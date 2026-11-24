@@ -8,6 +8,7 @@ import { getOwnedEquipmentBonuses } from '../../domains/economy/economyActions';
 import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
 import { findNationalTeamFixtureOnDay } from '../../domains/international/internationalCalendar';
 import {
+  findClubLeagueIdInWorld,
   getClubFixtureOnExactDay,
   rolloverSeasonWithPromotionAndQualification,
   simulateWorldCompetitionsOnDay,
@@ -36,6 +37,9 @@ export function computeNextDayState(
   let nextMarket = state.marketOffers;
   let nextLeveled = state.recentLeveledKeys;
   let nextPeriod = { ...state.periodStats };
+  let nextStints = [...state.currentSeasonStints];
+  let nextSeasonLogs = [...state.careerSeasonLogs];
+  let nextUserCompStats = state.userCompStats;
   let nextCabinet = [...state.trophyCabinet];
   let nextPrestige = state.awardPrestigeBoost;
   let nextGala = state.latestGalaReport;
@@ -287,6 +291,51 @@ export function computeNextDayState(
     }
 
     if (nextWeek > TOTAL_SEASON_WEEKS) {
+      // Arquiva o registro completo da temporada encerrada antes do rollover!
+      const finishedSeasonYear = calendar.season;
+      const stintsWithFinish = (
+        nextStints.length > 0
+          ? nextStints
+          : [
+              {
+                clubId: contract.clubId,
+                leagueId: findClubLeagueIdInWorld(nextWorld, contract.clubId),
+                stage: contract.stage,
+                matches: Math.max(0, nextPeriod.seasonMatches - nextPeriod.internationalMatches),
+                goals: Math.max(0, nextPeriod.seasonGoals - nextPeriod.internationalGoals),
+                assists: Math.max(0, nextPeriod.seasonAssists - nextPeriod.internationalAssists),
+                threeStarMatches: 0,
+              },
+            ]
+      ).map((st) => {
+        const lgRows = nextWorld.leagues[st.leagueId]?.standings ?? [];
+        const posIdx = lgRows.findIndex((r) => r.clubId === st.clubId);
+        return {
+          ...st,
+          leagueFinishPosition: st.stage === 'YOUTH' || posIdx === -1 ? undefined : posIdx + 1,
+        };
+      });
+
+      const seasonTrophies = nextCabinet
+        .filter((t) => t.season === finishedSeasonYear)
+        .map((t) => t.title);
+
+      nextSeasonLogs = [
+        ...nextSeasonLogs,
+        {
+          seasonNumber: nextSeasonLogs.length + 1,
+          seasonYear: finishedSeasonYear,
+          age: nextPlayer.age,
+          ovrEnd: nextPlayer.overall,
+          stints: stintsWithFinish,
+          nationalTeamId: `nt_${nextPlayer.nationality.toLowerCase()}`,
+          nationalMatches: nextPeriod.internationalMatches,
+          nationalGoals: nextPeriod.internationalGoals,
+          nationalAssists: nextPeriod.internationalAssists,
+          trophyTitles: seasonTrophies,
+        },
+      ];
+
       nextWeek = 1;
       nextSeason += 1;
       nextPlayer = { ...nextPlayer, age: nextPlayer.age + 1 };
@@ -297,6 +346,18 @@ export function computeNextDayState(
         nextPeriod.seasonAssists,
       );
       nextPeriod = { ...INITIAL_PERIOD_STATS };
+      nextStints = [
+        {
+          clubId: contract.clubId,
+          leagueId: findClubLeagueIdInWorld(nextWorld, contract.clubId),
+          stage: contract.stage,
+          matches: 0,
+          goals: 0,
+          assists: 0,
+          threeStarMatches: 0,
+        },
+      ];
+      nextUserCompStats = {};
       nextPrestige = Math.max(0, nextPrestige - 2);
       nextFeed = [
         makeEvent(
@@ -318,6 +379,9 @@ export function computeNextDayState(
     bankBalance: nextBalance,
     worldSeason: nextWorld,
     periodStats: nextPeriod,
+    currentSeasonStints: nextStints,
+    careerSeasonLogs: nextSeasonLogs,
+    userCompStats: nextUserCompStats,
     trophyCabinet: nextCabinet,
     awardPrestigeBoost: nextPrestige,
     latestGalaReport: nextGala,

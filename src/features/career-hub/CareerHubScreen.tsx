@@ -67,7 +67,7 @@ export const CareerHubScreen: React.FC = () => {
           <GamepadBadge action="CONFIRM" label="CONFIRMAR" />
           {activeTab === 'MEU_PRO' && (
             <>
-              <GamepadBadge action="LT" label="TROFÉUS" />
+              <GamepadBadge action="LT" label="SEÇÃO" />
               <GamepadBadge action="RT" />
             </>
           )}
@@ -83,7 +83,8 @@ export const CareerHubScreen: React.FC = () => {
             <>
               <GamepadBadge action="LT" label="LIGA" />
               <GamepadBadge action="RT" />
-              <GamepadBadge action="RS" label="ROLAR ELENCO" />
+              <GamepadBadge action="ALT_X" label="ESTATÍSTICAS" />
+              <GamepadBadge action="RS" label="ROLAR" />
             </>
           )}
           <GamepadBadge

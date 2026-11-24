@@ -4,11 +4,13 @@ import { COUNTRIES } from '../../../data/countries/countries';
 import { ContinentalCupId, LeagueId, LEAGUES } from '../../../data/leagues/leagues';
 import { getCompetitionTheme, InternationalCompId } from '../../../data/world/competitionThemes';
 import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { ConsoleStepper } from '../../../shared/ui/ConsoleStepper';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { ClubSquadInspector } from './ClubSquadInspector';
+import { CompetitionStatsView } from './CompetitionStatsView';
 import { ContinentalBracketView } from './ContinentalBracketView';
 import { InternationalCupBracketView } from './InternationalCupBracketView';
 import { InternationalQualifiersView } from './InternationalQualifiersView';
@@ -55,6 +57,7 @@ export const CompetitionsTab: React.FC = () => {
         : 'EURO_LIGAS';
 
   const [mode, setMode] = useState<CompMode>(initialMode);
+  const [topSubTab, setTopSubTab] = useState<'STANDINGS' | 'STATS'>('STANDINGS');
   const [leagueId, setLeagueId] = useState<LeagueId>(playerLeagueId);
   const [cupId, setCupId] = useState<ContinentalCupId>('CHAMPIONS_LEAGUE');
   const [wcqGroupId, setWcqGroupId] = useState<string>('WCQ_CONMEBOL');
@@ -142,90 +145,155 @@ export const CompetitionsTab: React.FC = () => {
     <div className="h-full flex flex-col gap-5 min-h-0">
       <button type="button" data-pad-lt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(-1)} />
       <button type="button" data-pad-rt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(1)} />
-
-      <div className="grid sm:grid-cols-2 gap-4 shrink-0">
-        <ConsoleStepper
-          autoFocus
-          compact
-          value={mode}
-          onChange={handleModeChange}
-          options={[
-            { value: 'SELECOES_ELIM', label: 'SELEÇÕES • ELIMINATÓRIAS DA COPA (FIFA)' },
-            { value: 'SELECOES_COPAS', label: 'SELEÇÕES • COPA DO MUNDO, NATIONS & COPA AMÉRICA' },
-            { value: 'SUL_LIGAS', label: 'AMÉRICA DO SUL • LIGAS (1ª E 2ª DIV)' },
-            { value: 'EURO_LIGAS', label: 'EUROPA • 6 LIGAS (1ª E 2ª DIV)' },
-            { value: 'MLS', label: 'MLS • ESTADOS UNIDOS & CANADÁ' },
-            { value: 'CONMEBOL_CUPS', label: 'LIBERTADORES & SUL-AMERICANA' },
-            { value: 'UEFA_CUPS', label: 'CHAMPIONS LEAGUE & EUROPA LEAGUE' },
-            { value: 'HISTORICO', label: 'HISTÓRICO DE CAMPEÕES' },
-          ]}
+      {mode !== 'HISTORICO' && (
+        <button
+          type="button"
+          data-pad-x="true"
+          data-nav-ignore="true"
+          className="hidden"
+          onClick={() => setTopSubTab((prev) => (prev === 'STANDINGS' ? 'STATS' : 'STANDINGS'))}
         />
+      )}
 
-        {mode === 'HISTORICO' ? (
-          <div className="h-9 bg-[#0E0F12] border border-[#242730] flex items-center justify-center font-condensed uppercase font-bold text-sm tracking-widest text-[#9498A3]">
-            REGISTRO ANUAL DE TÍTULOS ({worldSeason.history.length} CONCLUÍDAS)
-          </div>
-        ) : mode === 'SELECOES_ELIM' ? (
+      <div className="grid lg:grid-cols-12 gap-3 shrink-0 items-center">
+        <div className="lg:col-span-5">
           <ConsoleStepper
+            autoFocus
             compact
-            value={wcqGroupId}
-            onChange={(nextId) => {
-              setWcqGroupId(nextId);
-              const g = qualifiers.find((q) => q.id === nextId);
-              if (g?.standings[0]) setSelectedClubId(g.standings[0].clubId);
-            }}
-            options={qualifiers.map((q) => ({ value: q.id, label: q.label }))}
-          />
-        ) : mode === 'SELECOES_COPAS' ? (
-          <ConsoleStepper
-            compact
-            value={intlCupId}
-            onChange={setIntlCupId}
+            value={mode}
+            onChange={handleModeChange}
             options={[
-              { value: 'WORLD_CUP', label: 'COPA DO MUNDO FIFA (32 SELEÇÕES)' },
-              { value: 'NATIONS_LEAGUE', label: 'LIGA DAS NAÇÕES (UEFA + TOP 2 CONMEBOL)' },
-              { value: 'COPA_AMERICA', label: 'CONMEBOL COPA AMÉRICA (16 SELEÇÕES)' },
-              { value: 'EURO_CUP', label: 'UEFA EUROCOPA (16 SELEÇÕES)' },
+              { value: 'SELECOES_ELIM', label: 'SELEÇÕES • ELIMINATÓRIAS DA COPA (FIFA)' },
+              { value: 'SELECOES_COPAS', label: 'SELEÇÕES • COPA DO MUNDO, NATIONS & COPA AMÉRICA' },
+              { value: 'SUL_LIGAS', label: 'AMÉRICA DO SUL • LIGAS (1ª E 2ª DIV)' },
+              { value: 'EURO_LIGAS', label: 'EUROPA • 6 LIGAS (1ª E 2ª DIV)' },
+              { value: 'MLS', label: 'MLS • ESTADOS UNIDOS & CANADÁ' },
+              { value: 'CONMEBOL_CUPS', label: 'LIBERTADORES & SUL-AMERICANA' },
+              { value: 'UEFA_CUPS', label: 'CHAMPIONS LEAGUE & EUROPA LEAGUE' },
+              { value: 'HISTORICO', label: 'HISTÓRICO DE CAMPEÕES' },
             ]}
           />
-        ) : isClubCupMode ? (
-          <ConsoleStepper
-            compact
-            value={cupId}
-            onChange={setCupId}
-            options={
-              mode === 'CONMEBOL_CUPS'
-                ? [
-                    { value: 'LIBERTADORES', label: 'CONMEBOL LIBERTADORES (32 CLUBES)' },
-                    { value: 'SUL_AMERICANA', label: 'CONMEBOL SUL-AMERICANA (32 CLUBES)' },
-                  ]
-                : [
-                    { value: 'CHAMPIONS_LEAGUE', label: 'UEFA CHAMPIONS LEAGUE (32 CLUBES)' },
-                    { value: 'EUROPA_LEAGUE', label: 'UEFA EUROPA LEAGUE (32 CLUBES)' },
-                  ]
-            }
-          />
-        ) : (
-          <ConsoleStepper
-            compact
-            value={leagueId}
-            onChange={(nextLg) => {
-              setLeagueId(nextLg);
-              const first = worldSeason.leagues[nextLg]?.standings[0]?.clubId;
-              if (first) setSelectedClubId(first);
-            }}
-            options={availableLeagues.map((id) => {
-              const lg = LEAGUES[id];
-              const flag = lg.country !== 'INT' ? COUNTRIES[lg.country]?.flag ?? '' : '';
-              return { value: id, label: `${flag} ${lg.name}` };
-            })}
-          />
-        )}
+        </div>
+
+        <div className="lg:col-span-4">
+          {mode === 'HISTORICO' ? (
+            <div className="h-9 bg-[#0E0F12] border border-[#242730] flex items-center justify-center font-condensed uppercase font-bold text-sm tracking-widest text-[#9498A3]">
+              REGISTRO ANUAL ({worldSeason.history.length} CONCLUÍDAS)
+            </div>
+          ) : mode === 'SELECOES_ELIM' ? (
+            <ConsoleStepper
+              compact
+              value={wcqGroupId}
+              onChange={(nextId) => {
+                setWcqGroupId(nextId);
+                const g = qualifiers.find((q) => q.id === nextId);
+                if (g?.standings[0]) setSelectedClubId(g.standings[0].clubId);
+              }}
+              options={qualifiers.map((q) => ({ value: q.id, label: q.label }))}
+            />
+          ) : mode === 'SELECOES_COPAS' ? (
+            <ConsoleStepper
+              compact
+              value={intlCupId}
+              onChange={setIntlCupId}
+              options={[
+                { value: 'WORLD_CUP', label: 'COPA DO MUNDO FIFA (32 SELEÇÕES)' },
+                { value: 'NATIONS_LEAGUE', label: 'LIGA DAS NAÇÕES (UEFA + TOP 2 CONMEBOL)' },
+                { value: 'COPA_AMERICA', label: 'CONMEBOL COPA AMÉRICA (16 SELEÇÕES)' },
+                { value: 'EURO_CUP', label: 'UEFA EUROCOPA (16 SELEÇÕES)' },
+              ]}
+            />
+          ) : isClubCupMode ? (
+            <ConsoleStepper
+              compact
+              value={cupId}
+              onChange={setCupId}
+              options={
+                mode === 'CONMEBOL_CUPS'
+                  ? [
+                      { value: 'LIBERTADORES', label: 'CONMEBOL LIBERTADORES (32 CLUBES)' },
+                      { value: 'SUL_AMERICANA', label: 'CONMEBOL SUL-AMERICANA (32 CLUBES)' },
+                    ]
+                  : [
+                      { value: 'CHAMPIONS_LEAGUE', label: 'UEFA CHAMPIONS LEAGUE (32 CLUBES)' },
+                      { value: 'EUROPA_LEAGUE', label: 'UEFA EUROPA LEAGUE (32 CLUBES)' },
+                    ]
+              }
+            />
+          ) : (
+            <ConsoleStepper
+              compact
+              value={leagueId}
+              onChange={(nextLg) => {
+                setLeagueId(nextLg);
+                const first = worldSeason.leagues[nextLg]?.standings[0]?.clubId;
+                if (first) setSelectedClubId(first);
+              }}
+              options={availableLeagues.map((id) => {
+                const lg = LEAGUES[id];
+                const flag = lg.country !== 'INT' ? COUNTRIES[lg.country]?.flag ?? '' : '';
+                return { value: id, label: `${flag} ${lg.name}` };
+              })}
+            />
+          )}
+        </div>
+
+        {/* Aba Superior: Classificação/Chaves vs Estatísticas do Campeonato */}
+        <div className="lg:col-span-3 flex items-center gap-1.5 justify-end">
+          {mode !== 'HISTORICO' && (
+            <>
+              <GamepadBadge action="ALT_X" />
+              <button
+                type="button"
+                data-focusable="true"
+                onClick={() => setTopSubTab('STANDINGS')}
+                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${
+                  topSubTab === 'STANDINGS'
+                    ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
+                    : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+                }`}
+              >
+                CLASSIFICAÇÃO
+              </button>
+              <button
+                type="button"
+                data-focusable="true"
+                onClick={() => setTopSubTab('STATS')}
+                style={
+                  topSubTab === 'STATS'
+                    ? {
+                        backgroundColor: theme.accentPrimary,
+                        color: theme.textOnAccent,
+                        borderColor: theme.accentPrimary,
+                      }
+                    : undefined
+                }
+                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${
+                  topSubTab === 'STATS'
+                    ? ''
+                    : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+                }`}
+              >
+                ESTATÍSTICAS
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 grid lg:grid-cols-12 gap-5 min-h-0">
         {mode === 'HISTORICO' ? (
           <SeasonHistoryView history={worldSeason.history} onSelectClub={setSelectedClubId} />
+        ) : topSubTab === 'STATS' ? (
+          <CompetitionStatsView
+            compId={activeCompId}
+            qualifierGroupId={mode === 'SELECOES_ELIM' ? wcqGroupId : undefined}
+            stageSubtitle={
+              mode === 'SELECOES_ELIM' && activeQualGroup ? activeQualGroup.label : undefined
+            }
+            selectedClubId={selectedClubId}
+            onSelectClub={setSelectedClubId}
+          />
         ) : mode === 'SELECOES_ELIM' && activeQualGroup ? (
           <InternationalQualifiersView
             group={activeQualGroup}

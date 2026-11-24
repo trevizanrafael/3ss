@@ -4,6 +4,7 @@ import {
   createInitialInternationalState,
   simulateInternationalDay,
 } from '../../domains/international/internationalCalendar';
+import { findClubLeagueIdInWorld } from '../../domains/season/worldSeasonEngine';
 import { CareerState } from '../careerTypes';
 
 const LEGACY_KEYS = ['three-stars-soccer-career-v3', 'three-stars-soccer-career-v2'];
@@ -75,6 +76,74 @@ export function migratePersistedCareerState(
     ...INITIAL_PERIOD_STATS,
     ...(persisted.periodStats ?? {}),
   };
+
+  // Reconstrói automaticamente temporadas passadas de saves antigos caso `careerSeasonLogs` ainda não existisse!
+  if ((!merged.careerSeasonLogs || merged.careerSeasonLogs.length === 0) && merged.worldSeason?.history?.length && merged.player) {
+    const sortedHist = [...merged.worldSeason.history].sort((a, b) => a.season - b.season);
+    merged.careerSeasonLogs = sortedHist.map((h, idx) => ({
+      seasonNumber: idx + 1,
+      seasonYear: h.season,
+      age: Math.max(16, merged.player!.age - (sortedHist.length - idx)),
+      ovrEnd: merged.player!.overall,
+      stints: [
+        {
+          clubId: h.playerClubId,
+          leagueId: h.leagueId,
+          stage: 'PRO',
+          matches: 30,
+          goals: h.goals,
+          assists: h.assists,
+          threeStarMatches: 0,
+          leagueFinishPosition: h.leaguePosition,
+        },
+      ],
+      nationalTeamId: `nt_${merged.player!.nationality.toLowerCase()}`,
+      nationalMatches: 0,
+      nationalGoals: 0,
+      nationalAssists: 0,
+      trophyTitles: (merged.trophyCabinet ?? [])
+        .filter((t) => t.season === h.season)
+        .map((t) => t.title),
+    }));
+  }
+
+  if ((!merged.currentSeasonStints || merged.currentSeasonStints.length === 0) && merged.contract && merged.worldSeason) {
+    const clubLg = findClubLeagueIdInWorld(merged.worldSeason, merged.contract.clubId);
+    const clubMatches = Math.max(0, merged.periodStats.seasonMatches - merged.periodStats.internationalMatches);
+    const clubGoals = Math.max(0, merged.periodStats.seasonGoals - merged.periodStats.internationalGoals);
+    const clubAssists = Math.max(0, merged.periodStats.seasonAssists - merged.periodStats.internationalAssists);
+
+    merged.currentSeasonStints = [
+      {
+        clubId: merged.contract.clubId,
+        leagueId: clubLg,
+        stage: merged.contract.stage,
+        matches: clubMatches,
+        goals: clubGoals,
+        assists: clubAssists,
+        threeStarMatches: 0,
+      },
+    ];
+
+    if (!merged.userCompStats || Object.keys(merged.userCompStats).length === 0) {
+      merged.userCompStats =
+        merged.contract.stage !== 'YOUTH' && clubMatches > 0
+          ? {
+              [clubLg]: {
+                clubId: merged.contract.clubId,
+                matches: Math.max(0, clubMatches - merged.periodStats.continentalMatches),
+                goals: Math.max(0, clubGoals - merged.periodStats.continentalGoals),
+                assists: Math.max(0, clubAssists - merged.periodStats.continentalAssists),
+                threeStarMatches: 0,
+              },
+            }
+          : {};
+    }
+  }
+
+  if (!merged.userCompStats) {
+    merged.userCompStats = {};
+  }
 
   if (merged.worldSeason && !merged.worldSeason.international) {
     const seasonYear = merged.worldSeason.seasonYear ?? merged.calendar?.season ?? 2026;

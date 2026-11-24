@@ -11,7 +11,11 @@ import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
+import { CareerHistoryView } from './CareerHistoryView';
 import { TrophyCabinetView } from './TrophyCabinetView';
+
+type ProSubView = 'STATS' | 'TROPHIES' | 'HISTORY';
+const PRO_SUB_VIEWS: ProSubView[] = ['STATS', 'TROPHIES', 'HISTORY'];
 
 interface StatColumnConfig {
   title: string;
@@ -20,9 +24,16 @@ interface StatColumnConfig {
 }
 
 export const MyProTab: React.FC = () => {
-  const { player, contract, drillSlots, recentLeveledKeys, trophyCabinet, periodStats } =
-    useCareerStore();
-  const [subView, setSubView] = useState<'STATS' | 'TROPHIES'>('STATS');
+  const {
+    player,
+    contract,
+    drillSlots,
+    recentLeveledKeys,
+    trophyCabinet,
+    careerSeasonLogs,
+    periodStats,
+  } = useCareerStore();
+  const [subView, setSubView] = useState<ProSubView>('STATS');
 
   if (!player) return null;
   const natMeta = COUNTRIES[player.nationality] ?? COUNTRIES.BRA;
@@ -93,14 +104,16 @@ export const MyProTab: React.FC = () => {
     },
   ];
 
-  const toggleSubView = () =>
-    setSubView((curr) => (curr === 'STATS' ? 'TROPHIES' : 'STATS'));
+  const stepSubView = (dir: -1 | 1) =>
+    setSubView(
+      (curr) => PRO_SUB_VIEWS[(PRO_SUB_VIEWS.indexOf(curr) + dir + PRO_SUB_VIEWS.length) % PRO_SUB_VIEWS.length],
+    );
 
   return (
     <div className="h-full flex flex-col gap-5 min-h-0">
-      {/* Faixa Superior Resumo do Atleta + Seletor LT/RT Sala de Troféus */}
+      {/* Faixa Superior Resumo do Atleta + Seletor LT/RT (Habilidades | Troféus | Carreira) */}
       <div className="console-tile border-l-4 border-l-[#C8A45D] px-6 py-4 flex flex-wrap items-center justify-between gap-6 shrink-0">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
           <div
             className="font-condensed font-extrabold text-6xl leading-none"
             style={{ color: getFifaStatColor(player.overall) }}
@@ -125,13 +138,13 @@ export const MyProTab: React.FC = () => {
           </div>
         </div>
 
-        {/* Sub-Abas Console: 01 HABILIDADES | 02 SALA DE TROFÉUS (LT / RT) */}
-        <div className="flex items-center gap-2">
+        {/* Sub-Abas Console: 01 HABILIDADES | 02 TROFÉUS | 03 CARREIRA (LT / RT) */}
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             data-pad-lt="true"
             data-nav-ignore="true"
-            onClick={toggleSubView}
+            onClick={() => stepSubView(-1)}
             className="cursor-pointer mr-1"
           >
             <GamepadBadge action="LT" />
@@ -142,33 +155,46 @@ export const MyProTab: React.FC = () => {
             data-focusable="true"
             data-autofocus="true"
             onClick={() => setSubView('STATS')}
-            className={`px-4 py-2 font-condensed uppercase font-extrabold text-sm tracking-wider border transition-colors cursor-pointer ${
+            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${
               subView === 'STATS'
                 ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
                 : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
             }`}
           >
-            01 HABILIDADES 0–99
+            01 HABILIDADES
           </button>
 
           <button
             type="button"
             data-focusable="true"
             onClick={() => setSubView('TROPHIES')}
-            className={`px-4 py-2 font-condensed uppercase font-extrabold text-sm tracking-wider border transition-colors cursor-pointer ${
+            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${
               subView === 'TROPHIES'
                 ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
                 : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
             }`}
           >
-            02 SALA DE TROFÉUS ({trophyCabinet.length})
+            02 TROFÉUS ({trophyCabinet.length})
+          </button>
+
+          <button
+            type="button"
+            data-focusable="true"
+            onClick={() => setSubView('HISTORY')}
+            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${
+              subView === 'HISTORY'
+                ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
+                : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+            }`}
+          >
+            03 CARREIRA ({careerSeasonLogs.length + 1} TEMP)
           </button>
 
           <button
             type="button"
             data-pad-rt="true"
             data-nav-ignore="true"
-            onClick={toggleSubView}
+            onClick={() => stepSubView(1)}
             className="cursor-pointer ml-1"
           >
             <GamepadBadge action="RT" />
@@ -176,9 +202,11 @@ export const MyProTab: React.FC = () => {
         </div>
       </div>
 
-      {/* Visão 01: 6 Colunas Verticais de Habilidades estilo FIFA 18 | Visão 02: Sala de Troféus */}
+      {/* Visão 01: Habilidades | Visão 02: Sala de Troféus | Visão 03: Histórico Temporada por Temporada */}
       {subView === 'TROPHIES' ? (
         <TrophyCabinetView />
+      ) : subView === 'HISTORY' ? (
+        <CareerHistoryView />
       ) : (
         <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 min-h-0">
           {columns.map((col) => {

@@ -4,6 +4,11 @@ import {
   PlayerTrophyEntry,
   SeasonAwardsGalaReport,
 } from '../domains/awards/awardTypes';
+import {
+  ClubSeasonStint,
+  PlayerSeasonCareerLog,
+  UserCompetitionStatsMap,
+} from '../domains/career-stats/careerHistoryTypes';
 import { ActiveContract, TransferMarketOffer } from '../domains/contracts/contractEngine';
 import { MatchPerformanceResult, TacticalMindset } from '../domains/match-sim/matchSimulator';
 import { CreatePlayerInput } from '../domains/player/createInitialPlayer';
@@ -46,6 +51,9 @@ export interface CareerState {
 
   worldSeason: WorldSeasonState;
   periodStats: PlayerPeriodStats;
+  currentSeasonStints: ClubSeasonStint[];
+  careerSeasonLogs: PlayerSeasonCareerLog[];
+  userCompStats: UserCompetitionStatsMap;
   trophyCabinet: PlayerTrophyEntry[];
   awardPrestigeBoost: number;
   latestGalaReport: SeasonAwardsGalaReport | null;

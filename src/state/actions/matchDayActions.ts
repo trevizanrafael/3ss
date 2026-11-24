@@ -7,6 +7,7 @@ import {
   TacticalMindset,
 } from '../../domains/match-sim/matchSimulator';
 import {
+  findClubLeagueIdInWorld,
   getClubFixtureOnExactDay,
   simulateWorldCompetitionsOnDay,
 } from '../../domains/season/worldSeasonEngine';
@@ -180,6 +181,47 @@ export function computePlayedMatchState(
       periodStats.internationalAssists + (isNatGame ? result.playerAssists : 0),
   };
 
+  const prevCompLine = state.userCompStats[fixture.competitionId];
+  const nextUserCompStats = {
+    ...state.userCompStats,
+    [fixture.competitionId]: {
+      clubId: activeTeamId,
+      matches: (prevCompLine?.matches ?? 0) + 1,
+      goals: (prevCompLine?.goals ?? 0) + result.playerGoals,
+      assists: (prevCompLine?.assists ?? 0) + result.playerAssists,
+      threeStarMatches: (prevCompLine?.threeStarMatches ?? 0) + (result.stars === 3 ? 1 : 0),
+    },
+  };
+
+  let nextSeasonStints = [...state.currentSeasonStints];
+  if (!isNatGame) {
+    const clubLg = findClubLeagueIdInWorld(nextWorld, contract.clubId);
+    const stintIdx = nextSeasonStints.findIndex(
+      (s) => s.clubId === contract.clubId && s.stage === contract.stage,
+    );
+    if (stintIdx !== -1) {
+      const curr = nextSeasonStints[stintIdx];
+      nextSeasonStints[stintIdx] = {
+        ...curr,
+        leagueId: clubLg,
+        matches: curr.matches + 1,
+        goals: curr.goals + result.playerGoals,
+        assists: curr.assists + result.playerAssists,
+        threeStarMatches: curr.threeStarMatches + (result.stars === 3 ? 1 : 0),
+      };
+    } else {
+      nextSeasonStints.push({
+        clubId: contract.clubId,
+        leagueId: clubLg,
+        stage: contract.stage,
+        matches: 1,
+        goals: result.playerGoals,
+        assists: result.playerAssists,
+        threeStarMatches: result.stars === 3 ? 1 : 0,
+      });
+    }
+  }
+
   return {
     result,
     patch: {
@@ -195,6 +237,8 @@ export function computePlayedMatchState(
       transitionProposals: nextProposals,
       worldSeason: nextWorld,
       periodStats: nextPeriod,
+      currentSeasonStints: nextSeasonStints,
+      userCompStats: nextUserCompStats,
       awardPrestigeBoost: state.awardPrestigeBoost + (isNatGame && result.stars === 3 ? 1 : 0),
       lastMatchResult: result,
       feed: nextFeed.slice(0, 30),

@@ -4,7 +4,10 @@ import {
   createSeasonContractGoal,
   TransferMarketOffer,
 } from '../../domains/contracts/contractEngine';
-import { createInitialWorldSeason } from '../../domains/season/worldSeasonEngine';
+import {
+  createInitialWorldSeason,
+  findClubLeagueIdInWorld,
+} from '../../domains/season/worldSeasonEngine';
 import { YouthAcademyOffer } from '../../domains/tryout/generateYouthOffers';
 import {
   createInitialYouthState,
@@ -38,6 +41,19 @@ export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer
     marketOffers: [],
     worldSeason: createInitialWorldSeason(2026),
     periodStats: { ...INITIAL_PERIOD_STATS },
+    currentSeasonStints: [
+      {
+        clubId: offer.clubId,
+        leagueId: club.leagueId,
+        stage: 'YOUTH',
+        matches: 0,
+        goals: 0,
+        assists: 0,
+        threeStarMatches: 0,
+      },
+    ],
+    careerSeasonLogs: [],
+    userCompStats: {},
     trophyCabinet: [],
     awardPrestigeBoost: 0,
     latestGalaReport: null,
@@ -60,7 +76,26 @@ export function buildYouthTransitionPatch(
 ): Partial<CareerState> {
   if (!state.player) return {};
   const targetClub = getClubById(proposal.targetClubId);
-  const stage = proposal.type === 'LOAN_STARTER' ? 'LOAN' : 'PRO';
+  const stage: 'LOAN' | 'PRO' = proposal.type === 'LOAN_STARTER' ? 'LOAN' : 'PRO';
+  const targetLg = findClubLeagueIdInWorld(state.worldSeason, proposal.targetClubId);
+  const hasStint = state.currentSeasonStints.some(
+    (s) => s.clubId === proposal.targetClubId && s.stage === stage,
+  );
+  const nextStints = hasStint
+    ? state.currentSeasonStints
+    : [
+        ...state.currentSeasonStints.filter((s) => s.matches > 0),
+        {
+          clubId: proposal.targetClubId,
+          leagueId: targetLg,
+          stage,
+          matches: 0,
+          goals: 0,
+          assists: 0,
+          threeStarMatches: 0,
+        },
+      ];
+
   return {
     contract: {
       clubId: proposal.targetClubId,
@@ -72,6 +107,7 @@ export function buildYouthTransitionPatch(
       goalBonusPerContribution: proposal.goalBonus,
       seasonGoal: createSeasonContractGoal(state.player, stage, proposal.monthlySalary),
     },
+    currentSeasonStints: nextStints,
     youthState: null,
     transitionProposals: [],
     feed: [
@@ -94,6 +130,25 @@ export function buildMarketSignPatch(
 ): Partial<CareerState> {
   if (!state.player) return {};
   const club = getClubById(offer.clubId);
+  const targetLg = findClubLeagueIdInWorld(state.worldSeason, offer.clubId);
+  const hasStint = state.currentSeasonStints.some(
+    (s) => s.clubId === offer.clubId && s.stage === 'PRO',
+  );
+  const nextStints = hasStint
+    ? state.currentSeasonStints
+    : [
+        ...state.currentSeasonStints.filter((s) => s.matches > 0),
+        {
+          clubId: offer.clubId,
+          leagueId: targetLg,
+          stage: 'PRO' as const,
+          matches: 0,
+          goals: 0,
+          assists: 0,
+          threeStarMatches: 0,
+        },
+      ];
+
   return {
     contract: {
       clubId: offer.clubId,
@@ -104,6 +159,7 @@ export function buildMarketSignPatch(
       goalBonusPerContribution: offer.goalBonus,
       seasonGoal: createSeasonContractGoal(state.player, 'PRO', offer.monthlySalary),
     },
+    currentSeasonStints: nextStints,
     marketOffers: [],
     feed: [
       makeEvent(
