@@ -1,4 +1,4 @@
-import { getClubsByLeague } from '../../data/clubs';
+import { getClubById, getClubsByLeague } from '../../data/clubs';
 import {
   ContinentalCupId,
   LeagueId,
@@ -85,7 +85,7 @@ export function findClubLeagueIdInWorld(world: WorldSeasonState, clubId: string)
   for (const lgId of PLAYABLE_LEAGUE_IDS) {
     if (world.leagues[lgId]?.clubIds.includes(clubId)) return lgId;
   }
-  return 'BRA_1';
+  return getClubById(clubId).leagueId;
 }
 
 export function getClubFixtureOnExactDay(

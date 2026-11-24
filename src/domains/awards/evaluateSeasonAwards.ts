@@ -18,6 +18,26 @@ import {
   SimCandidate,
 } from './seasonCandidatesBuilder';
 
+// Regras estritas de posição para a Seleção do Campeonato (4-3-3):
+// Goleiro SÓ aceita GK, Zagueiro SÓ aceita ZAG, Atacante NUNCA entra no gol ou na lateral!
+const TOTS_SLOTS_SPEC: {
+  slot: SquadPosition;
+  primary: SquadPosition[];
+  fallback: SquadPosition[];
+}[] = [
+  { slot: 'GK', primary: ['GK'], fallback: ['GK'] },
+  { slot: 'LD', primary: ['LD'], fallback: ['MD', 'ZAG'] },
+  { slot: 'ZAG', primary: ['ZAG'], fallback: ['VOL'] },
+  { slot: 'ZAG', primary: ['ZAG'], fallback: ['VOL'] },
+  { slot: 'LE', primary: ['LE'], fallback: ['ME', 'ZAG'] },
+  { slot: 'VOL', primary: ['VOL'], fallback: ['MC'] },
+  { slot: 'MC', primary: ['MC'], fallback: ['VOL', 'MEI'] },
+  { slot: 'MEI', primary: ['MEI'], fallback: ['SA', 'MC', 'MD', 'ME'] },
+  { slot: 'PD', primary: ['PD', 'MD'], fallback: ['SA', 'ATA'] },
+  { slot: 'PE', primary: ['PE', 'ME'], fallback: ['SA', 'ATA'] },
+  { slot: 'ATA', primary: ['ATA', 'SA'], fallback: ['PD', 'PE'] },
+];
+
 export function evaluateEndOfSeasonAwards(
   player: CareerPlayer,
   userClubId: string,
@@ -59,9 +79,27 @@ export function evaluateEndOfSeasonAwards(
     scoreFn: (c: SimCandidate) => number,
     lineFn: (c: SimCandidate) => string,
     cash: number,
+    maxPerClub = 3,
+    tieBreakFn?: (a: SimCandidate, b: SimCandidate) => number,
   ): SeasonAwardResult => {
-    const sorted = [...pool].sort((a, b) => scoreFn(b) - scoreFn(a));
-    const top3 = sorted.slice(0, 3).map((c) => ({
+    const sorted = [...pool].sort((a, b) => {
+      const diff = scoreFn(b) - scoreFn(a);
+      if (Math.abs(diff) > 0.001) return diff;
+      if (tieBreakFn) return tieBreakFn(a, b);
+      return b.ovr - a.ovr;
+    });
+
+    const picked: SimCandidate[] = [];
+    const clubCount = new Map<string, number>();
+    for (const c of sorted) {
+      const cnt = clubCount.get(c.clubId) ?? 0;
+      if (!c.isUser && cnt >= maxPerClub) continue;
+      picked.push(c);
+      clubCount.set(c.clubId, cnt + 1);
+      if (picked.length >= 3) break;
+    }
+
+    const top3 = picked.map((c) => ({
       playerId: c.id,
       playerName: c.name,
       clubId: c.clubId,
@@ -84,7 +122,11 @@ export function evaluateEndOfSeasonAwards(
     };
   };
 
-  const myLeaguePool = candidates.filter((c) => c.leagueId === userLeagueId);
+  // Filtra estritamente apenas jogadores dos clubes que disputaram a SUA liga nacional!
+  const validClubsInMyLeague = new Set(world.leagues[userLeagueId]?.clubIds ?? []);
+  const myLeaguePool = candidates.filter(
+    (c) => c.leagueId === userLeagueId && validClubsInMyLeague.has(c.clubId),
+  );
   const myLeagueName = LEAGUES[userLeagueId].name.toUpperCase();
   const isDiv1 = LEAGUES[userLeagueId].division === 1;
 
@@ -110,20 +152,30 @@ export function evaluateEndOfSeasonAwards(
     makeAward(
       'GOLDEN_BOOT',
       'CHUTEIRA DE OURO',
-      'MAIOR ARTILHEIRO PONDERADO DA TEMPORADA',
+      'ARTILHARIA PONDERADA (×2.0 TOP-5 EUROPA • ×1.5 DEMAIS 1ª DIV)',
       candidates.filter((c) => c.pos !== 'GK'),
       (c) => c.goals * getBootFactor(c.leagueId),
-      (c) => `${c.goals} GOLS (${Math.round(c.goals * getBootFactor(c.leagueId))} PTS)`,
+      (c) => {
+        const f = getBootFactor(c.leagueId);
+        return `${c.goals} GOLS × ${f.toFixed(1)} = ${(c.goals * f).toFixed(0)} PTS`;
+      },
       200000,
+      3,
+      (a, b) => b.goals - a.goals || b.assists - a.assists || b.ovr - a.ovr,
     ),
     makeAward(
       'GOLDEN_PLAYMAKER',
       'GARÇOM DE OURO',
-      'LÍDER MUNDIAL DE ASSISTÊNCIAS',
+      'LÍDER MUNDIAL PONDERADO DE ASSISTÊNCIAS',
       candidates.filter((c) => c.pos !== 'GK'),
       (c) => c.assists * getBootFactor(c.leagueId),
-      (c) => `${c.assists} ASSISTÊNCIAS`,
+      (c) => {
+        const f = getBootFactor(c.leagueId);
+        return `${c.assists} ASSIST × ${f.toFixed(1)} = ${(c.assists * f).toFixed(0)} PTS`;
+      },
       140000,
+      3,
+      (a, b) => b.assists - a.assists || b.goals - a.goals || b.ovr - a.ovr,
     ),
     makeAward(
       'UCL_BEST',
@@ -131,8 +183,9 @@ export function evaluateEndOfSeasonAwards(
       'MELHOR JOGADOR DA TEMPORADA EUROPEIA',
       candidates.filter((c) => c.uclScore > 0),
       (c) => c.uclScore,
-      (c) => `${c.goals}G • ${c.assists}A`,
+      (c) => `${c.cupGoals}G • ${c.cupAssists}A NA CHAMPIONS`,
       220000,
+      2,
     ),
     makeAward(
       'REI_DA_AMERICA',
@@ -140,8 +193,9 @@ export function evaluateEndOfSeasonAwards(
       'MELHOR JOGADOR DA CONMEBOL LIBERTADORES',
       candidates.filter((c) => c.libScore > 0),
       (c) => c.libScore,
-      (c) => `${c.goals}G • ${c.assists}A`,
+      (c) => `${c.cupGoals}G • ${c.cupAssists}A NA LIBERTADORES`,
       150000,
+      2,
     ),
     makeAward(
       'LEAGUE_MVP',
@@ -163,41 +217,32 @@ export function evaluateEndOfSeasonAwards(
     ),
   ];
 
-  // Seleção do Campeonato (11 Ideais — 4-3-3)
-  const totsPositions: SquadPosition[] = [
-    'GK',
-    'LD',
-    'ZAG',
-    'ZAG',
-    'LE',
-    'VOL',
-    'MC',
-    'MEI',
-    'PD',
-    'PE',
-    'ATA',
-  ];
+  // Seleção do Campeonato (11 Ideais — 4-3-3 com posições estritamente respeitadas!)
   const usedTots = new Set<string>();
-  const leagueTots: TeamOfTheSeasonSlot[] = totsPositions.map((slotPos) => {
-    const best = [...myLeaguePool]
-      .filter((c) => !usedTots.has(c.id))
-      .sort((a, b) => {
-        const matchA = a.pos === slotPos ? 18 : 0;
-        const matchB = b.pos === slotPos ? 18 : 0;
-        return b.leagueScore + matchB - (a.leagueScore + matchA);
-      })[0];
+  const leagueTots: TeamOfTheSeasonSlot[] = TOTS_SLOTS_SPEC.map(({ slot, primary, fallback }) => {
+    const primaryMatches = myLeaguePool
+      .filter((c) => !usedTots.has(c.id) && primary.includes(c.pos))
+      .sort((a, b) => b.leagueScore - a.leagueScore);
 
+    const fallbackMatches =
+      primaryMatches.length > 0
+        ? []
+        : myLeaguePool
+            .filter((c) => !usedTots.has(c.id) && fallback.includes(c.pos))
+            .sort((a, b) => b.leagueScore - a.leagueScore);
+
+    const best = primaryMatches[0] ?? fallbackMatches[0];
     if (best) {
       usedTots.add(best.id);
       return {
-        pos: slotPos,
+        pos: slot,
         playerName: best.name,
         clubId: best.clubId,
         ovr: best.ovr,
         isUser: best.isUser,
       };
     }
-    return { pos: slotPos, playerName: 'Destaque', clubId: userClubId, ovr: 72, isUser: false };
+    return { pos: slot, playerName: 'Destaque', clubId: userClubId, ovr: 72, isUser: false };
   });
 
   const userInTots = leagueTots.some((s) => s.isUser);
@@ -262,7 +307,6 @@ export function evaluateEndOfSeasonAwards(
       }
     }
 
-    // Títulos oficiais pela Seleção Nacional se foi convocado na temporada!
     const userNatId = `nt_${player.nationality.toLowerCase()}`;
     if (period.internationalMatches > 0 && world.international) {
       const intl = world.international;

@@ -1,5 +1,6 @@
 import { COUNTRIES, isLeagueCountryCode } from '../../data/countries/countries';
 import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
+import { evaluateEndOfSeasonAwards } from '../../domains/awards/evaluateSeasonAwards';
 import {
   createInitialInternationalState,
   simulateInternationalDay,
@@ -188,6 +189,30 @@ export function migratePersistedCareerState(
       ...merged.worldSeason,
       international: intl,
     };
+  }
+
+  // Se o save está na Semana da Gala (mesma temporada ativa), recalcula a Gala e troféus de fim de ano com ligas e posições 100% certas!
+  if (
+    merged.latestGalaReport &&
+    merged.player &&
+    merged.contract &&
+    merged.worldSeason &&
+    merged.latestGalaReport.season === merged.worldSeason.seasonYear
+  ) {
+    const recomputed = evaluateEndOfSeasonAwards(
+      merged.player,
+      merged.contract.clubId,
+      merged.contract.stage,
+      merged.periodStats,
+      merged.worldSeason,
+    );
+    merged.latestGalaReport = recomputed.gala;
+
+    const galaSeason = merged.worldSeason.seasonYear;
+    const preservedOtherTrophies = (merged.trophyCabinet ?? []).filter(
+      (t) => t.season !== galaSeason || t.code === 'POTM',
+    );
+    merged.trophyCabinet = [...recomputed.newTrophies, ...preservedOtherTrophies];
   }
 
   return merged;
