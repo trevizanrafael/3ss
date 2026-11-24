@@ -60,8 +60,18 @@ export function migratePersistedCareerState(
           ? validNat
           : 'BRA';
 
+    const safeAge = Math.max(18, merged.player.age ?? 18);
+    const currSeason = merged.calendar?.season ?? 2026;
+    const birthDay = merged.player.birthDay ?? 15;
+    const birthMonth = merged.player.birthMonth ?? 5;
+    const birthYear = merged.player.birthYear ?? currSeason - safeAge;
+
     merged.player = {
       ...merged.player,
+      age: safeAge,
+      birthDay,
+      birthMonth,
+      birthYear,
       nationality: validNat,
       startingLeagueCountry: validStartLg,
       careerTotals: {
@@ -70,6 +80,19 @@ export function migratePersistedCareerState(
         nationalGoals: merged.player.careerTotals?.nationalGoals ?? 0,
       },
     };
+  }
+
+  // Se save antigo estava na Base ('YOUTH'), promove automaticamente ao Profissional!
+  if (merged.contract && merged.contract.stage === 'YOUTH') {
+    merged.contract = {
+      ...merged.contract,
+      stage: 'PRO',
+      role: merged.contract.role === 'BASE_TITULAR' ? 'TITULAR' : 'RESERVA',
+      monthlySalary: Math.max(12000, merged.contract.monthlySalary),
+      goalBonusPerContribution: Math.max(2500, merged.contract.goalBonusPerContribution),
+    };
+    merged.youthState = null;
+    merged.transitionProposals = [];
   }
 
   merged.periodStats = {

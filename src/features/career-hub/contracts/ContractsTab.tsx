@@ -97,7 +97,7 @@ export const ContractsTab: React.FC = () => {
             className="px-4 py-2 bg-[#191B20] hover:bg-[#242730] border border-[#C8A45D] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-widest text-[#C8A45D] cursor-pointer"
           >
             <GamepadBadge action="ALT_Y" />
-            <span>{contract.stage === 'YOUTH' ? 'PEDIR REUNIÃO NA BASE ›' : 'SONDAR MERCADO ›'}</span>
+            <span>SONDAR MERCADO / EMPRÉSTIMO ›</span>
           </button>
         )}
       </div>

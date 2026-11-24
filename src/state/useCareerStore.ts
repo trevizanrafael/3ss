@@ -15,7 +15,6 @@ import {
   DEFAULT_FIVE_DRILL_SLOTS,
 } from '../domains/training/trainingEngine';
 import { generateYouthOffersFromTryout } from '../domains/tryout/generateYouthOffers';
-import { generateYouthTransitionProposals } from '../domains/youth-academy/youthModel';
 import { clamp } from '../shared/utils/math';
 import { computeNextDayState } from './actions/calendarActions';
 import {
@@ -138,18 +137,25 @@ export const useCareerStore = create<CareerState>()(
       requestLoanOrOffersFromAgent: () => {
         const { player, contract, agentId, awardPrestigeBoost, calendar, feed } = get();
         if (!player || !contract) return;
-        if (contract.stage === 'YOUTH') {
-          set({
-            transitionProposals: generateYouthTransitionProposals(player, contract.clubId),
-            feed: [makeEvent(calendar.week, 'Diretoria Acionada', 'Propostas de Subida e Empréstimo liberadas.', 'CONTRACT'), ...feed],
-          });
-        } else {
-          const offers = generateWindowTransferOffers(player, contract, agentId, awardPrestigeBoost);
-          set({
-            marketOffers: offers,
-            feed: [makeEvent(calendar.week, 'Sondagem Concluída', `${offers.length} clube(s) apresentaram proposta.`, 'CONTRACT'), ...feed],
-          });
-        }
+        const offers = generateWindowTransferOffers(
+          player,
+          contract,
+          agentId,
+          awardPrestigeBoost,
+        );
+        set({
+          transitionProposals: [],
+          marketOffers: offers,
+          feed: [
+            makeEvent(
+              calendar.week,
+              'Sondagem de Mercado Concluída',
+              `${offers.length} proposta(s) profissional(is) e empréstimo na mesa.`,
+              'CONTRACT',
+            ),
+            ...feed,
+          ],
+        });
       },
 
       buyEquipmentItem: (equipmentId) => {

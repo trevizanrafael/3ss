@@ -174,7 +174,6 @@ export const RollingWeekCalendarTile: React.FC = () => {
   }, [isSimulating, advanceDay]);
 
   if (!player || !contract) return null;
-  const club = getClubById(contract.clubId);
   const clubLeagueId = findClubLeagueIdInWorld(worldSeason, contract.clubId);
   const upcomingFx = findUpcomingFixtureForClub(
     worldSeason,
@@ -258,9 +257,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
             competitionId={activeCompId}
             size="md"
             stageSubtitle={
-              contract.stage === 'YOUTH'
-                ? club.youthAcademyName
-                : todayFixture?.stageLabel ?? upcomingFx?.stageLabel ?? 'PÓS-TEMPORADA'
+              todayFixture?.stageLabel ?? upcomingFx?.stageLabel ?? 'PÓS-TEMPORADA'
             }
           />
           <div className="font-condensed uppercase font-extrabold text-2xl tracking-wider text-[#F5F5F7]">

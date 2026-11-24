@@ -8,9 +8,9 @@ import { CareerPlayer } from '../player/playerTypes';
 
 export interface YouthAcademyOffer {
   clubId: string;
-  youthTeamName: string;
-  role: Extract<SquadRole, 'BASE_RESERVA' | 'BASE_TITULAR'>;
-  monthlyAllowance: number;
+  youthTeamName: string; // Exibido como divisão/elenco profissional
+  role: Extract<SquadRole, 'PROMESSA' | 'RESERVA' | 'TITULAR'>;
+  monthlyAllowance: number; // Salário mensal profissional inicial
   pathwayDifficulty: 'ACESSIVEL' | 'COMPETITIVO' | 'MUITO_DIFICIL';
   seniorCompetitor: RealSquadStar;
   scoutNote: string;
@@ -39,9 +39,9 @@ export function generateYouthOffersFromTryout(
 ): YouthAcademyOffer[] {
   const targetCountry = player.startingLeagueCountry ?? 'BRA';
   const countryClubs = getNationalClubsByCountry(targetCountry);
-  const div1Giants = shuffleArray(countryClubs.filter((c) => c.squadAvgOvr >= 80));
+  const div1Giants = shuffleArray(countryClubs.filter((c) => c.squadAvgOvr >= 79));
   const div1Mid = shuffleArray(
-    countryClubs.filter((c) => LEAGUES[c.leagueId].division === 1 && c.squadAvgOvr < 80),
+    countryClubs.filter((c) => LEAGUES[c.leagueId].division === 1 && c.squadAvgOvr < 79),
   );
   const div2Clubs = shuffleArray(
     countryClubs.filter((c) => LEAGUES[c.leagueId].division === 2),
@@ -66,8 +66,7 @@ export function generateYouthOffersFromTryout(
     if (div1Mid[0]) selected.push(div1Mid[0]);
   }
 
-  // Fallback para países sem 2ª divisão (ex: MLS)
-  if (selected.length < 3) {
+  if (selected.length < 4) {
     for (const club of shuffleArray(countryClubs)) {
       if (!selected.some((s) => s.id === club.id)) {
         selected.push(club);
@@ -77,16 +76,24 @@ export function generateYouthOffersFromTryout(
   }
 
   return selected.slice(0, 4).map((club) => {
-    const isGiant = club.squadAvgOvr >= 80;
+    const isGiant = club.squadAvgOvr >= 79;
     const isSecondDiv = LEAGUES[club.leagueId].division === 2;
-    const role: 'BASE_RESERVA' | 'BASE_TITULAR' =
-      tryoutStars >= 2 && !isGiant ? 'BASE_TITULAR' : tryoutStars === 3 && !isGiant ? 'BASE_TITULAR' : isSecondDiv && tryoutStars >= 1 ? 'BASE_TITULAR' : 'BASE_RESERVA';
+    const isEuro = LEAGUES[club.leagueId].continentalPrimary === 'CHAMPIONS_LEAGUE';
 
-    const monthlyAllowance = isGiant
-      ? 4200
+    const role: 'PROMESSA' | 'RESERVA' | 'TITULAR' = isGiant
+      ? tryoutStars === 3
+        ? 'RESERVA'
+        : 'PROMESSA'
       : isSecondDiv
-        ? 1400
-        : 2500;
+        ? tryoutStars >= 2
+          ? 'TITULAR'
+          : 'RESERVA'
+        : tryoutStars === 3
+          ? 'TITULAR'
+          : 'RESERVA';
+
+    const baseSal = isGiant ? 28000 : isSecondDiv ? 11500 : 18500;
+    const monthlyAllowance = isEuro ? Math.round(baseSal * 1.45) : baseSal;
 
     const pathwayDifficulty = isGiant
       ? 'MUITO_DIFICIL'
@@ -95,14 +102,14 @@ export function generateYouthOffersFromTryout(
         : 'COMPETITIVO';
 
     const scoutNote = isGiant
-      ? `Estrutura de elite (${club.youthQuality}/99), mas a concorrência pra subir ao profissional é pesada.`
+      ? 'Elenco principal de elite com calendário continental; minutos iniciais vêm do banco.'
       : isSecondDiv
-        ? 'Bolsa humilde, porém caminho muito mais curto para subir rápido e jogar como profissional.'
-        : 'Equilíbrio excelente entre boa categoria de base e espaço para jovens no time de cima.';
+        ? 'Titularidade rápida no time profissional para somar 90 minutos, gols e subir de Overall.'
+        : 'Espaço real de rotação e titularidade já na 1ª divisão nacional.';
 
     return {
       clubId: club.id,
-      youthTeamName: club.youthAcademyName,
+      youthTeamName: 'ELENCO PROFISSIONAL PRINCIPAL',
       role,
       monthlyAllowance,
       pathwayDifficulty,

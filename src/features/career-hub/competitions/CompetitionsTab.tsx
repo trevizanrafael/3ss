@@ -139,7 +139,7 @@ export const CompetitionsTab: React.FC = () => {
     } else if (availableLeagues.length > 1) {
       const nextLg =
         availableLeagues[
-          (availableLeagues.indexOf(leagueId) + dir + availableLeagues.length) % availableLeagues.length
+        (availableLeagues.indexOf(leagueId) + dir + availableLeagues.length) % availableLeagues.length
         ];
       setLeagueId(nextLg);
       const first = worldSeason.leagues[nextLg]?.standings[0]?.clubId;
@@ -217,13 +217,13 @@ export const CompetitionsTab: React.FC = () => {
               options={
                 mode === 'CONMEBOL_CUPS'
                   ? [
-                      { value: 'LIBERTADORES', label: 'CONMEBOL LIBERTADORES (32 CLUBES)' },
-                      { value: 'SUL_AMERICANA', label: 'CONMEBOL SUL-AMERICANA (32 CLUBES)' },
-                    ]
+                    { value: 'LIBERTADORES', label: 'CONMEBOL LIBERTADORES (32 CLUBES)' },
+                    { value: 'SUL_AMERICANA', label: 'CONMEBOL SUL-AMERICANA (32 CLUBES)' },
+                  ]
                   : [
-                      { value: 'CHAMPIONS_LEAGUE', label: 'UEFA CHAMPIONS LEAGUE (32 CLUBES)' },
-                      { value: 'EUROPA_LEAGUE', label: 'UEFA EUROPA LEAGUE (32 CLUBES)' },
-                    ]
+                    { value: 'CHAMPIONS_LEAGUE', label: 'UEFA CHAMPIONS LEAGUE (32 CLUBES)' },
+                    { value: 'EUROPA_LEAGUE', label: 'UEFA EUROPA LEAGUE (32 CLUBES)' },
+                  ]
               }
             />
           ) : (
@@ -257,11 +257,10 @@ export const CompetitionsTab: React.FC = () => {
                 type="button"
                 data-focusable="true"
                 onClick={() => setTopSubTab('STANDINGS')}
-                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${
-                  topSubTab === 'STANDINGS'
-                    ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
-                    : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
-                }`}
+                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${topSubTab === 'STANDINGS'
+                  ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
+                  : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+                  }`}
               >
                 CLASSIFICAÇÃO
               </button>
@@ -272,17 +271,16 @@ export const CompetitionsTab: React.FC = () => {
                 style={
                   topSubTab === 'STATS'
                     ? {
-                        backgroundColor: theme.accentPrimary,
-                        color: theme.textOnAccent,
-                        borderColor: theme.accentPrimary,
-                      }
+                      backgroundColor: theme.accentPrimary,
+                      color: theme.textOnAccent,
+                      borderColor: theme.accentPrimary,
+                    }
                     : undefined
                 }
-                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${
-                  topSubTab === 'STATS'
-                    ? ''
-                    : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
-                }`}
+                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${topSubTab === 'STATS'
+                  ? ''
+                  : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+                  }`}
               >
                 ESTATÍSTICAS
               </button>
@@ -384,13 +382,12 @@ export const CompetitionsTab: React.FC = () => {
                         data-focusable="true"
                         onFocus={() => setSelectedClubId(club.id)}
                         onClick={() => setSelectedClubId(club.id)}
-                        className={`cursor-pointer transition-colors outline-none ${
-                          selected
-                            ? 'bg-[#F5F5F7] text-[#0B0B0D]'
-                            : isMine
-                              ? 'bg-[#1C1A14] text-[#C8A45D]'
-                              : 'hover:bg-[#191B20] text-[#F5F5F7]'
-                        }`}
+                        className={`cursor-pointer transition-colors outline-none ${selected
+                          ? 'bg-[#F5F5F7] text-[#0B0B0D]'
+                          : isMine
+                            ? 'bg-[#1C1A14] text-[#C8A45D]'
+                            : 'hover:bg-[#191B20] text-[#F5F5F7]'
+                          }`}
                       >
                         <td className="py-2 pl-2 font-condensed font-bold text-base">
                           <span

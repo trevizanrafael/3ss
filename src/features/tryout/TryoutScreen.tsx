@@ -30,9 +30,9 @@ const TRYOUT_STAGES = [
   },
   {
     code: '03 / 03',
-    title: 'COLETIVO SUB-20 DECISIVO',
+    title: 'COLETIVO PROFISSIONAL DECISIVO',
     options: [
-      { code: 'A', label: 'CHAMAR A RESPONSABILIDADE', sub: 'BUSCA AS 3 ESTRELAS NA FRENTE DA COMISSÃO', bonus: 42, risk: 0.25 },
+      { code: 'A', label: 'CHAMAR A RESPONSABILIDADE', sub: 'BUSCA AS 3 ESTRELAS NA FRENTE DO TÉCNICO', bonus: 42, risk: 0.25 },
       { code: 'B', label: 'ORGANIZAR O SETOR TÁTICO', sub: 'NOTA COLETIVA CONSISTENTE', bonus: 30, risk: 0.05 },
     ],
   },
@@ -69,7 +69,7 @@ export const TryoutScreen: React.FC = () => {
       <header className="flex items-center justify-between border-b border-[#242730] pb-4">
         <div>
           <span className="text-[11px] uppercase tracking-[0.24em] text-[#C8A45D] font-semibold inline-flex items-center gap-2">
-            <span>PENEIRA DE BASE •</span>
+            <span>SELETIVA PROFISSIONAL •</span>
             <CountryFlag code={tryoutCountry.code} size="xs" />
             <span>{tryoutCountry.name}</span>
             <span className="text-[#9498A3]">• ATLETA:</span>
@@ -77,7 +77,7 @@ export const TryoutScreen: React.FC = () => {
             <span>{natCountry.name}</span>
           </span>
           <h1 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none mt-1">
-            {tryoutStars === null ? 'AVALIAÇÃO DE CATEGORIAS DE BASE' : 'CONVITES OFICIAIS DE BASE'}
+            {tryoutStars === null ? 'AVALIAÇÃO DE PRÉ-TEMPORADA PROFISSIONAL' : 'PROPOSTAS DE CONTRATO PROFISSIONAL'}
           </h1>
         </div>
         {tryoutStars !== null && <StarRatingBadge stars={tryoutStars} size="lg" showLabel />}
@@ -154,7 +154,7 @@ export const TryoutScreen: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#9498A3] uppercase">BOLSA</span>
+                      <span className="text-[#9498A3] uppercase">SALÁRIO</span>
                       <span className="font-condensed font-bold text-sm text-[#C8A45D]">
                         {formatMoney(offer.monthlyAllowance)}/MÊS
                       </span>
@@ -162,7 +162,7 @@ export const TryoutScreen: React.FC = () => {
                     <div className="flex justify-between items-center pt-2 border-t border-[#191B20]">
                       <div>
                         <span className="text-[10px] text-[#565A65] uppercase block">
-                          TITULAR NO PROFISSIONAL
+                          CONCORRENTE NA POSIÇÃO
                         </span>
                         <span className="text-xs text-[#F5F5F7] font-medium">
                           {offer.seniorCompetitor.name}
@@ -181,7 +181,7 @@ export const TryoutScreen: React.FC = () => {
                   }}
                   className="console-btn-primary w-full py-3 text-base cursor-pointer mt-4"
                 >
-                  ASSINAR BASE ›
+                  ASSINAR CONTRATO PRO ›
                 </button>
               </div>
             );

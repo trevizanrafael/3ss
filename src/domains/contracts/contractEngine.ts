@@ -93,7 +93,33 @@ export function generateWindowTransferOffers(
     };
   });
 
-  // Opção de renovação com o clube atual se estiver no Profissional
+  // Adiciona também 1 opção de EMPRÉSTIMO de 1 ano como TITULAR caso o atleta queira mais minutos em campo!
+  const loanCandidate = shuffleArray(
+    ALL_CLUBS.filter(
+      (c) =>
+        c.id !== currentContract.clubId &&
+        c.leagueId !== 'CONMEBOL_POOL' &&
+        c.leagueId !== 'UEFA_POOL' &&
+        c.country === currentClub.country &&
+        c.squadAvgOvr <= player.overall + 3 &&
+        c.squadAvgOvr >= player.overall - 7,
+    ),
+  )[0];
+
+  if (loanCandidate && !offers.some((o) => o.clubId === loanCandidate.id)) {
+    offers.push({
+      id: `loan_${loanCandidate.id}_${Math.random().toString(36).slice(2, 6)}`,
+      clubId: loanCandidate.id,
+      offerType: 'LOAN',
+      role: 'TITULAR',
+      monthlySalary: currentContract.monthlySalary,
+      years: 1,
+      goalBonus: currentContract.goalBonusPerContribution,
+      headline: `Empréstimo de 1 ano como Titular no ${loanCandidate.name}`,
+    });
+  }
+
+  // Opção de renovação com o clube atual
   if (currentContract.stage === 'PRO') {
     const newSal = Math.round(currentContract.monthlySalary * 1.18 * salaryMultiplier);
     offers.unshift({

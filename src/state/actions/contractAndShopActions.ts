@@ -9,10 +9,7 @@ import {
   findClubLeagueIdInWorld,
 } from '../../domains/season/worldSeasonEngine';
 import { YouthAcademyOffer } from '../../domains/tryout/generateYouthOffers';
-import {
-  createInitialYouthState,
-  YouthTransitionProposal,
-} from '../../domains/youth-academy/youthModel';
+import { YouthTransitionProposal } from '../../domains/youth-academy/youthModel';
 import { formatMoney } from '../../shared/utils/formatters';
 import { CareerState } from '../careerTypes';
 import { makeEvent } from '../helpers/feedHelper';
@@ -20,23 +17,24 @@ import { makeEvent } from '../helpers/feedHelper';
 export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer): Partial<CareerState> {
   if (!state.player) return {};
   const club = getClubById(offer.clubId);
+  const goalBonus = Math.round(offer.monthlyAllowance * 0.22);
   return {
     hasActiveSave: true,
     calendar: { season: 2026, week: 1, day: 1 },
-    bankBalance: 1500,
+    bankBalance: 5000,
     agentId: 'agent_family',
     ownedEquipmentIds: [],
     trainedToday: false,
     contract: {
       clubId: offer.clubId,
-      stage: 'YOUTH',
+      stage: 'PRO',
       role: offer.role,
       monthlySalary: offer.monthlyAllowance,
-      seasonsRemaining: 2,
-      goalBonusPerContribution: 350,
-      seasonGoal: createSeasonContractGoal(state.player, 'YOUTH', offer.monthlyAllowance),
+      seasonsRemaining: 3,
+      goalBonusPerContribution: goalBonus,
+      seasonGoal: createSeasonContractGoal(state.player, 'PRO', offer.monthlyAllowance),
     },
-    youthState: createInitialYouthState(offer.role),
+    youthState: null,
     transitionProposals: [],
     marketOffers: [],
     worldSeason: createInitialWorldSeason(2026),
@@ -45,7 +43,7 @@ export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer
       {
         clubId: offer.clubId,
         leagueId: club.leagueId,
-        stage: 'YOUTH',
+        stage: 'PRO',
         matches: 0,
         goals: 0,
         assists: 0,
@@ -62,8 +60,8 @@ export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer
     feed: [
       makeEvent(
         1,
-        `Bem-vindo à base do ${club.name}!`,
-        `Vínculo assinado no ${offer.youthTeamName} com bolsa de ${formatMoney(offer.monthlyAllowance)}/mês.`,
+        `Contrato Profissional Assinado com ${club.name}!`,
+        `Apresentado ao elenco principal como ${offer.role} com salário de ${formatMoney(offer.monthlyAllowance)}/mês.`,
         'CONTRACT',
       ),
     ],
@@ -130,9 +128,10 @@ export function buildMarketSignPatch(
 ): Partial<CareerState> {
   if (!state.player) return {};
   const club = getClubById(offer.clubId);
+  const nextStage: 'PRO' | 'LOAN' = offer.offerType === 'LOAN' ? 'LOAN' : 'PRO';
   const targetLg = findClubLeagueIdInWorld(state.worldSeason, offer.clubId);
   const hasStint = state.currentSeasonStints.some(
-    (s) => s.clubId === offer.clubId && s.stage === 'PRO',
+    (s) => s.clubId === offer.clubId && s.stage === nextStage,
   );
   const nextStints = hasStint
     ? state.currentSeasonStints
@@ -141,7 +140,7 @@ export function buildMarketSignPatch(
         {
           clubId: offer.clubId,
           leagueId: targetLg,
-          stage: 'PRO' as const,
+          stage: nextStage,
           matches: 0,
           goals: 0,
           assists: 0,
@@ -152,19 +151,22 @@ export function buildMarketSignPatch(
   return {
     contract: {
       clubId: offer.clubId,
-      stage: 'PRO',
+      parentClubId: offer.offerType === 'LOAN' ? state.contract?.clubId : undefined,
+      stage: nextStage,
       role: offer.role,
       monthlySalary: offer.monthlySalary,
       seasonsRemaining: offer.years,
       goalBonusPerContribution: offer.goalBonus,
-      seasonGoal: createSeasonContractGoal(state.player, 'PRO', offer.monthlySalary),
+      seasonGoal: createSeasonContractGoal(state.player, nextStage, offer.monthlySalary),
     },
     currentSeasonStints: nextStints,
     marketOffers: [],
     feed: [
       makeEvent(
         state.calendar.week,
-        `Contrato Assinado com ${club.name}!`,
+        offer.offerType === 'LOAN'
+          ? `Emprestado ao ${club.name} por 1 temporada!`
+          : `Contrato Assinado com ${club.name}!`,
         `Papel: ${offer.role} • Salário: ${formatMoney(offer.monthlySalary)}/mês.`,
         'CONTRACT',
       ),

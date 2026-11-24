@@ -5,7 +5,10 @@ import { COUNTRIES, TRYOUT_LEAGUE_COUNTRIES } from '../../data/countries/countri
 import { CareerPlayer } from '../../domains/player/playerTypes';
 import { computeFifaMacroStats } from '../../domains/training/trainingDrillsCatalog';
 import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
-import { buildStylizedFootballer3D } from '../../shared/three/player3DBuilder';
+import {
+  buildRealisticHumanFootballer3D,
+  preloadHumanAthleteAssets,
+} from '../../shared/three/player3DBuilder';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
 import { CountryFlag } from '../../shared/ui/CountryFlag';
 import { getFifaStatColor } from '../../shared/ui/FifaStatBadge';
@@ -23,8 +26,9 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const manualYawRef = useRef(0);
-  const targetYawRef = useRef(0);
+  const targetYawRef = useRef(-0.18);
   const [zoomFaceOverride, setZoomFaceOverride] = useState<boolean | null>(null);
+  const [modelReady, setModelReady] = useState(false);
 
   const activePreset: ShowcaseCameraPreset =
     zoomFaceOverride === true
@@ -39,20 +43,23 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   presetRef.current = activePreset;
 
   useEffect(() => {
+    preloadHumanAthleteAssets();
+  }, []);
+
+  useEffect(() => {
     setZoomFaceOverride(null);
     if (cameraPreset === 'FULL_BACK') {
       targetYawRef.current = Math.PI;
     } else if (cameraPreset === 'HEAD_CLOSEUP') {
-      targetYawRef.current = 0.12;
+      targetYawRef.current = 0.08;
     } else {
-      targetYawRef.current = -0.22;
+      targetYawRef.current = -0.18;
     }
   }, [cameraPreset]);
 
-  // Inicializa o palco 3D WebGL (Luzes de Estúdio FIFA + Rotação RS / Mouse)
   const sceneBundleRef = useRef<{
-    scene: THREE.Scene;
     actorHolder: THREE.Group;
+    mixer: THREE.AnimationMixer | null;
     disposeActor?: () => void;
   } | null>(null);
 
@@ -61,32 +68,29 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     if (!container) return;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 30);
-    camera.position.set(0, 1.05, 3.35);
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 30);
+    camera.position.set(0, 1.05, 3.45);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.08;
     container.appendChild(renderer.domElement);
 
-    // Iluminação cinematográfica de vestiário/arena
-    scene.add(new THREE.HemisphereLight('#E2E8F0', '#181B24', 1.15));
-    const keyLight = new THREE.DirectionalLight('#FFFBF0', 1.85);
-    keyLight.position.set(2.4, 3.6, 3.2);
+    // Iluminação equilibrada para pele humana realista
+    scene.add(new THREE.HemisphereLight('#F8FAFC', '#1E2430', 1.25));
+    const keyLight = new THREE.DirectionalLight('#FFFBF2', 1.65);
+    keyLight.position.set(2.2, 3.2, 3.5);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight('#60A5FA', 1.1);
-    rimLight.position.set(-2.8, 2.5, -2.4);
+    const rimLight = new THREE.DirectionalLight('#93C5FD', 0.85);
+    rimLight.position.set(-2.5, 2.4, -2.5);
     scene.add(rimLight);
-
-    const goldFill = new THREE.PointLight('#C8A45D', 0.9, 6);
-    goldFill.position.set(0, 0.5, 2.2);
-    scene.add(goldFill);
 
     const actorHolder = new THREE.Group();
     scene.add(actorHolder);
-    sceneBundleRef.current = { scene, actorHolder };
+    sceneBundleRef.current = { actorHolder, mixer: null };
 
     const syncSize = () => {
       const w = Math.max(200, container.clientWidth);
@@ -99,7 +103,6 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     const ro = new ResizeObserver(syncSize);
     ro.observe(container);
 
-    // Arrastar com mouse gira o jogador em 360°
     let dragging = false;
     let prevX = 0;
     const onDown = (e: PointerEvent) => {
@@ -119,7 +122,6 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
 
-    // Analógico Direito (RS) do controle gira o boneco 3D suavemente!
     const onRsMove = (ev: Event) => {
       const { dx } = (ev as CustomEvent<{ dx: number; dy: number }>).detail;
       if (Math.abs(dx) > 0.2) {
@@ -129,18 +131,23 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     window.addEventListener('gamepad-rs-move', onRsMove);
 
     let rafId = 0;
-    const lookCurrent = new THREE.Vector3(0, 0.92, 0);
+    const clock = new THREE.Clock();
+    const lookCurrent = new THREE.Vector3(0, 0.95, 0);
 
-    const animate = (timeMs: number) => {
+    const animate = () => {
+      const dt = Math.min(0.05, clock.getDelta());
+      sceneBundleRef.current?.mixer?.update(dt);
+
       const p = presetRef.current;
+      const hRatio = previewPlayer.heightCm / 178;
       const desiredCamPos =
         p === 'HEAD_CLOSEUP'
-          ? new THREE.Vector3(0, 1.56, 1.18)
-          : new THREE.Vector3(0, 0.98, 3.18);
+          ? new THREE.Vector3(0, 1.66 * hRatio, 0.95)
+          : new THREE.Vector3(0, 1.02, 3.35);
       const desiredLook =
         p === 'HEAD_CLOSEUP'
-          ? new THREE.Vector3(0, 1.53, 0)
-          : new THREE.Vector3(0, 0.88, 0);
+          ? new THREE.Vector3(0, 1.64 * hRatio, 0)
+          : new THREE.Vector3(0, 0.92, 0);
 
       camera.position.lerp(desiredCamPos, 0.09);
       lookCurrent.lerp(desiredLook, 0.09);
@@ -148,7 +155,6 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
 
       manualYawRef.current += (targetYawRef.current - manualYawRef.current) * 0.12;
       actorHolder.rotation.y = manualYawRef.current;
-      actorHolder.position.y = Math.sin(timeMs * 0.0022) * 0.008;
 
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(animate);
@@ -166,18 +172,31 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
       renderer.dispose();
       container.innerHTML = '';
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reconstrói instantaneamente o modelo 3D sempre que qualquer opção muda!
   useEffect(() => {
-    const bundle = sceneBundleRef.current;
-    if (!bundle) return;
-    bundle.disposeActor?.();
-    bundle.actorHolder.clear();
-
-    const built = buildStylizedFootballer3D(previewPlayer);
-    bundle.actorHolder.add(built.root);
-    bundle.disposeActor = built.dispose;
+    let cancelled = false;
+    buildRealisticHumanFootballer3D(previewPlayer).then((built) => {
+      if (cancelled) {
+        built.dispose();
+        return;
+      }
+      const bundle = sceneBundleRef.current;
+      if (!bundle) {
+        built.dispose();
+        return;
+      }
+      bundle.disposeActor?.();
+      bundle.actorHolder.clear();
+      bundle.actorHolder.add(built.root);
+      bundle.mixer = built.mixer;
+      bundle.disposeActor = built.dispose;
+      setModelReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [previewPlayer]);
 
   const country = COUNTRIES[previewPlayer.nationality] ?? COUNTRIES.BRA;
@@ -188,15 +207,13 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
 
   return (
     <div className="console-tile border-t-[3px] border-t-[#C8A45D] flex flex-col justify-between h-full relative overflow-hidden">
-      {/* Glow da Seleção Nacional ao fundo */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-25"
+        className="pointer-events-none absolute inset-0 opacity-20"
         style={{
           background: `radial-gradient(circle at 50% 42%, ${natTeam.primaryColor}88, transparent 68%)`,
         }}
       />
 
-      {/* Cabeçalho da Carta FIFA 18 */}
       <div className="px-5 pt-4 pb-3 border-b border-[#242730] flex items-center justify-between relative z-10 shrink-0">
         <div className="flex items-center gap-3.5">
           <div
@@ -207,7 +224,7 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
           </div>
           <div>
             <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] leading-none">
-              {previewPlayer.position} • #{previewPlayer.shirtNumber}
+              {previewPlayer.position} • #{previewPlayer.shirtNumber} • {previewPlayer.age} ANOS
             </div>
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-[#9498A3] mt-1">
               <CountryFlag code={previewPlayer.nationality} size="sm" />
@@ -219,7 +236,7 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <span className="text-[10px] uppercase tracking-widest text-[#565A65] block">
-              BASE DO TESTE
+              PAÍS DE INÍCIO
             </span>
             <span className="inline-flex items-center gap-1.5 font-condensed uppercase font-bold text-xs text-[#C8A45D]">
               <CountryFlag code={tryoutCountry.code} size="xs" />
@@ -230,9 +247,13 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
         </div>
       </div>
 
-      {/* Palco 3D Interativo */}
       <div className="flex-1 relative min-h-0 cursor-grab active:cursor-grabbing" ref={mountRef}>
-        {/* Controles rápidos de Câmera (Girar Costas / Zoom Rosto) */}
+        {!modelReady && (
+          <div className="absolute inset-0 flex items-center justify-center font-condensed uppercase tracking-widest text-sm text-[#9498A3]">
+            CARREGANDO ATLETA 3D...
+          </div>
+        )}
+
         <div className="absolute bottom-3 inset-x-4 flex items-center justify-between pointer-events-none z-10">
           <span className="text-[10px] uppercase tracking-widest text-[#9498A3] bg-[#0B0B0D]/80 px-2.5 py-1 border border-[#242730] inline-flex items-center gap-1.5">
             <GamepadBadge action="RS" />
@@ -268,7 +289,6 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
         </div>
       </div>
 
-      {/* Barra Inferior dos 6 Macro-Atributos FIFA */}
       <div className="px-5 py-3 border-t border-[#242730] bg-[#0E0F12]/90 grid grid-cols-6 gap-2 text-center relative z-10 shrink-0">
         {(
           [

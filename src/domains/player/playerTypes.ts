@@ -34,18 +34,21 @@ export interface CareerPlayer {
   fullName: string;
   shirtName: string;
   shirtNumber: number;
-  age: number; // Começa entre 16 e 18
-  nationality: CountryCode; // Livre entre as 64 Seleções Nacionais FIFA
-  startingLeagueCountry: LeagueCountryCode; // País/Liga onde faz o teste de base inicial
+  age: number; // Mínimo 18 anos no Profissional
+  birthDay: number; // 1..31
+  birthMonth: number; // 1..12
+  birthYear: number; // ex: 2008 (18 anos em Ago/2026)
+  nationality: CountryCode;
+  startingLeagueCountry: LeagueCountryCode;
   position: PositionCode;
   preferredFoot: PreferredFoot;
   heightCm: number;
   weightKg: number;
   appearance: PlayerAppearance;
   attributes: Record<AttributeKey, number>;
-  attributeXp: Record<AttributeKey, number>; // 0..99% rumo ao próximo ponto
+  attributeXp: Record<AttributeKey, number>;
   overall: number;
-  stamina: number; // 0..100 energia atual para a partida
+  stamina: number;
   reputationStars: StarRating;
   careerTotals: CareerStatsTotals;
 }

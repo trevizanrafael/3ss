@@ -15,7 +15,9 @@ export interface CreatePlayerInput {
   fullName: string;
   shirtName: string;
   shirtNumber: number;
-  age: 16 | 17 | 18;
+  birthDay: number;
+  birthMonth: number;
+  birthYear: number;
   nationality: CountryCode;
   startingLeagueCountry?: LeagueCountryCode;
   position: PositionCode;
@@ -25,9 +27,35 @@ export interface CreatePlayerInput {
   appearance: PlayerAppearance;
 }
 
+/**
+ * Calcula a idade exata a partir da Data de Nascimento na data de início da temporada (10/Agosto),
+ * garantindo idade mínima profissional de 18 anos.
+ */
+export function calculateAgeFromBirthDate(
+  birthDay: number,
+  birthMonth: number,
+  birthYear: number,
+  refYear = 2026,
+  refMonth = 8,
+  refDay = 10,
+): number {
+  let age = refYear - birthYear;
+  if (refMonth < birthMonth || (refMonth === birthMonth && refDay < birthDay)) {
+    age -= 1;
+  }
+  return Math.max(18, age);
+}
+
+export function formatBirthDatePt(day: number, month: number, year: number): string {
+  return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+}
+
 export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
   const sector = getPositionSector(input.position);
-  const ageBase = input.age === 16 ? 52 : input.age === 17 ? 54 : 56;
+  const age = calculateAgeFromBirthDate(input.birthDay, input.birthMonth, input.birthYear);
+
+  // Atleta já estreia no Profissional (~66 a 69 OVR dependendo da idade 18..22)
+  const ageBase = clamp(60 + Math.min(4, age - 18), 60, 64);
 
   const attrs = {} as Record<AttributeKey, number>;
   const xp = {} as Record<AttributeKey, number>;
@@ -38,31 +66,31 @@ export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
   }
 
   if (sector === 'ATK') {
-    attrs.finishing += 7;
-    attrs.acceleration += 6;
-    attrs.sprintSpeed += 6;
-    attrs.dribbling += 6;
-    attrs.ballControl += 5;
-    attrs.shotPower += 5;
-    attrs.positioning += 5;
-    attrs.tackling -= 12;
-    attrs.interceptions -= 10;
-  } else if (sector === 'MID') {
-    attrs.shortPass += 7;
-    attrs.longPass += 6;
+    attrs.finishing += 8;
+    attrs.acceleration += 7;
+    attrs.sprintSpeed += 7;
+    attrs.dribbling += 7;
     attrs.ballControl += 6;
-    attrs.dribbling += 5;
-    attrs.stamina += 6;
-    attrs.positioning += 5;
-    attrs.agility += 4;
+    attrs.shotPower += 6;
+    attrs.positioning += 6;
+    attrs.tackling -= 14;
+    attrs.interceptions -= 12;
+  } else if (sector === 'MID') {
+    attrs.shortPass += 8;
+    attrs.longPass += 7;
+    attrs.ballControl += 7;
+    attrs.dribbling += 6;
+    attrs.stamina += 7;
+    attrs.positioning += 6;
+    attrs.agility += 5;
   } else {
-    attrs.tackling += 8;
-    attrs.interceptions += 7;
-    attrs.strength += 6;
-    attrs.positioning += 5;
-    attrs.stamina += 5;
-    attrs.sprintSpeed += 4;
-    attrs.finishing -= 12;
+    attrs.tackling += 9;
+    attrs.interceptions += 8;
+    attrs.strength += 7;
+    attrs.positioning += 6;
+    attrs.stamina += 6;
+    attrs.sprintSpeed += 5;
+    attrs.finishing -= 14;
   }
 
   if (input.heightCm >= 185) {
@@ -77,7 +105,7 @@ export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
   }
 
   for (const key of ALL_ATTRIBUTE_KEYS) {
-    attrs[key] = clamp(attrs[key], 35, 72);
+    attrs[key] = clamp(attrs[key], 38, 76);
   }
 
   const startingLeagueCountry: LeagueCountryCode =
@@ -85,13 +113,25 @@ export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
     (isLeagueCountryCode(input.nationality) ? input.nationality : 'BRA');
 
   return {
-    ...input,
+    fullName: input.fullName,
+    shirtName: input.shirtName,
+    shirtNumber: input.shirtNumber,
+    age,
+    birthDay: input.birthDay,
+    birthMonth: input.birthMonth,
+    birthYear: input.birthYear,
+    nationality: input.nationality,
     startingLeagueCountry,
+    position: input.position,
+    preferredFoot: input.preferredFoot,
+    heightCm: input.heightCm,
+    weightKg: input.weightKg,
+    appearance: input.appearance,
     attributes: attrs,
     attributeXp: xp,
     overall: calculateOverall(attrs, input.position),
     stamina: 100,
-    reputationStars: 0,
+    reputationStars: 1,
     careerTotals: {
       matches: 0,
       goals: 0,

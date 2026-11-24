@@ -15,7 +15,6 @@ import {
   TOTAL_SEASON_WEEKS,
 } from '../../domains/season/worldSeasonEngine';
 import { applyFiveSlotsTraining } from '../../domains/training/trainingEngine';
-import { generateYouthTransitionProposals } from '../../domains/youth-academy/youthModel';
 import { StarRating } from '../../shared/types/common';
 import { formatMoney, formatSquadRole } from '../../shared/utils/formatters';
 import { clamp } from '../../shared/utils/math';
@@ -278,16 +277,12 @@ export function computeNextDayState(
         ];
       }
 
-      if (contract.stage === 'YOUTH') {
-        nextProposals = generateYouthTransitionProposals(nextPlayer, contract.clubId);
-      } else {
-        nextMarket = generateWindowTransferOffers(
-          nextPlayer,
-          contract,
-          state.agentId,
-          nextPrestige,
-        );
-      }
+      nextMarket = generateWindowTransferOffers(
+        nextPlayer,
+        contract,
+        state.agentId,
+        nextPrestige,
+      );
     }
 
     if (nextWeek > TOTAL_SEASON_WEEKS) {

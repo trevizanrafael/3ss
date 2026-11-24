@@ -21,14 +21,6 @@ const HAIR_COLOR_OPTIONS = [
   { value: '#E2E8F0', label: 'PLATINADO / NEVADO', colorSwatch: '#E2E8F0' },
 ];
 
-const EYE_COLOR_OPTIONS = [
-  { value: '#3B2F2F', label: 'CASTANHO ESCURO', colorSwatch: '#3B2F2F' },
-  { value: '#7C5329', label: 'MEL / ÂMBAR', colorSwatch: '#7C5329' },
-  { value: '#2E6F40', label: 'VERDE ESMERALDA', colorSwatch: '#2E6F40' },
-  { value: '#2563EB', label: 'AZUL CLARO', colorSwatch: '#2563EB' },
-  { value: '#64748B', label: 'CINZA ACOBREADO', colorSwatch: '#64748B' },
-];
-
 const BOOT_COLOR_OPTIONS = [
   { value: '#C8A45D', label: 'OURO ELITE', colorSwatch: '#C8A45D' },
   { value: '#F5F5F7', label: 'BRANCO GELO', colorSwatch: '#F5F5F7' },
@@ -52,27 +44,22 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
 }) => {
   if (mode === 'CABECA') {
     return (
-      <div className="space-y-3.5">
+      <div className="space-y-4">
         <ConsoleStepper
           autoFocus
-          label="TOM DE PELE"
+          label="TOM DE PELE HUMANA"
           value={appearance.skinTone}
           onChange={(v) => onChange({ ...appearance, skinTone: v })}
           options={SKIN_OPTIONS}
         />
 
         <ConsoleStepper
-          label="ESTILO DE CABELO"
-          value={appearance.hairStyle}
+          label="CORTE DE CABELO"
+          value={appearance.hairStyle === 'RASPADO' ? 'RASPADO' : 'DEGRADE'}
           onChange={(v) => onChange({ ...appearance, hairStyle: v })}
           options={[
-            { value: 'DEGRADE', label: 'DEGRADÊ / FADE' },
-            { value: 'CURTO', label: 'CURTO CLÁSSICO' },
-            { value: 'TOPETE', label: 'TOPETE / POMPADOUR' },
-            { value: 'TRANCA', label: 'TRANÇAS / BRAIDS' },
-            { value: 'AFRO', label: 'BLACK POWER / AFRO' },
-            { value: 'LONGO', label: 'LONGO SOLTO' },
-            { value: 'RASPADO', label: 'RASPADO / BUZZ' },
+            { value: 'DEGRADE', label: 'SOCIAL MODERNO / DEGRADÊ' },
+            { value: 'RASPADO', label: 'RASPADO / MÁQUINA ZERO' },
           ]}
         />
 
@@ -82,43 +69,14 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
           onChange={(v) => onChange({ ...appearance, hairColor: v })}
           options={HAIR_COLOR_OPTIONS}
         />
-
-        <ConsoleStepper
-          label="BARBA & PELOS FACIAIS"
-          value={appearance.facialHair ?? 'LIMPO'}
-          onChange={(v) => onChange({ ...appearance, facialHair: v })}
-          options={[
-            { value: 'LIMPO', label: 'ROSTO LIMPO (SEM BARBA)' },
-            { value: 'CAVANHAQUE', label: 'BIGODE & CAVANHAQUE' },
-            { value: 'BARBA_BAIXA', label: 'BARBA BAIXA DESENHADA' },
-            { value: 'BARBA_CHEIA', label: 'BARBA CHEIA FECHADA' },
-          ]}
-        />
-
-        <ConsoleStepper
-          label="COR DOS OLHOS"
-          value={appearance.eyeColor}
-          onChange={(v) => onChange({ ...appearance, eyeColor: v })}
-          options={EYE_COLOR_OPTIONS}
-        />
       </div>
     );
   }
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       <ConsoleStepper
         autoFocus
-        label="CAIMENTO DA CAMISA"
-        value={appearance.shirtTuck}
-        onChange={(v) => onChange({ ...appearance, shirtTuck: v })}
-        options={[
-          { value: 'SOLTA', label: 'CAMISA SOLTA (POR FORA)' },
-          { value: 'DENTRO_CALCAO', label: 'POR DENTRO DO CALÇÃO (CLÁSSICO)' },
-        ]}
-      />
-
-      <ConsoleStepper
         label="COMPRIMENTO DA MANGA"
         value={appearance.sleeveStyle}
         onChange={(v) => onChange({ ...appearance, sleeveStyle: v })}
@@ -136,7 +94,7 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
         options={[
           { value: 'PADRAO', label: 'MEIÃO PADRÃO' },
           { value: 'ALTO', label: 'MEIÃO ALTO (ACIMA DO JOELHO)' },
-          { value: 'BAIXO', label: 'MEIÃO BAIXO (ESTILO MEIA-CANELA)' },
+          { value: 'BAIXO', label: 'MEIÃO BAIXO (MEIA-CANELA)' },
         ]}
       />
 
@@ -149,7 +107,6 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
           { value: 'MUNHEQUEIRA', label: 'MUNHEQUEIRA BRANCA DUPLA' },
           { value: 'TORNOZELEIRA', label: 'ESPARADRAPO NO TORNOZELO' },
           { value: 'LUVAS', label: 'LUVAS TÉRMICAS DE INVERNO' },
-          { value: 'FAIXA_CABECA', label: 'FAIXA NA CABEÇA' },
         ]}
       />
 
