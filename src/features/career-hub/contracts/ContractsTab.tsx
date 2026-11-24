@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { Briefcase, Check, RefreshCw, UserCheck } from 'lucide-react';
 import { AGENTS_CATALOG } from '../../../data/agents/catalog';
 import { getClubById } from '../../../data/clubs';
 import { LEAGUES } from '../../../data/leagues/leagues';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
-import { Panel } from '../../../shared/ui/Panel';
 import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
 import { formatMoney, formatSquadRole } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
+import { EquipmentTab } from '../equipment/EquipmentTab';
+
+type OfficeSection = 'CONTRATOS' | 'EMPRESARIO' | 'ESTRUTURA';
 
 export const ContractsTab: React.FC = () => {
   const {
-    player,
     contract,
     agentId,
     bankBalance,
@@ -23,200 +23,246 @@ export const ContractsTab: React.FC = () => {
     hireAgentById,
   } = useCareerStore();
 
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const [section, setSection] = useState<OfficeSection>('CONTRATOS');
+  const [notice, setNotice] = useState<string | null>(null);
 
-  if (!player || !contract) return null;
+  if (!contract) return null;
   const currentClub = getClubById(contract.clubId);
-  const parentClub = contract.parentClubId ? getClubById(contract.parentClubId) : null;
 
   return (
-    <div className="space-y-6">
-      {feedback && (
-        <div className="rounded-xl bg-emerald-500/15 border border-emerald-400/40 px-4 py-3 text-xs font-semibold text-emerald-300">
-          {feedback}
+    <div className="h-full flex flex-col gap-5 min-h-0">
+      {/* Sub-Menu Seco do Escritório (Sem empilhar seções na mesma tela) */}
+      <div className="console-tile px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
+        <div className="flex items-center gap-2">
+          {(
+            [
+              ['CONTRATOS', '01 VÍNCULO & PROPOSTAS'],
+              ['EMPRESARIO', '02 EMPRESÁRIOS'],
+              ['ESTRUTURA', '03 ESTRUTURA DE TREINO'],
+            ] as const
+          ).map(([id, lbl]) => (
+            <button
+              key={id}
+              onClick={() => {
+                setSection(id);
+                setNotice(null);
+              }}
+              className={`px-5 py-2 font-condensed uppercase font-extrabold text-base tracking-wider cursor-pointer ${
+                section === id
+                  ? 'bg-[#F5F5F7] text-[#0B0B0D]'
+                  : 'bg-[#0E0F12] text-[#9498A3] hover:text-[#F5F5F7]'
+              }`}
+            >
+              {lbl}
+            </button>
+          ))}
         </div>
-      )}
 
-      {/* Vínculo Atual */}
-      <Panel
-        title="Contrato Vigente"
-        subtitle={
-          parentClub
-            ? `Atuando por empréstimo (Pertence ao ${parentClub.name})`
-            : 'Detalhes do seu vínculo, salário e bônus de desempenho.'
-        }
-        rightSlot={
+        {notice ? (
+          <span className="font-condensed uppercase text-sm text-[#C8A45D] font-bold">{notice}</span>
+        ) : (
           <button
             onClick={requestLoanOrOffersFromAgent}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-emerald-300 border border-slate-700 cursor-pointer"
+            className="px-4 py-2 bg-[#191B20] hover:bg-[#242730] border border-[#C8A45D] font-condensed uppercase font-bold text-xs tracking-widest text-[#C8A45D] cursor-pointer"
           >
-            <RefreshCw size={14} />
-            {contract.stage === 'YOUTH' ? 'Pedir Reunião (Subida / Empréstimo)' : 'Sondar Mercado via Empresário'}
+            {contract.stage === 'YOUTH' ? 'PEDIR REUNIÃO NA BASE ›' : 'SONDAR MERCADO ›'}
           </button>
-        }
-      >
-        <div className="grid sm:grid-cols-4 gap-3 text-xs">
-          <div className="rounded-xl bg-slate-950 p-3.5 border border-slate-800">
-            <span className="text-slate-400 block">Clube Atual</span>
-            <span className="text-base font-bold text-white">{currentClub.name}</span>
+        )}
+      </div>
+
+      {/* VISÃO 01: CONTRATO ATUAL & PROPOSTAS */}
+      {section === 'CONTRATOS' && (
+        <div className="flex-1 grid lg:grid-cols-12 gap-5 min-h-0">
+          <div className="lg:col-span-4 console-tile border-t-[3px] border-t-[#C8A45D] p-6 flex flex-col justify-between">
+            <div>
+              <span className="text-[11px] uppercase tracking-[0.2em] text-[#9498A3]">VÍNCULO ATUAL</span>
+              <div className="flex items-center gap-4 mt-4 pb-4 border-b border-[#242730]">
+                <ClubCrest
+                  clubId={currentClub.id}
+                  shortName={currentClub.shortName}
+                  primaryColor={currentClub.primaryColor}
+                  secondaryColor={currentClub.secondaryColor}
+                  pattern={currentClub.pattern}
+                  size="lg"
+                />
+                <div>
+                  <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none">
+                    {currentClub.name}
+                  </div>
+                  <div className="text-xs uppercase tracking-wider text-[#C8A45D] mt-1">
+                    {formatSquadRole(contract.role)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-4 text-xs uppercase">
+                <div className="flex justify-between">
+                  <span className="text-[#9498A3]">SALÁRIO MENSAL</span>
+                  <span className="font-condensed font-bold text-base text-[#F5F5F7]">
+                    {formatMoney(contract.monthlySalary)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#9498A3]">BÔNUS POR GOL / ASSIST</span>
+                  <span className="font-condensed font-bold text-base text-[#C8A45D]">
+                    {formatMoney(contract.goalBonusPerContribution)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#9498A3]">DURAÇÃO RESTANTE</span>
+                  <span className="font-condensed font-bold text-base text-[#F5F5F7]">
+                    {contract.seasonsRemaining} TEMPORADA(S)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-[#242730] pt-4">
+              <div className="text-[10px] uppercase tracking-widest text-[#9498A3]">META ATIVA</div>
+              <div className="font-condensed uppercase font-bold text-lg text-[#F5F5F7]">
+                {contract.seasonGoal.label} ({contract.seasonGoal.current}/{contract.seasonGoal.target})
+              </div>
+            </div>
           </div>
-          <div className="rounded-xl bg-slate-950 p-3.5 border border-slate-800">
-            <span className="text-slate-400 block">Papel no Elenco</span>
-            <span className="text-base font-bold text-emerald-400">{formatSquadRole(contract.role)}</span>
-          </div>
-          <div className="rounded-xl bg-slate-950 p-3.5 border border-slate-800">
-            <span className="text-slate-400 block">Salário / Bolsa Mensal</span>
-            <span className="text-base font-bold text-white">{formatMoney(contract.monthlySalary)}</span>
-          </div>
-          <div className="rounded-xl bg-slate-950 p-3.5 border border-slate-800">
-            <span className="text-slate-400 block">Bônus por Gol/Assist.</span>
-            <span className="text-base font-bold text-amber-300">{formatMoney(contract.goalBonusPerContribution)}</span>
+
+          <div className="lg:col-span-8 console-tile p-6 flex flex-col overflow-y-auto min-h-0">
+            <div className="text-[11px] uppercase tracking-[0.2em] text-[#9498A3] pb-3 border-b border-[#242730] mb-4">
+              PROPOSTAS OFICIAIS NA MESA
+            </div>
+
+            {transitionProposals.length === 0 && marketOffers.length === 0 ? (
+              <div className="my-auto text-center">
+                <div className="font-condensed uppercase font-bold text-2xl text-[#565A65]">
+                  NENHUMA PROPOSTA PENDENTE
+                </div>
+                <p className="text-xs uppercase tracking-wider text-[#565A65] mt-1">
+                  JOGUE A TEMPORADA OU ACIONE O BOTÃO SUPERIOR PARA SONDAR OPÇÕES
+                </p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {transitionProposals.map((p) => {
+                  const target = getClubById(p.targetClubId);
+                  return (
+                    <div key={p.id} className="bg-[#0E0F12] border border-[#242730] p-4 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <ClubCrest
+                            clubId={target.id}
+                            shortName={target.shortName}
+                            primaryColor={target.primaryColor}
+                            secondaryColor={target.secondaryColor}
+                            pattern={target.pattern}
+                            size="md"
+                          />
+                          <div>
+                            <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7]">
+                              {target.name}
+                            </div>
+                            <div className="text-[10px] uppercase tracking-wider text-[#C8A45D]">
+                              {p.type === 'LOAN_STARTER' ? 'EMPRÉSTIMO 1 ANO' : 'SUBIDA AO PROFISSIONAL'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-xs text-[#9498A3] my-2">
+                          {formatSquadRole(p.offeredRole)} • <strong className="text-[#F5F5F7]">{formatMoney(p.monthlySalary)}/MÊS</strong>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => acceptYouthTransition(p)}
+                        className="console-btn-primary w-full py-2.5 text-sm cursor-pointer mt-2"
+                      >
+                        ASSINAR ›
+                      </button>
+                    </div>
+                  );
+                })}
+
+                {marketOffers.map((o) => {
+                  const c = getClubById(o.clubId);
+                  return (
+                    <div key={o.id} className="bg-[#0E0F12] border border-[#242730] p-4 flex flex-col justify-between">
+                      <div className="flex items-center gap-3 mb-3">
+                        <ClubCrest
+                          clubId={c.id}
+                          shortName={c.shortName}
+                          primaryColor={c.primaryColor}
+                          secondaryColor={c.secondaryColor}
+                          pattern={c.pattern}
+                          size="md"
+                        />
+                        <div>
+                          <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7]">
+                            {c.name}
+                          </div>
+                          <div className="text-[10px] uppercase tracking-wider text-[#9498A3]">
+                            {LEAGUES[c.leagueId].name} • {formatSquadRole(o.role)}
+                          </div>
+                          <div className="font-condensed font-bold text-sm text-[#C8A45D]">
+                            {formatMoney(o.monthlySalary)}/MÊS
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => acceptMarketProposal(o)}
+                        className="console-btn-primary w-full py-2.5 text-sm cursor-pointer"
+                      >
+                        ACEITAR PROPOSTA ›
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
-      </Panel>
-
-      {/* Propostas de Transição da Base (Subir ou Empréstimo) */}
-      {transitionProposals.length > 0 && (
-        <Panel
-          title="Transição da Base para o Futebol Profissional"
-          subtitle="Escolha entre buscar espaço direto no time de cima ou sair emprestado por 1 temporada como Titular!"
-        >
-          <div className="grid md:grid-cols-3 gap-4">
-            {transitionProposals.map((prop) => {
-              const target = getClubById(prop.targetClubId);
-              return (
-                <div key={prop.id} className="rounded-2xl bg-slate-950 border border-amber-400/40 p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <ClubCrest
-                        clubId={target.id}
-                        shortName={target.shortName}
-                        primaryColor={target.primaryColor}
-                        secondaryColor={target.secondaryColor}
-                        pattern={target.pattern}
-                        size="md"
-                      />
-                      <div>
-                        <h4 className="font-bold text-white">{target.name}</h4>
-                        <span className="text-[11px] text-amber-300 font-semibold">
-                          {prop.type === 'LOAN_STARTER' ? 'Empréstimo de 1 Ano' : 'Promoção ao Profissional'}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-300 my-2">{prop.summary}</p>
-                    <div className="text-xs text-slate-400 space-y-1 pt-2 border-t border-slate-800">
-                      <div>Papel: <strong className="text-white">{formatSquadRole(prop.offeredRole)}</strong></div>
-                      <div>Salário: <strong className="text-emerald-400">{formatMoney(prop.monthlySalary)}/mês</strong></div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => acceptYouthTransition(prop)}
-                    className="mt-4 w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold cursor-pointer"
-                  >
-                    Assinar Vínculo
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </Panel>
       )}
 
-      {/* Propostas de Mercado / Renovação */}
-      {marketOffers.length > 0 && (
-        <Panel title="Propostas Oficiais na Mesa" subtitle="Propostas obtidas na janela de transferências.">
-          <div className="grid md:grid-cols-2 gap-4">
-            {marketOffers.map((off) => {
-              const club = getClubById(off.clubId);
-              return (
-                <div key={off.id} className="rounded-2xl bg-slate-950 border border-slate-800 p-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <ClubCrest
-                      clubId={club.id}
-                      shortName={club.shortName}
-                      primaryColor={club.primaryColor}
-                      secondaryColor={club.secondaryColor}
-                      pattern={club.pattern}
-                      size="md"
-                    />
-                    <div>
-                      <h4 className="font-bold text-white">{club.name}</h4>
-                      <p className="text-[11px] text-slate-400">{LEAGUES[club.leagueId].name} • {formatSquadRole(off.role)}</p>
-                      <p className="text-xs text-emerald-400 font-bold mt-0.5">
-                        {formatMoney(off.monthlySalary)}/mês • {off.years} anos
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => acceptMarketProposal(off)}
-                    className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold cursor-pointer"
-                  >
-                    Aceitar
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </Panel>
-      )}
-
-      {/* Catálogo de Empresários */}
-      <Panel
-        title="Empresários de Carreira"
-        subtitle="Empresários mais estrelados negociam salários maiores e abrem portas no exterior (Europa, MLS e Libertadores)."
-      >
-        <div className="grid md:grid-cols-2 gap-4">
+      {/* VISÃO 02: EMPRESÁRIOS */}
+      {section === 'EMPRESARIO' && (
+        <div className="flex-1 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 min-h-0">
           {AGENTS_CATALOG.map((ag) => {
-            const isCurrent = ag.id === agentId;
+            const active = ag.id === agentId;
             return (
               <div
                 key={ag.id}
-                className={`rounded-2xl border p-4 flex flex-col justify-between ${
-                  isCurrent ? 'bg-emerald-950/25 border-emerald-500/60' : 'bg-slate-950 border-slate-800'
+                className={`console-tile p-5 flex flex-col justify-between ${
+                  active ? 'border-t-[3px] border-t-[#C8A45D]' : ''
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <div>
-                      <h4 className="font-bold text-white flex items-center gap-2">
-                        <Briefcase size={14} className="text-amber-400" />
-                        {ag.name}
-                      </h4>
-                      <p className="text-[11px] text-slate-400">{ag.agencyName}</p>
-                    </div>
-                    <StarRatingBadge stars={ag.stars} size="sm" />
+                  <StarRatingBadge stars={ag.stars} size="sm" />
+                  <h3 className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] mt-3">
+                    {ag.name}
+                  </h3>
+                  <div className="text-[11px] uppercase tracking-wider text-[#9498A3]">
+                    {ag.agencyName}
                   </div>
-                  <p className="text-xs text-slate-300 mt-2">{ag.description}</p>
-                  <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
-                    <span className="px-2 py-0.5 rounded bg-slate-900 text-emerald-300 border border-slate-800">
-                      +{ag.salaryBonusPct}% nos Salários
-                    </span>
-                    {ag.unlocksForeignOffers && (
-                      <span className="px-2 py-0.5 rounded bg-slate-900 text-amber-300 border border-slate-800">
-                        Mercado Internacional Liberado
-                      </span>
-                    )}
+                  <div className="mt-4 pt-4 border-t border-[#242730] space-y-2 text-xs uppercase">
+                    <div className="text-[#2DBE60] font-condensed font-bold text-base">
+                      +{ag.salaryBonusPct}% EM SALÁRIOS
+                    </div>
+                    <div className="text-[#9498A3]">
+                      {ag.unlocksForeignOffers ? 'PROPOSTAS DO EXTERIOR LIBERADAS' : 'MERCADO NACIONAL'}
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">
-                    {ag.signingFee === 0 ? 'Gratuito' : `Taxa: ${formatMoney(ag.signingFee)}`}
+                <div className="pt-4 border-t border-[#242730] flex items-center justify-between">
+                  <span className="font-condensed font-bold text-lg text-[#F5F5F7]">
+                    {ag.signingFee === 0 ? 'GRÁTIS' : formatMoney(ag.signingFee)}
                   </span>
-                  {isCurrent ? (
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
-                      <UserCheck size={14} /> Atual
+                  {active ? (
+                    <span className="font-condensed uppercase font-bold text-xs tracking-widest text-[#C8A45D]">
+                      ATUAL
                     </span>
                   ) : (
                     <button
                       disabled={bankBalance < ag.signingFee}
-                      onClick={() => {
-                        const res = hireAgentById(ag.id);
-                        setFeedback(res.message);
-                      }}
-                      className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
+                      onClick={() => setNotice(hireAgentById(ag.id).message)}
+                      className="console-btn-primary px-4 py-2 text-sm cursor-pointer"
                     >
-                      <Check size={14} /> Contratar
+                      CONTRATAR
                     </button>
                   )}
                 </div>
@@ -224,7 +270,10 @@ export const ContractsTab: React.FC = () => {
             );
           })}
         </div>
-      </Panel>
+      )}
+
+      {/* VISÃO 03: ESTRUTURA DE TREINO */}
+      {section === 'ESTRUTURA' && <EquipmentTab onFeedback={setNotice} />}
     </div>
   );
 };

@@ -1,128 +1,191 @@
-import React from 'react';
-import { CheckCircle2, Dumbbell, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { ATTRIBUTE_DEFINITIONS } from '../../../domains/attributes/attributeDefinitions';
 import { getOwnedEquipmentBonuses } from '../../../domains/economy/economyActions';
-import { Panel } from '../../../shared/ui/Panel';
-import { StatProgressBar } from '../../../shared/ui/StatProgressBar';
+import { getDrillById } from '../../../domains/training/trainingDrillsCatalog';
+import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { StarRating } from '../../../shared/types/common';
 import { useCareerStore } from '../../../state/useCareerStore';
+import { DrillPickerModal } from './DrillPickerModal';
 
 export const TrainingTab: React.FC = () => {
   const {
     player,
     contract,
     calendar,
-    focusedAttributes,
+    drillSlots,
+    lastSlotGrades,
     ownedEquipmentIds,
     trainedToday,
-    toggleFocusAttribute,
+    setDrillSlot,
     completeActiveTraining,
     advanceDay,
   } = useCareerStore();
+
+  const [editingSlot, setEditingSlot] = useState<number | null>(null);
 
   if (!player || !contract) return null;
   const club = getClubById(contract.clubId);
   const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
   const isTrainingDay = calendar.day === 2 || calendar.day === 4;
 
-  const handlePlaySession = (intensity: 'NORMAL' | 'INTENSO') => {
+  const getAttrLabel = (key: string) =>
+    ATTRIBUTE_DEFINITIONS.find((a) => a.key === key)?.label.toUpperCase() ?? key;
+
+  const handleRunActiveSession = () => {
     const roll = Math.random();
-    const stars: StarRating =
-      intensity === 'INTENSO'
-        ? roll < 0.55
-          ? 3
-          : roll < 0.88
-            ? 2
-            : 1
-        : roll < 0.3
-          ? 3
-          : 2;
+    const stars: StarRating = roll < 0.55 ? 3 : roll < 0.88 ? 2 : 1;
     completeActiveTraining(stars);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Explicação e Ação do Sistema 50% Automático vs 100% Jogado */}
-      <div className="rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border border-emerald-500/30 p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+    <div className="h-full flex flex-col gap-5 min-h-0">
+      {/* Barra Superior dos 5 Slots estilo FIFA 18 */}
+      <div className="console-tile px-6 py-4 flex flex-wrap items-center justify-between gap-4 shrink-0">
         <div>
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">
-              50% Automático • 100% Jogando
-            </span>
-            <span className="text-xs text-slate-400">
-              Estrutura do {club.name}: <strong className="text-white">{club.youthQuality}/99</strong> •
-              Bônus de Equipamentos: <strong className="text-emerald-400">+{bonuses.trainingXpBonusPct}% XP</strong>
-            </span>
+          <div className="text-[11px] uppercase tracking-[0.22em] text-[#C8A45D] font-bold">
+            SESSÃO SEMANAL • 5 SLOTS DE TREINO
           </div>
-          <h2 className="text-xl font-bold text-white">Centro de Treinamento & Atributos (0–99)</h2>
-          <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-            Selecione até <strong>3 atributos em foco</strong> clicando nos cards abaixo. Toda Terça e Quinta,
-            se você só avançar os dias, ganha <strong>50% do progresso automaticamente</strong> sem precisar clicar em simular.
-            Se quiser treinar hoje em campo, ganha até <strong>100%</strong>!
-          </p>
+          <div className="text-xs uppercase tracking-wider text-[#9498A3] mt-0.5">
+            AVANÇAR SEMANA = <strong className="text-[#F5F5F7]">50% AUTOMÁTICO</strong> • JOGAR SESSÃO ={' '}
+            <strong className="text-[#C8A45D]">100% RENDIMENTO</strong> • BÔNUS ESTRUTURA{' '}
+            <strong className="text-[#2DBE60]">+{bonuses.trainingXpBonusPct}%</strong>
+          </div>
         </div>
 
-        <div className="shrink-0">
+        <div className="flex items-center gap-3">
           {isTrainingDay && !trainedToday ? (
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => handlePlaySession('NORMAL')}
-                className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-white cursor-pointer"
-              >
-                <Dumbbell size={16} className="text-emerald-400" />
-                Fazer Treino Técnico (100% Seguro)
-              </button>
-              <button
-                onClick={() => handlePlaySession('INTENSO')}
-                className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold cursor-pointer"
-              >
-                <Zap size={16} />
-                Treino Intenso 3★ (Bônus Máximo)
-              </button>
-            </div>
+            <button
+              onClick={handleRunActiveSession}
+              className="console-btn-primary px-7 py-3 text-base cursor-pointer"
+            >
+              EXECUTAR SESSÃO (100%) ›
+            </button>
           ) : trainedToday ? (
-            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
-              <CheckCircle2 size={16} /> Sessão de 100% concluída hoje!
-            </div>
+            <span className="px-5 py-2.5 bg-[#191B20] border border-[#C8A45D] font-condensed uppercase font-bold text-sm tracking-widest text-[#C8A45D]">
+              SESSÃO 100% CONCLUÍDA HOJE
+            </span>
           ) : (
             <button
               onClick={advanceDay}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 cursor-pointer"
+              className="px-5 py-2.5 bg-[#191B20] hover:bg-[#242730] border border-[#242730] font-condensed uppercase font-bold text-sm tracking-wider text-[#F5F5F7] cursor-pointer"
             >
-              Hoje não é Terça/Quinta • Avançar +1 Dia
+              PRÓXIMO TREINO: TERÇA/QUINTA • +1 DIA ({club.shortName})
             </button>
           )}
         </div>
       </div>
 
-      {/* Grupos de Atributos 0-99 */}
-      {(
-        [
-          { key: 'FISICO', title: 'Atributos Físicos & Explosão' },
-          { key: 'TECNICO', title: 'Atributos Técnicos & Finalização' },
-          { key: 'DEF_TATICO', title: 'Atributos Defensivos & Leitura Tática' },
-        ] as const
-      ).map((grp) => (
-        <Panel
-          key={grp.key}
-          title={grp.title}
-          subtitle="Clique em um atributo para colocá-lo entre seus 3 focos semanais."
-        >
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {ATTRIBUTE_DEFINITIONS.filter((a) => a.group === grp.key).map((attr) => (
-              <StatProgressBar
-                key={attr.key}
-                label={attr.label}
-                value={player.attributes[attr.key]}
-                progressPct={player.attributeXp[attr.key]}
-                isFocused={focusedAttributes.includes(attr.key)}
-                onToggleFocus={() => toggleFocusAttribute(attr.key)}
-              />
-            ))}
-          </div>
-        </Panel>
-      ))}
+      {/* OS 5 SLOTS VERTICAIS SEPARADOS LADO A LADO (PADRÃO FIFA 18) */}
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-5 gap-4 min-h-0">
+        {[0, 1, 2, 3, 4].map((slotIdx) => {
+          const drill = getDrillById(drillSlots[slotIdx]);
+          const grade = lastSlotGrades[slotIdx];
+
+          if (!drill) {
+            return (
+              <button
+                key={slotIdx}
+                onClick={() => setEditingSlot(slotIdx)}
+                className="console-tile console-tile-interactive p-5 flex flex-col items-center justify-center text-center cursor-pointer group"
+              >
+                <span className="text-[11px] uppercase tracking-[0.24em] text-[#565A65] mb-3">
+                  SLOT 0{slotIdx + 1}
+                </span>
+                <div className="w-12 h-12 border border-[#323640] group-hover:border-[#C8A45D] flex items-center justify-center font-condensed text-3xl text-[#9498A3] group-hover:text-[#C8A45D]">
+                  +
+                </div>
+                <span className="font-condensed uppercase font-bold text-base tracking-wider text-[#9498A3] group-hover:text-[#F5F5F7] mt-3">
+                  ALOCAR TREINO
+                </span>
+              </button>
+            );
+          }
+
+          return (
+            <div
+              key={slotIdx}
+              onClick={() => setEditingSlot(slotIdx)}
+              className="console-tile console-tile-interactive border-t-[3px] border-t-[#C8A45D] p-5 flex flex-col justify-between cursor-pointer"
+            >
+              {/* Cabeçalho do Slot */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-[#565A65] font-bold">
+                    SLOT 0{slotIdx + 1}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {grade && trainedToday && (
+                      <span className="px-2 py-0.5 bg-[#2DBE60] text-[#0B0B0D] font-condensed font-extrabold text-xs">
+                        NOTA {grade}
+                      </span>
+                    )}
+                    <span
+                      className={`px-2 py-0.5 font-condensed font-extrabold text-xs uppercase ${
+                        drill.tier === 'OURO'
+                          ? 'bg-[#C8A45D] text-[#0B0B0D]'
+                          : drill.tier === 'PRATA'
+                            ? 'bg-[#9498A3] text-[#0B0B0D]'
+                            : 'bg-[#8C5E3C] text-[#F5F5F7]'
+                      }`}
+                    >
+                      {drill.tier}
+                    </span>
+                  </div>
+                </div>
+
+                <h3 className="font-condensed uppercase font-extrabold text-2xl leading-tight text-[#F5F5F7]">
+                  {drill.name}
+                </h3>
+              </div>
+
+              {/* Atributos Evoluídos por este Slot */}
+              <div className="space-y-4 my-auto py-4 border-y border-[#242730]">
+                {drill.attributes.map((attrKey) => {
+                  const val = player.attributes[attrKey];
+                  const xp = player.attributeXp[attrKey];
+                  const color = getFifaStatColor(val);
+                  return (
+                    <div key={attrKey}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-condensed uppercase font-semibold text-sm text-[#9498A3]">
+                          {getAttrLabel(attrKey)}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-[#2DBE60] font-bold">▲</span>
+                          <span
+                            className="font-condensed font-extrabold text-2xl leading-none"
+                            style={{ color }}
+                          >
+                            {val}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-full h-1.5 bg-[#0E0F12]">
+                        <div className="h-full bg-[#C8A45D]" style={{ width: `${xp}%` }} />
+                      </div>
+                      <div className="text-[10px] text-right text-[#565A65] mt-0.5">{xp}%</div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="font-condensed uppercase text-xs tracking-widest text-[#9498A3] text-center">
+                TROCAR EXERCÍCIO ›
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {editingSlot !== null && (
+        <DrillPickerModal
+          slotIndex={editingSlot}
+          currentDrillId={drillSlots[editingSlot]}
+          onSelect={(id) => setDrillSlot(editingSlot, id)}
+          onClose={() => setEditingSlot(null)}
+        />
+      )}
     </div>
   );
 };

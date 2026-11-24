@@ -1,10 +1,10 @@
 import React from 'react';
 import { PlayerAppearance } from '../../domains/player/playerTypes';
-import { Panel } from '../../shared/ui/Panel';
+import { ConsoleStepper } from '../../shared/ui/ConsoleStepper';
 
 const SKIN_TONES = ['#F6D5B8', '#E0AC69', '#C68642', '#8D5524', '#4B2811'];
 const HAIR_COLORS = ['#111827', '#451A03', '#92400E', '#EAB308', '#E2E8F0'];
-const BOOT_COLORS = ['#10B981', '#F59E0B', '#EF4444', '#38BDF8', '#F8FAFC', '#111827'];
+const BOOT_COLORS = ['#C8A45D', '#F5F5F7', '#2DBE60', '#C94040', '#38BDF8', '#181A20'];
 
 interface AppearanceFormSectionProps {
   appearance: PlayerAppearance;
@@ -16,18 +16,56 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
   onChange,
 }) => {
   return (
-    <Panel title="Aparência, Camisa & Acessórios" subtitle="Personalização limpa para identificar seu jogador em campo.">
-      <div className="grid sm:grid-cols-3 gap-4">
+    <div className="space-y-6">
+      <div className="grid sm:grid-cols-3 gap-6">
+        <ConsoleStepper
+          label="CORTE DE CABELO"
+          value={appearance.hairStyle}
+          onChange={(v) => onChange({ ...appearance, hairStyle: v })}
+          options={[
+            { value: 'DEGRADE', label: 'DEGRADÊ' },
+            { value: 'CURTO', label: 'CURTO CLÁSSICO' },
+            { value: 'TRANCA', label: 'TRANÇAS' },
+            { value: 'LONGO', label: 'LONGO' },
+            { value: 'RASPADO', label: 'RASPADO' },
+          ]}
+        />
+
+        <ConsoleStepper
+          label="MANGA DO UNIFORME"
+          value={appearance.sleeveStyle}
+          onChange={(v) => onChange({ ...appearance, sleeveStyle: v })}
+          options={[
+            { value: 'CURTA', label: 'MANGA CURTA' },
+            { value: 'LONGA', label: 'MANGA LONGA' },
+          ]}
+        />
+
+        <ConsoleStepper
+          label="ACESSÓRIO EM CAMPO"
+          value={appearance.accessory}
+          onChange={(v) => onChange({ ...appearance, accessory: v })}
+          options={[
+            { value: 'NENHUM', label: 'NENHUM' },
+            { value: 'MUNHEQUEIRA', label: 'MUNHEQUEIRA' },
+            { value: 'FAIXA_CABECA', label: 'FAIXA' },
+            { value: 'TORNOZELEIRA', label: 'FITA TORNOZELO' },
+            { value: 'LUVAS', label: 'LUVAS' },
+          ]}
+        />
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-6 pt-2">
         <div>
-          <span className="text-xs text-slate-400 block mb-2">Tom de Pele</span>
+          <div className="text-[11px] uppercase tracking-widest text-[#9498A3] mb-2">TOM DE PELE</div>
           <div className="flex gap-2">
             {SKIN_TONES.map((tone) => (
               <button
                 key={tone}
                 type="button"
                 onClick={() => onChange({ ...appearance, skinTone: tone })}
-                className={`w-8 h-8 rounded-full border-2 cursor-pointer ${
-                  appearance.skinTone === tone ? 'border-emerald-400 scale-110' : 'border-slate-700'
+                className={`w-9 h-9 border-2 cursor-pointer ${
+                  appearance.skinTone === tone ? 'border-[#C8A45D]' : 'border-[#242730]'
                 }`}
                 style={{ backgroundColor: tone }}
               />
@@ -36,15 +74,15 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
         </div>
 
         <div>
-          <span className="text-xs text-slate-400 block mb-2">Cor do Cabelo</span>
+          <div className="text-[11px] uppercase tracking-widest text-[#9498A3] mb-2">COR DO CABELO</div>
           <div className="flex gap-2">
             {HAIR_COLORS.map((col) => (
               <button
                 key={col}
                 type="button"
                 onClick={() => onChange({ ...appearance, hairColor: col })}
-                className={`w-8 h-8 rounded-full border-2 cursor-pointer ${
-                  appearance.hairColor === col ? 'border-emerald-400 scale-110' : 'border-slate-700'
+                className={`w-9 h-9 border-2 cursor-pointer ${
+                  appearance.hairColor === col ? 'border-[#C8A45D]' : 'border-[#242730]'
                 }`}
                 style={{ backgroundColor: col }}
               />
@@ -53,64 +91,22 @@ export const AppearanceFormSection: React.FC<AppearanceFormSectionProps> = ({
         </div>
 
         <div>
-          <span className="text-xs text-slate-400 block mb-2">Cor da Chuteira</span>
+          <div className="text-[11px] uppercase tracking-widest text-[#9498A3] mb-2">CHUTEIRA</div>
           <div className="flex gap-2">
             {BOOT_COLORS.map((col) => (
               <button
                 key={col}
                 type="button"
                 onClick={() => onChange({ ...appearance, bootColor: col })}
-                className={`w-7 h-7 rounded-full border-2 cursor-pointer ${
-                  appearance.bootColor === col ? 'border-white scale-110' : 'border-slate-700'
+                className={`w-9 h-9 border-2 cursor-pointer ${
+                  appearance.bootColor === col ? 'border-[#C8A45D]' : 'border-[#242730]'
                 }`}
                 style={{ backgroundColor: col }}
               />
             ))}
           </div>
         </div>
-
-        <label className="block">
-          <span className="text-xs text-slate-400">Corte de Cabelo</span>
-          <select
-            value={appearance.hairStyle}
-            onChange={(e) => onChange({ ...appearance, hairStyle: e.target.value as PlayerAppearance['hairStyle'] })}
-            className="mt-1 w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-sm text-white"
-          >
-            <option value="DEGRADE">Degradê Moderno</option>
-            <option value="CURTO">Curto Clássico</option>
-            <option value="TRANCA">Tranças / Dreads</option>
-            <option value="LONGO">Cabelo Longo</option>
-            <option value="RASPADO">Raspado</option>
-          </select>
-        </label>
-
-        <label className="block">
-          <span className="text-xs text-slate-400">Manga da Camisa</span>
-          <select
-            value={appearance.sleeveStyle}
-            onChange={(e) => onChange({ ...appearance, sleeveStyle: e.target.value as PlayerAppearance['sleeveStyle'] })}
-            className="mt-1 w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-sm text-white"
-          >
-            <option value="CURTA">Manga Curta</option>
-            <option value="LONGA">Manga Longa / Térmica</option>
-          </select>
-        </label>
-
-        <label className="block">
-          <span className="text-xs text-slate-400">Acessório</span>
-          <select
-            value={appearance.accessory}
-            onChange={(e) => onChange({ ...appearance, accessory: e.target.value as PlayerAppearance['accessory'] })}
-            className="mt-1 w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-sm text-white"
-          >
-            <option value="NENHUM">Nenhum</option>
-            <option value="MUNHEQUEIRA">Munhequeira Branca</option>
-            <option value="FAIXA_CABECA">Faixa de Cabeça</option>
-            <option value="TORNOZELEIRA">Fita no Tornozelo</option>
-            <option value="LUVAS">Luvas de Frio</option>
-          </select>
-        </label>
       </div>
-    </Panel>
+    </div>
   );
 };

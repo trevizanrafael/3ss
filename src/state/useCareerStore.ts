@@ -9,7 +9,10 @@ import {
   purchaseTrainingEquipment,
 } from '../domains/economy/economyActions';
 import { createInitialPlayer } from '../domains/player/createInitialPlayer';
-import { applyTrainingProgress } from '../domains/training/trainingEngine';
+import {
+  applyFiveSlotsTraining,
+  DEFAULT_FIVE_DRILL_SLOTS,
+} from '../domains/training/trainingEngine';
 import { generateYouthOffersFromTryout } from '../domains/tryout/generateYouthOffers';
 import { generateYouthTransitionProposals } from '../domains/youth-academy/youthModel';
 import { clamp } from '../shared/utils/math';
@@ -32,7 +35,9 @@ export const useCareerStore = create<CareerState>()(
       bankBalance: 1200,
       agentId: 'agent_family',
       ownedEquipmentIds: [],
-      focusedAttributes: ['acceleration', 'finishing', 'shortPass'],
+      drillSlots: [...DEFAULT_FIVE_DRILL_SLOTS],
+      lastSlotGrades: [null, null, null, null, null],
+      recentLeveledKeys: [],
       trainedToday: false,
       tryoutStars: null,
       tryoutOffers: [],
@@ -59,34 +64,48 @@ export const useCareerStore = create<CareerState>()(
         set({ tryoutStars: stars, tryoutOffers: generateYouthOffersFromTryout(player, stars) });
       },
 
-      signYouthOffer: (offer) => set(buildSignYouthPatch(get(), offer)),
+      signYouthOffer: (offer) =>
+        set({
+          ...buildSignYouthPatch(get(), offer),
+          drillSlots: [...DEFAULT_FIVE_DRILL_SLOTS],
+          lastSlotGrades: [null, null, null, null, null],
+          recentLeveledKeys: [],
+        }),
 
-      toggleFocusAttribute: (key) => {
-        const { focusedAttributes } = get();
-        if (focusedAttributes.includes(key)) {
-          if (focusedAttributes.length <= 1) return;
-          set({ focusedAttributes: focusedAttributes.filter((k) => k !== key) });
-        } else if (focusedAttributes.length < 3) {
-          set({ focusedAttributes: [...focusedAttributes, key] });
-        } else {
-          set({ focusedAttributes: [...focusedAttributes.slice(1), key] });
-        }
+      setDrillSlot: (slotIndex, drillId) => {
+        const next = [...get().drillSlots];
+        next[slotIndex] = drillId;
+        set({ drillSlots: next });
       },
 
       completeActiveTraining: (stars) => {
-        const { player, contract, focusedAttributes, ownedEquipmentIds, trainedToday, calendar, feed } = get();
+        const { player, contract, drillSlots, ownedEquipmentIds, trainedToday, calendar, feed } = get();
         if (!player || !contract || trainedToday) return;
         const club = getClubById(contract.clubId);
         const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
-        const { updatedPlayer, report } = applyTrainingProgress(
-          player, focusedAttributes, 'ACTIVE_100', club.youthQuality, bonuses.trainingXpBonusPct, stars,
+        const { updatedPlayer, report } = applyFiveSlotsTraining(
+          player,
+          drillSlots,
+          'ACTIVE_100',
+          club.youthQuality,
+          bonuses.trainingXpBonusPct,
+          stars,
         );
-        const levelMsg = report.leveledUpAttributes.length > 0 ? ` Subiu ${report.leveledUpAttributes.length} atributo(s)!` : '';
         set({
           player: { ...updatedPlayer, stamina: clamp(updatedPlayer.stamina - 8, 35, 100) },
           trainedToday: true,
+          lastSlotGrades: report.slotGrades,
+          recentLeveledKeys:
+            report.leveledUpKeys.length > 0 ? report.leveledUpKeys : get().recentLeveledKeys,
           feed: [
-            makeEvent(calendar.week, `Treino Concluído (${stars}★ — 100% XP)`, `+${report.xpGainedPerAttribute}% nos focos.${levelMsg}`, 'TRAINING'),
+            makeEvent(
+              calendar.week,
+              `Sessão 100% Concluída (${stars}★)`,
+              report.leveledUpKeys.length > 0
+                ? `+1 ponto conquistado em ${report.leveledUpKeys.length} atributo(s)!`
+                : 'Barras dos 5 slots avançaram em velocidade máxima.',
+              'TRAINING',
+            ),
             ...feed.slice(0, 24),
           ],
         });
@@ -120,13 +139,13 @@ export const useCareerStore = create<CareerState>()(
         if (contract.stage === 'YOUTH') {
           set({
             transitionProposals: generateYouthTransitionProposals(player, contract.clubId),
-            feed: [makeEvent(calendar.week, 'Reunião Solicitada na Base', 'Opções de empréstimo/subida atualizadas.', 'CONTRACT'), ...feed],
+            feed: [makeEvent(calendar.week, 'Diretoria Acionada', 'Propostas de Subida e Empréstimo liberadas.', 'CONTRACT'), ...feed],
           });
         } else {
           const offers = generateWindowTransferOffers(player, contract, agentId);
           set({
             marketOffers: offers,
-            feed: [makeEvent(calendar.week, 'Empresário Sondou o Mercado', `${offers.length} proposta(s) na mesa!`, 'CONTRACT'), ...feed],
+            feed: [makeEvent(calendar.week, 'Sondagem Concluída', `${offers.length} clube(s) apresentaram proposta.`, 'CONTRACT'), ...feed],
           });
         }
       },
@@ -140,7 +159,14 @@ export const useCareerStore = create<CareerState>()(
             player: res.updatedPlayer,
             bankBalance: res.updatedBalance,
             ownedEquipmentIds: res.updatedOwnedIds,
-            feed: [makeEvent(calendar.week, 'Novo Equipamento!', res.message, 'TRAINING'), ...feed],
+            recentLeveledKeys: Object.keys(
+              res.updatedPlayer.attributes,
+            ).filter(
+              (k) =>
+                res.updatedPlayer.attributes[k as keyof typeof player.attributes] >
+                player.attributes[k as keyof typeof player.attributes],
+            ) as CareerState['recentLeveledKeys'],
+            feed: [makeEvent(calendar.week, 'Estrutura Instalada', res.message, 'TRAINING'), ...feed],
           });
         }
         return { ok: res.ok, message: res.message };
@@ -153,7 +179,7 @@ export const useCareerStore = create<CareerState>()(
           set({
             bankBalance: res.updatedBalance,
             agentId: res.updatedAgentId,
-            feed: [makeEvent(calendar.week, 'Novo Empresário!', res.message, 'CONTRACT'), ...feed],
+            feed: [makeEvent(calendar.week, 'Novo Empresário', res.message, 'CONTRACT'), ...feed],
           });
         }
         return { ok: res.ok, message: res.message };
@@ -171,6 +197,6 @@ export const useCareerStore = create<CareerState>()(
           feed: [],
         }),
     }),
-    { name: 'three-stars-soccer-career-v1' },
+    { name: 'three-stars-soccer-career-v2' },
   ),
 );

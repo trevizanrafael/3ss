@@ -4,6 +4,7 @@ import { ActiveContract, TransferMarketOffer } from '../domains/contracts/contra
 import { MatchPerformanceResult, TacticalMindset } from '../domains/match-sim/matchSimulator';
 import { CreatePlayerInput } from '../domains/player/createInitialPlayer';
 import { CareerPlayer } from '../domains/player/playerTypes';
+import { DrillGrade } from '../domains/training/trainingEngine';
 import { YouthAcademyOffer } from '../domains/tryout/generateYouthOffers';
 import { YouthAcademyState, YouthTransitionProposal } from '../domains/youth-academy/youthModel';
 import { CalendarDate, StarRating } from '../shared/types/common';
@@ -23,7 +24,11 @@ export interface CareerState {
   bankBalance: number;
   agentId: string;
   ownedEquipmentIds: string[];
-  focusedAttributes: AttributeKey[];
+
+  // Sistema 5 Slots FIFA 18
+  drillSlots: (string | null)[];
+  lastSlotGrades: (DrillGrade | null)[];
+  recentLeveledKeys: AttributeKey[];
   trainedToday: boolean;
 
   // Fluxo Peneira
@@ -44,7 +49,7 @@ export interface CareerState {
   beginCareerWithPlayer: (input: CreatePlayerInput) => void;
   finishTryout: (stars: StarRating) => void;
   signYouthOffer: (offer: YouthAcademyOffer) => void;
-  toggleFocusAttribute: (key: AttributeKey) => void;
+  setDrillSlot: (slotIndex: number, drillId: string | null) => void;
   completeActiveTraining: (stars: StarRating) => void;
   advanceDay: () => void;
   advanceToMatchDay: () => void;

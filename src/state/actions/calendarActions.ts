@@ -2,7 +2,7 @@ import { getClubById } from '../../data/clubs';
 import { applySeasonPromotionRelegation } from '../../domains/competition/leagueSimulator';
 import { generateWindowTransferOffers } from '../../domains/contracts/contractEngine';
 import { getOwnedEquipmentBonuses } from '../../domains/economy/economyActions';
-import { applyTrainingProgress } from '../../domains/training/trainingEngine';
+import { applyFiveSlotsTraining } from '../../domains/training/trainingEngine';
 import { generateYouthTransitionProposals } from '../../domains/youth-academy/youthModel';
 import { formatMoney } from '../../shared/utils/formatters';
 import { clamp } from '../../shared/utils/math';
@@ -12,7 +12,7 @@ import { makeEvent } from '../helpers/feedHelper';
 const SEASON_WEEKS = 20;
 
 export function computeNextDayState(state: CareerState): Partial<CareerState> {
-  const { player, contract, calendar, focusedAttributes, ownedEquipmentIds, trainedToday } = state;
+  const { player, contract, calendar, drillSlots, ownedEquipmentIds, trainedToday } = state;
   if (!player || !contract) return {};
 
   let nextPlayer = { ...player };
@@ -21,27 +21,28 @@ export function computeNextDayState(state: CareerState): Partial<CareerState> {
   let nextTables = state.leagueTables;
   let nextProposals = state.transitionProposals;
   let nextMarket = state.marketOffers;
+  let nextLeveled = state.recentLeveledKeys;
 
   const club = getClubById(contract.clubId);
   const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
 
-  // Terça (2) e Quinta (4): aplica 50% AUTOMÁTICO caso o jogador não tenha treinado manualmente
   const isTrainingDay = calendar.day === 2 || calendar.day === 4;
   if (isTrainingDay && !trainedToday) {
-    const { updatedPlayer, report } = applyTrainingProgress(
+    const { updatedPlayer, report } = applyFiveSlotsTraining(
       nextPlayer,
-      focusedAttributes,
+      drillSlots,
       'PASSIVE_50',
       club.youthQuality,
       bonuses.trainingXpBonusPct,
     );
     nextPlayer = updatedPlayer;
-    if (report.leveledUpAttributes.length > 0) {
+    if (report.leveledUpKeys.length > 0) {
+      nextLeveled = report.leveledUpKeys;
       nextFeed = [
         makeEvent(
           calendar.week,
-          'Evolução no Treino Automático (50%)',
-          'Seu trabalho semanal com o elenco rendeu +1 ponto de atributo!',
+          'Evolução nos Slots de Treino (50% Auto)',
+          `Subiu +1 em ${report.leveledUpKeys.length} atributo(s) durante a rotina semanal.`,
           'TRAINING',
         ),
         ...nextFeed,
@@ -67,7 +68,7 @@ export function computeNextDayState(state: CareerState): Partial<CareerState> {
       nextFeed = [
         makeEvent(
           calendar.week,
-          'Salário Depositado na Conta',
+          'Pagamento Mensal Creditado',
           `Recebido ${formatMoney(contract.monthlySalary)} do ${club.name}.`,
           'CONTRACT',
         ),
@@ -78,7 +79,7 @@ export function computeNextDayState(state: CareerState): Partial<CareerState> {
     if (nextWeek === 10 && contract.stage !== 'YOUTH') {
       nextMarket = generateWindowTransferOffers(nextPlayer, contract, state.agentId);
       nextFeed = [
-        makeEvent(10, 'Janela de Transferências Aberta!', 'Novas sondagens chegaram na aba Contratos.', 'CONTRACT'),
+        makeEvent(10, 'Janela Aberta', 'Novas propostas disponíveis em ESCRITÓRIO.', 'CONTRACT'),
         ...nextFeed,
       ];
     }
@@ -92,23 +93,13 @@ export function computeNextDayState(state: CareerState): Partial<CareerState> {
       if (contract.stage === 'YOUTH') {
         nextProposals = generateYouthTransitionProposals(nextPlayer, contract.clubId);
         nextFeed = [
-          makeEvent(
-            1,
-            'Fim de Temporada na Base — Reunião com a Diretoria!',
-            'Confira propostas de Promoção ao Profissional ou Empréstimo na aba Contratos.',
-            'CONTRACT',
-          ),
+          makeEvent(1, 'Decisão de Subida da Base', 'Veja as opções de Profissional ou Empréstimo em ESCRITÓRIO.', 'CONTRACT'),
           ...nextFeed,
         ];
       } else {
         nextMarket = generateWindowTransferOffers(nextPlayer, contract, state.agentId);
         nextFeed = [
-          makeEvent(
-            1,
-            `Nova Temporada ${nextSeason}! (${nextPlayer.age} anos)`,
-            'Tabelas atualizadas com acessos/rebaixamentos e novas propostas disponíveis.',
-            'INFO',
-          ),
+          makeEvent(1, `Temporada ${nextSeason}`, 'Acessos, rebaixamentos e janela atualizados.', 'INFO'),
           ...nextFeed,
         ];
       }
@@ -119,6 +110,7 @@ export function computeNextDayState(state: CareerState): Partial<CareerState> {
     player: nextPlayer,
     calendar: { season: nextSeason, week: nextWeek, day: nextDay },
     trainedToday: false,
+    recentLeveledKeys: nextLeveled,
     bankBalance: nextBalance,
     leagueTables: nextTables,
     transitionProposals: nextProposals,

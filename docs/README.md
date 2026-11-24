@@ -19,6 +19,7 @@
 
 ## Índice da Documentação
 
+- [idv.md](./idv.md) — **Manual de Identidade Visual (IDV)**, paleta Grafite/Ouro Fosco, geometria reta e referência FIFA 18
 - [architecture.md](./architecture.md) — **Regras de arquitetura modular**, separação de pastas e limite de tamanho por arquivo
 - [gdd-carreira-contratos-treino.md](./gdd-carreira-contratos-treino.md) — Criação do jogador, Peneira, Base, Contratos, Economia 0–99 e Treinos
 - [database-ligas.md](./database-ligas.md) — Lista oficial de Ligas, 2ªs Divisões, Copas Continentais e estrutura de dados reais

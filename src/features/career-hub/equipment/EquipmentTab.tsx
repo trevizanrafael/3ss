@@ -1,105 +1,74 @@
-import React, { useState } from 'react';
-import { CheckCircle2, ShoppingBag, Sparkles } from 'lucide-react';
+import React from 'react';
 import { EQUIPMENT_CATALOG } from '../../../data/equipment/catalog';
 import { ATTRIBUTE_DEFINITIONS } from '../../../domains/attributes/attributeDefinitions';
-import { getOwnedEquipmentBonuses } from '../../../domains/economy/economyActions';
-import { Panel } from '../../../shared/ui/Panel';
 import { formatMoney } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
 
-export const EquipmentTab: React.FC = () => {
-  const { bankBalance, ownedEquipmentIds, buyEquipmentItem } = useCareerStore();
-  const [notice, setNotice] = useState<string | null>(null);
+interface EquipmentSubViewProps {
+  onFeedback: (msg: string) => void;
+}
 
-  const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
+export const EquipmentTab: React.FC<EquipmentSubViewProps> = ({ onFeedback }) => {
+  const { bankBalance, ownedEquipmentIds, buyEquipmentItem } = useCareerStore();
 
   const getAttrLabel = (key: string) =>
-    ATTRIBUTE_DEFINITIONS.find((a) => a.key === key)?.label ?? key;
+    ATTRIBUTE_DEFINITIONS.find((a) => a.key === key)?.label.toUpperCase() ?? key;
 
   return (
-    <div className="space-y-6">
-      {notice && (
-        <div className="rounded-xl bg-emerald-500/15 border border-emerald-400/40 px-4 py-3 text-xs font-semibold text-emerald-300">
-          {notice}
-        </div>
-      )}
+    <div className="flex-1 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-y-auto pr-1 min-h-0">
+      {EQUIPMENT_CATALOG.map((item) => {
+        const owned = ownedEquipmentIds.includes(item.id);
+        const canAfford = bankBalance >= item.price;
 
-      <Panel
-        title="Estrutura Pessoal de Alto Rendimento"
-        subtitle="Zero gastos fúteis: aqui seu salário vira equipamentos reais que sobem seus atributos 0–99 e aceleram seus treinos."
-        rightSlot={
-          <div className="text-right text-xs">
-            <span className="text-slate-400 block">Bônus Acumulado</span>
-            <span className="font-bold text-emerald-400">
-              +{bonuses.trainingXpBonusPct}% XP Treino • +{bonuses.staminaRecoveryBonus} Recup.
-            </span>
-          </div>
-        }
-      >
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {EQUIPMENT_CATALOG.map((item) => {
-            const owned = ownedEquipmentIds.includes(item.id);
-            const canAfford = bankBalance >= item.price;
+        return (
+          <div
+            key={item.id}
+            className={`console-tile p-5 flex flex-col justify-between ${
+              owned ? 'border-t-[3px] border-t-[#2DBE60]' : 'border-t-[3px] border-t-[#242730]'
+            }`}
+          >
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-[#565A65] mb-1">
+                ESTRUTURA PESSOAL
+              </div>
+              <h4 className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] leading-tight">
+                {item.name}
+              </h4>
 
-            return (
-              <div
-                key={item.id}
-                className={`rounded-2xl border p-4 flex flex-col justify-between transition ${
-                  owned
-                    ? 'bg-emerald-950/20 border-emerald-500/50'
-                    : 'bg-slate-950 border-slate-800'
-                }`}
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-bold text-white text-base">{item.name}</h3>
-                    <Sparkles size={16} className={owned ? 'text-emerald-400' : 'text-amber-400'} />
+              <div className="space-y-1 mt-3 pt-3 border-t border-[#242730] text-xs uppercase">
+                {Object.entries(item.instantBoosts).map(([k, v]) => (
+                  <div key={k} className="text-[#2DBE60] font-condensed font-bold text-sm">
+                    +{v} {getAttrLabel(k)}
                   </div>
-                  <p className="text-xs text-slate-400 mb-3">{item.description}</p>
-
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {Object.entries(item.instantBoosts).map(([key, val]) => (
-                      <span
-                        key={key}
-                        className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold"
-                      >
-                        +{val} {getAttrLabel(key)}
-                      </span>
-                    ))}
-                    <span className="px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 text-[11px] font-semibold">
-                      +{item.trainingXpBonusPct}% XP nos Treinos
-                    </span>
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                  <span className="text-sm font-bold text-white tabular-nums">
-                    {formatMoney(item.price)}
-                  </span>
-
-                  {owned ? (
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
-                      <CheckCircle2 size={15} /> Instalado
-                    </span>
-                  ) : (
-                    <button
-                      disabled={!canAfford}
-                      onClick={() => {
-                        const res = buyEquipmentItem(item.id);
-                        setNotice(res.message);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 text-xs font-bold transition cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <ShoppingBag size={14} />
-                      Comprar
-                    </button>
-                  )}
+                ))}
+                <div className="text-[#C8A45D] font-condensed font-bold text-sm">
+                  +{item.trainingXpBonusPct}% XP NOS SLOTS DE TREINO
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </Panel>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#242730] flex items-center justify-between">
+              <span className="font-condensed font-extrabold text-lg text-[#F5F5F7]">
+                {formatMoney(item.price)}
+              </span>
+
+              {owned ? (
+                <span className="font-condensed uppercase font-bold text-xs tracking-widest text-[#2DBE60]">
+                  INSTALADO
+                </span>
+              ) : (
+                <button
+                  disabled={!canAfford}
+                  onClick={() => onFeedback(buyEquipmentItem(item.id).message)}
+                  className="console-btn-primary px-4 py-2 text-sm cursor-pointer"
+                >
+                  ADQUIRIR
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
