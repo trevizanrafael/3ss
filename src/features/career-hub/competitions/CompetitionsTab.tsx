@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { getClubById, getNationalTeamByCountry } from '../../../data/clubs';
-import { COUNTRIES } from '../../../data/countries/countries';
 import { ContinentalCupId, LeagueId, LEAGUES } from '../../../data/leagues/leagues';
 import { getCompetitionTheme, InternationalCompId } from '../../../data/world/competitionThemes';
 import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
@@ -8,6 +7,7 @@ import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { ConsoleStepper } from '../../../shared/ui/ConsoleStepper';
+import { CountryFlag } from '../../../shared/ui/CountryFlag';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { ClubSquadInspector } from './ClubSquadInspector';
 import { CompetitionStatsView } from './CompetitionStatsView';
@@ -231,8 +231,12 @@ export const CompetitionsTab: React.FC = () => {
               }}
               options={availableLeagues.map((id) => {
                 const lg = LEAGUES[id];
-                const flag = lg.country !== 'INT' ? COUNTRIES[lg.country]?.flag ?? '' : '';
-                return { value: id, label: `${flag} ${lg.name}` };
+                return {
+                  value: id,
+                  label: lg.name,
+                  leadingVisual:
+                    lg.country !== 'INT' ? <CountryFlag code={lg.country} size="sm" /> : undefined,
+                };
               })}
             />
           )}

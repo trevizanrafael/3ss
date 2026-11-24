@@ -9,11 +9,13 @@ import {
 
 export interface PlayerAppearance {
   skinTone: string;
-  hairStyle: 'CURTO' | 'DEGRADE' | 'TRANCA' | 'LONGO' | 'RASPADO';
+  hairStyle: 'CURTO' | 'DEGRADE' | 'TOPETE' | 'TRANCA' | 'AFRO' | 'LONGO' | 'RASPADO';
   hairColor: string;
+  facialHair?: 'LIMPO' | 'CAVANHAQUE' | 'BARBA_BAIXA' | 'BARBA_CHEIA';
   eyeColor: string;
   shirtTuck: 'SOLTA' | 'DENTRO_CALCAO';
-  sleeveStyle: 'CURTA' | 'LONGA';
+  sleeveStyle: 'CURTA' | 'LONGA' | 'TERMICA';
+  sockHeight?: 'PADRAO' | 'ALTO' | 'BAIXO';
   accessory: 'NENHUM' | 'MUNHEQUEIRA' | 'FAIXA_CABECA' | 'TORNOZELEIRA' | 'LUVAS';
   bootColor: string;
 }

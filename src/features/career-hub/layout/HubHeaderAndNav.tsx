@@ -11,6 +11,7 @@ import {
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
+import { CountryFlag } from '../../../shared/ui/CountryFlag';
 import { FifaStatBadge } from '../../../shared/ui/FifaStatBadge';
 import { formatMoney } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
@@ -85,9 +86,12 @@ export const HubHeaderAndNav: React.FC = () => {
           <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] tracking-wide">
             {player.shirtName}
           </div>
-          <div className="text-[10px] uppercase tracking-widest text-[#9498A3]">
-            {natMeta.flag} {club.shortName} • {player.position}
-            {callUp.calledUp ? ' • ★ SELEÇÃO' : ''}
+          <div className="text-[10px] uppercase tracking-widest text-[#9498A3] flex items-center gap-1.5 mt-0.5">
+            <CountryFlag code={natMeta.code} size="xs" />
+            <span>
+              {club.shortName} • {player.position}
+              {callUp.calledUp ? ' • ★ SELEÇÃO' : ''}
+            </span>
           </div>
         </div>
         <FifaStatBadge value={player.overall} size="md" />

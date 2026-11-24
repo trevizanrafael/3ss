@@ -3,6 +3,7 @@ import { getClubById } from '../../data/clubs';
 import { COUNTRIES, TRYOUT_LEAGUE_COUNTRIES } from '../../data/countries/countries';
 import { LEAGUES } from '../../data/leagues/leagues';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
+import { CountryFlag } from '../../shared/ui/CountryFlag';
 import { FifaStatBadge } from '../../shared/ui/FifaStatBadge';
 import { StarRatingBadge } from '../../shared/ui/StarRatingBadge';
 import { StarRating } from '../../shared/types/common';
@@ -67,9 +68,13 @@ export const TryoutScreen: React.FC = () => {
     <div className="w-screen h-screen bg-[#0B0B0D] flex flex-col justify-between px-8 md:px-14 py-6 overflow-hidden">
       <header className="flex items-center justify-between border-b border-[#242730] pb-4">
         <div>
-          <span className="text-[11px] uppercase tracking-[0.24em] text-[#C8A45D] font-semibold">
-            PENEIRA DE BASE • {tryoutCountry.flag} {tryoutCountry.name} (ATLETA:{' '}
-            {natCountry.flag} {natCountry.name})
+          <span className="text-[11px] uppercase tracking-[0.24em] text-[#C8A45D] font-semibold inline-flex items-center gap-2">
+            <span>PENEIRA DE BASE •</span>
+            <CountryFlag code={tryoutCountry.code} size="xs" />
+            <span>{tryoutCountry.name}</span>
+            <span className="text-[#9498A3]">• ATLETA:</span>
+            <CountryFlag code={natCountry.code} size="xs" />
+            <span>{natCountry.name}</span>
           </span>
           <h1 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none mt-1">
             {tryoutStars === null ? 'AVALIAÇÃO DE CATEGORIAS DE BASE' : 'CONVITES OFICIAIS DE BASE'}

@@ -9,6 +9,7 @@ import {
 } from '../../../domains/training/trainingDrillsCatalog';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
+import { CountryFlag } from '../../../shared/ui/CountryFlag';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { CareerHistoryView } from './CareerHistoryView';
@@ -125,15 +126,18 @@ export const MyProTab: React.FC = () => {
             <h2 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none">
               {player.fullName}
             </h2>
-            <p className="text-xs uppercase tracking-widest text-[#9498A3] mt-1">
-              {natMeta.flag} {natMeta.name} ({player.careerTotals.nationalCaps ?? 0}J /{' '}
-              {player.careerTotals.nationalGoals ?? 0}G) •{' '}
+            <p className="text-xs uppercase tracking-widest text-[#9498A3] mt-1 flex flex-wrap items-center gap-1.5">
+              <CountryFlag code={natMeta.code} size="xs" />
+              <span>
+                {natMeta.name} ({player.careerTotals.nationalCaps ?? 0}J /{' '}
+                {player.careerTotals.nationalGoals ?? 0}G) •
+              </span>
               <strong className={callUp.calledUp ? 'text-[#2DBE60]' : 'text-[#C8A45D]'}>
                 {callUp.calledUp
                   ? `CONVOCADO (${callUp.role})`
                   : `META SELEÇÃO: ${callUp.minOvrRequired}+ OVR`}
-              </strong>{' '}
-              • {POSITION_LABELS[player.position]}
+              </strong>
+              <span>• {POSITION_LABELS[player.position]}</span>
             </p>
           </div>
         </div>
