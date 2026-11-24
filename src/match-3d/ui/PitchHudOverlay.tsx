@@ -91,21 +91,19 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
 
         <div className="flex items-center gap-2 pointer-events-auto">
           <span
-            className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
-              padConnected
-                ? 'bg-[#12261A]/85 text-[#2DBE60] border-[#2DBE60]'
-                : 'bg-[#0B0B0D]/80 text-[#FACC15] border-[#FACC15]/60'
-            }`}
+            className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${padConnected
+              ? 'bg-[#12261A]/85 text-[#2DBE60] border-[#2DBE60]'
+              : 'bg-[#0B0B0D]/80 text-[#FACC15] border-[#FACC15]/60'
+              }`}
           >
             {padConnected ? `CONTROLE (${brand})` : 'APERTE UM BOTÃO NO CONTROLE'}
           </span>
 
           <span
-            className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
-              hud.cameraMode === 'BALL_CAM'
-                ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
-                : 'bg-[#0B0B0D]/80 text-[#F5F5F7] border-white/15'
-            }`}
+            className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${hud.cameraMode === 'BALL_CAM'
+              ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
+              : 'bg-[#0B0B0D]/80 text-[#F5F5F7] border-white/15'
+              }`}
           >
             {hud.cameraMode === 'BALL_CAM'
               ? `CÂMERA: BOLA (${lblLB})`
