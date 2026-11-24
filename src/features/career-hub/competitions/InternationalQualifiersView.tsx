@@ -1,6 +1,6 @@
 import React from 'react';
 import { getClubById } from '../../../data/clubs';
-import { getCompetitionTheme } from '../../../data/world/competitionThemes';
+import { getCompetitionTheme, getQualifierCompId } from '../../../data/world/competitionThemes';
 import { QualifierGroupData } from '../../../domains/international/internationalTypes';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
@@ -18,7 +18,8 @@ export const InternationalQualifiersView: React.FC<InternationalQualifiersViewPr
   selectedTeamId,
   onSelectTeam,
 }) => {
-  const theme = getCompetitionTheme('WC_QUALIFIERS');
+  const qualCompId = getQualifierCompId(group.confederation);
+  const theme = getCompetitionTheme(qualCompId);
   const nationsSpots = group.nationsLeagueSpots ?? 0;
 
   return (
@@ -28,7 +29,7 @@ export const InternationalQualifiersView: React.FC<InternationalQualifiersViewPr
     >
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-[#242730] shrink-0">
         <CompetitionBadge
-          competitionId="WC_QUALIFIERS"
+          competitionId={qualCompId}
           size="md"
           stageSubtitle={group.label}
         />

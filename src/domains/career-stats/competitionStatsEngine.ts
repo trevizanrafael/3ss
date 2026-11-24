@@ -194,10 +194,12 @@ function extractTeamAggregates(
   const intl = world.international;
   if (!intl) return { teamStats: map, totalMatches, totalGoals };
 
-  if (compId === 'WC_QUALIFIERS') {
+  if (compId === 'WC_QUALIFIERS' || compId.startsWith('WCQ_')) {
     const targetGroups = qualifierGroupId
       ? intl.qualifiers.filter((q) => q.id === qualifierGroupId)
-      : intl.qualifiers;
+      : compId.startsWith('WCQ_')
+        ? intl.qualifiers.filter((q) => `WCQ_${q.confederation}` === compId)
+        : intl.qualifiers;
     for (const q of targetGroups) {
       seedTeamsFromStandings(q.standings);
       q.rounds.forEach((rnd) => rnd.forEach(ingestFixture));
@@ -245,7 +247,9 @@ export async function buildCompetitionLeaderboards(
   const teamIds = Array.from(teamStats.keys());
   const squads = await Promise.all(teamIds.map((id) => loadClubFullSquad(id)));
 
-  const userLine = userCompStats[compId];
+  const userLine =
+    userCompStats[compId] ??
+    (compId.startsWith('WCQ_') ? userCompStats.WC_QUALIFIERS : undefined);
   const userNatId = userPlayer ? `nt_${userPlayer.nationality.toLowerCase()}` : null;
   const rows: CompetitionPlayerStatRow[] = [];
 

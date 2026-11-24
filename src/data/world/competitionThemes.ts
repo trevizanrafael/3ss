@@ -1,7 +1,16 @@
+import { ConfederationCode } from '../../shared/types/common';
 import { ContinentalCupId, LeagueId } from '../leagues/leagues';
 import rawLogos from './competitionLogos.json';
 
+export type QualifierCompId =
+  | 'WCQ_CONMEBOL'
+  | 'WCQ_UEFA'
+  | 'WCQ_CONCACAF'
+  | 'WCQ_CAF'
+  | 'WCQ_AFC';
+
 export type InternationalCompId =
+  | QualifierCompId
   | 'WC_QUALIFIERS'
   | 'NATIONS_LEAGUE'
   | 'COPA_AMERICA'
@@ -10,6 +19,14 @@ export type InternationalCompId =
   | 'INTL_FRIENDLY';
 
 export type AnyCompetitionId = LeagueId | ContinentalCupId | InternationalCompId;
+
+export function getQualifierCompId(confederation: ConfederationCode): QualifierCompId {
+  if (confederation === 'UEFA') return 'WCQ_UEFA';
+  if (confederation === 'CONCACAF') return 'WCQ_CONCACAF';
+  if (confederation === 'CAF') return 'WCQ_CAF';
+  if (confederation === 'AFC') return 'WCQ_AFC';
+  return 'WCQ_CONMEBOL';
+}
 
 export interface CompetitionTheme {
   id: AnyCompetitionId;
@@ -54,9 +71,16 @@ export const COMPETITION_THEMES: Record<AnyCompetitionId, CompetitionTheme> = {
   CHAMPIONS_LEAGUE: { id: 'CHAMPIONS_LEAGUE', shortLabel: 'UEFA CHAMPIONS LEAGUE', accentPrimary: '#3B82F6', accentSecondary: '#E2E8F0', bannerBg: '#07133A', textOnAccent: '#F5F5F7', logoUrl: getLogo('CHAMPIONS_LEAGUE') },
   EUROPA_LEAGUE: { id: 'EUROPA_LEAGUE', shortLabel: 'UEFA EUROPA LEAGUE', accentPrimary: '#FF6900', accentSecondary: '#12100E', bannerBg: '#261105', textOnAccent: '#0B0B0D', logoUrl: getLogo('EUROPA_LEAGUE') },
 
-  // COMPETIÇÕES OFICIAIS DE SELEÇÕES FIFA
+  // ELIMINATÓRIAS DA COPA DO MUNDO POR CONFEDERAÇÃO (Logos Oficiais Separadas!)
+  WCQ_CONMEBOL: { id: 'WCQ_CONMEBOL', shortLabel: 'ELIMINATÓRIAS CONMEBOL', accentPrimary: '#10B981', accentSecondary: '#C8A45D', bannerBg: '#07221B', textOnAccent: '#0B0B0D', logoUrl: getLogo('WCQ_CONMEBOL') },
+  WCQ_UEFA: { id: 'WCQ_UEFA', shortLabel: 'EUROPEAN QUALIFIERS (UEFA)', accentPrimary: '#E11D48', accentSecondary: '#38BDF8', bannerBg: '#230914', textOnAccent: '#F5F5F7', logoUrl: getLogo('WCQ_UEFA') },
+  WCQ_CONCACAF: { id: 'WCQ_CONCACAF', shortLabel: 'ELIMINATÓRIAS CONCACAF', accentPrimary: '#F59E0B', accentSecondary: '#1E3A8A', bannerBg: '#211607', textOnAccent: '#0B0B0D', logoUrl: getLogo('WCQ_CONCACAF') },
+  WCQ_CAF: { id: 'WCQ_CAF', shortLabel: 'ELIMINATÓRIAS ÁFRICA (CAF)', accentPrimary: '#16A34A', accentSecondary: '#EAB308', bannerBg: '#092112', textOnAccent: '#0B0B0D', logoUrl: getLogo('WCQ_CAF') },
+  WCQ_AFC: { id: 'WCQ_AFC', shortLabel: 'ELIMINATÓRIAS ÁSIA & OCEANIA', accentPrimary: '#38BDF8', accentSecondary: '#F59E0B', bannerBg: '#081B2B', textOnAccent: '#0B0B0D', logoUrl: getLogo('WCQ_AFC') },
+  WC_QUALIFIERS: { id: 'WC_QUALIFIERS', shortLabel: 'ELIMINATÓRIAS FIFA', accentPrimary: '#C8A45D', accentSecondary: '#F5F5F7', bannerBg: '#19160E', textOnAccent: '#0B0B0D', logoUrl: getLogo('WORLD_CUP') },
+
+  // COPAS DE SELEÇÕES
   WORLD_CUP: { id: 'WORLD_CUP', shortLabel: 'COPA DO MUNDO FIFA', accentPrimary: '#E5C158', accentSecondary: '#8A1538', bannerBg: '#231807', textOnAccent: '#0B0B0D', logoUrl: getLogo('WORLD_CUP') },
-  WC_QUALIFIERS: { id: 'WC_QUALIFIERS', shortLabel: 'ELIMINATÓRIAS DA COPA', accentPrimary: '#10B981', accentSecondary: '#C8A45D', bannerBg: '#07221B', textOnAccent: '#0B0B0D', logoUrl: getLogo('WC_QUALIFIERS') },
   NATIONS_LEAGUE: { id: 'NATIONS_LEAGUE', shortLabel: 'LIGA DAS NAÇÕES UEFA+CONMEBOL', accentPrimary: '#38BDF8', accentSecondary: '#C8A45D', bannerBg: '#081B2E', textOnAccent: '#0B0B0D', logoUrl: getLogo('NATIONS_LEAGUE') },
   COPA_AMERICA: { id: 'COPA_AMERICA', shortLabel: 'CONMEBOL COPA AMÉRICA', accentPrimary: '#F59E0B', accentSecondary: '#1D4ED8', bannerBg: '#221506', textOnAccent: '#0B0B0D', logoUrl: getLogo('COPA_AMERICA') },
   EURO_CUP: { id: 'EURO_CUP', shortLabel: 'UEFA EUROCOPA', accentPrimary: '#2563EB', accentSecondary: '#FACC15', bannerBg: '#091736', textOnAccent: '#F5F5F7', logoUrl: getLogo('EURO_CUP') },

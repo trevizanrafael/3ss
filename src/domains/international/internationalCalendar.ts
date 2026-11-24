@@ -1,5 +1,5 @@
 import { ALL_NATIONAL_TEAMS } from '../../data/clubs';
-import { InternationalCompId } from '../../data/world/competitionThemes';
+import { getQualifierCompId, InternationalCompId } from '../../data/world/competitionThemes';
 import { shuffleArray } from '../../shared/utils/math';
 import { PlayerScoreOverride } from '../season/continentalEngine';
 import { simulateRealisticScoreline, sortStandings } from '../season/poissonMatchMath';
@@ -155,7 +155,7 @@ export function findNationalTeamFixtureOnDay(
               grp.rounds[rIdx],
               nationalTeamId,
               `${grp.label} • RODADA ${rIdx + 1}`,
-              'WC_QUALIFIERS',
+              getQualifierCompId(grp.confederation),
               7,
             );
           }

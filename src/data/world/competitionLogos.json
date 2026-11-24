@@ -102,5 +102,25 @@
   "NATIONS_LEAGUE": {
     "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/2395.png",
     "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/2395.png"
+  },
+  "WCQ_CONMEBOL": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/65.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/65.png"
+  },
+  "WCQ_UEFA": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/67.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/67.png"
+  },
+  "WCQ_CONCACAF": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/64.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/64.png"
+  },
+  "WCQ_CAF": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/63.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/63.png"
+  },
+  "WCQ_AFC": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/62.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/62.png"
   }
 }

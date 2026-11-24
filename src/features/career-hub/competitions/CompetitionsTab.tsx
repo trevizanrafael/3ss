@@ -1,7 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { getClubById, getNationalTeamByCountry } from '../../../data/clubs';
 import { ContinentalCupId, LeagueId, LEAGUES } from '../../../data/leagues/leagues';
-import { getCompetitionTheme, InternationalCompId } from '../../../data/world/competitionThemes';
+import {
+  getCompetitionTheme,
+  getQualifierCompId,
+  InternationalCompId,
+} from '../../../data/world/competitionThemes';
 import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
@@ -66,10 +70,16 @@ export const CompetitionsTab: React.FC = () => {
     contract?.clubId ?? worldSeason.leagues[playerLeagueId].standings[0]?.clubId,
   );
 
+  const qualifiers = worldSeason.international?.qualifiers ?? [];
+  const activeQualGroup =
+    qualifiers.find((q) => q.id === wcqGroupId) ?? qualifiers[0];
+
   const isClubCupMode = mode === 'CONMEBOL_CUPS' || mode === 'UEFA_CUPS';
   const activeCompId =
     mode === 'SELECOES_ELIM'
-      ? 'WC_QUALIFIERS'
+      ? activeQualGroup
+        ? getQualifierCompId(activeQualGroup.confederation)
+        : 'WCQ_UEFA'
       : mode === 'SELECOES_COPAS'
         ? intlCupId
         : isClubCupMode
@@ -81,10 +91,6 @@ export const CompetitionsTab: React.FC = () => {
     () => (mode === 'SUL_LIGAS' || mode === 'EURO_LIGAS' || mode === 'MLS' ? LEAGUES_MAP[mode] : []),
     [mode],
   );
-
-  const qualifiers = worldSeason.international?.qualifiers ?? [];
-  const activeQualGroup =
-    qualifiers.find((q) => q.id === wcqGroupId) ?? qualifiers[0];
 
   const handleModeChange = (next: CompMode) => {
     setMode(next);
