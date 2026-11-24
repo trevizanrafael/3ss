@@ -1,6 +1,7 @@
 import React from 'react';
 import { getClubById } from '../../data/clubs';
 import { getCompetitionTheme } from '../../data/world/competitionThemes';
+import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
 import {
   findClubLeagueIdInWorld,
   findUpcomingFixtureForClub,
@@ -19,8 +20,10 @@ import { TrainingTab } from './training/TrainingTab';
 
 export const CareerHubScreen: React.FC = () => {
   const { activeTab, setScreen } = useNavigationStore();
-  const { contract, calendar, worldSeason } = useCareerStore();
+  const { player, contract, calendar, worldSeason, periodStats } = useCareerStore();
   const club = contract ? getClubById(contract.clubId) : null;
+  const callUp =
+    player && contract ? evaluateNationalCallUp(player, contract.stage, periodStats) : null;
 
   const activeLeagueId = contract
     ? findClubLeagueIdInWorld(worldSeason, contract.clubId)
@@ -32,6 +35,7 @@ export const CareerHubScreen: React.FC = () => {
         contract.stage,
         calendar.week,
         calendar.day,
+        callUp,
       )
     : null;
   const compTheme = getCompetitionTheme(nextFx ? nextFx.competitionId : activeLeagueId);

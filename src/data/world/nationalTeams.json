@@ -1,0 +1,2946 @@
+[
+  {
+    "id": "nt_bra",
+    "nationalCode": "BRA",
+    "name": "Brasil",
+    "shortName": "BRA",
+    "flag": "🇧🇷",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 86,
+    "youthAcademyName": "Seleção Brasil Sub-20",
+    "youthQuality": 86,
+    "primaryColor": "#FFDF00",
+    "secondaryColor": "#009C3B",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/bra.png",
+    "squadSize": 24,
+    "city": "Rio de Janeiro",
+    "stadiumName": "Maracanã",
+    "lat": -22.9121,
+    "lng": -43.2302,
+    "keyPlayers": [
+      {
+        "name": "Raphinha",
+        "pos": "ME",
+        "ovr": 89
+      },
+      {
+        "name": "Vini Jr.",
+        "pos": "PE",
+        "ovr": 89
+      },
+      {
+        "name": "Gabriel",
+        "pos": "ZAG",
+        "ovr": 88
+      },
+      {
+        "name": "Marquinhos",
+        "pos": "ZAG",
+        "ovr": 87
+      }
+    ]
+  },
+  {
+    "id": "nt_arg",
+    "nationalCode": "ARG",
+    "name": "Argentina",
+    "shortName": "ARG",
+    "flag": "🇦🇷",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 85,
+    "youthAcademyName": "Seleção Argentina Sub-20",
+    "youthQuality": 85,
+    "primaryColor": "#74ACDF",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/arg.png",
+    "squadSize": 24,
+    "city": "Buenos Aires",
+    "stadiumName": "Monumental de Núñez",
+    "lat": -34.5453,
+    "lng": -58.4498,
+    "keyPlayers": [
+      {
+        "name": "L. Martínez",
+        "pos": "ATA",
+        "ovr": 88
+      },
+      {
+        "name": "A. Mac Allister",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "J. Alvarez",
+        "pos": "ATA",
+        "ovr": 87
+      },
+      {
+        "name": "P. Dybala",
+        "pos": "MEI",
+        "ovr": 86
+      }
+    ]
+  },
+  {
+    "id": "nt_uru",
+    "nationalCode": "URU",
+    "name": "Uruguai",
+    "shortName": "URU",
+    "flag": "🇺🇾",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 83,
+    "youthAcademyName": "Seleção Uruguai Sub-20",
+    "youthQuality": 83,
+    "primaryColor": "#5BC2E7",
+    "secondaryColor": "#111111",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/uru.png",
+    "squadSize": 24,
+    "city": "Montevidéu",
+    "stadiumName": "Estadio Centenario",
+    "lat": -34.8945,
+    "lng": -56.1528,
+    "keyPlayers": [
+      {
+        "name": "F. Valverde",
+        "pos": "MC",
+        "ovr": 89
+      },
+      {
+        "name": "R. Araujo",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "J. Giménez",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "Sebastián Cáceres",
+        "pos": "ZAG",
+        "ovr": 83
+      }
+    ]
+  },
+  {
+    "id": "nt_col",
+    "nationalCode": "COL",
+    "name": "Colômbia",
+    "shortName": "COL",
+    "flag": "🇨🇴",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Seleção Colômbia Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#FCD116",
+    "secondaryColor": "#003893",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/col.png",
+    "squadSize": 24,
+    "city": "Barranquilla",
+    "stadiumName": "Metropolitano Roberto Meléndez",
+    "lat": 10.9269,
+    "lng": -74.8006,
+    "keyPlayers": [
+      {
+        "name": "L. Díaz",
+        "pos": "ME",
+        "ovr": 85
+      },
+      {
+        "name": "D. Sánchez",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "Jhon Arias",
+        "pos": "MC",
+        "ovr": 82
+      },
+      {
+        "name": "D. Zapata",
+        "pos": "ATA",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "nt_ecu",
+    "nationalCode": "ECU",
+    "name": "Equador",
+    "shortName": "ECU",
+    "flag": "🇪🇨",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Equador Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#FFD100",
+    "secondaryColor": "#0033A0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ecu.png",
+    "squadSize": 24,
+    "city": "Quito",
+    "stadiumName": "Rodrigo Paz Delgado",
+    "lat": -0.1077,
+    "lng": -78.4891,
+    "keyPlayers": [
+      {
+        "name": "M. Caicedo",
+        "pos": "VOL",
+        "ovr": 87
+      },
+      {
+        "name": "W. Pacho",
+        "pos": "ZAG",
+        "ovr": 86
+      },
+      {
+        "name": "P. Hincapié",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "Félix Torres",
+        "pos": "ZAG",
+        "ovr": 83
+      }
+    ]
+  },
+  {
+    "id": "nt_par",
+    "nationalCode": "PAR",
+    "name": "Paraguai",
+    "shortName": "PAR",
+    "flag": "🇵🇾",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Seleção Paraguai Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#D52B1E",
+    "secondaryColor": "#0038A8",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/par.png",
+    "squadSize": 24,
+    "city": "Assunção",
+    "stadiumName": "Defensores del Chaco",
+    "lat": -25.2922,
+    "lng": -57.6574,
+    "keyPlayers": [
+      {
+        "name": "Gustavo Gómez",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "Kaku",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "Damián Bobadilla",
+        "pos": "MC",
+        "ovr": 79
+      },
+      {
+        "name": "O. Alderete",
+        "pos": "ZAG",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "nt_ven",
+    "nationalCode": "VEN",
+    "name": "Venezuela",
+    "shortName": "VEN",
+    "flag": "🇻🇪",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção Venezuela Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#7A1C24",
+    "secondaryColor": "#F4C430",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ven.png",
+    "squadSize": 24,
+    "city": "Maturín",
+    "stadiumName": "Monumental de Maturín",
+    "lat": 9.7115,
+    "lng": -63.2244,
+    "keyPlayers": [
+      {
+        "name": "Nahuel Ferraresi",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "Y. Herrera",
+        "pos": "MC",
+        "ovr": 81
+      },
+      {
+        "name": "J. Aramburu",
+        "pos": "LD",
+        "ovr": 77
+      },
+      {
+        "name": "Edson Castillo",
+        "pos": "MC",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "nt_chi",
+    "nationalCode": "CHI",
+    "name": "Chile",
+    "shortName": "CHI",
+    "flag": "🇨🇱",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção Chile Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#D52B1E",
+    "secondaryColor": "#0039A6",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/chi.png",
+    "squadSize": 24,
+    "city": "Santiago",
+    "stadiumName": "Estadio Nacional Julio Martínez",
+    "lat": -33.4646,
+    "lng": -70.6106,
+    "keyPlayers": [
+      {
+        "name": "Erick Pulgar",
+        "pos": "MC",
+        "ovr": 83
+      },
+      {
+        "name": "Guillermo Maripán",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "P. Díaz",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "G. Maripán",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "nt_per",
+    "nationalCode": "PER",
+    "name": "Peru",
+    "shortName": "PER",
+    "flag": "🇵🇪",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Seleção Peru Sub-20",
+    "youthQuality": 75,
+    "primaryColor": "#D91023",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/per.png",
+    "squadSize": 24,
+    "city": "Lima",
+    "stadiumName": "Estadio Nacional de Lima",
+    "lat": -12.0673,
+    "lng": -77.0337,
+    "keyPlayers": [
+      {
+        "name": "Luiz Da Silva",
+        "pos": "ZAG",
+        "ovr": 81
+      },
+      {
+        "name": "Carlos Gamarra",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Erick Noriega",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Carlos Diez",
+        "pos": "MC",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_bol",
+    "nationalCode": "BOL",
+    "name": "Bolívia",
+    "shortName": "BOL",
+    "flag": "🇧🇴",
+    "confederation": "CONMEBOL",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Seleção Bolívia Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#007934",
+    "secondaryColor": "#F9E300",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/bol.png",
+    "squadSize": 24,
+    "city": "La Paz",
+    "stadiumName": "Hernando Siles (3.600m)",
+    "lat": -16.4995,
+    "lng": -68.1227,
+    "keyPlayers": [
+      {
+        "name": "José Sagredo",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Rai Lima",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Marcelo Tórrez",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "José Herrera",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "nt_fra",
+    "nationalCode": "FRA",
+    "name": "França",
+    "shortName": "FRA",
+    "flag": "🇫🇷",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 87,
+    "youthAcademyName": "Seleção França Sub-20",
+    "youthQuality": 87,
+    "primaryColor": "#002395",
+    "secondaryColor": "#ED2939",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+    "squadSize": 24,
+    "city": "Paris",
+    "stadiumName": "Stade de France",
+    "lat": 48.9245,
+    "lng": 2.3602,
+    "keyPlayers": [
+      {
+        "name": "K. Mbappé",
+        "pos": "ATA",
+        "ovr": 91
+      },
+      {
+        "name": "O. Dembélé",
+        "pos": "ATA",
+        "ovr": 90
+      },
+      {
+        "name": "J. Koundé",
+        "pos": "LD",
+        "ovr": 87
+      },
+      {
+        "name": "W. Saliba",
+        "pos": "ZAG",
+        "ovr": 87
+      }
+    ]
+  },
+  {
+    "id": "nt_esp",
+    "nationalCode": "ESP",
+    "name": "Espanha",
+    "shortName": "ESP",
+    "flag": "🇪🇸",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 86,
+    "youthAcademyName": "Seleção Espanha Sub-20",
+    "youthQuality": 86,
+    "primaryColor": "#AA151B",
+    "secondaryColor": "#F1BF00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
+    "squadSize": 24,
+    "city": "Madri",
+    "stadiumName": "Santiago Bernabéu",
+    "lat": 40.4531,
+    "lng": -3.6883,
+    "keyPlayers": [
+      {
+        "name": "Rodri",
+        "pos": "VOL",
+        "ovr": 90
+      },
+      {
+        "name": "Pedri",
+        "pos": "MC",
+        "ovr": 89
+      },
+      {
+        "name": "Lamine Yamal",
+        "pos": "MD",
+        "ovr": 89
+      },
+      {
+        "name": "Nico Williams",
+        "pos": "ME",
+        "ovr": 86
+      }
+    ]
+  },
+  {
+    "id": "nt_eng",
+    "nationalCode": "ENG",
+    "name": "Inglaterra",
+    "shortName": "ENG",
+    "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 86,
+    "youthAcademyName": "Seleção Inglaterra Sub-20",
+    "youthQuality": 86,
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#CF081F",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
+    "squadSize": 24,
+    "city": "Londres",
+    "stadiumName": "Wembley Stadium",
+    "lat": 51.556,
+    "lng": -0.2795,
+    "keyPlayers": [
+      {
+        "name": "J. Bellingham",
+        "pos": "MEI",
+        "ovr": 90
+      },
+      {
+        "name": "H. Kane",
+        "pos": "ATA",
+        "ovr": 89
+      },
+      {
+        "name": "B. Saka",
+        "pos": "PD",
+        "ovr": 88
+      },
+      {
+        "name": "D. Rice",
+        "pos": "VOL",
+        "ovr": 87
+      }
+    ]
+  },
+  {
+    "id": "nt_por",
+    "nationalCode": "POR",
+    "name": "Portugal",
+    "shortName": "POR",
+    "flag": "🇵🇹",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 85,
+    "youthAcademyName": "Seleção Portugal Sub-20",
+    "youthQuality": 85,
+    "primaryColor": "#DA291C",
+    "secondaryColor": "#046A38",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/por.png",
+    "squadSize": 24,
+    "city": "Lisboa",
+    "stadiumName": "Estádio da Luz",
+    "lat": 38.7527,
+    "lng": -9.1847,
+    "keyPlayers": [
+      {
+        "name": "Vitinha",
+        "pos": "MC",
+        "ovr": 89
+      },
+      {
+        "name": "Bruno Fernandes",
+        "pos": "MEI",
+        "ovr": 87
+      },
+      {
+        "name": "Nuno Mendes",
+        "pos": "LE",
+        "ovr": 86
+      },
+      {
+        "name": "Rúben Dias",
+        "pos": "ZAG",
+        "ovr": 86
+      }
+    ]
+  },
+  {
+    "id": "nt_ger",
+    "nationalCode": "GER",
+    "name": "Alemanha",
+    "shortName": "GER",
+    "flag": "🇩🇪",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 86,
+    "youthAcademyName": "Seleção Alemanha Sub-20",
+    "youthQuality": 86,
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#111111",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
+    "squadSize": 24,
+    "city": "Munique",
+    "stadiumName": "Allianz Arena",
+    "lat": 48.2188,
+    "lng": 11.6247,
+    "keyPlayers": [
+      {
+        "name": "J. Kimmich",
+        "pos": "VOL",
+        "ovr": 89
+      },
+      {
+        "name": "F. Wirtz",
+        "pos": "MEI",
+        "ovr": 89
+      },
+      {
+        "name": "J. Musiala",
+        "pos": "MEI",
+        "ovr": 88
+      },
+      {
+        "name": "J. Tah",
+        "pos": "ZAG",
+        "ovr": 87
+      }
+    ]
+  },
+  {
+    "id": "nt_ita",
+    "nationalCode": "ITA",
+    "name": "Itália",
+    "shortName": "ITA",
+    "flag": "🇮🇹",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 85,
+    "youthAcademyName": "Seleção Itália Sub-20",
+    "youthQuality": 85,
+    "primaryColor": "#0064AA",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+    "squadSize": 24,
+    "city": "Roma",
+    "stadiumName": "Stadio Olimpico",
+    "lat": 41.9341,
+    "lng": 12.4547,
+    "keyPlayers": [
+      {
+        "name": "A. Bastoni",
+        "pos": "ZAG",
+        "ovr": 87
+      },
+      {
+        "name": "N. Barella",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "S. Tonali",
+        "pos": "VOL",
+        "ovr": 86
+      },
+      {
+        "name": "F. Dimarco",
+        "pos": "LE",
+        "ovr": 85
+      }
+    ]
+  },
+  {
+    "id": "nt_ned",
+    "nationalCode": "NED",
+    "name": "Holanda",
+    "shortName": "NED",
+    "flag": "🇳🇱",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 85,
+    "youthAcademyName": "Seleção Holanda Sub-20",
+    "youthQuality": 85,
+    "primaryColor": "#F36C21",
+    "secondaryColor": "#1E3264",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ned.png",
+    "squadSize": 24,
+    "city": "Amsterdã",
+    "stadiumName": "Johan Cruijff ArenA",
+    "lat": 52.3144,
+    "lng": 4.9419,
+    "keyPlayers": [
+      {
+        "name": "V. van Dijk",
+        "pos": "ZAG",
+        "ovr": 90
+      },
+      {
+        "name": "F. de Jong",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "T. Reijnders",
+        "pos": "MC",
+        "ovr": 86
+      },
+      {
+        "name": "R. Gravenberch",
+        "pos": "VOL",
+        "ovr": 85
+      }
+    ]
+  },
+  {
+    "id": "nt_bel",
+    "nationalCode": "BEL",
+    "name": "Bélgica",
+    "shortName": "BEL",
+    "flag": "🇧🇪",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 83,
+    "youthAcademyName": "Seleção Bélgica Sub-20",
+    "youthQuality": 83,
+    "primaryColor": "#E30613",
+    "secondaryColor": "#FFD500",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/bel.png",
+    "squadSize": 24,
+    "city": "Bruxelas",
+    "stadiumName": "King Baudouin Stadium",
+    "lat": 50.8957,
+    "lng": 4.3341,
+    "keyPlayers": [
+      {
+        "name": "K. De Bruyne",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "Y. Tielemans",
+        "pos": "MC",
+        "ovr": 85
+      },
+      {
+        "name": "R. Lukaku",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "L. Openda",
+        "pos": "ATA",
+        "ovr": 83
+      }
+    ]
+  },
+  {
+    "id": "nt_cro",
+    "nationalCode": "CRO",
+    "name": "Croácia",
+    "shortName": "CRO",
+    "flag": "🇭🇷",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Seleção Croácia Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#FF0000",
+    "secondaryColor": "#0052B4",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/cro.png",
+    "squadSize": 24,
+    "city": "Zagreb",
+    "stadiumName": "Stadion Maksimir",
+    "lat": 45.8189,
+    "lng": 16.0181,
+    "keyPlayers": [
+      {
+        "name": "J. Gvardiol",
+        "pos": "LE",
+        "ovr": 84
+      },
+      {
+        "name": "L. Modrić",
+        "pos": "MC",
+        "ovr": 83
+      },
+      {
+        "name": "M. Kovačić",
+        "pos": "MC",
+        "ovr": 83
+      },
+      {
+        "name": "A. Budimir",
+        "pos": "ATA",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "nt_sui",
+    "nationalCode": "SUI",
+    "name": "Suíça",
+    "shortName": "SUI",
+    "flag": "🇨🇭",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Seleção Suíça Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#D52B1E",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/sui.png",
+    "squadSize": 24,
+    "city": "Basileia",
+    "stadiumName": "St. Jakob-Park",
+    "lat": 47.5416,
+    "lng": 7.6201,
+    "keyPlayers": [
+      {
+        "name": "G. Xhaka",
+        "pos": "VOL",
+        "ovr": 85
+      },
+      {
+        "name": "F. Schär",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "M. Akanji",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "D. Zakaria",
+        "pos": "VOL",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "nt_den",
+    "nationalCode": "DEN",
+    "name": "Dinamarca",
+    "shortName": "DEN",
+    "flag": "🇩🇰",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Dinamarca Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#C60C30",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/den.png",
+    "squadSize": 24,
+    "city": "Copenhague",
+    "stadiumName": "Parken Stadium",
+    "lat": 55.7027,
+    "lng": 12.5723,
+    "keyPlayers": [
+      {
+        "name": "M. Hjulmand",
+        "pos": "VOL",
+        "ovr": 83
+      },
+      {
+        "name": "P. Højbjerg",
+        "pos": "VOL",
+        "ovr": 82
+      },
+      {
+        "name": "A. Christensen",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "M. Damsgaard",
+        "pos": "MEI",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_aut",
+    "nationalCode": "AUT",
+    "name": "Áustria",
+    "shortName": "AUT",
+    "flag": "🇦🇹",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Seleção Áustria Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#ED2939",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/aut.png",
+    "squadSize": 24,
+    "city": "Viena",
+    "stadiumName": "Ernst-Happel-Stadion",
+    "lat": 48.2072,
+    "lng": 16.4209,
+    "keyPlayers": [
+      {
+        "name": "D. Alaba",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "K. Laimer",
+        "pos": "LD",
+        "ovr": 82
+      },
+      {
+        "name": "M. Sabitzer",
+        "pos": "VOL",
+        "ovr": 80
+      },
+      {
+        "name": "X. Schlager",
+        "pos": "VOL",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_tur",
+    "nationalCode": "TUR",
+    "name": "Turquia",
+    "shortName": "TUR",
+    "flag": "🇹🇷",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Seleção Turquia Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#E30A17",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/tur.png",
+    "squadSize": 24,
+    "city": "Istambul",
+    "stadiumName": "Atatürk Olympic Stadium",
+    "lat": 41.0745,
+    "lng": 28.7656,
+    "keyPlayers": [
+      {
+        "name": "H. Çalhanoğlu",
+        "pos": "VOL",
+        "ovr": 86
+      },
+      {
+        "name": "O. Kökçü",
+        "pos": "MC",
+        "ovr": 82
+      },
+      {
+        "name": "A. Güler",
+        "pos": "MD",
+        "ovr": 81
+      },
+      {
+        "name": "A. Bardakcı",
+        "pos": "ZAG",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_srb",
+    "nationalCode": "SRB",
+    "name": "Sérvia",
+    "shortName": "SRB",
+    "flag": "🇷🇸",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Sérvia Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#C6363C",
+    "secondaryColor": "#0C4076",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/sba.png",
+    "squadSize": 24,
+    "city": "Belgrado",
+    "stadiumName": "Rajko Mitić",
+    "lat": 44.7832,
+    "lng": 20.4648,
+    "keyPlayers": [
+      {
+        "name": "S. Milinković-Savić",
+        "pos": "MC",
+        "ovr": 84
+      },
+      {
+        "name": "N. Milenković",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "D. Vlahović",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "F. Kostić",
+        "pos": "ME",
+        "ovr": 81
+      }
+    ]
+  },
+  {
+    "id": "nt_ukr",
+    "nationalCode": "UKR",
+    "name": "Ucrânia",
+    "shortName": "UKR",
+    "flag": "🇺🇦",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Seleção Ucrânia Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#FFD700",
+    "secondaryColor": "#0057B7",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ukr.png",
+    "squadSize": 24,
+    "city": "Kiev",
+    "stadiumName": "NSC Olimpiyskiy",
+    "lat": 50.4334,
+    "lng": 30.5219,
+    "keyPlayers": [
+      {
+        "name": "A. Dovbyk",
+        "pos": "ATA",
+        "ovr": 83
+      },
+      {
+        "name": "G. Sudakov",
+        "pos": "MEI",
+        "ovr": 80
+      },
+      {
+        "name": "I. Zabarnyi",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "V. Tsygankov",
+        "pos": "MD",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "nt_pol",
+    "nationalCode": "POL",
+    "name": "Polônia",
+    "shortName": "POL",
+    "flag": "🇵🇱",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Seleção Polônia Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#DC143C",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/pol.png",
+    "squadSize": 24,
+    "city": "Varsóvia",
+    "stadiumName": "PGE Narodowy",
+    "lat": 52.2395,
+    "lng": 21.0458,
+    "keyPlayers": [
+      {
+        "name": "R. Lewandowski",
+        "pos": "ATA",
+        "ovr": 88
+      },
+      {
+        "name": "P. Zieliński",
+        "pos": "MC",
+        "ovr": 80
+      },
+      {
+        "name": "M. Cash",
+        "pos": "LD",
+        "ovr": 79
+      },
+      {
+        "name": "A. Milik",
+        "pos": "ATA",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "nt_swe",
+    "nationalCode": "SWE",
+    "name": "Suécia",
+    "shortName": "SWE",
+    "flag": "🇸🇪",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Suécia Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#FECC02",
+    "secondaryColor": "#006AA7",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/swe.png",
+    "squadSize": 24,
+    "city": "Estocolmo",
+    "stadiumName": "Strawberry Arena",
+    "lat": 59.3727,
+    "lng": 18.0003,
+    "keyPlayers": [
+      {
+        "name": "A. Isak",
+        "pos": "ATA",
+        "ovr": 88
+      },
+      {
+        "name": "V. Gyökeres",
+        "pos": "ATA",
+        "ovr": 87
+      },
+      {
+        "name": "D. Kulusevski",
+        "pos": "MC",
+        "ovr": 83
+      },
+      {
+        "name": "A. Elanga",
+        "pos": "PD",
+        "ovr": 81
+      }
+    ]
+  },
+  {
+    "id": "nt_nor",
+    "nationalCode": "NOR",
+    "name": "Noruega",
+    "shortName": "NOR",
+    "flag": "🇳🇴",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Seleção Noruega Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#BA0C2F",
+    "secondaryColor": "#00205B",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/nor.png",
+    "squadSize": 24,
+    "city": "Oslo",
+    "stadiumName": "Ullevaal Stadion",
+    "lat": 59.949,
+    "lng": 10.7336,
+    "keyPlayers": [
+      {
+        "name": "E. Haaland",
+        "pos": "ATA",
+        "ovr": 90
+      },
+      {
+        "name": "M. Ødegaard",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "A. Sørloth",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "F. Aursnes",
+        "pos": "MC",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_sco",
+    "nationalCode": "SCO",
+    "name": "Escócia",
+    "shortName": "SCO",
+    "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Seleção Escócia Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#003078",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
+    "squadSize": 24,
+    "city": "Glasgow",
+    "stadiumName": "Hampden Park",
+    "lat": 55.8258,
+    "lng": -4.252,
+    "keyPlayers": [
+      {
+        "name": "S. McTominay",
+        "pos": "MC",
+        "ovr": 85
+      },
+      {
+        "name": "A. Robertson",
+        "pos": "LE",
+        "ovr": 82
+      },
+      {
+        "name": "J. McGinn",
+        "pos": "ME",
+        "ovr": 81
+      },
+      {
+        "name": "C. McGregor",
+        "pos": "VOL",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "nt_cze",
+    "nationalCode": "CZE",
+    "name": "Rep. Tcheca",
+    "shortName": "CZE",
+    "flag": "🇨🇿",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Seleção Rep. Tcheca Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#D7141A",
+    "secondaryColor": "#11457E",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/cze.png",
+    "squadSize": 24,
+    "city": "Praga",
+    "stadiumName": "Fortuna Arena",
+    "lat": 50.0675,
+    "lng": 14.4717,
+    "keyPlayers": [
+      {
+        "name": "P. Schick",
+        "pos": "ATA",
+        "ovr": 85
+      },
+      {
+        "name": "L. Krejčí",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "L. Provod",
+        "pos": "MEI",
+        "ovr": 78
+      },
+      {
+        "name": "T. Souček",
+        "pos": "VOL",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "nt_gre",
+    "nationalCode": "GRE",
+    "name": "Grécia",
+    "shortName": "GRE",
+    "flag": "🇬🇷",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Seleção Grécia Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#0D5EAF",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/gre.png",
+    "squadSize": 24,
+    "city": "Atenas",
+    "stadiumName": "OPAP Arena",
+    "lat": 38.0361,
+    "lng": 23.7412,
+    "keyPlayers": [
+      {
+        "name": "V. Pavlidis",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "K. Fortounis",
+        "pos": "MEI",
+        "ovr": 80
+      },
+      {
+        "name": "C. Tzolis",
+        "pos": "ME",
+        "ovr": 80
+      },
+      {
+        "name": "K. Tsimikas",
+        "pos": "LE",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_hun",
+    "nationalCode": "HUN",
+    "name": "Hungria",
+    "shortName": "HUN",
+    "flag": "🇭🇺",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Seleção Hungria Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#CD2A3E",
+    "secondaryColor": "#436F4D",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/hun.png",
+    "squadSize": 24,
+    "city": "Budapeste",
+    "stadiumName": "Puskás Aréna",
+    "lat": 47.5031,
+    "lng": 19.0982,
+    "keyPlayers": [
+      {
+        "name": "W. Orban",
+        "pos": "ZAG",
+        "ovr": 84
+      },
+      {
+        "name": "D. Szoboszlai",
+        "pos": "MEI",
+        "ovr": 83
+      },
+      {
+        "name": "M. Kerkez",
+        "pos": "LE",
+        "ovr": 82
+      },
+      {
+        "name": "R. Sallai",
+        "pos": "MD",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "nt_rou",
+    "nationalCode": "ROU",
+    "name": "Romênia",
+    "shortName": "ROU",
+    "flag": "🇷🇴",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção Romênia Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#FCD116",
+    "secondaryColor": "#002B7F",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/rom.png",
+    "squadSize": 24,
+    "city": "Bucareste",
+    "stadiumName": "Arena Națională",
+    "lat": 44.4372,
+    "lng": 26.1526,
+    "keyPlayers": [
+      {
+        "name": "A. Rațiu",
+        "pos": "LD",
+        "ovr": 79
+      },
+      {
+        "name": "N. Stanciu",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "A. Maxim",
+        "pos": "MEI",
+        "ovr": 76
+      },
+      {
+        "name": "D. Man",
+        "pos": "PD",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "nt_wal",
+    "nationalCode": "WAL",
+    "name": "País de Gales",
+    "shortName": "WAL",
+    "flag": "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+    "confederation": "UEFA",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção País de Gales Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#C8102E",
+    "secondaryColor": "#00AB39",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/wal.png",
+    "squadSize": 24,
+    "city": "Cardiff",
+    "stadiumName": "Cardiff City Stadium",
+    "lat": 51.4728,
+    "lng": -3.2031,
+    "keyPlayers": [
+      {
+        "name": "B. Johnson",
+        "pos": "PD",
+        "ovr": 79
+      },
+      {
+        "name": "N. Williams",
+        "pos": "LE",
+        "ovr": 78
+      },
+      {
+        "name": "E. Ampadu",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "J. Rodon",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "nt_usa",
+    "nationalCode": "USA",
+    "name": "Estados Unidos",
+    "shortName": "USA",
+    "flag": "🇺🇸",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Estados Unidos Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#002868",
+    "secondaryColor": "#BF0A30",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+    "squadSize": 24,
+    "city": "Nova Jersey",
+    "stadiumName": "MetLife Stadium",
+    "lat": 40.8128,
+    "lng": -74.0742,
+    "keyPlayers": [
+      {
+        "name": "C. Pulisic",
+        "pos": "PD",
+        "ovr": 84
+      },
+      {
+        "name": "A. Robinson",
+        "pos": "LE",
+        "ovr": 82
+      },
+      {
+        "name": "M. Tillman",
+        "pos": "MEI",
+        "ovr": 82
+      },
+      {
+        "name": "Johnny Cardoso",
+        "pos": "VOL",
+        "ovr": 81
+      }
+    ]
+  },
+  {
+    "id": "nt_mex",
+    "nationalCode": "MEX",
+    "name": "México",
+    "shortName": "MEX",
+    "flag": "🇲🇽",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Seleção México Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#006847",
+    "secondaryColor": "#CE1126",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/mex.png",
+    "squadSize": 24,
+    "city": "Cidade do México",
+    "stadiumName": "Estadio Azteca",
+    "lat": 19.3029,
+    "lng": -99.1505,
+    "keyPlayers": [
+      {
+        "name": "J. Quiñones",
+        "pos": "ATA",
+        "ovr": 80
+      },
+      {
+        "name": "S. Giménez",
+        "pos": "ATA",
+        "ovr": 79
+      },
+      {
+        "name": "E. Sánchez",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "R. Alvarado",
+        "pos": "MD",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "nt_can",
+    "nationalCode": "CAN",
+    "name": "Canadá",
+    "shortName": "CAN",
+    "flag": "🇨🇦",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Seleção Canadá Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#FF0000",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/can.png",
+    "squadSize": 24,
+    "city": "Toronto",
+    "stadiumName": "BMO Field",
+    "lat": 43.6332,
+    "lng": -79.4186,
+    "keyPlayers": [
+      {
+        "name": "A. Davies",
+        "pos": "LE",
+        "ovr": 84
+      },
+      {
+        "name": "J. David",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "A. Johnston",
+        "pos": "LD",
+        "ovr": 78
+      },
+      {
+        "name": "Stephen Eustáquio",
+        "pos": "VOL",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_pan",
+    "nationalCode": "PAN",
+    "name": "Panamá",
+    "shortName": "PAN",
+    "flag": "🇵🇦",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Seleção Panamá Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#DA121A",
+    "secondaryColor": "#072357",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/pan.png",
+    "squadSize": 23,
+    "city": "Cidade do Panamá",
+    "stadiumName": "Rommel Fernández",
+    "lat": 9.0359,
+    "lng": -79.4694,
+    "keyPlayers": [
+      {
+        "name": "A. Murillo",
+        "pos": "LD",
+        "ovr": 76
+      },
+      {
+        "name": "César Blackman",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Roderick Miller",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Antony Herbert",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "nt_crc",
+    "nationalCode": "CRC",
+    "name": "Costa Rica",
+    "shortName": "CRC",
+    "flag": "🇨🇷",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Seleção Costa Rica Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#CE1126",
+    "secondaryColor": "#002B7F",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/crc.png",
+    "squadSize": 23,
+    "city": "San José",
+    "stadiumName": "Estadio Nacional",
+    "lat": 9.9366,
+    "lng": -84.1075,
+    "keyPlayers": [
+      {
+        "name": "Francisco Calvo",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Fernán Faerron",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Julio Cascante",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Álvaro Zamora",
+        "pos": "ATA",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "nt_jam",
+    "nationalCode": "JAM",
+    "name": "Jamaica",
+    "shortName": "JAM",
+    "flag": "🇯🇲",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Seleção Jamaica Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#FED100",
+    "secondaryColor": "#009B3A",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/jam.png",
+    "squadSize": 24,
+    "city": "Kingston",
+    "stadiumName": "Independence Park",
+    "lat": 18.002,
+    "lng": -76.772,
+    "keyPlayers": [
+      {
+        "name": "L. Bailey",
+        "pos": "MD",
+        "ovr": 79
+      },
+      {
+        "name": "E. Pinnock",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Kaheem Parris",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "B. De Cordova-Reid",
+        "pos": "MD",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "nt_hon",
+    "nationalCode": "HON",
+    "name": "Honduras",
+    "shortName": "HON",
+    "flag": "🇭🇳",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Seleção Honduras Sub-20",
+    "youthQuality": 71,
+    "primaryColor": "#0073CF",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/hon.png",
+    "squadSize": 23,
+    "city": "San Pedro Sula",
+    "stadiumName": "Olímpico Metropolitano",
+    "lat": 15.4697,
+    "lng": -88.011,
+    "keyPlayers": [
+      {
+        "name": "K. Arriaga",
+        "pos": "VOL",
+        "ovr": 73
+      },
+      {
+        "name": "R. Quioto",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "A. Nájar",
+        "pos": "LD",
+        "ovr": 72
+      },
+      {
+        "name": "Luis Vega",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "nt_slv",
+    "nationalCode": "SLV",
+    "name": "El Salvador",
+    "shortName": "SLV",
+    "flag": "🇸🇻",
+    "confederation": "CONCACAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Seleção El Salvador Sub-20",
+    "youthQuality": 69,
+    "primaryColor": "#0F47AF",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/slv.png",
+    "squadSize": 23,
+    "city": "San Salvador",
+    "stadiumName": "Estadio Cuscatlán",
+    "lat": 13.6811,
+    "lng": -89.2224,
+    "keyPlayers": [
+      {
+        "name": "A. Roldan",
+        "pos": "LD",
+        "ovr": 70
+      },
+      {
+        "name": "Ronald Gómez",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Elvis Claros",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Brayan Landaverde",
+        "pos": "MC",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "nt_mar",
+    "nationalCode": "MAR",
+    "name": "Marrocos",
+    "shortName": "MAR",
+    "flag": "🇲🇦",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Seleção Marrocos Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#C1272D",
+    "secondaryColor": "#006233",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/mar.png",
+    "squadSize": 24,
+    "city": "Rabat",
+    "stadiumName": "Prince Moulay Abdellah",
+    "lat": 33.9599,
+    "lng": -6.8891,
+    "keyPlayers": [
+      {
+        "name": "A. Hakimi",
+        "pos": "LD",
+        "ovr": 89
+      },
+      {
+        "name": "Brahim",
+        "pos": "MD",
+        "ovr": 82
+      },
+      {
+        "name": "Y. En-Nesyri",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "N. Aguerd",
+        "pos": "ZAG",
+        "ovr": 81
+      }
+    ]
+  },
+  {
+    "id": "nt_sen",
+    "nationalCode": "SEN",
+    "name": "Senegal",
+    "shortName": "SEN",
+    "flag": "🇸🇳",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Senegal Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#00853F",
+    "secondaryColor": "#FDEF42",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/sen.png",
+    "squadSize": 24,
+    "city": "Dakar",
+    "stadiumName": "Diamniadio Olympic Stadium",
+    "lat": 14.7351,
+    "lng": -17.2007,
+    "keyPlayers": [
+      {
+        "name": "S. Mané",
+        "pos": "ME",
+        "ovr": 83
+      },
+      {
+        "name": "K. Koulibaly",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "B. Dia",
+        "pos": "ATA",
+        "ovr": 80
+      },
+      {
+        "name": "N. Jackson",
+        "pos": "ATA",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_nga",
+    "nationalCode": "NGA",
+    "name": "Nigéria",
+    "shortName": "NGA",
+    "flag": "🇳🇬",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Nigéria Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#008751",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/nga.png",
+    "squadSize": 24,
+    "city": "Abuja",
+    "stadiumName": "Moshood Abiola National Stadium",
+    "lat": 9.0381,
+    "lng": 7.4533,
+    "keyPlayers": [
+      {
+        "name": "V. Osimhen",
+        "pos": "ATA",
+        "ovr": 87
+      },
+      {
+        "name": "A. Lookman",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "V. Boniface",
+        "pos": "ATA",
+        "ovr": 81
+      },
+      {
+        "name": "O. Aina",
+        "pos": "LD",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_egy",
+    "nationalCode": "EGY",
+    "name": "Egito",
+    "shortName": "EGY",
+    "flag": "🇪🇬",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Seleção Egito Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#CE1126",
+    "secondaryColor": "#111111",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/egy.png",
+    "squadSize": 23,
+    "city": "Cairo",
+    "stadiumName": "Cairo International Stadium",
+    "lat": 30.0691,
+    "lng": 31.3123,
+    "keyPlayers": [
+      {
+        "name": "M. Salah",
+        "pos": "MD",
+        "ovr": 91
+      },
+      {
+        "name": "O. Marmoush",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "Tarek Alaa",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "Karim Hafez",
+        "pos": "ZAG",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "nt_civ",
+    "nationalCode": "CIV",
+    "name": "Costa do Marfim",
+    "shortName": "CIV",
+    "flag": "🇨🇮",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Seleção Costa do Marfim Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#F77F00",
+    "secondaryColor": "#009E60",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/civ.png",
+    "squadSize": 24,
+    "city": "Abidjan",
+    "stadiumName": "Alassane Ouattara Stadium",
+    "lat": 5.4807,
+    "lng": -4.075,
+    "keyPlayers": [
+      {
+        "name": "Evan Ndicka",
+        "pos": "ZAG",
+        "ovr": 81
+      },
+      {
+        "name": "E. Ndicka",
+        "pos": "ZAG",
+        "ovr": 81
+      },
+      {
+        "name": "W. Singo",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "O. Kossounou",
+        "pos": "ZAG",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_alg",
+    "nationalCode": "ALG",
+    "name": "Argélia",
+    "shortName": "ALG",
+    "flag": "🇩🇿",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Seleção Argélia Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#006233",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/alg.png",
+    "squadSize": 24,
+    "city": "Argel",
+    "stadiumName": "Nelson Mandela Stadium",
+    "lat": 36.6976,
+    "lng": 3.1225,
+    "keyPlayers": [
+      {
+        "name": "R. Mahrez",
+        "pos": "MD",
+        "ovr": 84
+      },
+      {
+        "name": "R. Aït-Nouri",
+        "pos": "LE",
+        "ovr": 81
+      },
+      {
+        "name": "I. Bennacer",
+        "pos": "VOL",
+        "ovr": 80
+      },
+      {
+        "name": "M. Amoura",
+        "pos": "ATA",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_cmr",
+    "nationalCode": "CMR",
+    "name": "Camarões",
+    "shortName": "CMR",
+    "flag": "🇨🇲",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Seleção Camarões Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#007A5E",
+    "secondaryColor": "#CE1126",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/crm.png",
+    "squadSize": 24,
+    "city": "Yaoundé",
+    "stadiumName": "Olembe Stadium",
+    "lat": 3.9519,
+    "lng": 11.5407,
+    "keyPlayers": [
+      {
+        "name": "B. Mbeumo",
+        "pos": "PD",
+        "ovr": 85
+      },
+      {
+        "name": "A. Zambo Anguissa",
+        "pos": "MC",
+        "ovr": 82
+      },
+      {
+        "name": "C. Baleba",
+        "pos": "VOL",
+        "ovr": 81
+      },
+      {
+        "name": "F. Boyomo",
+        "pos": "ZAG",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "nt_mli",
+    "nationalCode": "MLI",
+    "name": "Mali",
+    "shortName": "MLI",
+    "flag": "🇲🇱",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção Mali Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#14B53A",
+    "secondaryColor": "#FCD116",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/mli.png",
+    "squadSize": 24,
+    "city": "Bamako",
+    "stadiumName": "Stade du 26 Mars",
+    "lat": 12.6039,
+    "lng": -7.9222,
+    "keyPlayers": [
+      {
+        "name": "H. Traoré",
+        "pos": "LD",
+        "ovr": 79
+      },
+      {
+        "name": "Y. Bissouma",
+        "pos": "VOL",
+        "ovr": 78
+      },
+      {
+        "name": "A. Haidara",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "C. Doucouré",
+        "pos": "VOL",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_tun",
+    "nationalCode": "TUN",
+    "name": "Tunísia",
+    "shortName": "TUN",
+    "flag": "🇹🇳",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Seleção Tunísia Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#E70013",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/tun.png",
+    "squadSize": 24,
+    "city": "Túnis",
+    "stadiumName": "Hammadi Agrebi Stadium",
+    "lat": 36.7478,
+    "lng": 10.2728,
+    "keyPlayers": [
+      {
+        "name": "E. Skhiri",
+        "pos": "VOL",
+        "ovr": 80
+      },
+      {
+        "name": "A. Abdi",
+        "pos": "LE",
+        "ovr": 76
+      },
+      {
+        "name": "Ali Abdi",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Ellyes Skhiri",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "nt_gha",
+    "nationalCode": "GHA",
+    "name": "Gana",
+    "shortName": "GHA",
+    "flag": "🇬🇭",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Seleção Gana Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#FCD116",
+    "secondaryColor": "#CE1126",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/gha.png",
+    "squadSize": 24,
+    "city": "Acra",
+    "stadiumName": "Accra Sports Stadium",
+    "lat": 5.5515,
+    "lng": -0.1918,
+    "keyPlayers": [
+      {
+        "name": "Iñaki Williams",
+        "pos": "MD",
+        "ovr": 83
+      },
+      {
+        "name": "T. Partey",
+        "pos": "VOL",
+        "ovr": 83
+      },
+      {
+        "name": "A. Semenyo",
+        "pos": "MD",
+        "ovr": 80
+      },
+      {
+        "name": "M. Kudus",
+        "pos": "PD",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "nt_rsa",
+    "nationalCode": "RSA",
+    "name": "África do Sul",
+    "shortName": "RSA",
+    "flag": "🇿🇦",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Seleção África do Sul Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#FFB81C",
+    "secondaryColor": "#007749",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/rsa.png",
+    "squadSize": 23,
+    "city": "Joanesburgo",
+    "stadiumName": "FNB Stadium (Soccer City)",
+    "lat": -26.2349,
+    "lng": 27.9826,
+    "keyPlayers": [
+      {
+        "name": "Aden McCarthy",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Aubrey Modiba",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "S. Ngezana",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "G. Links",
+        "pos": "LE",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "nt_cod",
+    "nationalCode": "COD",
+    "name": "RD Congo",
+    "shortName": "COD",
+    "flag": "🇨🇩",
+    "confederation": "CAF",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção RD Congo Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#007FFF",
+    "secondaryColor": "#F7D618",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/rdc.png",
+    "squadSize": 24,
+    "city": "Kinshasa",
+    "stadiumName": "Stade des Martyrs",
+    "lat": -4.3308,
+    "lng": 15.3102,
+    "keyPlayers": [
+      {
+        "name": "Y. Wissa",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "S. Banza",
+        "pos": "ATA",
+        "ovr": 81
+      },
+      {
+        "name": "A. Wan-Bissaka",
+        "pos": "LD",
+        "ovr": 80
+      },
+      {
+        "name": "C. Bakambu",
+        "pos": "ATA",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_jpn",
+    "nationalCode": "JPN",
+    "name": "Japão",
+    "shortName": "JPN",
+    "flag": "🇯🇵",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Seleção Japão Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#002366",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/jpn.png",
+    "squadSize": 24,
+    "city": "Tóquio",
+    "stadiumName": "Japan National Stadium",
+    "lat": 35.6779,
+    "lng": 139.7145,
+    "keyPlayers": [
+      {
+        "name": "K. Mitoma",
+        "pos": "ME",
+        "ovr": 82
+      },
+      {
+        "name": "T. Kubo",
+        "pos": "MD",
+        "ovr": 82
+      },
+      {
+        "name": "R. Doan",
+        "pos": "MD",
+        "ovr": 82
+      },
+      {
+        "name": "H. Morita",
+        "pos": "MC",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "nt_kor",
+    "nationalCode": "KOR",
+    "name": "Coreia do Sul",
+    "shortName": "KOR",
+    "flag": "🇰🇷",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Seleção Coreia do Sul Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#CD2E3A",
+    "secondaryColor": "#0047A0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/kors.png",
+    "squadSize": 24,
+    "city": "Seul",
+    "stadiumName": "Seoul World Cup Stadium",
+    "lat": 37.5683,
+    "lng": 126.8973,
+    "keyPlayers": [
+      {
+        "name": "H. Son",
+        "pos": "PE",
+        "ovr": 85
+      },
+      {
+        "name": "Kim Min Jae",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "Lee Kang In",
+        "pos": "PD",
+        "ovr": 79
+      },
+      {
+        "name": "Lee Jae Sung",
+        "pos": "MEI",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_irn",
+    "nationalCode": "IRN",
+    "name": "Irã",
+    "shortName": "IRN",
+    "flag": "🇮🇷",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Seleção Irã Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#239F40",
+    "secondaryColor": "#DA0000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/irn.png",
+    "squadSize": 23,
+    "city": "Teerã",
+    "stadiumName": "Azadi Stadium",
+    "lat": 35.7244,
+    "lng": 51.2755,
+    "keyPlayers": [
+      {
+        "name": "M. Taremi",
+        "pos": "ATA",
+        "ovr": 78
+      },
+      {
+        "name": "Shoja Khalilzadeh",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Hossein Kanani",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Danial Iri",
+        "pos": "ZAG",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "nt_aus",
+    "nationalCode": "AUS",
+    "name": "Austrália",
+    "shortName": "AUS",
+    "flag": "🇦🇺",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Seleção Austrália Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#FFCD00",
+    "secondaryColor": "#00843D",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
+    "squadSize": 24,
+    "city": "Sydney",
+    "stadiumName": "Stadium Australia",
+    "lat": -33.8471,
+    "lng": 151.0634,
+    "keyPlayers": [
+      {
+        "name": "J. Irvine",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "C. Burgess",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "H. Souttar",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "C. Goodwin",
+        "pos": "ME",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "nt_ksa",
+    "nationalCode": "KSA",
+    "name": "Arábia Saudita",
+    "shortName": "KSA",
+    "flag": "🇸🇦",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Seleção Arábia Saudita Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#006C35",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/ksa.png",
+    "squadSize": 24,
+    "city": "Riade",
+    "stadiumName": "King Fahd Sports City",
+    "lat": 24.7886,
+    "lng": 46.839,
+    "keyPlayers": [
+      {
+        "name": "S. Al Dawsari",
+        "pos": "ME",
+        "ovr": 82
+      },
+      {
+        "name": "Saud Abdulhamid",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "S. Abdulhamid",
+        "pos": "LD",
+        "ovr": 75
+      },
+      {
+        "name": "M. Al Juwair",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "nt_qat",
+    "nationalCode": "QAT",
+    "name": "Catar",
+    "shortName": "QAT",
+    "flag": "🇶🇦",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Seleção Catar Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#8A1538",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/qat.png",
+    "squadSize": 24,
+    "city": "Lusail",
+    "stadiumName": "Lusail Stadium",
+    "lat": 25.4209,
+    "lng": 51.4904,
+    "keyPlayers": [
+      {
+        "name": "A. Afif",
+        "pos": "ME",
+        "ovr": 78
+      },
+      {
+        "name": "Guilherme",
+        "pos": "VOL",
+        "ovr": 77
+      },
+      {
+        "name": "Edmilson Junior",
+        "pos": "PE",
+        "ovr": 76
+      },
+      {
+        "name": "A. Ali",
+        "pos": "ATA",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "nt_uzb",
+    "nationalCode": "UZB",
+    "name": "Uzbequistão",
+    "shortName": "UZB",
+    "flag": "🇺🇿",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Seleção Uzbequistão Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#0099B5",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/uzb.png",
+    "squadSize": 23,
+    "city": "Tashkent",
+    "stadiumName": "Milliy Stadium",
+    "lat": 41.2797,
+    "lng": 69.2121,
+    "keyPlayers": [
+      {
+        "name": "A. Khusanov",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "E. Shomurodov",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "Rustam Ashurmatov",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Avazbek Ulmasaliyev",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "nt_irq",
+    "nationalCode": "IRQ",
+    "name": "Iraque",
+    "shortName": "IRQ",
+    "flag": "🇮🇶",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Seleção Iraque Sub-20",
+    "youthQuality": 71,
+    "primaryColor": "#007A3D",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/irq.png",
+    "squadSize": 23,
+    "city": "Basra",
+    "stadiumName": "Basra International Stadium",
+    "lat": 30.4402,
+    "lng": 47.7801,
+    "keyPlayers": [
+      {
+        "name": "Frans Putros",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Merchas Doski",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Munaf Younus",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Hussein Ali",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "nt_uae",
+    "nationalCode": "UAE",
+    "name": "Emirados Árabes",
+    "shortName": "UAE",
+    "flag": "🇦🇪",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Seleção Emirados Árabes Sub-20",
+    "youthQuality": 71,
+    "primaryColor": "#C8102E",
+    "secondaryColor": "#00732F",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/uae.png",
+    "squadSize": 23,
+    "city": "Abu Dhabi",
+    "stadiumName": "Zayed Sports City",
+    "lat": 24.4139,
+    "lng": 54.4557,
+    "keyPlayers": [
+      {
+        "name": "Erik",
+        "pos": "LE",
+        "ovr": 73
+      },
+      {
+        "name": "K. Autonne",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Alaeddine Zouhir",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Kouame Autonne",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "nt_nzl",
+    "nationalCode": "NZL",
+    "name": "Nova Zelândia",
+    "shortName": "NZL",
+    "flag": "🇳🇿",
+    "confederation": "AFC",
+    "country": "BRA",
+    "leagueId": "BRA_1",
+    "isNationalTeam": true,
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Seleção Nova Zelândia Sub-20",
+    "youthQuality": 71,
+    "primaryColor": "#111111",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/countries/500/nzl.png",
+    "squadSize": 24,
+    "city": "Auckland",
+    "stadiumName": "Eden Park",
+    "lat": -36.8752,
+    "lng": 174.7447,
+    "keyPlayers": [
+      {
+        "name": "C. Wood",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "J. Bell",
+        "pos": "VOL",
+        "ovr": 74
+      },
+      {
+        "name": "L. Cacace",
+        "pos": "LE",
+        "ovr": 72
+      },
+      {
+        "name": "M. Stamenić",
+        "pos": "VOL",
+        "ovr": 71
+      }
+    ]
+  }
+]

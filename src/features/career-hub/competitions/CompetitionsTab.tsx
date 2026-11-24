@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { getClubById } from '../../../data/clubs';
+import { getClubById, getNationalTeamByCountry } from '../../../data/clubs';
 import { COUNTRIES } from '../../../data/countries/countries';
 import { ContinentalCupId, LeagueId, LEAGUES } from '../../../data/leagues/leagues';
-import { getCompetitionTheme } from '../../../data/world/competitionThemes';
+import { getCompetitionTheme, InternationalCompId } from '../../../data/world/competitionThemes';
 import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
@@ -10,9 +10,24 @@ import { ConsoleStepper } from '../../../shared/ui/ConsoleStepper';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { ClubSquadInspector } from './ClubSquadInspector';
 import { ContinentalBracketView } from './ContinentalBracketView';
+import { InternationalCupBracketView } from './InternationalCupBracketView';
+import { InternationalQualifiersView } from './InternationalQualifiersView';
 import { SeasonHistoryView } from './SeasonHistoryView';
 
-type CompMode = 'SUL_LIGAS' | 'EURO_LIGAS' | 'MLS' | 'CONMEBOL_CUPS' | 'UEFA_CUPS' | 'HISTORICO';
+type CompMode =
+  | 'SUL_LIGAS'
+  | 'EURO_LIGAS'
+  | 'MLS'
+  | 'CONMEBOL_CUPS'
+  | 'UEFA_CUPS'
+  | 'SELECOES_ELIM'
+  | 'SELECOES_COPAS'
+  | 'HISTORICO';
+
+type IntlCupOption = Extract<
+  InternationalCompId,
+  'WORLD_CUP' | 'NATIONS_LEAGUE' | 'COPA_AMERICA' | 'EURO_CUP'
+>;
 
 const LEAGUES_MAP: Record<'SUL_LIGAS' | 'EURO_LIGAS' | 'MLS', LeagueId[]> = {
   SUL_LIGAS: ['BRA_1', 'BRA_2', 'ARG_1', 'ARG_2'],
@@ -23,11 +38,14 @@ const LEAGUES_MAP: Record<'SUL_LIGAS' | 'EURO_LIGAS' | 'MLS', LeagueId[]> = {
   MLS: ['USA_1'],
 };
 
+const INTL_CUPS: IntlCupOption[] = ['WORLD_CUP', 'NATIONS_LEAGUE', 'COPA_AMERICA', 'EURO_CUP'];
+
 export const CompetitionsTab: React.FC = () => {
-  const { contract, worldSeason } = useCareerStore();
+  const { player, contract, worldSeason } = useCareerStore();
   const playerLeagueId = contract
     ? findClubLeagueIdInWorld(worldSeason, contract.clubId)
     : 'BRA_1';
+  const userNatTeam = getNationalTeamByCountry(player?.nationality ?? 'BRA');
 
   const initialMode: CompMode =
     playerLeagueId === 'USA_1'
@@ -39,12 +57,21 @@ export const CompetitionsTab: React.FC = () => {
   const [mode, setMode] = useState<CompMode>(initialMode);
   const [leagueId, setLeagueId] = useState<LeagueId>(playerLeagueId);
   const [cupId, setCupId] = useState<ContinentalCupId>('CHAMPIONS_LEAGUE');
+  const [wcqGroupId, setWcqGroupId] = useState<string>('WCQ_CONMEBOL');
+  const [intlCupId, setIntlCupId] = useState<IntlCupOption>('WORLD_CUP');
   const [selectedClubId, setSelectedClubId] = useState<string>(
     contract?.clubId ?? worldSeason.leagues[playerLeagueId].standings[0]?.clubId,
   );
 
-  const isCupMode = mode === 'CONMEBOL_CUPS' || mode === 'UEFA_CUPS';
-  const activeCompId = isCupMode ? cupId : leagueId;
+  const isClubCupMode = mode === 'CONMEBOL_CUPS' || mode === 'UEFA_CUPS';
+  const activeCompId =
+    mode === 'SELECOES_ELIM'
+      ? 'WC_QUALIFIERS'
+      : mode === 'SELECOES_COPAS'
+        ? intlCupId
+        : isClubCupMode
+          ? cupId
+          : leagueId;
   const theme = getCompetitionTheme(activeCompId);
 
   const availableLeagues = useMemo(
@@ -52,10 +79,24 @@ export const CompetitionsTab: React.FC = () => {
     [mode],
   );
 
+  const qualifiers = worldSeason.international?.qualifiers ?? [];
+  const activeQualGroup =
+    qualifiers.find((q) => q.id === wcqGroupId) ?? qualifiers[0];
+
   const handleModeChange = (next: CompMode) => {
     setMode(next);
     if (next === 'HISTORICO') return;
-    if (next === 'CONMEBOL_CUPS') {
+    if (next === 'SELECOES_ELIM') {
+      const myGrp = qualifiers.find((q) =>
+        q.standings.some((r) => r.clubId === userNatTeam.id),
+      );
+      if (myGrp) setWcqGroupId(myGrp.id);
+      setSelectedClubId(userNatTeam.id);
+    } else if (next === 'SELECOES_COPAS') {
+      const cIdx = worldSeason.international?.cycleIndex ?? 0;
+      setIntlCupId(cIdx === 1 ? 'NATIONS_LEAGUE' : 'WORLD_CUP');
+      setSelectedClubId(userNatTeam.id);
+    } else if (next === 'CONMEBOL_CUPS') {
       setCupId('LIBERTADORES');
     } else if (next === 'UEFA_CUPS') {
       setCupId('CHAMPIONS_LEAGUE');
@@ -73,8 +114,14 @@ export const CompetitionsTab: React.FC = () => {
   const promoCount = leagueCfg.hasPromotion ? (leagueId === 'BRA_2' ? 4 : 3) : 0;
 
   const cycleSubCompetition = (dir: -1 | 1) => {
-    if (mode === 'HISTORICO') return;
-    if (isCupMode) {
+    if (mode === 'SELECOES_ELIM' && qualifiers.length > 0) {
+      const idx = qualifiers.findIndex((q) => q.id === wcqGroupId);
+      const next = qualifiers[(idx + dir + qualifiers.length) % qualifiers.length];
+      setWcqGroupId(next.id);
+      if (next.standings[0]) setSelectedClubId(next.standings[0].clubId);
+    } else if (mode === 'SELECOES_COPAS') {
+      setIntlCupId(INTL_CUPS[(INTL_CUPS.indexOf(intlCupId) + dir + INTL_CUPS.length) % INTL_CUPS.length]);
+    } else if (isClubCupMode) {
       const cups: ContinentalCupId[] =
         mode === 'CONMEBOL_CUPS'
           ? ['LIBERTADORES', 'SUL_AMERICANA']
@@ -82,7 +129,9 @@ export const CompetitionsTab: React.FC = () => {
       setCupId(cups[(cups.indexOf(cupId) + dir + cups.length) % cups.length]);
     } else if (availableLeagues.length > 1) {
       const nextLg =
-        availableLeagues[(availableLeagues.indexOf(leagueId) + dir + availableLeagues.length) % availableLeagues.length];
+        availableLeagues[
+          (availableLeagues.indexOf(leagueId) + dir + availableLeagues.length) % availableLeagues.length
+        ];
       setLeagueId(nextLg);
       const first = worldSeason.leagues[nextLg]?.standings[0]?.clubId;
       if (first) setSelectedClubId(first);
@@ -93,7 +142,7 @@ export const CompetitionsTab: React.FC = () => {
     <div className="h-full flex flex-col gap-5 min-h-0">
       <button type="button" data-pad-lt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(-1)} />
       <button type="button" data-pad-rt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(1)} />
-      {/* Seletores Estilo Console */}
+
       <div className="grid sm:grid-cols-2 gap-4 shrink-0">
         <ConsoleStepper
           autoFocus
@@ -101,6 +150,8 @@ export const CompetitionsTab: React.FC = () => {
           value={mode}
           onChange={handleModeChange}
           options={[
+            { value: 'SELECOES_ELIM', label: 'SELEÇÕES • ELIMINATÓRIAS DA COPA (FIFA)' },
+            { value: 'SELECOES_COPAS', label: 'SELEÇÕES • COPA DO MUNDO, NATIONS & COPA AMÉRICA' },
             { value: 'SUL_LIGAS', label: 'AMÉRICA DO SUL • LIGAS (1ª E 2ª DIV)' },
             { value: 'EURO_LIGAS', label: 'EUROPA • 6 LIGAS (1ª E 2ª DIV)' },
             { value: 'MLS', label: 'MLS • ESTADOS UNIDOS & CANADÁ' },
@@ -114,7 +165,30 @@ export const CompetitionsTab: React.FC = () => {
           <div className="h-9 bg-[#0E0F12] border border-[#242730] flex items-center justify-center font-condensed uppercase font-bold text-sm tracking-widest text-[#9498A3]">
             REGISTRO ANUAL DE TÍTULOS ({worldSeason.history.length} CONCLUÍDAS)
           </div>
-        ) : isCupMode ? (
+        ) : mode === 'SELECOES_ELIM' ? (
+          <ConsoleStepper
+            compact
+            value={wcqGroupId}
+            onChange={(nextId) => {
+              setWcqGroupId(nextId);
+              const g = qualifiers.find((q) => q.id === nextId);
+              if (g?.standings[0]) setSelectedClubId(g.standings[0].clubId);
+            }}
+            options={qualifiers.map((q) => ({ value: q.id, label: q.label }))}
+          />
+        ) : mode === 'SELECOES_COPAS' ? (
+          <ConsoleStepper
+            compact
+            value={intlCupId}
+            onChange={setIntlCupId}
+            options={[
+              { value: 'WORLD_CUP', label: 'COPA DO MUNDO FIFA (32 SELEÇÕES)' },
+              { value: 'NATIONS_LEAGUE', label: 'LIGA DAS NAÇÕES (UEFA + TOP 2 CONMEBOL)' },
+              { value: 'COPA_AMERICA', label: 'CONMEBOL COPA AMÉRICA (16 SELEÇÕES)' },
+              { value: 'EURO_CUP', label: 'UEFA EUROCOPA (16 SELEÇÕES)' },
+            ]}
+          />
+        ) : isClubCupMode ? (
           <ConsoleStepper
             compact
             value={cupId}
@@ -142,21 +216,33 @@ export const CompetitionsTab: React.FC = () => {
             }}
             options={availableLeagues.map((id) => {
               const lg = LEAGUES[id];
-              const flag = lg.country !== 'INT' ? COUNTRIES[lg.country].flag : '';
+              const flag = lg.country !== 'INT' ? COUNTRIES[lg.country]?.flag ?? '' : '';
               return { value: id, label: `${flag} ${lg.name}` };
             })}
           />
         )}
       </div>
 
-      {/* Conteúdo Principal: Tabela da Liga OU Chaveamento Continental + Elenco Completo */}
       <div className="flex-1 grid lg:grid-cols-12 gap-5 min-h-0">
         {mode === 'HISTORICO' ? (
-          <SeasonHistoryView
-            history={worldSeason.history}
-            onSelectClub={setSelectedClubId}
+          <SeasonHistoryView history={worldSeason.history} onSelectClub={setSelectedClubId} />
+        ) : mode === 'SELECOES_ELIM' && activeQualGroup ? (
+          <InternationalQualifiersView
+            group={activeQualGroup}
+            userNatTeamId={userNatTeam.id}
+            selectedTeamId={selectedClubId}
+            onSelectTeam={setSelectedClubId}
           />
-        ) : isCupMode ? (
+        ) : mode === 'SELECOES_COPAS' && worldSeason.international ? (
+          <InternationalCupBracketView
+            compId={intlCupId}
+            intl={worldSeason.international}
+            seasonYear={worldSeason.seasonYear}
+            userNatTeamId={userNatTeam.id}
+            selectedTeamId={selectedClubId}
+            onSelectTeam={setSelectedClubId}
+          />
+        ) : isClubCupMode ? (
           <ContinentalBracketView
             cup={worldSeason.continentals[cupId]}
             playerClubId={contract?.clubId}
@@ -272,7 +358,6 @@ export const CompetitionsTab: React.FC = () => {
           </div>
         )}
 
-        {/* Coluna Direita: Elenco Completo Real do Clube Selecionado */}
         <ClubSquadInspector clubId={selectedClubId} accentColor={theme.accentPrimary} />
       </div>
     </div>

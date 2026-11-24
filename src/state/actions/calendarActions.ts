@@ -1,9 +1,12 @@
 import { getClubById } from '../../data/clubs';
+import { COUNTRIES } from '../../data/countries/countries';
 import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
 import { evaluateMonthlyPotm } from '../../domains/awards/evaluateMonthlyPotm';
 import { evaluateEndOfSeasonAwards } from '../../domains/awards/evaluateSeasonAwards';
 import { generateWindowTransferOffers } from '../../domains/contracts/contractEngine';
 import { getOwnedEquipmentBonuses } from '../../domains/economy/economyActions';
+import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
+import { findNationalTeamFixtureOnDay } from '../../domains/international/internationalCalendar';
 import {
   getClubFixtureOnExactDay,
   rolloverSeasonWithPromotionAndQualification,
@@ -13,7 +16,7 @@ import {
 import { applyFiveSlotsTraining } from '../../domains/training/trainingEngine';
 import { generateYouthTransitionProposals } from '../../domains/youth-academy/youthModel';
 import { StarRating } from '../../shared/types/common';
-import { formatMoney } from '../../shared/utils/formatters';
+import { formatMoney, formatSquadRole } from '../../shared/utils/formatters';
 import { clamp } from '../../shared/utils/math';
 import { CareerState } from '../careerTypes';
 import { makeEvent } from '../helpers/feedHelper';
@@ -40,21 +43,26 @@ export function computeNextDayState(
 
   const club = getClubById(contract.clubId);
   const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
+  const callUp = evaluateNationalCallUp(nextPlayer, contract.stage, nextPeriod);
 
-  if (!alreadySimulatedMatchToday && (calendar.day === 3 || calendar.day === 6)) {
+  if (
+    !alreadySimulatedMatchToday &&
+    (calendar.day === 3 || calendar.day === 6 || calendar.day === 7)
+  ) {
     const myFixture = getClubFixtureOnExactDay(
       nextWorld,
       contract.clubId,
       contract.stage,
       calendar.week,
       calendar.day,
+      callUp,
     );
     if (!myFixture) {
       nextWorld = simulateWorldCompetitionsOnDay(nextWorld, calendar.week, calendar.day);
     }
   }
 
-  const isTrainingDay = calendar.day === 2 || calendar.day === 4;
+  const isTrainingDay = calendar.week <= 38 && (calendar.day === 2 || calendar.day === 4);
   if (isTrainingDay && !trainedToday) {
     const { updatedPlayer, report } = applyFiveSlotsTraining(
       nextPlayer,
@@ -80,7 +88,11 @@ export function computeNextDayState(
 
   nextPlayer = {
     ...nextPlayer,
-    stamina: clamp(nextPlayer.stamina + 14 + Math.round(bonuses.staminaRecoveryBonus / 3), 0, 100),
+    stamina: clamp(
+      nextPlayer.stamina + 14 + Math.round(bonuses.staminaRecoveryBonus / 3),
+      0,
+      100,
+    ),
   };
 
   let nextDay = calendar.day + 1;
@@ -91,7 +103,7 @@ export function computeNextDayState(
     nextDay = 1;
     nextWeek += 1;
 
-    // A cada 4 semanas (fim de mês de competição, Semanas 4..36): Prêmio de MELHOR JOGADOR DO MÊS + Salário!
+    // Prêmio de MELHOR JOGADOR DO MÊS a cada 4 semanas da temporada de clubes (Semanas 4..36)
     if (calendar.week % 4 === 0 && calendar.week <= 36) {
       const potm = evaluateMonthlyPotm(
         nextPlayer,
@@ -119,7 +131,7 @@ export function computeNextDayState(
             ...makeEvent(
               calendar.week,
               `★ VOCÊ ELEITO ${potm.trophyEntry.title}!`,
-              `${potm.winnerStatLine} • Bônus de ${formatMoney(potm.cashReward)} creditado na conta!`,
+              `${potm.winnerStatLine} • Bônus de ${formatMoney(potm.cashReward)} creditado!`,
               'AWARD',
             ),
             clubId: contract.clubId,
@@ -141,7 +153,6 @@ export function computeNextDayState(
           ...nextFeed,
         ];
       }
-      // Zera acumuladores do mês
       nextPeriod = {
         ...nextPeriod,
         monthMatches: 0,
@@ -151,7 +162,7 @@ export function computeNextDayState(
       };
     }
 
-    if (nextWeek % 4 === 1) {
+    if (nextWeek % 4 === 1 && nextWeek <= 40) {
       nextBalance += contract.monthlySalary;
       nextFeed = [
         makeEvent(
@@ -164,16 +175,50 @@ export function computeNextDayState(
       ];
     }
 
+    // Boletim de CONVOCAÇÃO OFICIAL quando a nova semana tem jogo da Seleção e você atingiu o mérito!
+    const nextCallUp = evaluateNationalCallUp(nextPlayer, contract.stage, nextPeriod);
+    if (nextCallUp.calledUp && nextWorld.international && nextWeek <= 42) {
+      const hasNtGameThisWeek =
+        Boolean(findNationalTeamFixtureOnDay(nextWorld.international, nextCallUp.nationalTeamId, nextWeek, 3)) ||
+        Boolean(findNationalTeamFixtureOnDay(nextWorld.international, nextCallUp.nationalTeamId, nextWeek, 7));
+
+      if (hasNtGameThisWeek) {
+        const natMeta = COUNTRIES[nextPlayer.nationality] ?? COUNTRIES.BRA;
+        nextFeed = [
+          {
+            ...makeEvent(
+              nextWeek,
+              `★ CONVOCADO PARA A SELEÇÃO (${natMeta.name.toUpperCase()})!`,
+              `Você integra a lista oficial como ${formatSquadRole(nextCallUp.role)} nesta Data FIFA / Copa!`,
+              'AWARD',
+            ),
+            clubId: nextCallUp.nationalTeamId,
+          },
+          ...nextFeed,
+        ];
+      }
+    }
+
     if (nextWeek === 20 && contract.stage !== 'YOUTH') {
-      nextMarket = generateWindowTransferOffers(nextPlayer, contract, state.agentId, nextPrestige);
+      nextMarket = generateWindowTransferOffers(
+        nextPlayer,
+        contract,
+        state.agentId,
+        nextPrestige,
+      );
       nextFeed = [
-        makeEvent(20, 'Janela de Meio de Temporada Aberta', 'Confira propostas em ESCRITÓRIO.', 'CONTRACT'),
+        makeEvent(
+          20,
+          'Janela de Meio de Temporada Aberta',
+          'Confira propostas em ESCRITÓRIO.',
+          'CONTRACT',
+        ),
         ...nextFeed,
       ];
     }
 
-    // Fim das 38 rodadas (entrando na Semana 39): GALA DE PREMIAÇÃO ANUAL (Bola de Ouro, Golden Boy, Chuteira, Liga)!
-    if (nextWeek === 39) {
+    // Semana 43 (logo após as Finais de Copa do Mundo / Copa América / Eurocopa na Semana 42!): GALA DA BOLA DE OURO + JANELA ANUAL!
+    if (nextWeek === TOTAL_SEASON_WEEKS) {
       const { gala, newTrophies } = evaluateEndOfSeasonAwards(
         nextPlayer,
         contract.clubId,
@@ -188,10 +233,14 @@ export function computeNextDayState(
 
       if (newTrophies.length > 0) {
         nextCabinet = [...newTrophies, ...nextCabinet];
-        const wonWorld = newTrophies.some((t) => t.code === 'BALLON_DOR' || t.code === 'GOLDEN_BOY');
+        const wonWorld = newTrophies.some(
+          (t) => t.code === 'BALLON_DOR' || t.code === 'GOLDEN_BOY',
+        );
         nextPlayer = {
           ...nextPlayer,
-          reputationStars: (wonWorld ? 3 : Math.min(3, nextPlayer.reputationStars + 1)) as StarRating,
+          reputationStars: (wonWorld
+            ? 3
+            : Math.min(3, nextPlayer.reputationStars + 1)) as StarRating,
           careerTotals: {
             ...nextPlayer.careerTotals,
             trophies: nextPlayer.careerTotals.trophies + newTrophies.length,
@@ -200,7 +249,7 @@ export function computeNextDayState(
         nextFeed = [
           {
             ...makeEvent(
-              39,
+              nextWeek,
               `★ GALA ${calendar.season}: ${newTrophies.length} PRÊMIO(S) CONQUISTADO(S)!`,
               newTrophies.map((t) => t.title).join(' • '),
               'AWARD',
@@ -214,7 +263,7 @@ export function computeNextDayState(
         nextFeed = [
           {
             ...makeEvent(
-              39,
+              nextWeek,
               `Gala da Temporada • Bola de Ouro: ${bdWinner?.playerName ?? 'Definido'}`,
               'Confira todos os pódios Top 3 e a Seleção do Campeonato!',
               'AWARD',
@@ -228,7 +277,12 @@ export function computeNextDayState(
       if (contract.stage === 'YOUTH') {
         nextProposals = generateYouthTransitionProposals(nextPlayer, contract.clubId);
       } else {
-        nextMarket = generateWindowTransferOffers(nextPlayer, contract, state.agentId, nextPrestige);
+        nextMarket = generateWindowTransferOffers(
+          nextPlayer,
+          contract,
+          state.agentId,
+          nextPrestige,
+        );
       }
     }
 
@@ -248,7 +302,7 @@ export function computeNextDayState(
         makeEvent(
           1,
           `Nova Temporada ${nextSeason}! (${nextPlayer.age} anos)`,
-          'Acessos, rebaixamentos e novos grupos continentais sorteados!',
+          'Acessos, rebaixamentos, grupos continentais e calendário FIFA atualizados!',
           'INFO',
         ),
         ...nextFeed,

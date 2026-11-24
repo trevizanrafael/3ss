@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getClubById } from '../../data/clubs';
-import { COUNTRIES } from '../../data/countries/countries';
+import { COUNTRIES, TRYOUT_LEAGUE_COUNTRIES } from '../../data/countries/countries';
 import { LEAGUES } from '../../data/leagues/leagues';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
 import { FifaStatBadge } from '../../shared/ui/FifaStatBadge';
@@ -45,7 +45,10 @@ export const TryoutScreen: React.FC = () => {
   const [score, setScore] = useState(0);
 
   if (!player) return null;
-  const country = COUNTRIES[player.nationality];
+  const natCountry = COUNTRIES[player.nationality] ?? COUNTRIES.BRA;
+  const tryoutCountry =
+    TRYOUT_LEAGUE_COUNTRIES[player.startingLeagueCountry ?? 'BRA'] ??
+    TRYOUT_LEAGUE_COUNTRIES.BRA;
 
   const handleChoice = (bonus: number, risk: number) => {
     const failed = Math.random() < risk;
@@ -65,7 +68,8 @@ export const TryoutScreen: React.FC = () => {
       <header className="flex items-center justify-between border-b border-[#242730] pb-4">
         <div>
           <span className="text-[11px] uppercase tracking-[0.24em] text-[#C8A45D] font-semibold">
-            PENEIRA NACIONAL • {country.flag} {country.name}
+            PENEIRA DE BASE • {tryoutCountry.flag} {tryoutCountry.name} (ATLETA:{' '}
+            {natCountry.flag} {natCountry.name})
           </span>
           <h1 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none mt-1">
             {tryoutStars === null ? 'AVALIAÇÃO DE CATEGORIAS DE BASE' : 'CONVITES OFICIAIS DE BASE'}

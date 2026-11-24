@@ -1,3 +1,4 @@
+import { ALL_NATIONAL_TEAMS } from '../../data/clubs';
 import { SquadPosition } from '../../data/clubs/types';
 import { LeagueId, LEAGUES } from '../../data/leagues/leagues';
 import rawPool from '../../data/world/worldStarsPool.json';
@@ -16,19 +17,27 @@ interface PoolStar {
   pos: SquadPosition;
   age: number;
   ovr: number;
+  nationality?: string;
   faceUrl?: string;
 }
 
 const STARS_POOL = rawPool as PoolStar[];
-
 const TOP5_EURO = new Set<LeagueId>(['ENG_1', 'ESP_1', 'ITA_1', 'GER_1', 'FRA_1']);
+
+// Mapa rápido de nome normalizado -> seleção para dar bônus de Copa do Mundo / Copa América / Eurocopa!
+const PLAYER_NAT_ID_MAP = new Map<string, string>();
+for (const nt of ALL_NATIONAL_TEAMS) {
+  for (const kp of nt.keyPlayers) {
+    PLAYER_NAT_ID_MAP.set(kp.name.toLowerCase(), nt.id);
+  }
+}
 
 export function getLeaguePrestigeMultiplier(lgId: LeagueId, stage: CareerStage): number {
   if (stage === 'YOUTH') return 0.35;
   if (TOP5_EURO.has(lgId)) return 1.0;
   if (lgId === 'POR_1' || lgId === 'BRA_1' || lgId === 'ARG_1' || lgId === 'UEFA_POOL') return 0.84;
   if (lgId === 'USA_1' || lgId === 'CONMEBOL_POOL') return 0.76;
-  return 0.56; // 2ªs divisões (impede ganhar Bola de Ouro jogando na Série B!)
+  return 0.56;
 }
 
 export function getBootFactor(lgId: LeagueId): number {
@@ -53,6 +62,17 @@ export interface SimCandidate {
   libScore: number;
   isUser: boolean;
   faceUrl?: string;
+}
+
+function getNationalTrophyBonus(world: WorldSeasonState, natTeamId?: string): number {
+  if (!natTeamId || !world.international) return 0;
+  const intl = world.international;
+  let bonus = 0;
+  if (intl.worldCup?.championTeamId === natTeamId) bonus += 26;
+  if (intl.copaAmerica?.championTeamId === natTeamId) bonus += 15;
+  if (intl.euroCup?.championTeamId === natTeamId) bonus += 16;
+  if (intl.nationsLeague?.championTeamId === natTeamId) bonus += 9;
+  return bonus;
 }
 
 export function buildSeasonAwardCandidates(
@@ -100,10 +120,13 @@ export function buildSeasonAwardCandidates(
     const wonLeague = leagueChampions.get(currLg) === s.clubId ? 9 : 0;
     const wonUcl = uclWinner === s.clubId ? 18 : 0;
     const wonLib = libWinner === s.clubId ? 15 : 0;
+    const natId = PLAYER_NAT_ID_MAP.get(s.name.toLowerCase());
+    const natBonus = getNationalTrophyBonus(world, natId);
 
     const rawImpact =
       s.ovr * 1.05 + goals * 0.65 + assists * 0.55 + Math.max(0, 8 - rank) * 0.9 + form;
-    const worldScore = rawImpact * prestige + wonLeague * prestige + wonUcl + wonLib * 0.7;
+    const worldScore =
+      rawImpact * prestige + wonLeague * prestige + wonUcl + wonLib * 0.7 + natBonus;
     const leagueScore = rawImpact + wonLeague;
     const uclScore = uclClubs.has(s.clubId) ? rawImpact + wonUcl * 1.4 : 0;
     const libScore = libClubs.has(s.clubId) ? rawImpact + wonLib * 1.4 : 0;
@@ -130,12 +153,23 @@ export function buildSeasonAwardCandidates(
     const wonUcl = uclWinner === userClubId ? 19 : 0;
     const wonLib = libWinner === userClubId ? 16 : 0;
 
+    const userNatId = `nt_${player.nationality.toLowerCase()}`;
+    const userNatBonus =
+      period.internationalMatches > 0
+        ? getNationalTrophyBonus(world, userNatId) +
+          period.internationalGoals * 2.2 +
+          period.internationalAssists * 1.5
+        : 0;
+
+    const clubGoals = Math.max(0, period.seasonGoals - period.internationalGoals);
+    const clubAssists = Math.max(0, period.seasonAssists - period.internationalAssists);
+
     const posImpact =
       sector === 'ATK'
-        ? period.seasonGoals * 0.95 + period.seasonAssists * 0.65
+        ? clubGoals * 0.95 + clubAssists * 0.65
         : sector === 'MID'
-          ? period.seasonGoals * 0.85 + period.seasonAssists * 1.05 + avgStars * 4
-          : period.seasonGoals * 1.1 + period.seasonAssists * 0.8 + avgStars * 8.5;
+          ? clubGoals * 0.85 + clubAssists * 1.05 + avgStars * 4
+          : clubGoals * 1.1 + clubAssists * 0.8 + avgStars * 8.5;
 
     const rawUser =
       player.overall * 0.92 + avgStars * 9 + posImpact + Math.max(0, 8 - myRank) * 1.1;
@@ -148,9 +182,10 @@ export function buildSeasonAwardCandidates(
       pos: player.position,
       age: player.age,
       ovr: player.overall,
-      goals: period.seasonGoals,
-      assists: period.seasonAssists,
-      worldScore: rawUser * prestige + wonLg * prestige + wonUcl + wonLib * 0.75,
+      goals: clubGoals,
+      assists: clubAssists,
+      worldScore:
+        rawUser * prestige + wonLg * prestige + wonUcl + wonLib * 0.75 + userNatBonus,
       leagueScore: rawUser + wonLg,
       uclScore:
         uclClubs.has(userClubId) && period.continentalMatches > 0

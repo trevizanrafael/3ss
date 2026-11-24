@@ -261,6 +261,29 @@ export function evaluateEndOfSeasonAwards(
         });
       }
     }
+
+    // Títulos oficiais pela Seleção Nacional se foi convocado na temporada!
+    const userNatId = `nt_${player.nationality.toLowerCase()}`;
+    if (period.internationalMatches > 0 && world.international) {
+      const intl = world.international;
+      for (const [champId, ntTitle, ntDetail] of [
+        [intl.worldCup?.championTeamId, 'CAMPEÃO • COPA DO MUNDO FIFA', 'GLÓRIA MÁXIMA MUNDIAL'],
+        [intl.copaAmerica?.championTeamId, 'CAMPEÃO • CONMEBOL COPA AMÉRICA', 'TÍTULO DE SELEÇÕES'],
+        [intl.euroCup?.championTeamId, 'CAMPEÃO • UEFA EUROCOPA', 'TÍTULO DE SELEÇÕES'],
+        [intl.nationsLeague?.championTeamId, 'CAMPEÃO • LIGA DAS NAÇÕES', 'UEFA + CONMEBOL'],
+      ] as const) {
+        if (champId === userNatId) {
+          newTrophies.push({
+            id: `nt_champ_${ntTitle}_${world.seasonYear}`,
+            season: world.seasonYear,
+            code: 'COLLECTIVE_TROPHY',
+            title: ntTitle,
+            clubId: userNatId,
+            detail: ntDetail,
+          });
+        }
+      }
+    }
   }
 
   return {

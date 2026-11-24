@@ -1,4 +1,9 @@
-import { CountryCode, PositionCode, StarRating } from '../../shared/types/common';
+import {
+  ConfederationCode,
+  CountryCode,
+  PositionCode,
+  StarRating,
+} from '../../shared/types/common';
 import { LeagueId } from '../leagues/leagues';
 
 export type SquadPosition = 'GK' | PositionCode;
@@ -27,6 +32,10 @@ export interface ClubData {
   wikiTitle?: string;
   country: CountryCode;
   leagueId: LeagueId;
+  isNationalTeam?: boolean;
+  nationalCode?: CountryCode;
+  confederation?: ConfederationCode;
+  flag?: string;
   reputationStars: StarRating;
   squadAvgOvr: number;
   youthAcademyName: string;

@@ -26,6 +26,13 @@ import {
 import { computePlayedMatchState } from './actions/matchDayActions';
 import { CareerState } from './careerTypes';
 import { makeEvent } from './helpers/feedHelper';
+import {
+  migratePersistedCareerState,
+  rescueLegacySaveIfNeeded,
+} from './helpers/saveMigration';
+
+const STORAGE_KEY = 'three-stars-soccer-career-v4';
+rescueLegacySaveIfNeeded(STORAGE_KEY);
 
 export const useCareerStore = create<CareerState>()(
   persist(
@@ -194,6 +201,10 @@ export const useCareerStore = create<CareerState>()(
           feed: [],
         }),
     }),
-    { name: 'three-stars-soccer-career-v4' },
+    {
+      name: STORAGE_KEY,
+      merge: (persistedState, currentState) =>
+        migratePersistedCareerState(persistedState, currentState),
+    },
   ),
 );

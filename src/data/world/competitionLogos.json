@@ -82,5 +82,25 @@
   "EUROPA_LEAGUE": {
     "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/2310.png",
     "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/2310.png"
+  },
+  "WORLD_CUP": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/4.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/4.png"
+  },
+  "WC_QUALIFIERS": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/65.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/65.png"
+  },
+  "COPA_AMERICA": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/83.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/83.png"
+  },
+  "EURO_CUP": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/74.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/74.png"
+  },
+  "NATIONS_LEAGUE": {
+    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/2395.png",
+    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/2395.png"
   }
 }

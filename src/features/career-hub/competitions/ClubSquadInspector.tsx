@@ -45,7 +45,10 @@ export const ClubSquadInspector: React.FC<ClubSquadInspectorProps> = ({
             {club.name}
           </h3>
           <div className="text-[11px] uppercase tracking-wider text-[#9498A3] mt-1 truncate">
-            {club.youthAcademyName} • {club.squadAvgOvr} OVR
+            {club.isNationalTeam
+              ? `${club.confederation} • ${club.stadiumName ?? club.city}`
+              : club.youthAcademyName}{' '}
+            • {club.squadAvgOvr} OVR
           </div>
           <div className="mt-1.5">
             <StarRatingBadge stars={club.reputationStars} size="sm" />

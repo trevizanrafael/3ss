@@ -1,11 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { COUNTRY_LIST } from '../../data/countries/countries';
+import {
+  COUNTRY_LIST,
+  isLeagueCountryCode,
+  TRYOUT_LEAGUE_COUNTRY_LIST,
+} from '../../data/countries/countries';
 import { POSITION_LABELS } from '../../domains/attributes/overallCalculator';
 import { createInitialPlayer, CreatePlayerInput } from '../../domains/player/createInitialPlayer';
 import { PlayerAppearance } from '../../domains/player/playerTypes';
 import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import { ConsoleStepper } from '../../shared/ui/ConsoleStepper';
-import { CountryCode, PositionCode, PreferredFoot } from '../../shared/types/common';
+import {
+  CountryCode,
+  LeagueCountryCode,
+  PositionCode,
+  PreferredFoot,
+} from '../../shared/types/common';
 import { useCareerStore } from '../../state/useCareerStore';
 import { useNavigationStore } from '../../state/useNavigationStore';
 import { AppearanceFormSection } from './AppearanceFormSection';
@@ -24,6 +33,7 @@ export const PlayerCreationScreen: React.FC = () => {
   const [shirtNumber, setShirtNumber] = useState(10);
   const [age, setAge] = useState<16 | 17 | 18>(16);
   const [nationality, setNationality] = useState<CountryCode>('BRA');
+  const [startingLeagueCountry, setStartingLeagueCountry] = useState<LeagueCountryCode>('BRA');
   const [position, setPosition] = useState<PositionCode>('ATA');
   const [preferredFoot, setPreferredFoot] = useState<PreferredFoot>('DIREITA');
   const [heightCm, setHeightCm] = useState(178);
@@ -55,6 +65,13 @@ export const PlayerCreationScreen: React.FC = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [setScreen]);
 
+  const handleNationalityChange = (nextNat: CountryCode) => {
+    setNationality(nextNat);
+    if (isLeagueCountryCode(nextNat)) {
+      setStartingLeagueCountry(nextNat);
+    }
+  };
+
   const inputPayload: CreatePlayerInput = useMemo(
     () => ({
       fullName: fullName.trim() || 'Jovem Promessa',
@@ -62,13 +79,26 @@ export const PlayerCreationScreen: React.FC = () => {
       shirtNumber,
       age,
       nationality,
+      startingLeagueCountry,
       position,
       preferredFoot,
       heightCm,
       weightKg,
       appearance,
     }),
-    [fullName, shirtName, shirtNumber, age, nationality, position, preferredFoot, heightCm, weightKg, appearance],
+    [
+      fullName,
+      shirtName,
+      shirtNumber,
+      age,
+      nationality,
+      startingLeagueCountry,
+      position,
+      preferredFoot,
+      heightCm,
+      weightKg,
+      appearance,
+    ],
   );
 
   const previewPlayer = useMemo(() => createInitialPlayer(inputPayload), [inputPayload]);
@@ -112,42 +142,55 @@ export const PlayerCreationScreen: React.FC = () => {
         </button>
       </header>
 
-      {/* Fluxo Vertical Otimizado para Controle (D-Pad Cima/Baixo move linha, Esq/Dir gira ‹ Opção ›) */}
       <main className="flex-1 grid lg:grid-cols-12 gap-8 py-5 min-h-0">
         <div className="lg:col-span-8 console-tile p-7 flex flex-col justify-between">
           {tab === 'IDENTIDADE' && (
-            <div className="max-w-xl space-y-4">
+            <div className="max-w-xl space-y-3">
               <ConsoleStepper
                 autoFocus
-                label="NACIONALIDADE (DEFINE AS BASES DA PENEIRA)"
+                label="NACIONALIDADE LIVRE (64 SELEÇÕES • ELIMINATÓRIAS & COPA DO MUNDO)"
                 value={nationality}
-                onChange={setNationality}
+                onChange={handleNationalityChange}
                 options={COUNTRY_LIST.map((c) => ({
                   value: c.code,
                   label: `${c.flag} ${c.name}`,
+                  subLabel: `${c.confederation} • ${c.ovr} OVR`,
                 }))}
               />
 
               <ConsoleStepper
-                label="IDADE INICIAL NA BASE"
-                value={age}
-                onChange={(v) => setAge(v as 16 | 17 | 18)}
-                options={[
-                  { value: 16, label: '16 ANOS', subLabel: 'SUB-17' },
-                  { value: 17, label: '17 ANOS', subLabel: 'SUB-20' },
-                  { value: 18, label: '18 ANOS', subLabel: 'SUB-20' },
-                ]}
-              />
-
-              <ConsoleStepper
-                label="NÚMERO DA CAMISA"
-                value={shirtNumber}
-                onChange={setShirtNumber}
-                options={[7, 8, 9, 10, 11, 14, 17, 19, 20, 23, 99].map((n) => ({
-                  value: n,
-                  label: `CAMISA ${n}`,
+                label="PAÍS / LIGA DO TESTE INICIAL (PENEIRA DE BASE)"
+                value={startingLeagueCountry}
+                onChange={setStartingLeagueCountry}
+                options={TRYOUT_LEAGUE_COUNTRY_LIST.map((lg) => ({
+                  value: lg.code,
+                  label: `${lg.flag} ${lg.name}`,
+                  subLabel: lg.leaguesSummary,
                 }))}
               />
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                <ConsoleStepper
+                  label="IDADE INICIAL"
+                  value={age}
+                  onChange={(v) => setAge(v as 16 | 17 | 18)}
+                  options={[
+                    { value: 16, label: '16 ANOS', subLabel: 'SUB-17' },
+                    { value: 17, label: '17 ANOS', subLabel: 'SUB-20' },
+                    { value: 18, label: '18 ANOS', subLabel: 'SUB-20' },
+                  ]}
+                />
+
+                <ConsoleStepper
+                  label="CAMISA PREFERIDA"
+                  value={shirtNumber}
+                  onChange={setShirtNumber}
+                  options={[7, 8, 9, 10, 11, 14, 17, 19, 20, 23, 99].map((n) => ({
+                    value: n,
+                    label: `CAMISA ${n}`,
+                  }))}
+                />
+              </div>
 
               <div className="grid sm:grid-cols-2 gap-4 pt-1">
                 <label className="block">
@@ -241,7 +284,7 @@ export const PlayerCreationScreen: React.FC = () => {
               className="console-btn-primary px-7 py-3 text-lg inline-flex items-center gap-3 cursor-pointer"
             >
               <GamepadBadge action="ALT_Y" darkText />
-              <span>INICIAR PENEIRA NACIONAL ›</span>
+              <span>INICIAR PENEIRA ›</span>
             </button>
           </div>
         </div>
@@ -257,7 +300,7 @@ export const PlayerCreationScreen: React.FC = () => {
           <GamepadBadge action="RB" label="PRÓXIMA ABA" />
           <GamepadBadge action="ALT_Y" label="AVANÇAR PARA A PENEIRA" />
         </div>
-        <span>TODAS AS POSIÇÕES DE LINHA</span>
+        <span>64 SELEÇÕES OFICIAIS • 17 LIGAS NACIONAIS</span>
       </footer>
     </div>
   );

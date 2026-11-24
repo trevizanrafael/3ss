@@ -1,4 +1,4 @@
-import { CountryCode } from '../../shared/types/common';
+import { ConfederationCode, CountryCode, LeagueCountryCode } from '../../shared/types/common';
 import { LeagueId } from '../leagues/leagues';
 import { ClubData } from './types';
 
@@ -21,6 +21,7 @@ import por1 from '../world/clubs/por_1.json';
 import por2 from '../world/clubs/por_2.json';
 import uefaPool from '../world/clubs/uefa_pool.json';
 import usa1 from '../world/clubs/usa_1.json';
+import nationalTeamsRaw from '../world/nationalTeams.json';
 
 export const ALL_CLUBS: ClubData[] = [
   ...(bra1 as ClubData[]),
@@ -44,21 +45,34 @@ export const ALL_CLUBS: ClubData[] = [
   ...(uefaPool as ClubData[]),
 ];
 
-const CLUB_MAP = new Map<string, ClubData>(ALL_CLUBS.map((c) => [c.id, c]));
+export const ALL_NATIONAL_TEAMS: ClubData[] = nationalTeamsRaw as ClubData[];
+
+const ENTITY_MAP = new Map<string, ClubData>([
+  ...ALL_CLUBS.map((c): [string, ClubData] => [c.id, c]),
+  ...ALL_NATIONAL_TEAMS.map((nt): [string, ClubData] => [nt.id, nt]),
+]);
 
 export function getClubById(clubId: string): ClubData {
-  return CLUB_MAP.get(clubId) ?? ALL_CLUBS[0];
+  return ENTITY_MAP.get(clubId) ?? ALL_CLUBS[0];
 }
 
 export function hasClubId(clubId: string): boolean {
-  return CLUB_MAP.has(clubId);
+  return ENTITY_MAP.has(clubId);
+}
+
+export function getNationalTeamByCountry(country: CountryCode): ClubData {
+  return ENTITY_MAP.get(`nt_${country.toLowerCase()}`) ?? ALL_NATIONAL_TEAMS[0];
+}
+
+export function getNationalTeamsByConfederation(confed: ConfederationCode): ClubData[] {
+  return ALL_NATIONAL_TEAMS.filter((nt) => nt.confederation === confed);
 }
 
 export function getClubsByLeague(leagueId: LeagueId): ClubData[] {
   return ALL_CLUBS.filter((c) => c.leagueId === leagueId);
 }
 
-export function getNationalClubsByCountry(country: CountryCode): ClubData[] {
+export function getNationalClubsByCountry(country: LeagueCountryCode | CountryCode): ClubData[] {
   return ALL_CLUBS.filter(
     (c) =>
       c.country === country &&

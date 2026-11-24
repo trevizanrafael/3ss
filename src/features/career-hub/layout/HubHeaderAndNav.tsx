@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { getClubById } from '../../../data/clubs';
+import { COUNTRIES } from '../../../data/countries/countries';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
+import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import {
   findClubLeagueIdInWorld,
   findUpcomingFixtureForClub,
+  TOTAL_SEASON_WEEKS,
 } from '../../../domains/season/worldSeasonEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
@@ -28,6 +31,7 @@ export const HubHeaderAndNav: React.FC = () => {
     calendar,
     bankBalance,
     worldSeason,
+    periodStats,
     transitionProposals,
     marketOffers,
     galaModalOpen,
@@ -55,6 +59,8 @@ export const HubHeaderAndNav: React.FC = () => {
 
   if (!player || !contract) return null;
   const club = getClubById(contract.clubId);
+  const natMeta = COUNTRIES[player.nationality] ?? COUNTRIES.BRA;
+  const callUp = evaluateNationalCallUp(player, contract.stage, periodStats);
   const currentLeagueId = findClubLeagueIdInWorld(worldSeason, contract.clubId);
   const nextFx = findUpcomingFixtureForClub(
     worldSeason,
@@ -62,6 +68,7 @@ export const HubHeaderAndNav: React.FC = () => {
     contract.stage,
     calendar.week,
     calendar.day,
+    callUp,
   );
   const activeCompId = nextFx ? nextFx.competitionId : currentLeagueId;
   const theme = getCompetitionTheme(activeCompId);
@@ -79,7 +86,8 @@ export const HubHeaderAndNav: React.FC = () => {
             {player.shirtName}
           </div>
           <div className="text-[10px] uppercase tracking-widest text-[#9498A3]">
-            {club.shortName} • {player.position}
+            {natMeta.flag} {club.shortName} • {player.position}
+            {callUp.calledUp ? ' • ★ SELEÇÃO' : ''}
           </div>
         </div>
         <FifaStatBadge value={player.overall} size="md" />
@@ -147,7 +155,7 @@ export const HubHeaderAndNav: React.FC = () => {
             TEMP {calendar.season}/{(calendar.season + 1).toString().slice(-2)}
           </span>
           <span className="font-condensed font-bold text-base text-[#F5F5F7]">
-            SEM {String(calendar.week).padStart(2, '0')}/40
+            SEM {String(calendar.week).padStart(2, '0')}/{TOTAL_SEASON_WEEKS}
           </span>
         </div>
       </div>

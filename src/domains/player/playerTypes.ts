@@ -1,6 +1,7 @@
 import { AttributeKey } from '../../data/equipment/catalog';
 import {
   CountryCode,
+  LeagueCountryCode,
   PositionCode,
   PreferredFoot,
   StarRating,
@@ -23,6 +24,8 @@ export interface CareerStatsTotals {
   assists: number;
   threeStarMatches: number;
   trophies: number;
+  nationalCaps?: number;
+  nationalGoals?: number;
 }
 
 export interface CareerPlayer {
@@ -30,7 +33,8 @@ export interface CareerPlayer {
   shirtName: string;
   shirtNumber: number;
   age: number; // Começa entre 16 e 18
-  nationality: CountryCode;
+  nationality: CountryCode; // Livre entre as 64 Seleções Nacionais FIFA
+  startingLeagueCountry: LeagueCountryCode; // País/Liga onde faz o teste de base inicial
   position: PositionCode;
   preferredFoot: PreferredFoot;
   heightCm: number;

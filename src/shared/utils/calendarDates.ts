@@ -1,5 +1,6 @@
+import { NationalCallUpStatus } from '../../domains/international/callUpEvaluator';
 import { ScheduledClubFixture, WorldSeasonState } from '../../domains/season/seasonTypes';
-import { getClubFixtureOnExactDay } from '../../domains/season/worldSeasonEngine';
+import { getClubFixtureOnExactDay, TOTAL_SEASON_WEEKS } from '../../domains/season/worldSeasonEngine';
 import { CalendarDate, CareerStage } from '../types/common';
 
 const WEEKDAYS_3 = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'] as const;
@@ -26,13 +27,14 @@ export function getRollingWeekWindow(
   world: WorldSeasonState,
   clubId: string,
   stage: CareerStage,
+  callUp?: NationalCallUpStatus | null,
 ): {
   currentMonthLabel: string;
   days: RollingDayCell[];
 } {
-  // 40 semanas cobrindo o ciclo anual Julho -> Maio/Junho (~9 dias reais por semana de calendário ou contínuo a partir de 6 Jul)
+  // 43 semanas cobrindo Agosto -> Junho (Copa do Mundo / Copa América / Euro exatamente em Maio-Junho!)
   const baseYear = calendar.season;
-  const startUtc = Date.UTC(baseYear, 6, 6);
+  const startUtc = Date.UTC(baseYear, 7, 10);
   const startDow = new Date(startUtc).getUTCDay();
   const mondayAdjust = startDow === 1 ? 0 : startDow === 0 ? 1 : 8 - startDow;
 
@@ -48,12 +50,12 @@ export function getRollingWeekWindow(
     const gameDayOfWeek = utcDow === 0 ? 7 : utcDow;
 
     const fixture =
-      gameWeek >= 1 && gameWeek <= 40
-        ? getClubFixtureOnExactDay(world, clubId, stage, gameWeek, gameDayOfWeek)
+      gameWeek >= 1 && gameWeek <= TOTAL_SEASON_WEEKS
+        ? getClubFixtureOnExactDay(world, clubId, stage, gameWeek, gameDayOfWeek, callUp)
         : null;
 
-    // Se quarta-feira tiver jogo continental, não sobrepõe treino; treino é Terça (2) e Quinta (4)
-    const isTrainingDay = (gameDayOfWeek === 2 || gameDayOfWeek === 4) && !fixture;
+    const isTrainingDay =
+      gameWeek <= 38 && (gameDayOfWeek === 2 || gameDayOfWeek === 4) && !fixture;
 
     return {
       offset,

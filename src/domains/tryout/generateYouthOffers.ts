@@ -37,7 +37,8 @@ export function generateYouthOffersFromTryout(
   player: CareerPlayer,
   tryoutStars: StarRating,
 ): YouthAcademyOffer[] {
-  const countryClubs = getNationalClubsByCountry(player.nationality);
+  const targetCountry = player.startingLeagueCountry ?? 'BRA';
+  const countryClubs = getNationalClubsByCountry(targetCountry);
   const div1Giants = shuffleArray(countryClubs.filter((c) => c.squadAvgOvr >= 80));
   const div1Mid = shuffleArray(
     countryClubs.filter((c) => LEAGUES[c.leagueId].division === 1 && c.squadAvgOvr < 80),

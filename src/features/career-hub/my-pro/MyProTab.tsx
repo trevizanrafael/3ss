@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { COUNTRIES } from '../../../data/countries/countries';
 import { AttributeKey } from '../../../data/equipment/catalog';
 import { POSITION_LABELS } from '../../../domains/attributes/overallCalculator';
+import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import {
   computeFifaMacroStats,
   getDrillById,
 } from '../../../domains/training/trainingDrillsCatalog';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
+import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { TrophyCabinetView } from './TrophyCabinetView';
@@ -17,10 +20,13 @@ interface StatColumnConfig {
 }
 
 export const MyProTab: React.FC = () => {
-  const { player, drillSlots, recentLeveledKeys, trophyCabinet } = useCareerStore();
+  const { player, contract, drillSlots, recentLeveledKeys, trophyCabinet, periodStats } =
+    useCareerStore();
   const [subView, setSubView] = useState<'STATS' | 'TROPHIES'>('STATS');
 
   if (!player) return null;
+  const natMeta = COUNTRIES[player.nationality] ?? COUNTRIES.BRA;
+  const callUp = evaluateNationalCallUp(player, contract?.stage ?? 'YOUTH', periodStats);
 
   const macros = computeFifaMacroStats(player.attributes);
   const activeTrainingKeys = new Set<AttributeKey>();
@@ -101,13 +107,20 @@ export const MyProTab: React.FC = () => {
           >
             {player.overall}
           </div>
+          <ClubCrest clubId={natMeta.nationalTeamId} size="md" />
           <div>
             <h2 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none">
               {player.fullName}
             </h2>
             <p className="text-xs uppercase tracking-widest text-[#9498A3] mt-1">
-              {POSITION_LABELS[player.position]} • PERNA {player.preferredFoot} • {player.heightCm}CM /{' '}
-              {player.weightKg}KG
+              {natMeta.flag} {natMeta.name} ({player.careerTotals.nationalCaps ?? 0}J /{' '}
+              {player.careerTotals.nationalGoals ?? 0}G) •{' '}
+              <strong className={callUp.calledUp ? 'text-[#2DBE60]' : 'text-[#C8A45D]'}>
+                {callUp.calledUp
+                  ? `CONVOCADO (${callUp.role})`
+                  : `META SELEÇÃO: ${callUp.minOvrRequired}+ OVR`}
+              </strong>{' '}
+              • {POSITION_LABELS[player.position]}
             </p>
           </div>
         </div>

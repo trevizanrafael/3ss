@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { LeagueId } from '../../../data/leagues/leagues';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
+import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import {
   MatchPerformanceResult,
   TacticalMindset,
@@ -18,7 +19,8 @@ import { KitChoice, MatchKitsAndInfoPanel } from './MatchKitsAndInfoPanel';
 import { TacticalLineupPitch } from './TacticalLineupPitch';
 
 export const MatchDayModal: React.FC = () => {
-  const { player, contract, calendar, worldSeason, playCurrentMatch } = useCareerStore();
+  const { player, contract, calendar, worldSeason, periodStats, playCurrentMatch } =
+    useCareerStore();
   const { matchModalOpen, setMatchModalOpen } = useNavigationStore();
 
   const [mindset, setMindset] = useState<TacticalMindset>('EQUILIBRADO');
@@ -34,24 +36,28 @@ export const MatchDayModal: React.FC = () => {
 
   if (!matchModalOpen || !player || !contract) return null;
 
+  const callUp = evaluateNationalCallUp(player, contract.stage, periodStats);
   const liveFixture = getClubFixtureOnExactDay(
     worldSeason,
     contract.clubId,
     contract.stage,
     calendar.week,
     calendar.day,
+    callUp,
   );
 
   const compId = result?.competitionId ?? liveFixture?.competitionId;
   const opponentId = result?.opponentId ?? liveFixture?.opponentId;
   const isHome = result ? result.isHome : (liveFixture?.isHome ?? true);
   const stageLabel = result?.stageLabel ?? liveFixture?.stageLabel ?? 'PARTIDA OFICIAL';
-  const isContinental = Boolean(liveFixture?.isContinental);
+  const isContinental = Boolean(liveFixture?.isContinental || liveFixture?.isNationalTeam);
+  const activeMyTeamId = result?.clubId ?? liveFixture?.myTeamId ?? contract.clubId;
+  const activeUserRole = liveFixture?.nationalRole ?? contract.role;
 
   if (!compId || !opponentId) return null;
 
   const theme = getCompetitionTheme(compId);
-  const myClub = getClubById(contract.clubId);
+  const myClub = getClubById(activeMyTeamId);
   const opponentClub = getClubById(opponentId);
   const homeClub = isHome ? myClub : opponentClub;
   const awayClub = isHome ? opponentClub : myClub;
@@ -151,7 +157,7 @@ export const MatchDayModal: React.FC = () => {
               awayKit={awayKit}
               onChangeHomeKit={setHomeKit}
               onChangeAwayKit={setAwayKit}
-              userRole={contract.role}
+              userRole={activeUserRole}
               mindset={mindset}
               onChangeMindset={setMindset}
               isContinentalNight={isContinental}
@@ -175,7 +181,7 @@ export const MatchDayModal: React.FC = () => {
               myClub={myClub}
               opponentClub={opponentClub}
               userPlayer={player}
-              userRole={contract.role}
+              userRole={activeUserRole}
               accentColor={theme.accentPrimary}
             />
           </div>

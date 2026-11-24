@@ -1,7 +1,8 @@
 import React from 'react';
-import { COUNTRIES } from '../../data/countries/countries';
+import { COUNTRIES, TRYOUT_LEAGUE_COUNTRIES } from '../../data/countries/countries';
 import { CareerPlayer } from '../../domains/player/playerTypes';
 import { computeFifaMacroStats } from '../../domains/training/trainingDrillsCatalog';
+import { ClubCrest } from '../../shared/ui/ClubCrest';
 import { getFifaStatColor } from '../../shared/ui/FifaStatBadge';
 
 interface AvatarKitPreviewProps {
@@ -10,7 +11,10 @@ interface AvatarKitPreviewProps {
 
 export const AvatarKitPreview: React.FC<AvatarKitPreviewProps> = ({ previewPlayer }) => {
   const { appearance } = previewPlayer;
-  const country = COUNTRIES[previewPlayer.nationality];
+  const country = COUNTRIES[previewPlayer.nationality] ?? COUNTRIES.BRA;
+  const tryoutCountry =
+    TRYOUT_LEAGUE_COUNTRIES[previewPlayer.startingLeagueCountry ?? 'BRA'] ??
+    TRYOUT_LEAGUE_COUNTRIES.BRA;
   const macros = computeFifaMacroStats(previewPlayer.attributes);
 
   const macroRows: [string, number][] = [
@@ -38,13 +42,13 @@ export const AvatarKitPreview: React.FC<AvatarKitPreviewProps> = ({ previewPlaye
           </div>
         </div>
 
-        <div className="text-right">
-          <div className="text-2xl">{country.flag}</div>
-          <div className="font-condensed uppercase text-xs tracking-widest text-[#9498A3] mt-1">
-            {country.name} • {previewPlayer.age} ANOS
+        <div className="text-right flex flex-col items-end">
+          <ClubCrest clubId={country.nationalTeamId} size="md" />
+          <div className="font-condensed uppercase text-xs tracking-widest text-[#F5F5F7] mt-1.5">
+            {country.flag} {country.name} • {previewPlayer.age} ANOS
           </div>
-          <div className="text-[11px] text-[#565A65] mt-0.5">
-            {previewPlayer.heightCm} CM • {previewPlayer.weightKg} KG
+          <div className="text-[10px] uppercase tracking-wider text-[#C8A45D] mt-0.5">
+            TESTE: {tryoutCountry.flag} {tryoutCountry.name}
           </div>
         </div>
       </div>

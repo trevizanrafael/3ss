@@ -1,5 +1,7 @@
 import { ContinentalCupId, LeagueId } from '../../data/leagues/leagues';
 import { AnyCompetitionId } from '../../data/world/competitionThemes';
+import { SquadRole } from '../../shared/types/common';
+import { InternationalCycleState } from '../international/internationalTypes';
 
 export interface ClubStandingRow {
   clubId: string;
@@ -19,7 +21,7 @@ export interface FixtureMatch {
   homeGoals: number | null;
   awayGoals: number | null;
   played: boolean;
-  winnerId?: string; // Em caso de final única com pênaltis
+  winnerId?: string;
 }
 
 export interface LeagueSeasonData {
@@ -30,9 +32,9 @@ export interface LeagueSeasonData {
 }
 
 export interface ContinentalGroup {
-  groupName: string; // 'GRUPO A' .. 'GRUPO H'
+  groupName: string;
   standings: ClubStandingRow[];
-  rounds: FixtureMatch[][]; // 6 rodadas
+  rounds: FixtureMatch[][];
 }
 
 export interface KnockoutTie {
@@ -60,10 +62,13 @@ export interface ContinentalCupData {
 export interface ScheduledClubFixture {
   competitionId: AnyCompetitionId;
   isContinental: boolean;
+  isNationalTeam?: boolean;
+  myTeamId?: string;
+  nationalRole?: SquadRole;
   stageLabel: string;
   opponentId: string;
   isHome: boolean;
-  dayOfWeek: 3 | 6; // Quarta (3) = Continental | Sábado (6) = Liga Nacional
+  dayOfWeek: 3 | 6 | 7;
 }
 
 export interface SeasonHistoryRecord {
@@ -74,6 +79,7 @@ export interface SeasonHistoryRecord {
   leagueChampionId: string;
   championsLeagueWinnerId: string | null;
   libertadoresWinnerId: string | null;
+  worldCupWinnerId?: string | null;
   goals: number;
   assists: number;
 }
@@ -82,5 +88,6 @@ export interface WorldSeasonState {
   seasonYear: number;
   leagues: Record<LeagueId, LeagueSeasonData>;
   continentals: Record<ContinentalCupId, ContinentalCupData>;
+  international: InternationalCycleState;
   history: SeasonHistoryRecord[];
 }

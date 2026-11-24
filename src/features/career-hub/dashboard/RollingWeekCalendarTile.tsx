@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
+import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import {
   findClubLeagueIdInWorld,
   findUpcomingFixtureForClub,
@@ -35,26 +36,28 @@ function getCurveDurationMs(curve: StepCurve): number {
 }
 
 function shouldStopAfterNextDay(st: CareerState, manualStop: boolean): boolean {
-  if (manualStop || !st.contract) return true;
+  if (manualStop || !st.contract || !st.player) return true;
   const nextDay = st.calendar.day === 7 ? 1 : st.calendar.day + 1;
   const nextWeek = st.calendar.day === 7 ? st.calendar.week + 1 : st.calendar.week;
   if (nextWeek > TOTAL_SEASON_WEEKS) return true;
 
+  const callUp = evaluateNationalCallUp(st.player, st.contract.stage, st.periodStats);
   const fx = getClubFixtureOnExactDay(
     st.worldSeason,
     st.contract.clubId,
     st.contract.stage,
     nextWeek,
     nextDay,
+    callUp,
   );
-  if (fx) return true; // Para em Quarta de Champions/Libertadores OU Sábado de Liga!
-  if (nextDay === 2 || nextDay === 4) return true; // Para em Dia de Treino!
-  if (st.calendar.day === 7 && (nextWeek === 20 || nextWeek === 39)) return true; // Janelas!
+  if (fx) return true; // Para em Quarta Continental, Sábado de Liga OU Data FIFA da Seleção!
+  if (nextWeek <= 38 && (nextDay === 2 || nextDay === 4)) return true; // Para em Dia de Treino!
+  if (st.calendar.day === 7 && (nextWeek === 20 || nextWeek === TOTAL_SEASON_WEEKS)) return true;
   return false;
 }
 
 export const RollingWeekCalendarTile: React.FC = () => {
-  const { player, contract, calendar, worldSeason, trainedToday, advanceDay } =
+  const { player, contract, calendar, worldSeason, periodStats, trainedToday, advanceDay } =
     useCareerStore();
   const { setActiveTab, setMatchModalOpen } = useNavigationStore();
 
@@ -62,11 +65,21 @@ export const RollingWeekCalendarTile: React.FC = () => {
   const [slideFrac, setSlideFrac] = useState(0);
   const stopRequestedRef = useRef(false);
 
+  const callUp =
+    player && contract ? evaluateNationalCallUp(player, contract.stage, periodStats) : null;
   const todayFixture = contract
-    ? getClubFixtureOnExactDay(worldSeason, contract.clubId, contract.stage, calendar.week, calendar.day)
+    ? getClubFixtureOnExactDay(
+        worldSeason,
+        contract.clubId,
+        contract.stage,
+        calendar.week,
+        calendar.day,
+        callUp,
+      )
     : null;
   const isMatchToday = Boolean(todayFixture);
-  const isTrainingDay = (calendar.day === 2 || calendar.day === 4) && !isMatchToday;
+  const isTrainingDay =
+    calendar.week <= 38 && (calendar.day === 2 || calendar.day === 4) && !isMatchToday;
   const stopForTraining = isTrainingDay && !trainedToday;
 
   useEffect(() => {
@@ -113,6 +126,10 @@ export const RollingWeekCalendarTile: React.FC = () => {
       advanceDay();
 
       const after = useCareerStore.getState();
+      const afterCallUp =
+        after.player && after.contract
+          ? evaluateNationalCallUp(after.player, after.contract.stage, after.periodStats)
+          : null;
       const fxToday = after.contract
         ? getClubFixtureOnExactDay(
             after.worldSeason,
@@ -120,10 +137,14 @@ export const RollingWeekCalendarTile: React.FC = () => {
             after.contract.stage,
             after.calendar.week,
             after.calendar.day,
+            afterCallUp,
           )
         : null;
       const hitTrain =
-        (after.calendar.day === 2 || after.calendar.day === 4) && !fxToday && !after.trainedToday;
+        after.calendar.week <= 38 &&
+        (after.calendar.day === 2 || after.calendar.day === 4) &&
+        !fxToday &&
+        !after.trainedToday;
       const hitOffer =
         after.transitionProposals.length + after.marketOffers.length > prevOffers;
 
@@ -161,6 +182,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
     contract.stage,
     calendar.week,
     calendar.day,
+    callUp,
   );
   const activeCompId = todayFixture?.competitionId ?? upcomingFx?.competitionId ?? clubLeagueId;
   const compTheme = getCompetitionTheme(activeCompId);
@@ -170,6 +192,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
     worldSeason,
     contract.clubId,
     contract.stage,
+    callUp,
   );
 
   const handleTileClick = () => {
@@ -311,7 +334,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
                       {cell.fixture ? (
                         <div className="flex items-center gap-1">
                           <ClubCrest clubId={cell.fixture.opponentId} size="sm" />
-                          {cell.fixture.isContinental && (
+                          {(cell.fixture.isContinental || cell.fixture.isNationalTeam) && (
                             <CompetitionBadge
                               competitionId={cell.fixture.competitionId}
                               size="sm"

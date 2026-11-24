@@ -35,9 +35,10 @@ export const SeasonHistoryView: React.FC<SeasonHistoryViewProps> = ({
             const lgChamp = getClubById(h.leagueChampionId);
             const uclChamp = h.championsLeagueWinnerId ? getClubById(h.championsLeagueWinnerId) : null;
             const libChamp = h.libertadoresWinnerId ? getClubById(h.libertadoresWinnerId) : null;
+            const ntChamp = h.worldCupWinnerId ? getClubById(h.worldCupWinnerId) : null;
 
             return (
-              <div key={h.season} className="bg-[#0E0F12] border border-[#242730] p-4 grid sm:grid-cols-4 gap-4 items-center text-xs">
+              <div key={h.season} className="bg-[#0E0F12] border border-[#242730] p-4 grid sm:grid-cols-5 gap-3 items-center text-xs">
                 <div>
                   <div className="font-condensed font-extrabold text-2xl text-[#C8A45D]">
                     {h.season}/{String(h.season + 1).slice(-2)}
@@ -77,6 +78,16 @@ export const SeasonHistoryView: React.FC<SeasonHistoryViewProps> = ({
                   <span className="text-[10px] uppercase text-[#565A65] block">LIBERTADORES</span>
                   <span className="font-condensed uppercase font-bold text-base text-[#C8A45D]">
                     {libChamp?.name ?? '—'}
+                  </span>
+                </div>
+
+                <div
+                  onClick={() => ntChamp && onSelectClub(ntChamp.id)}
+                  className="cursor-pointer"
+                >
+                  <span className="text-[10px] uppercase text-[#565A65] block">COPA DE SELEÇÕES</span>
+                  <span className="font-condensed uppercase font-bold text-base text-[#2DBE60]">
+                    {ntChamp?.name ?? 'ELIMINATÓRIAS'}
                   </span>
                 </div>
               </div>

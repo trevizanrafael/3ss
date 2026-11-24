@@ -6,6 +6,13 @@ import {
   PLAYABLE_LEAGUE_IDS,
 } from '../../data/leagues/leagues';
 import { CareerStage } from '../../shared/types/common';
+import { NationalCallUpStatus } from '../international/callUpEvaluator';
+import {
+  createInitialInternationalState,
+  findNationalTeamFixtureOnDay,
+  rolloverInternationalSeason,
+  simulateInternationalDay,
+} from '../international/internationalCalendar';
 import {
   ALL_CONTINENTAL_WEEKS,
   findClubContinentalFixtureInWeek,
@@ -33,7 +40,8 @@ import {
   WorldSeasonState,
 } from './seasonTypes';
 
-export const TOTAL_SEASON_WEEKS = 40; // Semanas 1..38 = Competições | Semanas 39..40 = Pós-temporada e Janela Anual
+// Semanas 1..38 = Clubes + Datas FIFA (Dom) | Semanas 39..42 = Copas de Seleções (Junho) | Semana 43 = Gala & Janela
+export const TOTAL_SEASON_WEEKS = 43;
 
 const ALL_CUPS: ContinentalCupId[] = [
   'CHAMPIONS_LEAGUE',
@@ -68,6 +76,7 @@ export function createInitialWorldSeason(seasonYear = 2026): WorldSeasonState {
     seasonYear,
     leagues,
     continentals,
+    international: createInitialInternationalState(seasonYear),
     history: [],
   };
 }
@@ -85,15 +94,40 @@ export function getClubFixtureOnExactDay(
   stage: CareerStage,
   week: number,
   day: number,
+  callUp?: NationalCallUpStatus | null,
 ): ScheduledClubFixture | null {
-  // Quarta-feira (day === 3): Competições Continentais (somente no Profissional/Empréstimo)
-  if (day === 3 && stage !== 'YOUTH' && ALL_CONTINENTAL_WEEKS.has(week)) {
+  // 1. Jogos da Seleção Nacional (Datas FIFA no Domingo ou Copas de Verão nas Semanas 39..42) quando convocado!
+  if (callUp?.calledUp && world.international) {
+    const ntFx = findNationalTeamFixtureOnDay(
+      world.international,
+      callUp.nationalTeamId,
+      week,
+      day,
+    );
+    if (ntFx) {
+      return {
+        competitionId: ntFx.competitionId,
+        isContinental: false,
+        isNationalTeam: true,
+        myTeamId: callUp.nationalTeamId,
+        nationalRole: callUp.role,
+        stageLabel: ntFx.stageLabel,
+        opponentId: ntFx.opponentId,
+        isHome: ntFx.isHome,
+        dayOfWeek: ntFx.dayOfWeek,
+      };
+    }
+  }
+
+  // 2. Quarta-feira (day === 3, Semanas 1..38): Competições Continentais de Clubes
+  if (day === 3 && week <= 38 && stage !== 'YOUTH' && ALL_CONTINENTAL_WEEKS.has(week)) {
     for (const cupId of ALL_CUPS) {
       const found = findClubContinentalFixtureInWeek(world.continentals[cupId], clubId, week);
       if (found) {
         return {
           competitionId: cupId,
           isContinental: true,
+          myTeamId: clubId,
           stageLabel: found.stageLabel,
           opponentId: found.opponentId,
           isHome: found.isHome,
@@ -103,7 +137,7 @@ export function getClubFixtureOnExactDay(
     }
   }
 
-  // Sábado (day === 6): Rodada da Liga Nacional / Base
+  // 3. Sábado (day === 6, Semanas 1..38): Rodada da Liga Nacional / Base
   if (day === 6 && week <= 38) {
     const lgId = findClubLeagueIdInWorld(world, clubId);
     const lg = world.leagues[lgId];
@@ -117,6 +151,7 @@ export function getClubFixtureOnExactDay(
         return {
           competitionId: lgId,
           isContinental: false,
+          myTeamId: clubId,
           stageLabel: `RODADA ${rIdx + 1}`,
           opponentId: isHome ? m.awayClubId : m.homeClubId,
           isHome,
@@ -135,12 +170,13 @@ export function findUpcomingFixtureForClub(
   stage: CareerStage,
   startWeek: number,
   startDay: number,
+  callUp?: NationalCallUpStatus | null,
 ): ScheduledClubFixture | null {
-  for (let w = startWeek; w <= 38; w++) {
+  for (let w = startWeek; w <= 42; w++) {
     const dFrom = w === startWeek ? startDay : 1;
-    for (const d of [3, 6] as const) {
+    for (const d of [3, 6, 7] as const) {
       if (d < dFrom) continue;
-      const fx = getClubFixtureOnExactDay(world, clubId, stage, w, d);
+      const fx = getClubFixtureOnExactDay(world, clubId, stage, w, d, callUp);
       if (fx) return fx;
     }
   }
@@ -153,18 +189,20 @@ export function simulateWorldCompetitionsOnDay(
   day: number,
   playerOverride?: PlayerScoreOverride,
 ): WorldSeasonState {
-  // Quarta-feira: todas as 4 copas continentais rodam simultaneamente!
-  if (day === 3 && ALL_CONTINENTAL_WEEKS.has(week)) {
-    const nextCont = { ...world.continentals };
+  let nextWorld = world;
+
+  // Quarta-feira (Semanas 1..38): todas as 4 copas continentais de clubes rodam simultaneamente!
+  if (day === 3 && week <= 38 && ALL_CONTINENTAL_WEEKS.has(week)) {
+    const nextCont = { ...nextWorld.continentals };
     for (const cupId of ALL_CUPS) {
       nextCont[cupId] = simulateContinentalWeek(nextCont[cupId], week, playerOverride);
     }
-    return { ...world, continentals: nextCont };
+    nextWorld = { ...nextWorld, continentals: nextCont };
   }
 
-  // Sábado: todas as 17 ligas nacionais rodam simultaneamente!
+  // Sábado (Semanas 1..38): todas as 17 ligas nacionais rodam simultaneamente!
   if (day === 6 && week <= 38) {
-    const nextLeagues = { ...world.leagues };
+    const nextLeagues = { ...nextWorld.leagues };
     for (const lgId of PLAYABLE_LEAGUE_IDS) {
       const lg = nextLeagues[lgId];
       const rIdx = getLeagueRoundForWeek(week, lg.rounds.length);
@@ -182,7 +220,13 @@ export function simulateWorldCompetitionsOnDay(
             : { homeGoals: playerOverride.oppGoals, awayGoals: playerOverride.clubGoals }
           : simulateRealisticScoreline(m.homeClubId, m.awayClubId, false);
 
-        standings = applyScoreToStandings(standings, m.homeClubId, m.awayClubId, sc.homeGoals, sc.awayGoals);
+        standings = applyScoreToStandings(
+          standings,
+          m.homeClubId,
+          m.awayClubId,
+          sc.homeGoals,
+          sc.awayGoals,
+        );
         return { ...m, homeGoals: sc.homeGoals, awayGoals: sc.awayGoals, played: true };
       });
 
@@ -190,10 +234,23 @@ export function simulateWorldCompetitionsOnDay(
       rounds[rIdx] = updatedRound;
       nextLeagues[lgId] = { ...lg, standings, rounds };
     }
-    return { ...world, leagues: nextLeagues };
+    nextWorld = { ...nextWorld, leagues: nextLeagues };
   }
 
-  return world;
+  // Datas FIFA (Domingo) e Copas de Seleções de Verão (Semanas 39..42, Quarta & Domingo)!
+  if (nextWorld.international && (day === 7 || (week >= 39 && week <= 42 && day === 3))) {
+    nextWorld = {
+      ...nextWorld,
+      international: simulateInternationalDay(
+        nextWorld.international,
+        week,
+        day,
+        playerOverride,
+      ),
+    };
+  }
+
+  return nextWorld;
 }
 
 export function rolloverSeasonWithPromotionAndQualification(
@@ -214,14 +271,16 @@ export function rolloverSeasonWithPromotionAndQualification(
     leagueChampionId: pSorted[0]?.clubId ?? playerClubId,
     championsLeagueWinnerId: world.continentals.CHAMPIONS_LEAGUE.championClubId,
     libertadoresWinnerId: world.continentals.LIBERTADORES.championClubId,
+    worldCupWinnerId:
+      world.international?.worldCup?.championTeamId ??
+      world.international?.copaAmerica?.championTeamId ??
+      null,
     goals: playerSeasonGoals,
     assists: playerSeasonAssists,
   };
 
-  // Classifica para as próximas copas continentais ANTES de zerar as tabelas da temporada encerrada!
   const qualifiedNextYear = qualifyContinentalClubs(world.leagues);
 
-  // Aplica Rebaixamento e Acesso entre 1ª e 2ª divisões de cada país (exceto MLS!)
   const nextClubLists = {} as Record<LeagueId, string[]>;
   for (const lgId of PLAYABLE_LEAGUE_IDS) {
     nextClubLists[lgId] = sortStandings(world.leagues[lgId].standings).map((r) => r.clubId);
@@ -252,10 +311,14 @@ export function rolloverSeasonWithPromotionAndQualification(
     nextContinentals[cupId] = createContinentalCupFromClubs(cupId, qualifiedNextYear[cupId]);
   }
 
+  const baseIntl = world.international ?? createInitialInternationalState(world.seasonYear);
+  const nextInternational = rolloverInternationalSeason(baseIntl, world.seasonYear + 1);
+
   return {
     seasonYear: world.seasonYear + 1,
     leagues: nextLeagues,
     continentals: nextContinentals,
+    international: nextInternational,
     history: [historyEntry, ...world.history.slice(0, 19)],
   };
 }

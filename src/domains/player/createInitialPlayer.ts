@@ -1,5 +1,11 @@
+import { isLeagueCountryCode } from '../../data/countries/countries';
 import { AttributeKey } from '../../data/equipment/catalog';
-import { CountryCode, PositionCode, PreferredFoot } from '../../shared/types/common';
+import {
+  CountryCode,
+  LeagueCountryCode,
+  PositionCode,
+  PreferredFoot,
+} from '../../shared/types/common';
 import { clamp } from '../../shared/utils/math';
 import { ALL_ATTRIBUTE_KEYS } from '../attributes/attributeDefinitions';
 import { calculateOverall, getPositionSector } from '../attributes/overallCalculator';
@@ -11,6 +17,7 @@ export interface CreatePlayerInput {
   shirtNumber: number;
   age: 16 | 17 | 18;
   nationality: CountryCode;
+  startingLeagueCountry?: LeagueCountryCode;
   position: PositionCode;
   preferredFoot: PreferredFoot;
   heightCm: number;
@@ -20,7 +27,6 @@ export interface CreatePlayerInput {
 
 export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
   const sector = getPositionSector(input.position);
-  // 16 anos começa um pouco mais cru (~55), 18 anos já mais encorpado (~59)
   const ageBase = input.age === 16 ? 52 : input.age === 17 ? 54 : 56;
 
   const attrs = {} as Record<AttributeKey, number>;
@@ -59,7 +65,6 @@ export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
     attrs.finishing -= 12;
   }
 
-  // Modificadores físicos sutis e realistas
   if (input.heightCm >= 185) {
     attrs.strength += 3;
     attrs.agility -= 2;
@@ -75,8 +80,13 @@ export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
     attrs[key] = clamp(attrs[key], 35, 72);
   }
 
+  const startingLeagueCountry: LeagueCountryCode =
+    input.startingLeagueCountry ??
+    (isLeagueCountryCode(input.nationality) ? input.nationality : 'BRA');
+
   return {
     ...input,
+    startingLeagueCountry,
     attributes: attrs,
     attributeXp: xp,
     overall: calculateOverall(attrs, input.position),
@@ -88,6 +98,8 @@ export function createInitialPlayer(input: CreatePlayerInput): CareerPlayer {
       assists: 0,
       threeStarMatches: 0,
       trophies: 0,
+      nationalCaps: 0,
+      nationalGoals: 0,
     },
   };
 }

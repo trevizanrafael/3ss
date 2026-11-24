@@ -1,5 +1,6 @@
 import { getClubById } from '../../data/clubs';
 import { getCompetitionTheme } from '../../data/world/competitionThemes';
+import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
 import {
   MatchPerformanceResult,
   resolveMatchSimulation,
@@ -23,38 +24,44 @@ export function computePlayedMatchState(
   state: CareerState,
   mindset: TacticalMindset,
 ): { patch: Partial<CareerState>; result: MatchPerformanceResult } | null {
-  const { player, contract, calendar, worldSeason } = state;
+  const { player, contract, calendar, worldSeason, periodStats } = state;
   if (!player || !contract) return null;
 
+  const callUp = evaluateNationalCallUp(player, contract.stage, periodStats);
   const fixture = getClubFixtureOnExactDay(
     worldSeason,
     contract.clubId,
     contract.stage,
     calendar.week,
     calendar.day,
+    callUp,
   );
   if (!fixture) return null;
 
-  const club = getClubById(contract.clubId);
+  const isNatGame = Boolean(fixture.isNationalTeam && fixture.myTeamId);
+  const activeTeamId = isNatGame ? fixture.myTeamId! : contract.clubId;
+  const activeRole = isNatGame ? (fixture.nationalRole ?? 'RESERVA') : contract.role;
+  const activeStage = isNatGame ? 'PRO' : contract.stage;
+
+  const myTeam = getClubById(activeTeamId);
   const result = resolveMatchSimulation(
     player,
-    contract.clubId,
+    activeTeamId,
     fixture.opponentId,
     fixture.isHome,
     fixture.competitionId,
     fixture.stageLabel,
-    contract.role,
-    contract.stage,
+    activeRole,
+    activeStage,
     mindset,
   );
 
-  // Simula simultaneamente todos os outros jogos da mesma rodada (Liga ou Continental)!
   const nextWorld = simulateWorldCompetitionsOnDay(
     worldSeason,
     calendar.week,
     calendar.day,
     {
-      clubId: contract.clubId,
+      clubId: activeTeamId,
       clubGoals: result.clubGoals,
       oppGoals: result.opponentGoals,
     },
@@ -64,44 +71,58 @@ export function computePlayedMatchState(
   let nextYouth = state.youthState;
   let nextProposals = state.transitionProposals;
   let nextFeed = [...state.feed];
-
-  if (contract.stage === 'YOUTH' && nextYouth) {
-    const youthUpdate = updateYouthAfterMatch(
-      nextYouth,
-      player,
-      contract.clubId,
-      result.stars,
-      result.playerGoals,
-      result.playerAssists,
-    );
-    nextYouth = youthUpdate.updatedYouth;
-    if (youthUpdate.newRole) nextRole = youthUpdate.newRole;
-    if (youthUpdate.eventNote) {
-      nextFeed = [makeEvent(calendar.week, 'Destaque na Base', youthUpdate.eventNote, 'CONTRACT'), ...nextFeed];
-    }
-    if (nextYouth.transitionReady && nextProposals.length === 0) {
-      nextProposals = generateYouthTransitionProposals(player, contract.clubId);
-    }
-  }
-
-  const contributions = result.playerGoals + result.playerAssists;
-  let bonusEarned = contributions * contract.goalBonusPerContribution;
+  let bonusEarned = 0;
   const goal = { ...contract.seasonGoal };
-  goal.current += goal.label.includes('gols')
-    ? result.playerGoals
-    : goal.label.includes('G+A')
-      ? contributions
-      : result.stars >= 2
-        ? 1
-        : 0;
 
-  if (!goal.completed && goal.current >= goal.target) {
-    goal.completed = true;
-    bonusEarned += goal.rewardAmount;
-    nextFeed = [
-      makeEvent(calendar.week, 'Meta Contratual Batida!', `Bônus de ${formatMoney(goal.rewardAmount)} liberado!`, 'CONTRACT'),
-      ...nextFeed,
-    ];
+  if (isNatGame) {
+    // Bônus oficial da Confederação por partida e gols pela Seleção!
+    bonusEarned = 4500 + (result.playerGoals + result.playerAssists) * 3000;
+  } else {
+    if (contract.stage === 'YOUTH' && nextYouth) {
+      const youthUpdate = updateYouthAfterMatch(
+        nextYouth,
+        player,
+        contract.clubId,
+        result.stars,
+        result.playerGoals,
+        result.playerAssists,
+      );
+      nextYouth = youthUpdate.updatedYouth;
+      if (youthUpdate.newRole) nextRole = youthUpdate.newRole;
+      if (youthUpdate.eventNote) {
+        nextFeed = [
+          makeEvent(calendar.week, 'Destaque na Base', youthUpdate.eventNote, 'CONTRACT'),
+          ...nextFeed,
+        ];
+      }
+      if (nextYouth.transitionReady && nextProposals.length === 0) {
+        nextProposals = generateYouthTransitionProposals(player, contract.clubId);
+      }
+    }
+
+    const contributions = result.playerGoals + result.playerAssists;
+    bonusEarned = contributions * contract.goalBonusPerContribution;
+    goal.current += goal.label.includes('gols')
+      ? result.playerGoals
+      : goal.label.includes('G+A')
+        ? contributions
+        : result.stars >= 2
+          ? 1
+          : 0;
+
+    if (!goal.completed && goal.current >= goal.target) {
+      goal.completed = true;
+      bonusEarned += goal.rewardAmount;
+      nextFeed = [
+        makeEvent(
+          calendar.week,
+          'Meta Contratual Batida!',
+          `Bônus de ${formatMoney(goal.rewardAmount)} liberado!`,
+          'CONTRACT',
+        ),
+        ...nextFeed,
+      ];
+    }
   }
 
   const updatedTotals = {
@@ -110,12 +131,14 @@ export function computePlayedMatchState(
     assists: player.careerTotals.assists + result.playerAssists,
     threeStarMatches: player.careerTotals.threeStarMatches + (result.stars === 3 ? 1 : 0),
     trophies: player.careerTotals.trophies,
+    nationalCaps: (player.careerTotals.nationalCaps ?? 0) + (isNatGame ? 1 : 0),
+    nationalGoals: (player.careerTotals.nationalGoals ?? 0) + (isNatGame ? result.playerGoals : 0),
   };
 
   const repStars: StarRating =
-    player.overall >= 82 || updatedTotals.threeStarMatches >= 12
+    player.overall >= 82 || updatedTotals.threeStarMatches >= 12 || updatedTotals.nationalCaps >= 5
       ? 3
-      : player.overall >= 71 || updatedTotals.threeStarMatches >= 5
+      : player.overall >= 71 || updatedTotals.threeStarMatches >= 5 || isNatGame
         ? 2
         : updatedTotals.matches >= 3
           ? 1
@@ -124,30 +147,37 @@ export function computePlayedMatchState(
   const opponent = getClubById(fixture.opponentId);
   const compTheme = getCompetitionTheme(fixture.competitionId);
   nextFeed = [
-    makeEvent(
-      calendar.week,
-      `[${compTheme.shortLabel}] ${club.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName} (${result.stars}★)`,
-      `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
-      'MATCH',
-    ),
+    {
+      ...makeEvent(
+        calendar.week,
+        `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName} (${result.stars}★)`,
+        `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
+        'MATCH',
+      ),
+      clubId: activeTeamId,
+    },
     ...nextFeed,
   ];
 
   const nextPeriod = {
-    monthMatches: state.periodStats.monthMatches + 1,
-    monthGoals: state.periodStats.monthGoals + result.playerGoals,
-    monthAssists: state.periodStats.monthAssists + result.playerAssists,
-    monthStarPoints: state.periodStats.monthStarPoints + result.stars,
-    seasonMatches: state.periodStats.seasonMatches + 1,
-    seasonGoals: state.periodStats.seasonGoals + result.playerGoals,
-    seasonAssists: state.periodStats.seasonAssists + result.playerAssists,
-    seasonStarPoints: state.periodStats.seasonStarPoints + result.stars,
-    continentalMatches:
-      state.periodStats.continentalMatches + (fixture.isContinental ? 1 : 0),
+    monthMatches: periodStats.monthMatches + (isNatGame ? 0 : 1),
+    monthGoals: periodStats.monthGoals + (isNatGame ? 0 : result.playerGoals),
+    monthAssists: periodStats.monthAssists + (isNatGame ? 0 : result.playerAssists),
+    monthStarPoints: periodStats.monthStarPoints + (isNatGame ? 0 : result.stars),
+    seasonMatches: periodStats.seasonMatches + 1,
+    seasonGoals: periodStats.seasonGoals + result.playerGoals,
+    seasonAssists: periodStats.seasonAssists + result.playerAssists,
+    seasonStarPoints: periodStats.seasonStarPoints + result.stars,
+    continentalMatches: periodStats.continentalMatches + (fixture.isContinental ? 1 : 0),
     continentalGoals:
-      state.periodStats.continentalGoals + (fixture.isContinental ? result.playerGoals : 0),
+      periodStats.continentalGoals + (fixture.isContinental ? result.playerGoals : 0),
     continentalAssists:
-      state.periodStats.continentalAssists + (fixture.isContinental ? result.playerAssists : 0),
+      periodStats.continentalAssists + (fixture.isContinental ? result.playerAssists : 0),
+    internationalMatches: periodStats.internationalMatches + (isNatGame ? 1 : 0),
+    internationalGoals:
+      periodStats.internationalGoals + (isNatGame ? result.playerGoals : 0),
+    internationalAssists:
+      periodStats.internationalAssists + (isNatGame ? result.playerAssists : 0),
   };
 
   return {
@@ -165,6 +195,7 @@ export function computePlayedMatchState(
       transitionProposals: nextProposals,
       worldSeason: nextWorld,
       periodStats: nextPeriod,
+      awardPrestigeBoost: state.awardPrestigeBoost + (isNatGame && result.stars === 3 ? 1 : 0),
       lastMatchResult: result,
       feed: nextFeed.slice(0, 30),
     },
