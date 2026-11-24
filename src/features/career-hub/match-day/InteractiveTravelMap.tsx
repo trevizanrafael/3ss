@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ClubData } from '../../../data/clubs/types';
 
 interface InteractiveTravelMapProps {
@@ -33,7 +33,6 @@ function buildCurvedRoutePoints(
   const pts: [number, number][] = [];
   const dLat = to[0] - from[0];
   const dLng = to[1] - from[1];
-  // Deslocamento perpendicular sutil para criar arco de voo/viagem
   const ctrlLat = (from[0] + to[0]) / 2 + dLng * 0.14;
   const ctrlLng = (from[1] + to[1]) / 2 - dLat * 0.14;
 
@@ -55,11 +54,11 @@ function makeClubPinIcon(club: ClubData, tag: string, highlightColor: string): L
 
   return L.divIcon({
     className: '',
-    iconSize: [120, 56],
-    iconAnchor: [60, 48],
+    iconSize: [124, 56],
+    iconAnchor: [62, 48],
     html: `
       <div style="display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
-        <div style="background:#0B0B0D;border:2px solid ${highlightColor};padding:3px 8px;display:flex;align-items:center;gap:6px;box-shadow:0 6px 18px rgba(0,0,0,0.85);">
+        <div style="background:#0B0B0D;border:2px solid ${highlightColor};padding:3px 8px;display:flex;align-items:center;gap:6px;box-shadow:0 6px 18px rgba(0,0,0,0.88);">
           ${logoHtml}
           <div style="line-height:1.05;text-align:left;">
             <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;letter-spacing:0.12em;color:${highlightColor};text-transform:uppercase;">${tag}</div>
@@ -80,6 +79,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const [mapStyle, setMapStyle] = useState<'DARK' | 'SATELLITE'>('DARK');
 
   const originClub = myClub;
   const hostClub = isHome ? myClub : opponentClub;
@@ -109,12 +109,12 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
     const map = mapRef.current;
     if (!map) return;
     if (isHome) {
-      map.setView(hostCoords, 12, { animate: true });
+      map.setView(hostCoords, mapStyle === 'SATELLITE' ? 15 : 12, { animate: true });
     } else if (distanceKm < 25) {
       map.setView(hostCoords, 11, { animate: true });
     } else {
       const bounds = L.latLngBounds([originCoords, hostCoords]);
-      map.fitBounds(bounds, { padding: [52, 52], maxZoom: 11, animate: true });
+      map.fitBounds(bounds, { padding: [54, 54], maxZoom: 11, animate: true });
     }
   };
 
@@ -129,20 +129,47 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
     });
     mapRef.current = map;
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      maxZoom: 18,
-      attribution: '© OpenStreetMap • CARTO',
-    }).addTo(map);
+    if (mapStyle === 'DARK') {
+      // Esri ArcGIS World Dark Gray Base + Labels (100% gratuito, sem chave de API, nativo escuro!)
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 16,
+          attribution: '© Esri, HERE, Garmin, OpenStreetMap',
+        },
+      ).addTo(map);
+
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 16,
+        },
+      ).addTo(map);
+    } else {
+      // Visão de Satélite Real dos Estádios e Cidades + Nomes
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 18,
+          attribution: '© Esri World Imagery',
+        },
+      ).addTo(map);
+
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 18,
+        },
+      ).addTo(map);
+    }
 
     if (isHome) {
-      // Em casa: foca no Estádio do seu clube (e mostra de onde vem o visitante caso queira afastar o zoom!)
       L.circleMarker(hostCoords, {
         radius: 26,
         color: accentColor,
         weight: 1.5,
         fillColor: accentColor,
-        fillOpacity: 0.14,
+        fillOpacity: 0.16,
       }).addTo(map);
 
       L.marker(hostCoords, {
@@ -156,10 +183,10 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       if (computeDistanceKm(hostCoords[0], hostCoords[1], visitorCoords[0], visitorCoords[1]) > 8) {
         const visitorArc = buildCurvedRoutePoints(visitorCoords, hostCoords);
         L.polyline(visitorArc, {
-          color: '#565A65',
-          weight: 1.5,
+          color: '#9498A3',
+          weight: 1.8,
           dashArray: '5 6',
-          opacity: 0.65,
+          opacity: 0.7,
         }).addTo(map);
 
         L.marker(visitorCoords, {
@@ -167,23 +194,21 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         }).addTo(map);
       }
 
-      map.setView(hostCoords, 12);
+      map.setView(hostCoords, mapStyle === 'SATELLITE' ? 15 : 12);
     } else {
-      // Fora de casa: mostra deslocamento SAÍDA (Seu Clube) ➔ DESTINO (Estádio Adversário)!
       const arcPoints = buildCurvedRoutePoints(originCoords, hostCoords);
 
-      // Linha base sólida + trilha pontilhada de deslocamento
       L.polyline(arcPoints, {
         color: accentColor,
-        weight: 3,
-        opacity: 0.85,
+        weight: 3.2,
+        opacity: 0.9,
       }).addTo(map);
 
       L.polyline(arcPoints, {
         color: '#F5F5F7',
         weight: 1.5,
         dashArray: '6 10',
-        opacity: 0.75,
+        opacity: 0.8,
       }).addTo(map);
 
       L.marker(originCoords, {
@@ -197,7 +222,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         color: accentColor,
         weight: 1.5,
         fillColor: accentColor,
-        fillOpacity: 0.16,
+        fillOpacity: 0.18,
       }).addTo(map);
 
       L.marker(hostCoords, {
@@ -212,7 +237,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         map.setView(hostCoords, 11);
       } else {
         map.fitBounds(L.latLngBounds([originCoords, hostCoords]), {
-          padding: [52, 52],
+          padding: [54, 54],
           maxZoom: 11,
         });
       }
@@ -224,11 +249,21 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       map.remove();
       mapRef.current = null;
     };
-  }, [isHome, originClub, hostClub, opponentClub, originCoords, hostCoords, visitorCoords, distanceKm, accentColor]);
+  }, [
+    isHome,
+    mapStyle,
+    originClub,
+    hostClub,
+    opponentClub,
+    originCoords,
+    hostCoords,
+    visitorCoords,
+    distanceKm,
+    accentColor,
+  ]);
 
   return (
     <div className="console-tile flex flex-col h-full min-h-0 overflow-hidden">
-      {/* Faixa de Cabeçalho da Rota / Localização */}
       <div className="px-4 py-3 border-b border-[#242730] flex items-center justify-between gap-2 shrink-0 bg-[#101216]">
         <div className="min-w-0">
           <div
@@ -238,26 +273,34 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
             {isHome
               ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
               : distanceKm < 25
-                ? 'FORA DE CASA • CLÁSSICO NA MESMA REGIÃO'
+                ? 'FORA DE CASA • CLÁSSICO REGIONAL'
                 : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
           </div>
           <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate">
             {isHome
               ? `${hostClub.stadiumName ?? 'Estádio'} — ${hostClub.city ?? hostClub.name}`
-              : `${originClub.city ?? originClub.shortName}  ➔  ${hostClub.city ?? hostClub.shortName} (${hostClub.stadiumName ?? 'Estádio'})`}
+              : `${originClub.city ?? originClub.shortName}  ➔  ${hostClub.city ?? hostClub.shortName}`}
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={fitMapRoute}
-          className="px-2.5 py-1 bg-[#191B20] hover:bg-[#242730] border border-[#242730] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#F5F5F7] shrink-0 cursor-pointer"
-        >
-          ENQUADRAR
-        </button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => setMapStyle((s) => (s === 'DARK' ? 'SATELLITE' : 'DARK'))}
+            className="px-2.5 py-1 bg-[#191B20] hover:bg-[#242730] border border-[#242730] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#C8A45D] cursor-pointer"
+          >
+            {mapStyle === 'DARK' ? 'SATÉLITE' : 'MAPA'}
+          </button>
+          <button
+            type="button"
+            onClick={fitMapRoute}
+            className="px-2.5 py-1 bg-[#191B20] hover:bg-[#242730] border border-[#242730] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#F5F5F7] cursor-pointer"
+          >
+            ENQUADRAR
+          </button>
+        </div>
       </div>
 
-      {/* Área Interativa do Mapa (Arrastar + Scroll Zoom no Mouse) */}
       <div ref={containerRef} className="flex-1 w-full min-h-[220px] z-0" />
 
       <div className="px-4 py-2 border-t border-[#242730] bg-[#0E0F12] flex items-center justify-between text-[10px] uppercase tracking-widest text-[#565A65] shrink-0">
