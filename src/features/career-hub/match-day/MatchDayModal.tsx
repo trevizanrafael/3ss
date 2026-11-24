@@ -12,6 +12,7 @@ import {
   PenaltyCorner,
   resolveInteractiveShootout,
 } from '../../../domains/match-sim/penaltyShootoutEngine';
+import { resolveRivalryMatchContext } from '../../../domains/rivalry/rivalryEngine';
 import { getClubFixtureOnExactDay } from '../../../domains/season/worldSeasonEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { NavDirection } from '../../../shared/gamepad/spatialNavigator';
@@ -91,6 +92,11 @@ export const MatchDayModal: React.FC = () => {
   const opponentClub = getClubById(opponentId);
   const homeClub = isHome ? myClub : opponentClub;
   const awayClub = isHome ? opponentClub : myClub;
+  const isNeutralFinal = stageLabel.includes('FINAL') && !stageLabel.includes('SEMI');
+  const activeRivalry =
+    result?.rivalry ??
+    resolveRivalryMatchContext(activeMyTeamId, opponentId, isHome, isNeutralFinal) ??
+    undefined;
 
   let homeRank: number | null = null;
   let awayRank: number | null = null;
@@ -212,11 +218,39 @@ export const MatchDayModal: React.FC = () => {
           background: `linear-gradient(90deg, ${theme.bannerBg} 0%, #0B0B0D 65%)`,
         }}
       >
-        <CompetitionBadge
-          competitionId={compId}
-          size="lg"
-          stageSubtitle={`${stageLabel} • ${isHome ? 'EM CASA' : 'FORA DE CASA'}${prevLegSubtitle}`}
-        />
+        <div className="flex items-center gap-4">
+          <CompetitionBadge
+            competitionId={compId}
+            size="lg"
+            stageSubtitle={`${stageLabel} • ${isHome ? 'EM CASA' : 'FORA DE CASA'}${prevLegSubtitle}`}
+          />
+          {activeRivalry && (
+            <div
+              className={`hidden xl:flex flex-col px-3 py-1 border-l-4 ${
+                activeRivalry.stadiumMood === 'HOSTIL_CONTRA'
+                  ? 'bg-[#260E11] border-l-[#EF4444]'
+                  : 'bg-[#23190B] border-l-[#F59E0B]'
+              }`}
+            >
+              <span className="font-condensed uppercase font-extrabold text-sm tracking-wider text-[#F5F5F7] leading-none">
+                {activeRivalry.derbyName} ({activeRivalry.crowdDecibels} dB)
+              </span>
+              <span
+                className={`text-[9px] uppercase tracking-widest font-bold mt-0.5 ${
+                  activeRivalry.stadiumMood === 'HOSTIL_CONTRA'
+                    ? 'text-[#FCA5A5]'
+                    : 'text-[#FDE68A]'
+                }`}
+              >
+                {activeRivalry.stadiumMood === 'HOSTIL_CONTRA'
+                  ? `ESTÁDIO HOSTIL • ${activeRivalry.hostilityAgainstPlayer}% PRESSÃO RIVAL`
+                  : activeRivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+                    ? 'CALDEIRÃO EM FESTA • TORCIDA A FAVOR'
+                    : 'ARQUIBANCADA DIVIDIDA'}
+              </span>
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center gap-4">
           {!result && !pendingPenMatch && (
@@ -292,6 +326,7 @@ export const MatchDayModal: React.FC = () => {
               isContinentalNight={isContinental}
               accentColor={theme.accentPrimary}
               leg1Info={leg1Info}
+              rivalry={activeRivalry}
             />
           </div>
 
@@ -301,6 +336,7 @@ export const MatchDayModal: React.FC = () => {
               opponentClub={opponentClub}
               isHome={isHome}
               accentColor={theme.accentPrimary}
+              rivalry={activeRivalry}
             />
           </div>
 

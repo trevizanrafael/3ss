@@ -1,6 +1,7 @@
 import React from 'react';
 import { ClubData } from '../../../data/clubs/types';
 import { TacticalMindset } from '../../../domains/match-sim/matchSimulator';
+import { RivalryMatchContext } from '../../../domains/rivalry/rivalryEngine';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { ConsoleStepper } from '../../../shared/ui/ConsoleStepper';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
@@ -63,6 +64,7 @@ interface MatchKitsAndInfoPanelProps {
     myGoals: number;
     oppGoals: number;
   };
+  rivalry?: RivalryMatchContext;
 }
 
 const KIT_ORDER: KitChoice[] = ['HOME', 'AWAY', 'THIRD'];
@@ -116,6 +118,7 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
   isContinentalNight,
   accentColor,
   leg1Info,
+  rivalry,
 }) => {
   const hk = resolveClubKitColors(homeClub, homeKit);
   const ak = resolveClubKitColors(awayClub, awayKit);
@@ -167,6 +170,61 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Medidor de Clima / Hostilidade de Estádio em Clássicos! */}
+      {rivalry && (
+        <div
+          className={`mt-2 px-3 py-2 border ${
+            rivalry.stadiumMood === 'HOSTIL_CONTRA'
+              ? 'bg-[#220D10] border-[#EF4444]/80'
+              : rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+                ? 'bg-[#122016] border-[#2DBE60]/80'
+                : 'bg-[#211A0C] border-[#F59E0B]/80'
+          }`}
+        >
+          <div className="flex items-center justify-between text-[10px] font-condensed uppercase font-extrabold tracking-wider">
+            <span
+              className={
+                rivalry.stadiumMood === 'HOSTIL_CONTRA'
+                  ? 'text-[#FCA5A5]'
+                  : rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+                    ? 'text-[#86EFAC]'
+                    : 'text-[#FDE68A]'
+              }
+            >
+              {rivalry.derbyName} • {rivalry.crowdDecibels} dB
+            </span>
+            <span className="text-[#F5F5F7]">
+              {rivalry.stadiumMood === 'HOSTIL_CONTRA'
+                ? `HOSTILIDADE ${rivalry.hostilityAgainstPlayer}%`
+                : rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+                  ? 'APOIO MÁXIMO'
+                  : 'MEIO A MEIO'}
+            </span>
+          </div>
+          <div className="w-full h-1 bg-[#0B0B0D] my-1">
+            <div
+              className="h-full"
+              style={{
+                width: `${
+                  rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+                    ? 94
+                    : rivalry.hostilityAgainstPlayer
+                }%`,
+                backgroundColor:
+                  rivalry.stadiumMood === 'HOSTIL_CONTRA'
+                    ? '#EF4444'
+                    : rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+                      ? '#2DBE60'
+                      : '#F59E0B',
+              }}
+            />
+          </div>
+          <div className="text-[9px] uppercase tracking-wider text-[#D4D7E0] truncate">
+            {rivalry.atmosphereHeadline}
+          </div>
+        </div>
+      )}
 
       {/* Se for JOGO DE VOLTA, destaca o Placar da Ida e o que precisa para passar! */}
       {leg1Info && (

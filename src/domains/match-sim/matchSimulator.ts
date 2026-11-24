@@ -4,6 +4,10 @@ import { CareerStage, SquadRole, StarRating } from '../../shared/types/common';
 import { clamp, randomInt } from '../../shared/utils/math';
 import { getPositionSector } from '../attributes/overallCalculator';
 import { CareerPlayer } from '../player/playerTypes';
+import {
+  resolveRivalryMatchContext,
+  RivalryMatchContext,
+} from '../rivalry/rivalryEngine';
 import { samplePoissonGoals } from '../season/poissonMatchMath';
 import { UserPenaltyShootoutSummary } from './penaltyShootoutEngine';
 
@@ -30,6 +34,7 @@ export interface MatchPerformanceResult {
   matchNarrative: string[];
   penaltyShootout?: UserPenaltyShootoutSummary;
   aggregateNote?: string;
+  rivalry?: RivalryMatchContext;
   twoLegSummary?: {
     leg1MyGoals: number;
     leg1OppGoals: number;
@@ -70,7 +75,22 @@ export function resolveMatchSimulation(
 
   const effectiveMyOvr = myClub.squadAvgOvr + starCarryBoost;
   const isNeutralFinal = stageLabel.includes('FINAL') && !stageLabel.includes('SEMI');
-  const homeAdv = isNeutralFinal ? 0 : isHome ? 1.65 : -1.65;
+  const rivalry =
+    resolveRivalryMatchContext(clubId, opponentId, isHome, isNeutralFinal) ?? undefined;
+
+  // Pressão do Caldeirão em Clássicos: torcida hostil pesa mais fora de casa, e mosaico empurra em casa!
+  const derbyCauldronShift = !rivalry
+    ? 0
+    : rivalry.tier === 'FEROZ'
+      ? 0.72
+      : rivalry.tier === 'HISTORICO'
+        ? 0.46
+        : 0.28;
+  const homeAdv = isNeutralFinal
+    ? 0
+    : isHome
+      ? 1.65 + derbyCauldronShift
+      : -(1.65 + derbyCauldronShift);
   const ovrDiffForMyClub = effectiveMyOvr - opponent.squadAvgOvr + homeAdv;
 
   const atkMindsetMult =
@@ -147,6 +167,7 @@ export function resolveMatchSimulation(
 
   let scorePoints = 28 + skillEdge * 8 + keyActions * 5 + playerGoals * 28 + playerAssists * 20;
   if (clubGoals > opponentGoals) scorePoints += 10;
+  if (rivalry && (playerGoals > 0 || playerAssists > 0)) scorePoints += 8;
   if (sector === 'DEF' && opponentGoals === 0) scorePoints += 18;
   if (mindset === 'AGRESSIVO_GOL' && playerGoals === 0 && playerAssists === 0) scorePoints -= 8;
 
@@ -154,17 +175,38 @@ export function resolveMatchSimulation(
     scorePoints >= 75 ? 3 : scorePoints >= 52 ? 2 : scorePoints >= 34 ? 1 : 0;
 
   const narrative: string[] = [];
+  if (rivalry) {
+    narrative.push(
+      `Clima de clássico (${rivalry.derbyName} • ${rivalry.crowdDecibels} dB — ${
+        rivalry.stadiumMood === 'HOSTIL_CONTRA'
+          ? `Hostilidade ${rivalry.hostilityAgainstPlayer}% contra você`
+          : rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
+            ? 'Caldeirão pulsando a favor'
+            : 'Estádio dividido'
+      }).`,
+    );
+  }
   narrative.push(
     !isStarter
       ? `Entrou vindo do banco aos ${minuteEntered}' do 2º tempo (${stageLabel}).`
       : `Titular desde o apito inicial (${stageLabel}).`,
   );
-  if (playerGoals > 0) narrative.push(`Decisivo: marcou ${playerGoals} gol(s) na partida!`);
+  if (playerGoals > 0) {
+    narrative.push(
+      rivalry && rivalry.stadiumMood === 'HOSTIL_CONTRA'
+        ? `Calou o estádio rival! Marcou ${playerGoals} gol(s) sob vaias ensurdecedoras!`
+        : rivalry
+          ? `Herói do ${rivalry.derbyName}: marcou ${playerGoals} gol(s) decisivo(s)!`
+          : `Decisivo: marcou ${playerGoals} gol(s) na partida!`,
+    );
+  }
   if (playerAssists > 0) narrative.push(`Serviu ${playerAssists} assistência(s) limpa(s).`);
   if (sector === 'DEF' && opponentGoals === 0) narrative.push(`Defesa intacta: ${keyActions} ações defensivas.`);
   if (subbedOffForStamina) narrative.push(`Substituído aos ${minuteExited}' por desgaste.`);
 
-  const baseStaminaDrain = Math.round(minutesPlayed * (mindset === 'AGRESSIVO_GOL' ? 0.32 : 0.23));
+  const derbyDrain = rivalry ? (rivalry.tier === 'FEROZ' ? 3 : 2) : 0;
+  const baseStaminaDrain =
+    Math.round(minutesPlayed * (mindset === 'AGRESSIVO_GOL' ? 0.32 : 0.23)) + derbyDrain;
 
   return {
     competitionId,
@@ -183,7 +225,8 @@ export function resolveMatchSimulation(
     playerAssists,
     keyActions,
     stars,
-    staminaSpent: clamp(baseStaminaDrain, 10, 38),
+    staminaSpent: clamp(baseStaminaDrain, 10, 40),
     matchNarrative: narrative,
+    rivalry,
   };
 }

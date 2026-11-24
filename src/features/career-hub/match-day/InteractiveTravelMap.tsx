@@ -2,6 +2,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ClubData } from '../../../data/clubs/types';
+import { RivalryMatchContext } from '../../../domains/rivalry/rivalryEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { NavDirection } from '../../../shared/gamepad/spatialNavigator';
 
@@ -10,6 +11,7 @@ interface InteractiveTravelMapProps {
   opponentClub: ClubData;
   isHome: boolean;
   accentColor: string;
+  rivalry?: RivalryMatchContext;
 }
 
 export function computeDistanceKm(
@@ -78,6 +80,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
   opponentClub,
   isHome,
   accentColor,
+  rivalry,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -219,16 +222,24 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         .bindPopup(`<b>Saída: ${originClub.name}</b><br/>${originClub.city ?? ''}`)
         .addTo(map);
 
+      const pinColor =
+        rivalry?.stadiumMood === 'HOSTIL_CONTRA' ? '#EF4444' : accentColor;
+      const pinTag = rivalry
+        ? rivalry.stadiumMood === 'HOSTIL_CONTRA'
+          ? `CALDEIRÃO HOSTIL • ${rivalry.crowdDecibels} dB`
+          : `CLÁSSICO • ${rivalry.crowdDecibels} dB`
+        : 'DESTINO • JOGO';
+
       L.circleMarker(hostCoords, {
-        radius: 24,
-        color: accentColor,
-        weight: 1.5,
-        fillColor: accentColor,
-        fillOpacity: 0.18,
+        radius: rivalry ? 32 : 24,
+        color: pinColor,
+        weight: rivalry ? 2.2 : 1.5,
+        fillColor: pinColor,
+        fillOpacity: rivalry ? 0.26 : 0.18,
       }).addTo(map);
 
       L.marker(hostCoords, {
-        icon: makeClubPinIcon(hostClub, 'DESTINO • JOGO', accentColor),
+        icon: makeClubPinIcon(hostClub, pinTag, pinColor),
       })
         .bindPopup(
           `<b>${hostClub.stadiumName ?? hostClub.name}</b><br/>${hostClub.city ?? ''} (${distanceKm} km)`,
@@ -277,6 +288,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
     visitorCoords,
     distanceKm,
     accentColor,
+    rivalry,
   ]);
 
   return (
@@ -284,14 +296,21 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       <div className="px-4 py-3 border-b border-[#242730] flex items-center justify-between gap-2 shrink-0 bg-[#101216]">
         <div className="min-w-0">
           <div
-            className="text-[10px] uppercase tracking-[0.2em] font-bold"
-            style={{ color: accentColor }}
+            className="text-[10px] uppercase tracking-[0.2em] font-bold truncate"
+            style={{
+              color:
+                rivalry?.stadiumMood === 'HOSTIL_CONTRA' ? '#EF4444' : accentColor,
+            }}
           >
-            {isHome
-              ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
-              : distanceKm < 25
-                ? 'FORA DE CASA • CLÁSSICO REGIONAL'
-                : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
+            {rivalry
+              ? `${rivalry.derbyName} • ${
+                  isHome ? 'CALDEIRÃO EM CASA' : `ARENA HOSTIL (${distanceKm} KM)`
+                }`
+              : isHome
+                ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
+                : distanceKm < 25
+                  ? 'FORA DE CASA • CLÁSSICO REGIONAL'
+                  : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
           </div>
           <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate">
             {isHome

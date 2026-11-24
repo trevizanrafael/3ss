@@ -108,7 +108,18 @@ export function computePlayedMatchState(
     }
 
     const contributions = result.playerGoals + result.playerAssists;
-    bonusEarned = contributions * contract.goalBonusPerContribution;
+    const derbyMult = result.rivalry ? result.rivalry.bonusMultiplier : 1;
+    const wonDerbyBonus =
+      result.rivalry &&
+      (result.clubGoals > result.opponentGoals || Boolean(result.penaltyShootout?.won))
+        ? result.rivalry.tier === 'FEROZ'
+          ? 7500
+          : result.rivalry.tier === 'HISTORICO'
+            ? 4500
+            : 2500
+        : 0;
+    bonusEarned =
+      Math.round(contributions * contract.goalBonusPerContribution * derbyMult) + wonDerbyBonus;
     goal.current += goal.label.includes('gols')
       ? result.playerGoals
       : goal.label.includes('G+A')
@@ -158,12 +169,13 @@ export function computePlayedMatchState(
     ? ` • AGREG. ${tls.aggMyGoals}x${tls.aggOppGoals} (${tls.qualified ? 'CLASSIFICADO' : 'ELIMINADO'})`
     : '';
   const penSuffix = pen ? ` • PÊN ${pen.myPenGoals}x${pen.oppPenGoals}` : '';
+  const derbyPrefix = result.rivalry ? `${result.rivalry.derbyName} • ` : '';
   nextFeed = [
     {
       ...makeEvent(
         calendar.week,
         `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${aggSuffix}${penSuffix} (${result.stars}★)`,
-        `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
+        `${derbyPrefix}${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
         'MATCH',
       ),
       clubId: activeTeamId,
@@ -252,7 +264,11 @@ export function computePlayedMatchState(
       periodStats: nextPeriod,
       currentSeasonStints: nextSeasonStints,
       userCompStats: nextUserCompStats,
-      awardPrestigeBoost: state.awardPrestigeBoost + (isNatGame && result.stars === 3 ? 1 : 0),
+      awardPrestigeBoost:
+        state.awardPrestigeBoost +
+        ((isNatGame || (result.rivalry && result.rivalry.tier !== 'LOCAL')) && result.stars === 3
+          ? 1
+          : 0),
       lastMatchResult: result,
       feed: nextFeed.slice(0, 30),
     },
