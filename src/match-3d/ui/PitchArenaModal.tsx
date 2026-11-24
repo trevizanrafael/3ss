@@ -66,12 +66,13 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
   const canvasHostRef = useRef<HTMLDivElement | null>(null);
   const compTheme = getCompetitionTheme(competitionId ?? club.leagueId);
   const maxAttempts = mode === 'TRYOUT_PRO' ? 8 : mode === 'TRAINING_SESSION' ? 8 : 999;
+  const initialStaminaCap = Math.max(25, Math.min(100, player.stamina));
 
   const [hud, setHud] = useState<ArenaHudSnapshot>({
     cameraMode: 'BALL_CAM',
-    stamina: player.stamina,
-    shotPowerPct: 0,
-    chargingFinesse: false,
+    stamina: initialStaminaCap,
+    maxStamina: initialStaminaCap,
+    powerPct: 0,
     hasBall: false,
     goals: 0,
     saves: 0,
@@ -86,7 +87,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           ? 'SELETIVA PRO — MOSTRE SEU FUTEBOL!'
           : mode === 'TRAINING_SESSION'
             ? 'TREINO DE CAMPO — MIRE NA GAVETA!'
-            : 'ARENA 3D LIVRE — CLIQUE NA TELA OU USE O CONTROLE!',
+            : 'ARENA LIVRE 3D — BOM JOGO!',
       color: compTheme.accentPrimary,
     },
   });
@@ -119,7 +120,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
     playWhistleSfx(false);
 
-    // 1. Cena Three.js de Estádio Noturno (inspirada diretamente na nossa arte de referência!)
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#071226');
     scene.fog = new THREE.FogExp2('#071226', 0.0055);
@@ -132,7 +132,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     renderer.toneMappingExposure = 1.12;
     host.appendChild(renderer.domElement);
 
-    // Iluminação vibrante dos 4 refletores do estádio
     scene.add(new THREE.HemisphereLight('#E0F2FE', '#14532D', 1.25));
     const floodMain = new THREE.DirectionalLight('#FFFBEB', 1.75);
     floodMain.position.set(18, 34, 22);
@@ -142,7 +141,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     floodRim.position.set(-24, 26, -32);
     scene.add(floodRim);
 
-    // 2. Estádio + Seu Atleta + Companheiro Camisa 8 + Goleiro Adversário
     const stadium = buildStadium3D(activeClub, compTheme);
     scene.add(stadium.root);
 
@@ -156,14 +154,13 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     const gkBrain = createGoalkeeperAI(rivalKeeperClub);
     scene.add(gkBrain.actor.root);
 
-    // 3. Estados Vivos de Física e Câmera em 3ª Pessoa
     const ball = createInitialBallState(0, -13);
     const pState = createInitialPlayerPitchState(activePlayer.stamina);
     const inputCollector = new PitchInputCollector();
     inputCollector.attach(host);
 
     let camMode: CameraLockMode = 'BALL_CAM';
-    let camYaw = 0; // 0 = olhando reto pro Gol Norte (-Z)
+    let camYaw = 0;
     let camPitch = 0.24;
     let manualAimOffsetYaw = 0;
     const smoothCamPos = new THREE.Vector3(0, 2.6, -4.8);
@@ -171,18 +168,19 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
     let celebrationTimer = 0;
     let playResetTimer = 0;
-    let bannerTimer = 2.4;
+    let bannerTimer = 2.2;
     let bannerObj: { text: string; color: string } | null = {
       text:
         mode === 'TRYOUT_PRO'
-          ? 'SELETIVA PRO — FAÇA GOLS E ACERTE OS ÂNGULOS!'
+          ? 'SELETIVA PRO — FAÇA GOLS E TABELE!'
           : mode === 'TRAINING_SESSION'
-            ? 'SESSÃO 100% — TABELINHA (A/Y/X) E FINALIZAÇÃO (B)!'
+            ? 'SESSÃO 100% — TABELINHA E FINALIZAÇÃO!'
             : 'ARENA LIVRE 3D — BOM JOGO!',
       color: compTheme.accentPrimary,
     };
     let timeLeft = mode === 'FREE_PLAY' ? 0 : 95;
-    let assistArmed = false;
+    let mateAssistArmed = false;
+    let userAssistArmed = false;
 
     const showBanner = (text: string, color: string, dur = 1.8) => {
       bannerObj = { text, color };
@@ -202,21 +200,27 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       pState.pos.set(preset.px, 0, preset.pz);
       pState.vel.set(0, 0, 0);
       pState.facingYaw = Math.atan2(-preset.px, -PITCH.HALF_L - preset.pz);
-      pState.shotCharge01 = 0;
+      pState.powerCharge01 = 0;
+      pState.chargeIntent = null;
+      pState.hudPower01 = 0;
 
       ball.pos.set(preset.bx, PITCH.BALL_RADIUS, preset.bz);
       ball.vel.set(0, 0, 0);
       ball.spin.set(0, 0, 0);
       ball.ownerId = null;
+      ball.lastTouchBy = null;
       ball.touchCooldown = 0;
 
       mateBrain.pos.set(preset.mx, 0, preset.mz);
       mateBrain.vel.set(0, 0, 0);
+      mateBrain.receivedFromUser = false;
       gkBrain.pos.set(0, 0, -PITCH.HALF_L + 0.78);
+      gkBrain.vel.set(0, 0, 0);
       gkBrain.diveTimer = 0;
       gkBrain.diveDir = 0;
 
-      assistArmed = false;
+      mateAssistArmed = false;
+      userAssistArmed = false;
       celebrationTimer = 0;
       playResetTimer = 0;
     };
@@ -228,7 +232,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       const h = Math.max(240, host.clientHeight);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
     };
     syncSize();
     const ro = new ResizeObserver(syncSize);
@@ -274,18 +278,17 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         if (bannerTimer <= 0) bannerObj = null;
       }
 
-      // 4. Atualização da Câmera em 3ª Pessoa (Trava Inteligente na Bola/Gol OU Livre 360°!)
+      // Câmera em 3ª Pessoa
       if (camMode === 'BALL_CAM') {
         manualAimOffsetYaw = Math.max(
-          -0.65,
-          Math.min(0.65, manualAimOffsetYaw - inp.lookDeltaX * 0.9),
+          -0.75,
+          Math.min(0.75, manualAimOffsetYaw - inp.lookDeltaX * 0.9),
         );
         if (Math.abs(inp.lookDeltaX) < 0.001) {
-          manualAimOffsetYaw *= Math.max(0, 1 - 2.2 * dt);
+          manualAimOffsetYaw *= Math.max(0, 1 - 2.0 * dt);
         }
         camPitch = Math.max(0.12, Math.min(0.48, camPitch + inp.lookDeltaY * 0.7));
 
-        // Quando você está com a bola no pé, enquadra o Gol Norte; quando sem bola, olha para a bola!
         const focusTargetX = ball.ownerId === 'USER' ? 0 : ball.pos.x * 0.75;
         const focusTargetZ = ball.ownerId === 'USER' ? -PITCH.HALF_L : ball.pos.z * 0.8 - 8;
         const dx = focusTargetX - pState.pos.x;
@@ -297,7 +300,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         camPitch = Math.max(0.08, Math.min(0.62, camPitch + inp.lookDeltaY));
       }
 
-      // 5. Simulação de Jogador, Companheiro, Goleiro e Bola 240Hz
       if (celebrationTimer > 0) {
         celebrationTimer -= dt;
         pState.vel.multiplyScalar(0.92);
@@ -307,30 +309,42 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           respawnPlay(true);
         }
       } else {
-        const { calledForBall } = stepPlayerAndBallControl(
+        const { kicked, calledForBall, commandedMateShoot } = stepPlayerAndBallControl(
           pState,
           activePlayer,
           ball,
           inp,
           camYaw,
           mateBrain.pos,
+          mateBrain.vel,
           dt,
         );
+
+        if (kicked === 'GROUND_PASS' || kicked === 'THROUGH_BALL' || kicked === 'LOB_CROSS') {
+          userAssistArmed = false;
+        }
 
         const mateStep = stepSupportTeammateAI(
           mateBrain,
           ball,
           pState.pos,
           pState.vel,
+          gkBrain.pos,
           calledForBall,
+          commandedMateShoot,
           dt,
           timeSec,
         );
         if (mateStep.deliveredAssistPass) {
-          assistArmed = true;
+          mateAssistArmed = true;
+          userAssistArmed = false;
+        }
+        if (mateStep.shotByMateFromUserPass) {
+          userAssistArmed = true;
+          mateAssistArmed = false;
         }
 
-        const gkDifficulty = mode === 'TRYOUT_PRO' ? 0.45 : 0.58;
+        const gkDifficulty = mode === 'TRYOUT_PRO' ? 0.48 : 0.6;
         const { madeSave } = stepGoalkeeperAI(
           gkBrain,
           ball,
@@ -342,42 +356,50 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
         if (madeSave && playResetTimer <= 0) {
           statsRef.current.saves += 1;
-          statsRef.current.points += 15; // Chute no alvo defendido ainda soma moral leve!
-          showBanner('DEFESAÇA DO GOLEIRO! CONTINUE NO REBOTE!', '#F59E0B', 1.5);
+          statsRef.current.points += 15;
+          showBanner('DEFESA DO GOLEIRO!', '#F59E0B', 1.4);
         }
 
         const ballEvents = stepBallPhysics(ball, dt);
 
         if (ballEvents.hitPost) {
           playPostClangSfx();
-          showBanner('EXPLODIU NA TRAVE!', '#FACC15', 1.4);
+          showBanner('NA TRAVE!', '#FACC15', 1.3);
         }
 
         if (ballEvents.scoredNorthGoal && celebrationTimer <= 0) {
           playGoalRoarSfx();
           statsRef.current.goals += 1;
 
-          // Checa se entrou na GAVETA (ângulos superiores com os anéis dourados!)
           const hitTopCorner =
             Math.abs(ball.pos.x) > PITCH.GOAL_HALF_W - 1.55 &&
             ball.pos.y > PITCH.GOAL_HEIGHT - 1.15;
 
-          const bonus = hitTopCorner ? 145 : assistArmed ? 115 : 95;
+          const scoredByMate = ball.lastTouchBy === 'MATE';
+          const bonus = hitTopCorner
+            ? 145
+            : scoredByMate && userAssistArmed
+              ? 125
+              : mateAssistArmed
+                ? 115
+                : 95;
           statsRef.current.points += bonus;
 
           showBanner(
             hitTopCorner
               ? `GOLAÇO NA GAVETA! (+${bonus} PTS)`
-              : assistArmed
-                ? `GOL DE TABELINHA! (+${bonus} PTS)`
-                : `GOOOOOL! (+${bonus} PTS)`,
+              : scoredByMate && userAssistArmed
+                ? `GOL DO APOIO • SUA ASSISTÊNCIA! (+${bonus} PTS)`
+                : mateAssistArmed
+                  ? `GOL DE TABELINHA! (+${bonus} PTS)`
+                  : `GOOOOOL! (+${bonus} PTS)`,
             '#2DBE60',
             2.1,
           );
           celebrationTimer = 2.0;
         } else if (ballEvents.wentOutOfBounds && playResetTimer <= 0) {
           playResetTimer = 0.85;
-          showBanner('BOLA FORA • REPONDO JOGADA...', '#9498A3', 0.85);
+          showBanner('BOLA FORA • REPONDO...', '#9498A3', 0.85);
         }
 
         if (playResetTimer > 0) {
@@ -388,7 +410,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         }
       }
 
-      // 6. Sincroniza Malhas 3D e Animações Procedurais
       stadium.ballMesh.position.copy(ball.pos);
       stadium.ballMesh.quaternion.copy(ball.quat);
 
@@ -403,18 +424,19 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
             ? 'SLIDE'
             : pState.kickAnimTimer > 0
               ? 'KICK'
-              : pState.shotCharge01 > 0.04
+              : pState.chargeIntent !== null
                 ? 'CHARGE'
-                : uSpeed > 0.35
+                : uSpeed > 0.2
                   ? 'RUN'
                   : 'IDLE';
 
       animatePitchActor(
-        userActor.rig,
+        userActor,
         userPose,
         uSpeed,
-        pState.shotCharge01,
+        pState.powerCharge01,
         activePlayer.preferredFoot === 'ESQUERDA',
+        dt,
         timeSec,
       );
 
@@ -426,7 +448,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         mode !== 'FREE_PLAY',
       );
 
-      // Posicionamento suave da câmera 3ª pessoa atrás do jogador!
       const camForwardX = -Math.sin(camYaw);
       const camForwardZ = -Math.cos(camYaw);
       const camDist = 5.6 + camPitch * 2.2;
@@ -450,15 +471,14 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
       renderer.render(scene, camera);
 
-      // Atualiza HUD React a ~20Hz para não pesar o loop 60fps
       hudSyncAcc += dt;
-      if (hudSyncAcc >= 0.05) {
+      if (hudSyncAcc >= 0.04) {
         hudSyncAcc = 0;
         setHud({
           cameraMode: camMode,
           stamina: pState.stamina,
-          shotPowerPct: pState.shotCharge01 * 100,
-          chargingFinesse: pState.chargingFinesse,
+          maxStamina: pState.maxStamina,
+          powerPct: pState.hudPower01 * 100,
           hasBall: ball.ownerId === 'USER',
           goals: statsRef.current.goals,
           saves: statsRef.current.saves,
@@ -502,8 +522,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       <PitchHudOverlay
         mode={mode}
         club={club}
-        playerName={player.shirtName}
-        shirtNumber={player.shirtNumber}
         hud={hud}
         accentColor={compTheme.accentPrimary}
         onResetBall={() => triggerResetSpawnRef.current?.()}

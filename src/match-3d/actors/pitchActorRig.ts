@@ -20,6 +20,8 @@ export type PitchPoseState =
 export interface PitchActorInstance {
   root: THREE.Group;
   rig: AnimatedRigHandles;
+  walkPhase: number;
+  runBlend: number;
   dispose: () => void;
 }
 
@@ -36,20 +38,25 @@ export function createPitchFootballerActor(
     }
   });
 
-  // Ajusta o offset vertical para a sola da chuteira apoiar cravada em y = 0
   built.rig.character.position.y = 0;
 
-  return built;
+  return {
+    ...built,
+    walkPhase: 0,
+    runBlend: 0,
+  };
 }
 
 export function animatePitchActor(
-  rig: AnimatedRigHandles,
+  actor: PitchActorInstance,
   pose: PitchPoseState,
   speedMetersPerSec: number,
   charge01: number,
   isLeftFooted: boolean,
+  dt: number,
   timeSec: number,
 ): void {
+  const { rig } = actor;
   const ch = rig.character;
   ch.rotation.set(0, 0, 0);
 
@@ -104,7 +111,7 @@ export function animatePitchActor(
   }
 
   if (pose === 'CHARGE') {
-    const pull = 0.45 + charge01 * 0.85;
+    const pull = 0.42 + charge01 * 0.82;
     ch.position.y = 0;
     ch.rotation.x = 0.12 * charge01;
     if (isLeftFooted) {
@@ -114,8 +121,8 @@ export function animatePitchActor(
       rig.rightLegPivot.rotation.x = pull;
       rig.leftLegPivot.rotation.x = -0.22;
     }
-    rig.leftArmPivot.rotation.set(-0.35, 0, -0.55);
-    rig.rightArmPivot.rotation.set(0.35, 0, 0.55);
+    rig.leftArmPivot.rotation.set(-0.35, 0, -0.52);
+    rig.rightArmPivot.rotation.set(0.35, 0, 0.52);
     return;
   }
 
@@ -134,22 +141,27 @@ export function animatePitchActor(
     return;
   }
 
-  if (pose === 'RUN' || speedMetersPerSec > 0.35) {
-    const freq = 7.5 + Math.min(8.5, speedMetersPerSec * 0.85);
-    const amp = Math.min(0.95, 0.28 + speedMetersPerSec * 0.075);
-    const cyc = timeSec * freq;
+  // Fase contínua acumulada por dt (NUNCA usa timeSec * freq, zero tremida na caminhada/corrida!)
+  const targetBlend = Math.min(1, Math.max(0, (speedMetersPerSec - 0.15) / 1.65));
+  actor.runBlend += (targetBlend - actor.runBlend) * Math.min(1, 12 * dt);
 
-    ch.position.y = Math.abs(Math.sin(cyc)) * 0.055;
-    ch.rotation.x = Math.min(0.24, speedMetersPerSec * 0.024); // Inclinação atlética no sprint!
+  if (actor.runBlend > 0.02) {
+    const freq = 6.2 + Math.min(8.2, speedMetersPerSec * 0.92);
+    actor.walkPhase = (actor.walkPhase + dt * freq) % (Math.PI * 2);
+    const cyc = actor.walkPhase;
+    const amp = Math.min(0.95, 0.22 + speedMetersPerSec * 0.075) * actor.runBlend;
+
+    ch.position.y = Math.abs(Math.sin(cyc)) * 0.052 * actor.runBlend;
+    ch.rotation.x = Math.min(0.24, speedMetersPerSec * 0.023) * actor.runBlend;
     rig.headPivot.rotation.set(-ch.rotation.x * 0.6, 0, 0);
 
     rig.leftLegPivot.rotation.set(Math.sin(cyc) * amp, 0, -0.02);
     rig.rightLegPivot.rotation.set(-Math.sin(cyc) * amp, 0, 0.02);
 
-    rig.leftArmPivot.rotation.set(-Math.sin(cyc) * amp * 0.85, 0, -0.26);
-    rig.rightArmPivot.rotation.set(Math.sin(cyc) * amp * 0.85, 0, 0.26);
-    rig.leftForearmPivot.rotation.x = -0.68;
-    rig.rightForearmPivot.rotation.x = -0.68;
+    rig.leftArmPivot.rotation.set(-Math.sin(cyc) * amp * 0.85, 0, -0.25);
+    rig.rightArmPivot.rotation.set(Math.sin(cyc) * amp * 0.85, 0, 0.25);
+    rig.leftForearmPivot.rotation.x = -0.3 - 0.38 * actor.runBlend;
+    rig.rightForearmPivot.rotation.x = -0.3 - 0.38 * actor.runBlend;
     return;
   }
 

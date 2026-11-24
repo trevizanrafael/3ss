@@ -2,14 +2,11 @@ import React from 'react';
 import { ClubData } from '../../data/clubs/types';
 import { useGamepadStore } from '../../shared/gamepad/gamepadStore';
 import { StarRatingBadge } from '../../shared/ui/StarRatingBadge';
-import { getFifaStatColor } from '../../shared/ui/FifaStatBadge';
 import { ArenaHudSnapshot, ArenaSessionMode } from '../types';
 
 interface PitchHudOverlayProps {
   mode: ArenaSessionMode;
   club: ClubData;
-  playerName: string;
-  shirtNumber: number;
   hud: ArenaHudSnapshot;
   accentColor: string;
   onResetBall: () => void;
@@ -20,8 +17,6 @@ interface PitchHudOverlayProps {
 export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
   mode,
   club,
-  playerName,
-  shirtNumber,
   hud,
   accentColor,
   onResetBall,
@@ -40,15 +35,15 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
   const lblBack = isPS ? 'SHARE' : 'SELECT';
   const lblStart = isPS ? 'OPTIONS' : 'START';
   const isScoredMode = mode !== 'FREE_PLAY';
-  const powerColor =
-    hud.shotPowerPct > 90
-      ? '#EF4444'
-      : hud.shotPowerPct >= 62
-        ? '#2DBE60'
-        : '#FACC15';
 
   const mins = Math.floor(hud.timeRemainingSec / 60);
   const secs = Math.floor(hud.timeRemainingSec % 60);
+
+  const staminaPct = Math.max(0, Math.min(100, hud.stamina));
+  const maxStaminaPct = Math.max(25, Math.min(100, hud.maxStamina));
+  const powerPct = Math.max(0, Math.min(100, hud.powerPct));
+  const staminaColor =
+    staminaPct < 24 ? '#EF4444' : staminaPct < 48 ? '#F59E0B' : '#E2E8F0';
 
   return (
     <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-5 select-none">
@@ -56,7 +51,7 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
       <div className="flex items-start justify-between gap-4">
         <div
           style={{ borderLeftColor: accentColor }}
-          className="bg-[#0B0B0D]/88 border border-white/15 border-l-4 px-4 py-2.5 flex items-center gap-5 backdrop-blur-md"
+          className="bg-[#0B0B0D]/80 border border-white/15 border-l-4 px-4 py-2 flex items-center gap-5 backdrop-blur-md"
         >
           <div>
             <div className="text-[10px] uppercase tracking-[0.2em] text-[#9498A3] font-bold">
@@ -98,20 +93,18 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
           <span
             className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
               padConnected
-                ? 'bg-[#12261A]/90 text-[#2DBE60] border-[#2DBE60]'
-                : 'bg-[#0B0B0D]/88 text-[#FACC15] border-[#FACC15]/60'
+                ? 'bg-[#12261A]/85 text-[#2DBE60] border-[#2DBE60]'
+                : 'bg-[#0B0B0D]/80 text-[#FACC15] border-[#FACC15]/60'
             }`}
           >
-            {padConnected
-              ? `CONTROLE ATIVO (${brand})`
-              : 'APERTE UM BOTÃO NO CONTROLE'}
+            {padConnected ? `CONTROLE (${brand})` : 'APERTE UM BOTÃO NO CONTROLE'}
           </span>
 
           <span
             className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
               hud.cameraMode === 'BALL_CAM'
                 ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
-                : 'bg-[#0B0B0D]/85 text-[#F5F5F7] border-white/15'
+                : 'bg-[#0B0B0D]/80 text-[#F5F5F7] border-white/15'
             }`}
           >
             {hud.cameraMode === 'BALL_CAM'
@@ -122,7 +115,7 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
           <button
             type="button"
             onClick={onResetBall}
-            className="px-3 py-1.5 bg-[#0B0B0D]/88 hover:bg-[#1C1F28] border border-white/15 font-condensed uppercase font-bold text-xs tracking-wider text-[#F5F5F7] cursor-pointer"
+            className="px-3 py-1.5 bg-[#0B0B0D]/80 hover:bg-[#1C1F28] border border-white/15 font-condensed uppercase font-bold text-xs tracking-wider text-[#F5F5F7] cursor-pointer"
           >
             NOVA BOLA ({lblBack} / V)
           </button>
@@ -150,97 +143,74 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
         </div>
       </div>
 
-      {/* CENTRO: Feedback Instantâneo de Gol / Gaveta / Trave / Defesa! */}
+      {/* CENTRO: Feedback Instantâneo */}
       <div className="my-auto flex flex-col items-center justify-center">
         {hud.bannerFeedback && (
           <div
             style={{ borderColor: hud.bannerFeedback.color, color: hud.bannerFeedback.color }}
-            className="bg-[#0B0B0D]/92 border-y-2 px-8 py-2.5 font-condensed uppercase font-extrabold text-4xl tracking-wider shadow-2xl"
+            className="bg-[#0B0B0D]/88 border-y-2 px-8 py-2 font-condensed uppercase font-extrabold text-3xl tracking-wider shadow-2xl"
           >
             {hud.bannerFeedback.text}
           </div>
         )}
       </div>
 
-      {/* RODAPÉ: Barra de Força do Chute + Fôlego do Atleta + Guia Rápido FIFA */}
+      {/* RODAPÉ: Duas Barrinhas Semitransparentes Estilo FIFA (Fôlego em cima + Mapa de Calor de Força embaixo) */}
       <div className="flex flex-wrap items-end justify-between gap-4">
-        {/* Card do Seu Jogador: Fôlego + Barra de Chute Estilo FIFA */}
-        <div className="bg-[#0B0B0D]/88 border border-white/15 p-3.5 w-72 backdrop-blur-md space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="font-condensed uppercase font-extrabold text-base text-[#F5F5F7] tracking-wider">
-              #{shirtNumber} {playerName}
-            </span>
-            <span
-              className="font-condensed font-bold text-xs uppercase"
-              style={{ color: getFifaStatColor(hud.stamina) }}
-            >
-              FÔLEGO {Math.round(hud.stamina)}%
-            </span>
-          </div>
-
-          <div className="w-full h-1.5 bg-[#161922]">
+        <div className="bg-[#080A0F]/48 border border-white/12 px-2.5 py-2 w-56 backdrop-blur-sm space-y-1.5">
+          {/* Linha Superior: Fôlego Atual limitado ao Teto Pré-Jogo (ex: 75% ou 100%) */}
+          <div className="w-full h-[5px] bg-black/55 relative overflow-hidden">
+            {maxStaminaPct < 99.5 && (
+              <div
+                className="absolute top-0 bottom-0 right-0 bg-white/[0.08] border-l border-white/35"
+                style={{ width: `${100 - maxStaminaPct}%` }}
+              />
+            )}
             <div
               className="h-full transition-all duration-75"
               style={{
-                width: `${hud.stamina}%`,
-                backgroundColor: getFifaStatColor(hud.stamina),
+                width: `${staminaPct}%`,
+                backgroundColor: staminaColor,
               }}
             />
           </div>
 
-          <div>
-            <div className="flex items-center justify-between text-[10px] font-condensed uppercase tracking-wider text-[#9498A3] mb-0.5">
-              <span>
-                {hud.chargingFinesse
-                  ? `COLOCADO C/ CURVA (${lblRB}+${lblShoot})`
-                  : `FORÇA DO CHUTE (SEGURE ${lblShoot} / ESPAÇO)`}
-              </span>
-              <span className="text-[#F5F5F7] font-bold tabular-nums">
-                {Math.round(hud.shotPowerPct)}%
-              </span>
-            </div>
-            <div className="w-full h-2.5 bg-[#161922] border border-white/10 relative">
-              {/* Marcação da zona verde ideal (62%..88%) */}
+          {/* Linha Inferior: Barra de Força em Mapa de Calor (Verde -> Amarelo -> Laranja -> Vermelho) */}
+          <div className="w-full h-[9px] bg-black/60 border border-white/10 relative overflow-hidden">
+            <div
+              className="h-full overflow-hidden transition-none"
+              style={{ width: `${powerPct}%` }}
+            >
               <div
-                className="absolute top-0 bottom-0 bg-white/10"
-                style={{ left: '62%', width: '26%' }}
-              />
-              <div
-                className="h-full transition-none"
+                className="h-full w-56"
                 style={{
-                  width: `${hud.shotPowerPct}%`,
-                  backgroundColor: powerColor,
+                  background:
+                    'linear-gradient(90deg, #22C55E 0%, #84CC16 32%, #FACC15 58%, #F97316 80%, #EF4444 100%)',
                 }}
               />
             </div>
           </div>
         </div>
 
-        {/* Comandos Clássicos FIFA (Controle & Teclado) */}
-        <div className="bg-[#0B0B0D]/85 border border-white/12 px-4 py-2.5 text-[11px] font-condensed uppercase tracking-wider text-[#D4D7E0] flex flex-wrap items-center gap-x-4 gap-y-1 backdrop-blur-md">
+        {/* Guia Enxuto de Comandos */}
+        <div className="bg-[#0B0B0D]/60 border border-white/10 px-3.5 py-2 text-[11px] font-condensed uppercase tracking-wider text-[#D4D7E0] flex flex-wrap items-center gap-x-4 gap-y-1 backdrop-blur-sm">
           <span>
-            <strong className="text-[#F5F5F7]">LS / D-PAD:</strong> MOVER
+            <strong className="text-[#EF4444]">{lblShoot}:</strong> CHUTE
           </span>
           <span>
-            <strong className="text-[#EF4444]">{lblShoot} / ESPAÇO:</strong> CHUTAR
+            <strong className="text-[#C8A45D]">{lblRB}+{lblShoot}:</strong> COLOCADO
           </span>
           <span>
-            <strong className="text-[#C8A45D]">{lblRB}+{lblShoot} / Q+ESP:</strong> CURVA COLOCADA
+            <strong className="text-[#2DBE60]">{lblPass}:</strong> PASSE
           </span>
           <span>
-            <strong className="text-[#2DBE60]">{lblPass} / E:</strong> PASSE / TABELINHA
+            <strong className="text-[#FACC15]">{lblThrough}:</strong> ENFIADA
           </span>
           <span>
-            <strong className="text-[#FACC15]">{lblThrough} / F:</strong> ENFIADA
+            <strong className="text-[#38BDF8]">{lblLob}:</strong> CRUZAR / CARRINHO
           </span>
           <span>
-            <strong className="text-[#38BDF8]">{lblLob} / R:</strong> CRUZAR / CARRINHO
-          </span>
-          <span>
-            <strong className="text-[#F5F5F7]">{lblRT} / SHIFT:</strong> CORRER
-          </span>
-          <span>
-            <strong className="text-[#F5F5F7]">RS / MOUSE:</strong> OLHAR 360°
+            <strong className="text-[#F5F5F7]">{lblRT}:</strong> PIQUE
           </span>
         </div>
       </div>

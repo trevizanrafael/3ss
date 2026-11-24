@@ -7,7 +7,12 @@ export type ArenaSessionMode = 'FREE_PLAY' | 'TRYOUT_PRO' | 'TRAINING_SESSION';
 
 export type CameraLockMode = 'BALL_CAM' | 'FREE_CAM';
 
-export type KickKind = 'GROUND_PASS' | 'THROUGH_BALL' | 'LOB_CROSS' | 'POWER_SHOT' | 'FINESSE_SHOT';
+export type KickKind =
+  | 'GROUND_PASS'
+  | 'THROUGH_BALL'
+  | 'LOB_CROSS'
+  | 'POWER_SHOT'
+  | 'FINESSE_SHOT';
 
 export interface ArenaSessionProps {
   mode: ArenaSessionMode;
@@ -21,8 +26,8 @@ export interface ArenaSessionProps {
 export interface ArenaHudSnapshot {
   cameraMode: CameraLockMode;
   stamina: number;
-  shotPowerPct: number;
-  chargingFinesse: boolean;
+  maxStamina: number;
+  powerPct: number;
   hasBall: boolean;
   goals: number;
   saves: number;

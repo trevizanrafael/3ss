@@ -24,11 +24,13 @@ export interface BallStepEvents {
   wentOutOfBounds: boolean;
 }
 
-const GRAVITY = -11.4; // Gravidade esportiva calibrada para chutes tensos e cruzamentos naturais
-const AIR_DRAG = 0.22;
-const MAGNUS_COEFF = 0.038; // Intensidade real da curva colocada (RB + B)!
-const GRASS_RESTITUTION = 0.58;
-const GRASS_FRICTION = 2.65;
+export const BALL_AERO = {
+  GRAVITY: -11.4,
+  AIR_DRAG: 0.2,
+  MAGNUS_COEFF: 0.028,
+  GRASS_RESTITUTION: 0.56,
+  GRASS_FRICTION: 2.55,
+} as const;
 
 const tmpCross = new THREE.Vector3();
 const tmpAxis = new THREE.Vector3();
@@ -95,10 +97,14 @@ function collideSphereSegment(
 
     const vn = ball.vel.x * nx + ball.vel.y * ny + ball.vel.z * nz;
     if (vn < 0) {
-      const bounce = 1.72; // Trave metálica elástica realista!
+      const bounce = 1.68;
       ball.vel.x -= bounce * vn * nx;
       ball.vel.y -= bounce * vn * ny;
       ball.vel.z -= bounce * vn * nz;
+      if (ball.ownerId !== null) {
+        ball.ownerId = null;
+        ball.touchCooldown = 0.2;
+      }
       return true;
     }
   }
@@ -113,20 +119,26 @@ function checkGoalPostsAndNet(ball: BallState, goalZSign: -1 | 1): { hitPost: bo
   const pr = PITCH.POST_RADIUS;
 
   let hitPost = false;
-  // Trave esquerda, Trave direita e Travessão superior
   if (collideSphereSegment(ball, -hw, 0, gz, -hw, gh, gz, pr)) hitPost = true;
   if (collideSphereSegment(ball, hw, 0, gz, hw, gh, gz, pr)) hitPost = true;
   if (collideSphereSegment(ball, -hw, gh, gz, hw, gh, gz, pr)) hitPost = true;
 
   const crossedLine =
     goalZSign === -1
-      ? ball.pos.z < gz - PITCH.BALL_RADIUS * 0.65
-      : ball.pos.z > gz + PITCH.BALL_RADIUS * 0.65;
+      ? ball.pos.z < gz - PITCH.BALL_RADIUS * 0.45
+      : ball.pos.z > gz + PITCH.BALL_RADIUS * 0.45;
 
   const insideMouth = Math.abs(ball.pos.x) < hw - pr && ball.pos.y < gh - pr;
 
   if (crossedLine && insideMouth) {
-    // Contenção elástica suave das redes laterais, teto e fundo do gol!
+    // Mesmo que o atleta entre conduzindo a bola pra dentro do gol, valida GOL na hora e solta do pé!
+    if (ball.ownerId !== null) {
+      ball.ownerId = null;
+      ball.touchCooldown = 0.5;
+      ball.netRipple = Math.max(ball.netRipple, 0.55);
+      ball.netHitPoint.copy(ball.pos);
+    }
+
     if (ball.pos.x < -hw + PITCH.BALL_RADIUS) {
       ball.pos.x = -hw + PITCH.BALL_RADIUS;
       ball.vel.x *= -0.18;
@@ -164,10 +176,6 @@ function checkGoalPostsAndNet(ball: BallState, goalZSign: -1 | 1): { hitPost: bo
   return { hitPost, inGoal: false };
 }
 
-/**
- * Avança a física da bola com 4 sub-passos por frame (~240Hz) para colisões perfeitas
- * mesmo em bombas de 115 km/h na trave ou na gaveta!
- */
 export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
   const clampedDt = Math.min(dt, 0.05);
   ball.touchCooldown = Math.max(0, ball.touchCooldown - clampedDt);
@@ -180,13 +188,29 @@ export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
     wentOutOfBounds: false,
   };
 
-  // Se um jogador estiver conduzindo colado ao pé, a rotação visual acompanha a velocidade!
+  // Se um jogador estiver conduzindo no pé, AINDA checa traves, linha de gol e linha lateral!
   if (ball.ownerId !== null) {
     const speed = Math.hypot(ball.vel.x, ball.vel.z);
     if (speed > 0.05) {
       tmpAxis.set(ball.vel.z, 0, -ball.vel.x).normalize();
       tmpQuat.setFromAxisAngle(tmpAxis, (speed * clampedDt) / PITCH.BALL_RADIUS);
       ball.quat.premultiply(tmpQuat);
+    }
+
+    const north = checkGoalPostsAndNet(ball, -1);
+    const south = checkGoalPostsAndNet(ball, 1);
+    if (north.hitPost || south.hitPost) events.hitPost = true;
+    if (north.inGoal) events.scoredNorthGoal = true;
+    if (south.inGoal) events.scoredSouthGoal = true;
+
+    if (!north.inGoal && !south.inGoal && ball.ownerId !== 'GK') {
+      if (
+        Math.abs(ball.pos.x) > PITCH.HALF_W + 0.35 ||
+        Math.abs(ball.pos.z) > PITCH.HALF_L + 0.45
+      ) {
+        ball.ownerId = null;
+        events.wentOutOfBounds = true;
+      }
     }
     return events;
   }
@@ -197,24 +221,21 @@ export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
   for (let s = 0; s < subSteps; s++) {
     const speed = ball.vel.length();
 
-    // 1. Gravidade + Arrasto Aerodinâmico + Efeito Magnus (Curva no Ar!)
     if (ball.pos.y > PITCH.BALL_RADIUS + 0.005 || ball.vel.y > 0.05) {
-      ball.vel.y += GRAVITY * h;
+      ball.vel.y += BALL_AERO.GRAVITY * h;
       if (speed > 0.1) {
-        const drag = Math.max(0, 1 - AIR_DRAG * h);
+        const drag = Math.max(0, 1 - BALL_AERO.AIR_DRAG * h);
         ball.vel.multiplyScalar(drag);
-        // Força de Magnus: F = spin × vel
-        tmpCross.crossVectors(ball.spin, ball.vel).multiplyScalar(MAGNUS_COEFF * h);
+        tmpCross.crossVectors(ball.spin, ball.vel).multiplyScalar(BALL_AERO.MAGNUS_COEFF * h);
         ball.vel.add(tmpCross);
       }
-      ball.spin.multiplyScalar(Math.max(0, 1 - 0.55 * h));
+      ball.spin.multiplyScalar(Math.max(0, 1 - 0.45 * h));
     } else {
-      // Bola rolando na grama cortada
       ball.pos.y = PITCH.BALL_RADIUS;
       ball.vel.y = 0;
       const horizSpeed = Math.hypot(ball.vel.x, ball.vel.z);
       if (horizSpeed > 0.04) {
-        const drop = Math.max(0, horizSpeed - GRASS_FRICTION * h);
+        const drop = Math.max(0, horizSpeed - BALL_AERO.GRASS_FRICTION * h);
         const ratio = drop / horizSpeed;
         ball.vel.x *= ratio;
         ball.vel.z *= ratio;
@@ -224,14 +245,12 @@ export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
       ball.spin.multiplyScalar(Math.max(0, 1 - 3.5 * h));
     }
 
-    // 2. Integração de Posição
     ball.pos.addScaledVector(ball.vel, h);
 
-    // 3. Quique realista no gramado
     if (ball.pos.y < PITCH.BALL_RADIUS) {
       ball.pos.y = PITCH.BALL_RADIUS;
       if (ball.vel.y < -0.65) {
-        ball.vel.y = -ball.vel.y * GRASS_RESTITUTION;
+        ball.vel.y = -ball.vel.y * BALL_AERO.GRASS_RESTITUTION;
         ball.vel.x *= 0.88;
         ball.vel.z *= 0.88;
       } else {
@@ -239,14 +258,12 @@ export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
       }
     }
 
-    // 4. Traves, Travessão e Redes dos 2 Gols
     const north = checkGoalPostsAndNet(ball, -1);
     const south = checkGoalPostsAndNet(ball, 1);
     if (north.hitPost || south.hitPost) events.hitPost = true;
     if (north.inGoal) events.scoredNorthGoal = true;
     if (south.inGoal) events.scoredSouthGoal = true;
 
-    // 5. Saída pela Linha Lateral ou Linha de Fundo (fora do gol)
     if (!north.inGoal && !south.inGoal) {
       if (
         Math.abs(ball.pos.x) > PITCH.HALF_W + 0.5 ||
@@ -257,7 +274,6 @@ export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
     }
   }
 
-  // Rotação visual 3D realista da bola (rolagem + spin no ar)
   const vHoriz = Math.hypot(ball.vel.x, ball.vel.z);
   if (vHoriz > 0.08) {
     tmpAxis.set(ball.vel.z, 0, -ball.vel.x).normalize();

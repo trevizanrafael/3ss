@@ -11,11 +11,18 @@ export interface LivePitchInput {
   sprintHeld: boolean; // RT / Shift
   closeControlHeld: boolean; // LT / Ctrl
   finesseHeld: boolean; // RB / Q / Botão Direito
-  shootHeld: boolean; // B / Espaço / Botão Esquerdo (segurar carrega barra!)
+  shootHeld: boolean; // B / Espaço / Botão Esquerdo
+  shootJustPressed: boolean;
   shootJustReleased: boolean;
-  passJustPressed: boolean; // A / E
-  throughJustPressed: boolean; // Y / F
-  lobOrSlideJustPressed: boolean; // X / R
+  passHeld: boolean; // A / E
+  passJustPressed: boolean;
+  passJustReleased: boolean;
+  throughHeld: boolean; // Y / F
+  throughJustPressed: boolean;
+  throughJustReleased: boolean;
+  lobHeld: boolean; // X / R
+  lobOrSlideJustPressed: boolean;
+  lobJustReleased: boolean;
   toggleCameraJustPressed: boolean; // LB / R3 / Tab / C
   resetBallJustPressed: boolean; // Select / Back / Share / V / Backspace
   exitOrFinishJustPressed: boolean; // Start / Options / Menu
@@ -26,6 +33,9 @@ export class PitchInputCollector {
   private mouseBtns = new Set<number>();
   private mouseDX = 0;
   private mouseDY = 0;
+
+  private smoothMoveX = 0;
+  private smoothMoveZ = 0;
 
   private prevShoot = false;
   private prevPass = false;
@@ -101,7 +111,6 @@ export class PitchInputCollector {
   sample(dt: number): LivePitchInput {
     const gp = readNormalizedGamepad();
 
-    // No primeiro frame da Arena, sincroniza botões que já entraram pressionados (ex: entrou apertando A ou Y!)
     if (gp && !this.initializedFromPad) {
       this.initializedFromPad = true;
       this.prevShoot = gp.east;
@@ -113,15 +122,14 @@ export class PitchInputCollector {
       this.prevStart = gp.start;
     }
 
-    let moveX = 0;
-    let moveZ = 0;
-    if (this.keys.has('KeyA') || this.keys.has('ArrowLeft')) moveX -= 1;
-    if (this.keys.has('KeyD') || this.keys.has('ArrowRight')) moveX += 1;
-    if (this.keys.has('KeyW') || this.keys.has('ArrowUp')) moveZ -= 1;
-    if (this.keys.has('KeyS') || this.keys.has('ArrowDown')) moveZ += 1;
+    let rawX = 0;
+    let rawZ = 0;
+    if (this.keys.has('KeyA') || this.keys.has('ArrowLeft')) rawX -= 1;
+    if (this.keys.has('KeyD') || this.keys.has('ArrowRight')) rawX += 1;
+    if (this.keys.has('KeyW') || this.keys.has('ArrowUp')) rawZ -= 1;
+    if (this.keys.has('KeyS') || this.keys.has('ArrowDown')) rawZ += 1;
 
     if (gp) {
-      // Suporta TANTO Analógico Esquerdo (LS) QUANTO D-Pad para correr e mirar!
       let dpadX = 0;
       let dpadZ = 0;
       if (gp.dpadLeft) dpadX -= 1;
@@ -130,18 +138,33 @@ export class PitchInputCollector {
       if (gp.dpadDown) dpadZ += 1;
 
       if (dpadX !== 0 || dpadZ !== 0) {
-        moveX = dpadX;
-        moveZ = dpadZ;
-      } else if (Math.hypot(gp.lx, gp.ly) > 0.15) {
-        moveX = gp.lx;
-        moveZ = gp.ly;
+        rawX = dpadX;
+        rawZ = dpadZ;
+      } else {
+        // Deadzone radial limpa (0.18 -> remapeia 0..1 suave p/ filtrar ruído/drift de analógico!)
+        const stickMag = Math.hypot(gp.lx, gp.ly);
+        const dz = 0.18;
+        if (stickMag > dz) {
+          const cleanMag = Math.min(1, (stickMag - dz) / (1 - dz));
+          rawX = (gp.lx / stickMag) * cleanMag;
+          rawZ = (gp.ly / stickMag) * cleanMag;
+        }
       }
     }
 
-    const len = Math.hypot(moveX, moveZ);
-    if (len > 1) {
-      moveX /= len;
-      moveZ /= len;
+    const rawLen = Math.hypot(rawX, rawZ);
+    if (rawLen > 1) {
+      rawX /= rawLen;
+      rawZ /= rawLen;
+    }
+
+    // Filtro anti-tremida de micro-oscilação de potenciômetro (~26Hz low-pass, resposta instantânea)
+    const alpha = Math.min(1, 26 * dt);
+    this.smoothMoveX += (rawX - this.smoothMoveX) * alpha;
+    this.smoothMoveZ += (rawZ - this.smoothMoveZ) * alpha;
+    if (Math.hypot(this.smoothMoveX, this.smoothMoveZ) < 0.03 && rawLen === 0) {
+      this.smoothMoveX = 0;
+      this.smoothMoveZ = 0;
     }
 
     let lookDeltaX = this.mouseDX;
@@ -150,13 +173,14 @@ export class PitchInputCollector {
     this.mouseDY = 0;
 
     if (gp) {
-      if (Math.abs(gp.rx) > 0.16) lookDeltaX += gp.rx * 2.65 * dt;
-      if (Math.abs(gp.ry) > 0.16) lookDeltaY += gp.ry * 1.65 * dt;
+      const rMag = Math.hypot(gp.rx, gp.ry);
+      if (rMag > 0.18) {
+        const scale = (rMag - 0.18) / 0.82;
+        lookDeltaX += (gp.rx / rMag) * scale * 2.65 * dt;
+        lookDeltaY += (gp.ry / rMag) * scale * 1.65 * dt;
+      }
     }
 
-    // Controles Clássicos FIFA (Controle Xbox/PlayStation + Teclado/Mouse):
-    // B / Circle = Chute | A / Cross = Passe | Y / Triangle = Enfiada | X / Square = Cruzamento/Carrinho
-    // RT / R2 = Correr | LT / L2 = Condução Curta | RB / R1 = Colocado c/ Curva | LB / L1 / R3 = Trava na Bola
     const sprintHeld =
       Boolean(gp?.rt) || this.keys.has('ShiftLeft') || this.keys.has('ShiftRight');
     const closeControlHeld =
@@ -174,18 +198,25 @@ export class PitchInputCollector {
     const startNow = Boolean(gp?.start);
 
     const out: LivePitchInput = {
-      moveX,
-      moveZ,
+      moveX: this.smoothMoveX,
+      moveZ: this.smoothMoveZ,
       lookDeltaX,
       lookDeltaY,
       sprintHeld,
       closeControlHeld,
       finesseHeld,
       shootHeld: shootNow,
+      shootJustPressed: shootNow && !this.prevShoot,
       shootJustReleased: !shootNow && this.prevShoot,
+      passHeld: passNow,
       passJustPressed: passNow && !this.prevPass,
+      passJustReleased: !passNow && this.prevPass,
+      throughHeld: throughNow,
       throughJustPressed: throughNow && !this.prevThrough,
+      throughJustReleased: !throughNow && this.prevThrough,
+      lobHeld: lobNow,
       lobOrSlideJustPressed: lobNow && !this.prevLob,
+      lobJustReleased: !lobNow && this.prevLob,
       toggleCameraJustPressed: toggleCamNow && !this.prevToggleCam,
       resetBallJustPressed: resetNow && !this.prevReset,
       exitOrFinishJustPressed: startNow && !this.prevStart,
