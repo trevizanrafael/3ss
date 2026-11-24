@@ -153,12 +153,16 @@ export function computePlayedMatchState(
 
   const opponent = getClubById(fixture.opponentId);
   const compTheme = getCompetitionTheme(fixture.competitionId);
+  const tls = result.twoLegSummary;
+  const aggSuffix = tls
+    ? ` • AGREG. ${tls.aggMyGoals}x${tls.aggOppGoals} (${tls.qualified ? 'CLASSIFICADO' : 'ELIMINADO'})`
+    : '';
   const penSuffix = pen ? ` • PÊN ${pen.myPenGoals}x${pen.oppPenGoals}` : '';
   nextFeed = [
     {
       ...makeEvent(
         calendar.week,
-        `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${penSuffix} (${result.stars}★)`,
+        `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${aggSuffix}${penSuffix} (${result.stars}★)`,
         `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
         'MATCH',
       ),

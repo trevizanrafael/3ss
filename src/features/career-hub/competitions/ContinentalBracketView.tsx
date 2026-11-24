@@ -24,36 +24,87 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
   const renderTie = (tie: KnockoutTie) => {
     const home = getClubById(tie.homeClubId);
     const away = getClubById(tie.awayClubId);
+    const leg1Done = tie.leg1Home !== null;
+    const leg2Done = tie.leg2Home !== null;
     const aggH = (tie.leg1Home ?? 0) + (tie.leg2Away ?? 0);
     const aggA = (tie.leg1Away ?? 0) + (tie.leg2Home ?? 0);
-    const hasPlayed = tie.leg1Home !== null;
-    const hasPen = tie.penHome !== undefined && tie.penHome !== null && tie.penAway !== undefined && tie.penAway !== null;
+    const hasPen =
+      tie.penHome !== undefined &&
+      tie.penHome !== null &&
+      tie.penAway !== undefined &&
+      tie.penAway !== null;
+    const winnerClub = tie.winnerClubId ? getClubById(tie.winnerClubId) : null;
 
     return (
-      <div key={tie.id} className="bg-[#0E0F12] border border-[#242730] p-3 text-xs space-y-1.5">
+      <div key={tie.id} className="bg-[#0E0F12] border border-[#242730] p-3 text-xs space-y-2">
+        {/* Cabeçalho do Confronto: Quem Passou + Colunas IDA | VOLTA | AGREGADO */}
+        <div className="flex items-center justify-between border-b border-[#1C1F26] pb-1.5 text-[10px] uppercase tracking-wider">
+          <div className="truncate pr-2">
+            {winnerClub ? (
+              <span className="text-[#2DBE60] font-condensed font-extrabold tracking-widest">
+                ★ CLASSIFICADO: {winnerClub.shortName}
+                {hasPen ? ` (PÊN ${tie.penHome}:${tie.penAway})` : ` (AGREG. ${Math.max(aggH, aggA)}:${Math.min(aggH, aggA)})`}
+              </span>
+            ) : leg1Done ? (
+              <span className="text-[#C8A45D] font-condensed font-bold">
+                IDA ENCERRADA • FALTA VOLTA
+              </span>
+            ) : (
+              <span className="text-[#565A65] font-condensed font-bold">CONFRONTO DEFINIDO</span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-3 gap-1.5 w-28 text-center font-condensed font-bold text-[#9498A3] shrink-0">
+            <span>IDA</span>
+            <span>VOLTA</span>
+            <span className="text-[#C8A45D]">AGREG.</span>
+          </div>
+        </div>
+
         {[
           { club: home, leg1: tie.leg1Home, leg2: tie.leg2Away, agg: aggH, pen: tie.penHome },
           { club: away, leg1: tie.leg1Away, leg2: tie.leg2Home, agg: aggA, pen: tie.penAway },
         ].map(({ club, leg1, leg2, agg, pen }) => {
           const isWin = tie.winnerClubId === club.id;
+          const isEliminated = Boolean(tie.winnerClubId && !isWin);
           return (
             <div
               key={club.id}
               onClick={() => onSelectClub(club.id)}
-              className={`flex items-center justify-between px-2 py-1 cursor-pointer ${
-                isWin ? 'bg-[#191C24] text-[#F5F5F7]' : 'text-[#9498A3] hover:text-[#F5F5F7]'
+              className={`flex items-center justify-between px-2 py-1.5 cursor-pointer border-l-2 ${
+                isWin
+                  ? 'bg-[#15221B] border-l-[#2DBE60] text-[#F5F5F7]'
+                  : isEliminated
+                    ? 'border-l-transparent text-[#686D7A] hover:text-[#F5F5F7]'
+                    : 'border-l-transparent text-[#D4D7E0] hover:text-[#F5F5F7]'
               }`}
             >
-              <div className="flex items-center gap-2 truncate">
+              <div className="flex items-center gap-2 truncate min-w-0 pr-2">
                 <ClubCrest clubId={club.id} size="sm" />
                 <span className="font-condensed uppercase font-bold text-sm truncate">
                   {club.name}
                 </span>
+                {isWin && (
+                  <span className="px-1.5 py-0.5 bg-[#2DBE60] text-[#0B0B0D] font-condensed font-extrabold text-[9px] tracking-wider shrink-0">
+                    PASSOU
+                  </span>
+                )}
               </div>
-              <div className="font-condensed font-bold text-sm tabular-nums shrink-0">
-                {hasPlayed
-                  ? `${leg1 ?? '-'} / ${leg2 ?? '-'} (${agg})${hasPen ? ` • PÊN ${pen}` : ''}`
-                  : '—'}
+
+              <div className="grid grid-cols-3 gap-1.5 w-28 text-center font-condensed font-bold text-sm tabular-nums shrink-0 items-center">
+                <span className="text-[#9498A3]">{leg1Done ? leg1 : '—'}</span>
+                <span className="text-[#9498A3]">{leg2Done ? leg2 : '—'}</span>
+                <span
+                  className={`py-0.5 font-extrabold ${
+                    isWin
+                      ? 'bg-[#2DBE60]/20 text-[#2DBE60]'
+                      : leg1Done
+                        ? 'bg-[#191C24] text-[#F5F5F7]'
+                        : 'text-[#565A65]'
+                  }`}
+                >
+                  {leg1Done ? `${agg}${hasPen ? ` (${pen})` : ''}` : '—'}
+                </span>
               </div>
             </div>
           );

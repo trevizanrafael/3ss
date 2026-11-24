@@ -56,6 +56,12 @@ interface MatchKitsAndInfoPanelProps {
   onChangeMindset: (m: TacticalMindset) => void;
   isContinentalNight: boolean;
   accentColor: string;
+  leg1Info?: {
+    myShort: string;
+    oppShort: string;
+    myGoals: number;
+    oppGoals: number;
+  };
 }
 
 const KIT_ORDER: KitChoice[] = ['HOME', 'AWAY', 'THIRD'];
@@ -108,12 +114,22 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
   onChangeMindset,
   isContinentalNight,
   accentColor,
+  leg1Info,
 }) => {
   const hk = resolveClubKitColors(homeClub, homeKit);
   const ak = resolveClubKitColors(awayClub, awayKit);
 
   const cycleKit = (curr: KitChoice, dir: -1 | 1) =>
     KIT_ORDER[(KIT_ORDER.indexOf(curr) + dir + KIT_ORDER.length) % KIT_ORDER.length];
+
+  const leg1Diff = leg1Info ? leg1Info.myGoals - leg1Info.oppGoals : 0;
+  const leg1Situation = !leg1Info
+    ? ''
+    : leg1Diff > 0
+      ? `VANTAGEM (+${leg1Diff}) • EMPATE CLASSIFICA VOCÊ`
+      : leg1Diff === 0
+        ? 'TUDO IGUAL NA IDA • QUEM VENCER AVANÇA'
+        : `PRECISA VENCER POR +${Math.abs(leg1Diff) + 1} (OU +${Math.abs(leg1Diff)} P/ PÊNALTIS)`;
 
   return (
     <div className="console-tile p-5 flex flex-col justify-between h-full min-h-0">
@@ -150,6 +166,18 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Se for JOGO DE VOLTA, destaca o Placar da Ida e o que precisa para passar! */}
+      {leg1Info && (
+        <div className="mt-2.5 bg-[#12151E] border border-[#C8A45D]/70 px-3 py-2 flex flex-col gap-0.5 text-center">
+          <div className="font-condensed uppercase font-extrabold text-sm tracking-wider text-[#F5F5F7]">
+            PLACAR DA IDA: <span className="text-[#C8A45D]">{leg1Info.myShort} {leg1Info.myGoals} : {leg1Info.oppGoals} {leg1Info.oppShort}</span>
+          </div>
+          <div className="text-[10px] uppercase tracking-wider text-[#9498A3] font-bold">
+            {leg1Situation}
+          </div>
+        </div>
+      )}
 
       {/* Seletor de Uniformes dos 2 Times Estilo FIFA */}
       <div className="my-auto py-2">

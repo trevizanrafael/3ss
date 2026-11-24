@@ -30,6 +30,13 @@ export interface MatchPerformanceResult {
   matchNarrative: string[];
   penaltyShootout?: UserPenaltyShootoutSummary;
   aggregateNote?: string;
+  twoLegSummary?: {
+    leg1MyGoals: number;
+    leg1OppGoals: number;
+    aggMyGoals: number;
+    aggOppGoals: number;
+    qualified: boolean;
+  };
 }
 
 export function resolveMatchSimulation(

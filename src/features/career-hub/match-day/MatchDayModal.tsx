@@ -85,10 +85,19 @@ export const MatchDayModal: React.FC = () => {
     if (aIdx !== -1) awayRank = aIdx + 1;
   }
 
-  const prevLegSubtitle =
+  const leg1Info =
     liveFixture?.prevLegMyGoals !== undefined && liveFixture?.prevLegOppGoals !== undefined
-      ? ` • IDA: ${myClub.shortName} ${liveFixture.prevLegMyGoals}x${liveFixture.prevLegOppGoals} ${opponentClub.shortName}`
-      : '';
+      ? {
+          myShort: myClub.shortName,
+          oppShort: opponentClub.shortName,
+          myGoals: liveFixture.prevLegMyGoals,
+          oppGoals: liveFixture.prevLegOppGoals,
+        }
+      : undefined;
+
+  const prevLegSubtitle = leg1Info
+    ? ` • IDA: ${leg1Info.myShort} ${leg1Info.myGoals}x${leg1Info.oppGoals} ${leg1Info.oppShort}`
+    : '';
 
   const handleStartMatch = () => {
     if (!liveFixture) return;
@@ -116,6 +125,15 @@ export const MatchDayModal: React.FC = () => {
     const simWithAgg: MatchPerformanceResult = {
       ...sim90,
       aggregateNote,
+      twoLegSummary: hasPrevLeg
+        ? {
+            leg1MyGoals: liveFixture.prevLegMyGoals!,
+            leg1OppGoals: liveFixture.prevLegOppGoals!,
+            aggMyGoals: aggMy,
+            aggOppGoals: aggOpp,
+            qualified: aggMy > aggOpp,
+          }
+        : undefined,
     };
 
     if (liveFixture.decidesKnockout && aggMy === aggOpp) {
@@ -143,6 +161,12 @@ export const MatchDayModal: React.FC = () => {
     const fullResult: MatchPerformanceResult = {
       ...pendingPenMatch.sim90,
       penaltyShootout: shootout,
+      twoLegSummary: pendingPenMatch.sim90.twoLegSummary
+        ? {
+            ...pendingPenMatch.sim90.twoLegSummary,
+            qualified: shootout.won,
+          }
+        : undefined,
       matchNarrative: [...pendingPenMatch.sim90.matchNarrative, penNarrative],
     };
 
@@ -249,6 +273,7 @@ export const MatchDayModal: React.FC = () => {
               onChangeMindset={setMindset}
               isContinentalNight={isContinental}
               accentColor={theme.accentPrimary}
+              leg1Info={leg1Info}
             />
           </div>
 
@@ -291,7 +316,12 @@ export const MatchDayModal: React.FC = () => {
               </div>
 
               <div className="text-center">
-                <div className="font-condensed font-extrabold text-7xl text-[#F5F5F7]">
+                {result.twoLegSummary && (
+                  <div className="text-[10px] uppercase tracking-widest text-[#9498A3] mb-1">
+                    PLACAR DA VOLTA (HOJE)
+                  </div>
+                )}
+                <div className="font-condensed font-extrabold text-7xl text-[#F5F5F7] tabular-nums">
                   {isHome ? result.clubGoals : result.opponentGoals} :{' '}
                   {isHome ? result.opponentGoals : result.clubGoals}
                 </div>
@@ -312,6 +342,61 @@ export const MatchDayModal: React.FC = () => {
                 </span>
               </div>
             </div>
+
+            {/* Faixa Oficial de PLACAR AGREGADO & QUEM PASSOU no Jogo de Volta! */}
+            {result.twoLegSummary && (() => {
+              const tls = result.twoLegSummary;
+              const homeAgg = isHome ? tls.aggMyGoals : tls.aggOppGoals;
+              const awayAgg = isHome ? tls.aggOppGoals : tls.aggMyGoals;
+              const homeLeg1 = isHome ? tls.leg1MyGoals : tls.leg1OppGoals;
+              const awayLeg1 = isHome ? tls.leg1OppGoals : tls.leg1MyGoals;
+              const advancingClub = tls.qualified ? myClub : opponentClub;
+
+              return (
+                <div
+                  className={`mt-4 border p-4 flex flex-wrap items-center justify-between gap-4 ${
+                    tls.qualified
+                      ? 'bg-[#102117] border-[#2DBE60]'
+                      : 'bg-[#221214] border-[#EF4444]'
+                  }`}
+                >
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-[#9498A3]">
+                      IDA ({homeClub.shortName} {homeLeg1} : {awayLeg1} {awayClub.shortName}) + VOLTA
+                    </div>
+                    <div className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] tabular-nums mt-0.5">
+                      PLACAR AGREGADO: {homeClub.shortName}{' '}
+                      <span className="text-[#C8A45D]">{homeAgg} : {awayAgg}</span>{' '}
+                      {awayClub.shortName}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <ClubCrest clubId={advancingClub.id} size="md" />
+                    <div className="text-right">
+                      <span
+                        className={`px-2.5 py-0.5 font-condensed uppercase font-extrabold text-xs tracking-widest inline-block ${
+                          tls.qualified
+                            ? 'bg-[#2DBE60] text-[#0B0B0D]'
+                            : 'bg-[#EF4444] text-[#F5F5F7]'
+                        }`}
+                      >
+                        {tls.qualified ? '★ VOCÊ AVANÇOU!' : '✕ ELIMINADO'}
+                      </span>
+                      <div className="font-condensed uppercase font-bold text-base text-[#F5F5F7] mt-1">
+                        CLASSIFICADO: {advancingClub.name}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {!result.twoLegSummary && result.stageLabel.includes('(IDA)') && (
+              <div className="mt-4 bg-[#12151E] border border-[#242730] px-4 py-2.5 text-center font-condensed uppercase font-bold text-sm tracking-wider text-[#C8A45D]">
+                FIM DO JOGO DE IDA ({myClub.shortName} {result.clubGoals} : {result.opponentGoals} {opponentClub.shortName}) • VAGA DECIDIDA NO JOGO DE VOLTA!
+              </div>
+            )}
 
             {result.penaltyShootout && (
               <PenaltyScoreboardStrip
