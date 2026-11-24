@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getClubById } from '../data/clubs';
+import { INITIAL_PERIOD_STATS } from '../domains/awards/awardTypes';
 import { generateWindowTransferOffers } from '../domains/contracts/contractEngine';
 import {
   getOwnedEquipmentBonuses,
@@ -46,8 +47,11 @@ export const useCareerStore = create<CareerState>()(
       transitionProposals: [],
       marketOffers: [],
       worldSeason: createInitialWorldSeason(2026),
-      seasonGoalsCount: 0,
-      seasonAssistsCount: 0,
+      periodStats: { ...INITIAL_PERIOD_STATS },
+      trophyCabinet: [],
+      awardPrestigeBoost: 0,
+      latestGalaReport: null,
+      galaModalOpen: false,
       lastMatchResult: null,
       feed: [],
 
@@ -102,7 +106,7 @@ export const useCareerStore = create<CareerState>()(
                 : 'Barras dos 5 slots avançaram em velocidade máxima.',
               'TRAINING',
             ),
-            ...feed.slice(0, 24),
+            ...feed.slice(0, 29),
           ],
         });
       },
@@ -122,7 +126,7 @@ export const useCareerStore = create<CareerState>()(
       acceptMarketProposal: (offer) => set(buildMarketSignPatch(get(), offer)),
 
       requestLoanOrOffersFromAgent: () => {
-        const { player, contract, agentId, calendar, feed } = get();
+        const { player, contract, agentId, awardPrestigeBoost, calendar, feed } = get();
         if (!player || !contract) return;
         if (contract.stage === 'YOUTH') {
           set({
@@ -130,7 +134,7 @@ export const useCareerStore = create<CareerState>()(
             feed: [makeEvent(calendar.week, 'Diretoria Acionada', 'Propostas de Subida e Empréstimo liberadas.', 'CONTRACT'), ...feed],
           });
         } else {
-          const offers = generateWindowTransferOffers(player, contract, agentId);
+          const offers = generateWindowTransferOffers(player, contract, agentId, awardPrestigeBoost);
           set({
             marketOffers: offers,
             feed: [makeEvent(calendar.week, 'Sondagem Concluída', `${offers.length} clube(s) apresentaram proposta.`, 'CONTRACT'), ...feed],
@@ -171,6 +175,8 @@ export const useCareerStore = create<CareerState>()(
         return { ok: res.ok, message: res.message };
       },
 
+      setGalaModalOpen: (galaModalOpen) => set({ galaModalOpen }),
+
       resetCareer: () =>
         set({
           hasActiveSave: false,
@@ -179,10 +185,15 @@ export const useCareerStore = create<CareerState>()(
           youthState: null,
           transitionProposals: [],
           marketOffers: [],
+          periodStats: { ...INITIAL_PERIOD_STATS },
+          trophyCabinet: [],
+          awardPrestigeBoost: 0,
+          latestGalaReport: null,
+          galaModalOpen: false,
           lastMatchResult: null,
           feed: [],
         }),
     }),
-    { name: 'three-stars-soccer-career-v3' },
+    { name: 'three-stars-soccer-career-v4' },
   ),
 );

@@ -8,6 +8,7 @@ import {
 import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import { useCareerStore } from '../../state/useCareerStore';
 import { useNavigationStore } from '../../state/useNavigationStore';
+import { SeasonAwardsGalaModal } from './awards-gala/SeasonAwardsGalaModal';
 import { CompetitionsTab } from './competitions/CompetitionsTab';
 import { ContractsTab } from './contracts/ContractsTab';
 import { DashboardTab } from './dashboard/DashboardTab';
@@ -60,6 +61,12 @@ export const CareerHubScreen: React.FC = () => {
       <footer className="h-10 shrink-0 border-t border-[#242730] bg-[#0B0B0D] px-6 md:px-10 flex items-center justify-between text-[11px] uppercase tracking-widest text-[#565A65] relative z-10">
         <div className="flex flex-wrap items-center gap-5">
           <GamepadBadge action="CONFIRM" label="CONFIRMAR" />
+          {activeTab === 'MEU_PRO' && (
+            <>
+              <GamepadBadge action="LT" label="TROFÉUS" />
+              <GamepadBadge action="RT" />
+            </>
+          )}
           {activeTab === 'TREINO' && <GamepadBadge action="ALT_Y" label="SESSÃO 100%" />}
           {activeTab === 'ESCRITORIO' && (
             <>
@@ -92,6 +99,7 @@ export const CareerHubScreen: React.FC = () => {
       </footer>
 
       <MatchDayModal />
+      <SeasonAwardsGalaModal />
     </div>
   );
 };

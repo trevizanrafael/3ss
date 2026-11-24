@@ -127,7 +127,13 @@ export const RollingWeekCalendarTile: React.FC = () => {
       const hitOffer =
         after.transitionProposals.length + after.marketOffers.length > prevOffers;
 
-      if (stopRequestedRef.current || Boolean(fxToday) || hitTrain || hitOffer) {
+      if (
+        stopRequestedRef.current ||
+        Boolean(fxToday) ||
+        hitTrain ||
+        hitOffer ||
+        after.galaModalOpen
+      ) {
         setSlideFrac(0);
         setIsSimulating(false);
         return;

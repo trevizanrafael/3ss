@@ -54,19 +54,21 @@ export function generateWindowTransferOffers(
   player: CareerPlayer,
   currentContract: ActiveContract,
   agentId: string,
+  awardPrestigeBoost = 0,
 ): TransferMarketOffer[] {
   const agent = AGENTS_CATALOG.find((a) => a.id === agentId) ?? AGENTS_CATALOG[0];
   const currentClub = getClubById(currentContract.clubId);
-  const salaryMultiplier = 1 + agent.salaryBonusPct / 100;
+  const salaryMultiplier = 1 + agent.salaryBonusPct / 100 + Math.min(0.35, awardPrestigeBoost * 0.03);
 
-  const minTargetOvr = Math.max(66, player.overall - 4);
-  const maxTargetOvr = player.overall + 8 + agent.stars * 3;
+  const minTargetOvr = Math.max(66, player.overall - 4 + Math.min(4, awardPrestigeBoost));
+  const maxTargetOvr = player.overall + 8 + agent.stars * 3 + awardPrestigeBoost;
+  const unlockedAbroad = agent.unlocksForeignOffers || awardPrestigeBoost >= 4;
 
   const eligibleClubs = shuffleArray(
     ALL_CLUBS.filter((c) => {
       if (c.id === currentContract.clubId) return false;
       if (c.leagueId === 'CONMEBOL_POOL' || c.leagueId === 'UEFA_POOL') return false;
-      if (!agent.unlocksForeignOffers && c.country !== currentClub.country) return false;
+      if (!unlockedAbroad && c.country !== currentClub.country) return false;
       return c.squadAvgOvr >= minTargetOvr && c.squadAvgOvr <= maxTargetOvr;
     }),
   ).slice(0, 3);

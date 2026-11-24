@@ -133,13 +133,30 @@ export function computePlayedMatchState(
     ...nextFeed,
   ];
 
+  const nextPeriod = {
+    monthMatches: state.periodStats.monthMatches + 1,
+    monthGoals: state.periodStats.monthGoals + result.playerGoals,
+    monthAssists: state.periodStats.monthAssists + result.playerAssists,
+    monthStarPoints: state.periodStats.monthStarPoints + result.stars,
+    seasonMatches: state.periodStats.seasonMatches + 1,
+    seasonGoals: state.periodStats.seasonGoals + result.playerGoals,
+    seasonAssists: state.periodStats.seasonAssists + result.playerAssists,
+    seasonStarPoints: state.periodStats.seasonStarPoints + result.stars,
+    continentalMatches:
+      state.periodStats.continentalMatches + (fixture.isContinental ? 1 : 0),
+    continentalGoals:
+      state.periodStats.continentalGoals + (fixture.isContinental ? result.playerGoals : 0),
+    continentalAssists:
+      state.periodStats.continentalAssists + (fixture.isContinental ? result.playerAssists : 0),
+  };
+
   return {
     result,
     patch: {
       player: {
         ...player,
         stamina: clamp(player.stamina - result.staminaSpent, 15, 100),
-        reputationStars: repStars,
+        reputationStars: Math.max(player.reputationStars, repStars) as StarRating,
         careerTotals: updatedTotals,
       },
       contract: { ...contract, role: nextRole, seasonGoal: goal },
@@ -147,10 +164,9 @@ export function computePlayedMatchState(
       youthState: nextYouth,
       transitionProposals: nextProposals,
       worldSeason: nextWorld,
-      seasonGoalsCount: state.seasonGoalsCount + result.playerGoals,
-      seasonAssistsCount: state.seasonAssistsCount + result.playerAssists,
+      periodStats: nextPeriod,
       lastMatchResult: result,
-      feed: nextFeed.slice(0, 25),
+      feed: nextFeed.slice(0, 30),
     },
   };
 }

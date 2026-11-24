@@ -30,6 +30,7 @@ export const HubHeaderAndNav: React.FC = () => {
     worldSeason,
     transitionProposals,
     marketOffers,
+    galaModalOpen,
   } = useCareerStore();
   const { activeTab, matchModalOpen, setActiveTab, cycleTab, setScreen } =
     useNavigationStore();
@@ -37,7 +38,7 @@ export const HubHeaderAndNav: React.FC = () => {
   // LB / RB do controle já disparam 'q' e 'e' via useGlobalGamepadController
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (matchModalOpen) return;
+      if (matchModalOpen || galaModalOpen) return;
       if (e.key === 'q' || e.key === 'Q') cycleTab(-1);
       if (e.key === 'e' || e.key === 'E') cycleTab(1);
       if (e.key === 'Escape') {

@@ -35,7 +35,9 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
       <div>
         <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#9498A3] pb-4 border-b border-[#242730]">
           <span>MEU PRO</span>
-          <span>HABILIDADES ›</span>
+          <span>
+            HABILIDADES & TROFÉUS ({player.careerTotals.trophies}) ›
+          </span>
         </div>
 
         <div className="flex items-end justify-between py-5 border-b border-[#242730]">

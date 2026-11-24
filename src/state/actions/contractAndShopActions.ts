@@ -1,4 +1,5 @@
 import { getClubById } from '../../data/clubs';
+import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
 import {
   createSeasonContractGoal,
   TransferMarketOffer,
@@ -36,8 +37,11 @@ export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer
     transitionProposals: [],
     marketOffers: [],
     worldSeason: createInitialWorldSeason(2026),
-    seasonGoalsCount: 0,
-    seasonAssistsCount: 0,
+    periodStats: { ...INITIAL_PERIOD_STATS },
+    trophyCabinet: [],
+    awardPrestigeBoost: 0,
+    latestGalaReport: null,
+    galaModalOpen: false,
     lastMatchResult: null,
     feed: [
       makeEvent(

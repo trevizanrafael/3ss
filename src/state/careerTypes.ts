@@ -1,4 +1,9 @@
 import { AttributeKey } from '../data/equipment/catalog';
+import {
+  PlayerPeriodStats,
+  PlayerTrophyEntry,
+  SeasonAwardsGalaReport,
+} from '../domains/awards/awardTypes';
 import { ActiveContract, TransferMarketOffer } from '../domains/contracts/contractEngine';
 import { MatchPerformanceResult, TacticalMindset } from '../domains/match-sim/matchSimulator';
 import { CreatePlayerInput } from '../domains/player/createInitialPlayer';
@@ -14,7 +19,8 @@ export interface FeedEvent {
   week: number;
   title: string;
   detail: string;
-  category: 'INFO' | 'TRAINING' | 'MATCH' | 'CONTRACT';
+  category: 'INFO' | 'TRAINING' | 'MATCH' | 'CONTRACT' | 'AWARD';
+  clubId?: string;
 }
 
 export interface CareerState {
@@ -38,10 +44,13 @@ export interface CareerState {
   transitionProposals: YouthTransitionProposal[];
   marketOffers: TransferMarketOffer[];
 
-  // Motor Anual Completo (17 Ligas + 4 Continentais + Histórico)
   worldSeason: WorldSeasonState;
-  seasonGoalsCount: number;
-  seasonAssistsCount: number;
+  periodStats: PlayerPeriodStats;
+  trophyCabinet: PlayerTrophyEntry[];
+  awardPrestigeBoost: number;
+  latestGalaReport: SeasonAwardsGalaReport | null;
+  galaModalOpen: boolean;
+
   lastMatchResult: MatchPerformanceResult | null;
   feed: FeedEvent[];
 
@@ -57,5 +66,6 @@ export interface CareerState {
   requestLoanOrOffersFromAgent: () => void;
   buyEquipmentItem: (equipmentId: string) => { ok: boolean; message: string };
   hireAgentById: (agentId: string) => { ok: boolean; message: string };
+  setGalaModalOpen: (open: boolean) => void;
   resetCareer: () => void;
 }

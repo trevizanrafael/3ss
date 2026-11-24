@@ -4,12 +4,14 @@ import { MainMenuScreen } from './features/main-menu/MainMenuScreen';
 import { PlayerCreationScreen } from './features/player-creation/PlayerCreationScreen';
 import { TryoutScreen } from './features/tryout/TryoutScreen';
 import { useGlobalGamepadController } from './shared/gamepad/useGlobalGamepadController';
+import { useCareerStore } from './state/useCareerStore';
 import { useNavigationStore } from './state/useNavigationStore';
 
 export const App: React.FC = () => {
   const { screen, activeTab, matchModalOpen } = useNavigationStore();
+  const galaModalOpen = useCareerStore((s) => s.galaModalOpen);
 
-  useGlobalGamepadController([screen, activeTab, matchModalOpen]);
+  useGlobalGamepadController([screen, activeTab, matchModalOpen, galaModalOpen]);
 
   if (screen === 'CREATE_PLAYER') return <PlayerCreationScreen />;
   if (screen === 'TRYOUT') return <TryoutScreen />;

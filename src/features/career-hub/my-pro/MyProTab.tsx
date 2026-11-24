@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AttributeKey } from '../../../data/equipment/catalog';
 import { POSITION_LABELS } from '../../../domains/attributes/overallCalculator';
 import {
   computeFifaMacroStats,
   getDrillById,
 } from '../../../domains/training/trainingDrillsCatalog';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
+import { TrophyCabinetView } from './TrophyCabinetView';
 
 interface StatColumnConfig {
   title: string;
@@ -15,7 +17,9 @@ interface StatColumnConfig {
 }
 
 export const MyProTab: React.FC = () => {
-  const { player, drillSlots, recentLeveledKeys } = useCareerStore();
+  const { player, drillSlots, recentLeveledKeys, trophyCabinet } = useCareerStore();
+  const [subView, setSubView] = useState<'STATS' | 'TROPHIES'>('STATS');
+
   if (!player) return null;
 
   const macros = computeFifaMacroStats(player.attributes);
@@ -83,9 +87,12 @@ export const MyProTab: React.FC = () => {
     },
   ];
 
+  const toggleSubView = () =>
+    setSubView((curr) => (curr === 'STATS' ? 'TROPHIES' : 'STATS'));
+
   return (
     <div className="h-full flex flex-col gap-5 min-h-0">
-      {/* Faixa Superior Resumo do Atleta */}
+      {/* Faixa Superior Resumo do Atleta + Seletor LT/RT Sala de Troféus */}
       <div className="console-tile border-l-4 border-l-[#C8A45D] px-6 py-4 flex flex-wrap items-center justify-between gap-6 shrink-0">
         <div className="flex items-center gap-6">
           <div
@@ -105,107 +112,138 @@ export const MyProTab: React.FC = () => {
           </div>
         </div>
 
-        {/* Legenda Semafórica FIFA 18 */}
-        <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest text-[#9498A3]">
-          <span>
-            <i className="inline-block w-2.5 h-2.5 bg-[#2DBE60] mr-1.5 align-middle" />
-            80–99 ELITE
-          </span>
-          <span>
-            <i className="inline-block w-2.5 h-2.5 bg-[#B8C93A] mr-1.5 align-middle" />
-            65–79 BOM
-          </span>
-          <span>
-            <i className="inline-block w-2.5 h-2.5 bg-[#D9822B] mr-1.5 align-middle" />
-            50–64 MÉDIO
-          </span>
-          <span>
-            <i className="inline-block w-2.5 h-2.5 bg-[#C94040] mr-1.5 align-middle" />
-            0–49 FRACO
-          </span>
+        {/* Sub-Abas Console: 01 HABILIDADES | 02 SALA DE TROFÉUS (LT / RT) */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            data-pad-lt="true"
+            data-nav-ignore="true"
+            onClick={toggleSubView}
+            className="cursor-pointer mr-1"
+          >
+            <GamepadBadge action="LT" />
+          </button>
+
+          <button
+            type="button"
+            data-focusable="true"
+            data-autofocus="true"
+            onClick={() => setSubView('STATS')}
+            className={`px-4 py-2 font-condensed uppercase font-extrabold text-sm tracking-wider border transition-colors cursor-pointer ${
+              subView === 'STATS'
+                ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
+                : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+            }`}
+          >
+            01 HABILIDADES 0–99
+          </button>
+
+          <button
+            type="button"
+            data-focusable="true"
+            onClick={() => setSubView('TROPHIES')}
+            className={`px-4 py-2 font-condensed uppercase font-extrabold text-sm tracking-wider border transition-colors cursor-pointer ${
+              subView === 'TROPHIES'
+                ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
+                : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
+            }`}
+          >
+            02 SALA DE TROFÉUS ({trophyCabinet.length})
+          </button>
+
+          <button
+            type="button"
+            data-pad-rt="true"
+            data-nav-ignore="true"
+            onClick={toggleSubView}
+            className="cursor-pointer ml-1"
+          >
+            <GamepadBadge action="RT" />
+          </button>
         </div>
       </div>
 
-      {/* 6 Colunas Verticais de Habilidades estilo FIFA 18 */}
-      <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 min-h-0">
-        {columns.map((col) => {
-          const macroColor = getFifaStatColor(col.macroScore);
-          return (
-            <div key={col.title} className="console-tile p-4 flex flex-col">
-              {/* Topo da Coluna: Macro-Atributo */}
-              <div className="pb-3 mb-4 border-b border-[#242730]">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-condensed uppercase font-bold text-base tracking-wider text-[#9498A3]">
-                    {col.title}
-                  </span>
-                  <span
-                    className="font-condensed font-extrabold text-3xl leading-none"
-                    style={{ color: macroColor }}
-                  >
-                    {col.macroScore}
-                  </span>
+      {/* Visão 01: 6 Colunas Verticais de Habilidades estilo FIFA 18 | Visão 02: Sala de Troféus */}
+      {subView === 'TROPHIES' ? (
+        <TrophyCabinetView />
+      ) : (
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 min-h-0">
+          {columns.map((col) => {
+            const macroColor = getFifaStatColor(col.macroScore);
+            return (
+              <div key={col.title} className="console-tile p-4 flex flex-col">
+                <div className="pb-3 mb-4 border-b border-[#242730]">
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-condensed uppercase font-bold text-base tracking-wider text-[#9498A3]">
+                      {col.title}
+                    </span>
+                    <span
+                      className="font-condensed font-extrabold text-3xl leading-none"
+                      style={{ color: macroColor }}
+                    >
+                      {col.macroScore}
+                    </span>
+                  </div>
+                  <div className="w-full h-1 bg-[#0E0F12] mt-2">
+                    <div
+                      className="h-full"
+                      style={{ width: `${col.macroScore}%`, backgroundColor: macroColor }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-1 bg-[#0E0F12] mt-2">
-                  <div
-                    className="h-full"
-                    style={{ width: `${col.macroScore}%`, backgroundColor: macroColor }}
-                  />
-                </div>
-              </div>
 
-              {/* Lista Alinhada dos Sub-Atributos 0-99 */}
-              <div className="space-y-4">
-                {col.items.map((item) => {
-                  const val = player.attributes[item.key];
-                  const xp = player.attributeXp[item.key];
-                  const color = getFifaStatColor(val);
-                  const leveled = recentLeveledKeys.includes(item.key);
-                  const inSlot = activeTrainingKeys.has(item.key);
+                <div className="space-y-4">
+                  {col.items.map((item) => {
+                    const val = player.attributes[item.key];
+                    const xp = player.attributeXp[item.key];
+                    const color = getFifaStatColor(val);
+                    const leveled = recentLeveledKeys.includes(item.key);
+                    const inSlot = activeTrainingKeys.has(item.key);
 
-                  return (
-                    <div key={item.key}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-condensed uppercase font-semibold text-sm tracking-wide text-[#F5F5F7] truncate pr-1">
-                          {item.label}
-                        </span>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          {(leveled || inSlot) && (
-                            <span
-                              className={`text-[10px] font-bold ${
-                                leveled ? 'text-[#2DBE60]' : 'text-[#C8A45D]'
-                              }`}
-                              title={leveled ? 'Subiu recentemente!' : 'Alocado no Treino'}
-                            >
-                              ▲
-                            </span>
-                          )}
-                          <span
-                            className="font-condensed font-extrabold text-xl leading-none tabular-nums"
-                            style={{ color }}
-                          >
-                            {val}
+                    return (
+                      <div key={item.key}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-condensed uppercase font-semibold text-sm tracking-wide text-[#F5F5F7] truncate pr-1">
+                            {item.label}
                           </span>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {(leveled || inSlot) && (
+                              <span
+                                className={`text-[10px] font-bold ${
+                                  leveled ? 'text-[#2DBE60]' : 'text-[#C8A45D]'
+                                }`}
+                                title={leveled ? 'Subiu recentemente!' : 'Alocado no Treino'}
+                              >
+                                ▲
+                              </span>
+                            )}
+                            <span
+                              className="font-condensed font-extrabold text-xl leading-none tabular-nums"
+                              style={{ color }}
+                            >
+                              {val}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="w-full h-[3px] bg-[#0E0F12]">
+                          <div
+                            className="h-full transition-all"
+                            style={{
+                              width: `${xp}%`,
+                              backgroundColor: inSlot ? '#C8A45D' : '#323640',
+                            }}
+                          />
                         </div>
                       </div>
-
-                      {/* Barra fina de % até o próximo ponto */}
-                      <div className="w-full h-[3px] bg-[#0E0F12]">
-                        <div
-                          className="h-full transition-all"
-                          style={{
-                            width: `${xp}%`,
-                            backgroundColor: inSlot ? '#C8A45D' : '#323640',
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
