@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { getClubById } from '../../../data/clubs';
 import { ATTRIBUTE_DEFINITIONS } from '../../../domains/attributes/attributeDefinitions';
 import { getOwnedEquipmentBonuses } from '../../../domains/economy/economyActions';
 import { getDrillById } from '../../../domains/training/trainingDrillsCatalog';
+import { PitchArenaModal } from '../../../match-3d/ui/PitchArenaModal';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { StarRating } from '../../../shared/types/common';
@@ -24,8 +26,10 @@ export const TrainingTab: React.FC = () => {
   const { setActiveTab } = useNavigationStore();
 
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
+  const [pitchMode, setPitchMode] = useState<'TRAINING_SESSION' | 'FREE_PLAY' | null>(null);
 
   if (!player || !contract) return null;
+  const club = getClubById(contract.clubId);
   const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
   const isTrainingDay = calendar.day === 2 || calendar.day === 4;
 
@@ -53,30 +57,53 @@ export const TrainingTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            data-focusable="true"
+            onClick={() => setPitchMode('FREE_PLAY')}
+            className="px-4 py-2.5 bg-[#141720] hover:bg-[#1E222E] border border-[#2DBE60] font-condensed uppercase font-bold text-xs tracking-widest text-[#2DBE60] cursor-pointer"
+          >
+            ARENA LIVRE 3D ›
+          </button>
+
           {isTrainingDay && !trainedToday ? (
-            <button
-              type="button"
-              data-pad-y="true"
-              onClick={handleRunActiveSession}
-              className="console-btn-primary px-6 py-3 text-base inline-flex items-center gap-2.5 cursor-pointer"
-            >
-              <GamepadBadge action="ALT_Y" darkText />
-              <span>EXECUTAR SESSÃO DE HOJE (100%) ›</span>
-            </button>
+            <>
+              <button
+                type="button"
+                data-focusable="true"
+                data-pad-x="true"
+                onClick={handleRunActiveSession}
+                className="px-4 py-2.5 bg-[#16181D] hover:bg-[#222630] border border-[#242730] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-wider text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
+              >
+                <GamepadBadge action="ALT_X" />
+                <span>SIMULAR RÁPIDO</span>
+              </button>
+
+              <button
+                type="button"
+                data-focusable="true"
+                data-pad-y="true"
+                onClick={() => setPitchMode('TRAINING_SESSION')}
+                className="console-btn-primary px-6 py-2.5 text-base inline-flex items-center gap-2.5 cursor-pointer"
+              >
+                <GamepadBadge action="ALT_Y" darkText />
+                <span>JOGAR TREINO EM CAMPO 3D (100%) ›</span>
+              </button>
+            </>
           ) : trainedToday ? (
             <button
               type="button"
               data-pad-y="true"
               onClick={() => setActiveTab('CENTRAL')}
-              className="console-btn-primary px-6 py-3 text-base inline-flex items-center gap-2.5 cursor-pointer"
+              className="console-btn-primary px-6 py-2.5 text-base inline-flex items-center gap-2.5 cursor-pointer"
             >
               <GamepadBadge action="ALT_Y" darkText />
               <span>CONCLUIR E VOLTAR À CENTRAL ›</span>
             </button>
           ) : (
             <span className="px-4 py-2.5 bg-[#0E0F12] border border-[#242730] font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3]">
-              DISPONÍVEL NA TERÇA E QUINTA • CONFIGURE OS SLOTS ABAIXO
+              SESSÃO 100% NA TERÇA E QUINTA
             </span>
           )}
         </div>
@@ -191,6 +218,21 @@ export const TrainingTab: React.FC = () => {
           currentDrillId={drillSlots[editingSlot]}
           onSelect={(id) => setDrillSlot(editingSlot, id)}
           onClose={() => setEditingSlot(null)}
+        />
+      )}
+
+      {pitchMode !== null && (
+        <PitchArenaModal
+          mode={pitchMode}
+          player={player}
+          club={club}
+          onFinishSession={(earnedStars) => {
+            if (pitchMode === 'TRAINING_SESSION' && !trainedToday) {
+              completeActiveTraining(Math.max(1, earnedStars) as StarRating);
+            }
+            setPitchMode(null);
+          }}
+          onCancel={() => setPitchMode(null)}
         />
       )}
     </div>

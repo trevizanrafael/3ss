@@ -1,7 +1,9 @@
-import React from 'react';
-import { getClubById } from '../../data/clubs';
+import React, { useMemo, useState } from 'react';
+import { getClubById, getNationalTeamByCountry } from '../../data/clubs';
 import { getCompetitionTheme } from '../../data/world/competitionThemes';
+import { createInitialPlayer } from '../../domains/player/createInitialPlayer';
 import { findClubLeagueIdInWorld } from '../../domains/season/worldSeasonEngine';
+import { PitchArenaModal } from '../../match-3d/ui/PitchArenaModal';
 import { useUiSoundStore } from '../../shared/audio/uiSoundEngine';
 import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import { useGamepadStore } from '../../shared/gamepad/gamepadStore';
@@ -21,9 +23,41 @@ export const MainMenuScreen: React.FC = () => {
   const { setScreen } = useNavigationStore();
   const { padConnected, brand } = useGamepadStore();
   const { muted, toggleMuted } = useUiSoundStore();
+  const [arenaOpen, setArenaOpen] = useState(false);
 
   const currentClub = contract ? getClubById(contract.clubId) : null;
   const canContinue = Boolean(hasActiveSave && player && contract && currentClub);
+
+  const fallbackPlayer = useMemo(
+    () =>
+      createInitialPlayer({
+        fullName: 'Craque Demo',
+        shirtName: 'CRAQUE',
+        shirtNumber: 10,
+        birthDay: 10,
+        birthMonth: 5,
+        birthYear: 2004,
+        nationality: 'BRA',
+        startingLeagueCountry: 'BRA',
+        position: 'ATA',
+        preferredFoot: 'DIREITA',
+        heightCm: 179,
+        weightKg: 74,
+        appearance: {
+          skinTone: '#C68642',
+          hairStyle: 'DEGRADE',
+          hairColor: '#111827',
+          facialHair: 'LIMPO',
+          eyeColor: '#3B2F2F',
+          shirtTuck: 'SOLTA',
+          sleeveStyle: 'CURTA',
+          sockHeight: 'PADRAO',
+          accessory: 'MUNHEQUEIRA',
+          bootColor: '#C8A45D',
+        },
+      }),
+    [],
+  );
 
   const activeLeagueId =
     canContinue && contract ? findClubLeagueIdInWorld(worldSeason, contract.clubId) : 'LIBERTADORES';
@@ -103,7 +137,7 @@ export const MainMenuScreen: React.FC = () => {
         </div>
 
         {/* Coluna Central (Quando há Carreira Salva): Seu Craque 3D com a Camisa do Clube! */}
-        {canContinue && player && currentClub && (
+        {canContinue && player && currentClub && !arenaOpen && (
           <div className="hidden lg:flex lg:col-span-4 h-full max-h-[500px] flex-col relative">
             <div className="pointer-events-none absolute inset-x-0 top-2 text-center z-10">
               <span className="font-condensed font-extrabold text-[110px] leading-none text-white/[0.06] select-none">
@@ -165,21 +199,44 @@ export const MainMenuScreen: React.FC = () => {
             id="menu-new"
             data-autofocus={!canContinue ? 'true' : undefined}
             data-nav-up={canContinue ? 'menu-continue' : undefined}
+            data-nav-down="menu-arena"
             data-focus-label="CRIAR NOVO ATLETA"
             onClick={handleNewCareer}
-            className="console-tile console-tile-interactive text-left p-6 border-l-4 border-l-[#565A65] cursor-pointer group"
+            className="console-tile console-tile-interactive text-left p-5 border-l-4 border-l-[#565A65] cursor-pointer group"
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1.5">
               <span className="font-condensed uppercase text-xs tracking-[0.22em] text-[#9498A3] group-hover:text-[#F5F5F7] font-bold">
                 {canContinue ? '02 // NOVO SAVE' : '01 // INICIAR CARREIRA'}
               </span>
               <GamepadBadge action="CONFIRM" label="CRIAR PRO" />
             </div>
-            <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none">
+            <div className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] leading-none">
               NOVA CARREIRA DE JOGADOR
             </div>
-            <div className="text-xs text-[#9498A3] mt-2 uppercase tracking-wider">
+            <div className="text-xs text-[#9498A3] mt-1.5 uppercase tracking-wider">
               ESTREIA AOS 18 ANOS • SELETIVA PROFISSIONAL • 19 LIGAS & COPAS
+            </div>
+          </button>
+
+          <button
+            id="menu-arena"
+            data-nav-up="menu-new"
+            data-pad-y="true"
+            data-focus-label="ENTRAR NO GRAMADO 3D AGORA"
+            onClick={() => setArenaOpen(true)}
+            className="console-tile console-tile-interactive text-left p-5 border-l-4 border-l-[#2DBE60] cursor-pointer group"
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-condensed uppercase text-xs tracking-[0.22em] text-[#2DBE60] font-bold">
+                {canContinue ? '03 // TREINO LIVRE NO CAMPO' : '02 // TESTAR GAMEPLAY 3D'}
+              </span>
+              <GamepadBadge action="ALT_Y" label="CAMPO 3D" />
+            </div>
+            <div className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] leading-none">
+              ARENA DE FUTEBOL 3D (LIVRE)
+            </div>
+            <div className="text-xs text-[#9498A3] mt-1.5 uppercase tracking-wider">
+              3ª PESSOA • CURVA COLOCADA • TABELINHA & GOLEIRO IA
             </div>
           </button>
         </div>
@@ -192,6 +249,17 @@ export const MainMenuScreen: React.FC = () => {
         </div>
         <span>THREE STARS SOCCER</span>
       </footer>
+
+      {arenaOpen && (
+        <PitchArenaModal
+          mode="FREE_PLAY"
+          player={player ?? fallbackPlayer}
+          club={currentClub ?? getNationalTeamByCountry('BRA')}
+          competitionId={activeLeagueId}
+          onFinishSession={() => setArenaOpen(false)}
+          onCancel={() => setArenaOpen(false)}
+        />
+      )}
     </div>
   );
 };

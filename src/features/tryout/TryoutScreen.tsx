@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getClubById } from '../../data/clubs';
+import { getClubById, getNationalTeamByCountry } from '../../data/clubs';
 import { COUNTRIES, TRYOUT_LEAGUE_COUNTRIES } from '../../data/countries/countries';
 import { LEAGUES } from '../../data/leagues/leagues';
+import { PitchArenaModal } from '../../match-3d/ui/PitchArenaModal';
 import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import { focusInitialElementInScope } from '../../shared/gamepad/spatialNavigator';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
@@ -54,6 +55,7 @@ export const TryoutScreen: React.FC = () => {
 
   const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
+  const [playing3DTryout, setPlaying3DTryout] = useState(false);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -150,35 +152,58 @@ export const TryoutScreen: React.FC = () => {
       </header>
 
       {tryoutStars === null ? (
-        <main className="my-auto max-w-4xl w-full mx-auto">
-          <div className="font-condensed uppercase text-sm tracking-[0.25em] text-[#9498A3] mb-2">
-            BATERIA {TRYOUT_STAGES[step].code}
+        <main className="my-auto max-w-4xl w-full mx-auto space-y-6">
+          <div className="console-tile border-l-4 border-l-[#2DBE60] p-6 flex flex-wrap items-center justify-between gap-5">
+            <div>
+              <span className="text-[11px] uppercase tracking-[0.22em] text-[#2DBE60] font-bold block">
+                AVALIAÇÃO PRÁTICA EM CAMPO 3D (RECOMENDADO)
+              </span>
+              <h2 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] mt-1">
+                ENTRAR NO GRAMADO • 8 LANCES REAIS CONTRA O GOLEIRO
+              </h2>
+              <p className="text-xs text-[#9498A3] mt-1">
+                Faça gols, acerte a gaveta com curva colocada e tabele com o apoio para cravar suas 3 Estrelas!
+              </p>
+            </div>
+            <button
+              type="button"
+              data-focusable="true"
+              data-autofocus="true"
+              data-pad-y="true"
+              onClick={() => setPlaying3DTryout(true)}
+              className="console-btn-primary px-7 py-3.5 text-lg inline-flex items-center gap-2.5 cursor-pointer shrink-0"
+            >
+              <GamepadBadge action="ALT_Y" darkText />
+              <span>JOGAR SELETIVA EM CAMPO 3D ›</span>
+            </button>
           </div>
-          <h2 className="font-condensed uppercase font-extrabold text-5xl text-[#F5F5F7] mb-8">
-            {TRYOUT_STAGES[step].title}
-          </h2>
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            {TRYOUT_STAGES[step].options.map((opt, idx) => (
-              <button
-                key={opt.code}
-                type="button"
-                data-focusable="true"
-                data-autofocus={idx === 0 ? 'true' : undefined}
-                onClick={() => handleChoice(opt.bonus, opt.risk)}
-                className="console-tile console-tile-interactive text-left p-8 border-l-4 border-l-[#565A65] hover:border-l-[#C8A45D] cursor-pointer outline-none"
-              >
-                <span className="font-condensed text-xs tracking-[0.24em] text-[#C8A45D] font-bold">
-                  OPÇÃO {opt.code}
-                </span>
-                <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] mt-2">
-                  {opt.label}
-                </div>
-                <div className="text-xs uppercase tracking-wider text-[#9498A3] mt-3">
-                  {opt.sub}
-                </div>
-              </button>
-            ))}
+          <div>
+            <div className="font-condensed uppercase text-xs tracking-[0.25em] text-[#9498A3] mb-2">
+              OU SIMULAÇÃO RÁPIDA DE BANCADA • BATERIA {TRYOUT_STAGES[step].code}: {TRYOUT_STAGES[step].title}
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-5">
+              {TRYOUT_STAGES[step].options.map((opt) => (
+                <button
+                  key={opt.code}
+                  type="button"
+                  data-focusable="true"
+                  onClick={() => handleChoice(opt.bonus, opt.risk)}
+                  className="console-tile console-tile-interactive text-left p-6 border-l-4 border-l-[#565A65] hover:border-l-[#C8A45D] cursor-pointer outline-none"
+                >
+                  <span className="font-condensed text-xs tracking-[0.24em] text-[#C8A45D] font-bold">
+                    OPÇÃO {opt.code}
+                  </span>
+                  <div className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] mt-1.5">
+                    {opt.label}
+                  </div>
+                  <div className="text-xs uppercase tracking-wider text-[#9498A3] mt-2">
+                    {opt.sub}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </main>
       ) : (
@@ -272,6 +297,19 @@ export const TryoutScreen: React.FC = () => {
           <span>ESCOLHA SUA EXECUÇÃO EM CADA BATERIA PARA DEFINIR AS PROPOSTAS</span>
         )}
       </footer>
+
+      {playing3DTryout && (
+        <PitchArenaModal
+          mode="TRYOUT_PRO"
+          player={player}
+          club={getNationalTeamByCountry(player.nationality)}
+          onFinishSession={(stars) => {
+            setPlaying3DTryout(false);
+            finishTryout(stars);
+          }}
+          onCancel={() => setPlaying3DTryout(false)}
+        />
+      )}
     </div>
   );
 };

@@ -53,6 +53,7 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
+      if (document.querySelector('[data-pitch-3d-active="true"]')) return;
       const tag = (document.activeElement as HTMLElement | null)?.tagName;
       const typingInInput = tag === 'INPUT' || tag === 'TEXTAREA';
 
@@ -105,6 +106,10 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
     let rafId = 0;
 
     const pollGamepad = (now: number) => {
+      if (document.querySelector('[data-pitch-3d-active="true"]')) {
+        rafId = requestAnimationFrame(pollGamepad);
+        return;
+      }
       const pads = navigator.getGamepads ? Array.from(navigator.getGamepads()) : [];
       const gp = pads.find((p): p is Gamepad => Boolean(p && p.connected));
 
