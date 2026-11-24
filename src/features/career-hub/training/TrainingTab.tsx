@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { getClubById } from '../../../data/clubs';
 import { ATTRIBUTE_DEFINITIONS } from '../../../domains/attributes/attributeDefinitions';
 import { getOwnedEquipmentBonuses } from '../../../domains/economy/economyActions';
 import { getDrillById } from '../../../domains/training/trainingDrillsCatalog';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { StarRating } from '../../../shared/types/common';
 import { useCareerStore } from '../../../state/useCareerStore';
+import { useNavigationStore } from '../../../state/useNavigationStore';
 import { DrillPickerModal } from './DrillPickerModal';
 
 export const TrainingTab: React.FC = () => {
@@ -19,13 +19,12 @@ export const TrainingTab: React.FC = () => {
     trainedToday,
     setDrillSlot,
     completeActiveTraining,
-    advanceDay,
   } = useCareerStore();
+  const { setActiveTab } = useNavigationStore();
 
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
 
   if (!player || !contract) return null;
-  const club = getClubById(contract.clubId);
   const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
   const isTrainingDay = calendar.day === 2 || calendar.day === 4;
 
@@ -40,14 +39,14 @@ export const TrainingTab: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col gap-5 min-h-0">
-      {/* Barra Superior dos 5 Slots estilo FIFA 18 */}
+      {/* Barra Superior dos 5 Slots (NUNCA avança dias aqui dentro!) */}
       <div className="console-tile px-6 py-4 flex flex-wrap items-center justify-between gap-4 shrink-0">
         <div>
           <div className="text-[11px] uppercase tracking-[0.22em] text-[#C8A45D] font-bold">
-            SESSÃO SEMANAL • 5 SLOTS DE TREINO
+            PLANEJAMENTO DE SESSÃO • 5 SLOTS DE TREINO
           </div>
           <div className="text-xs uppercase tracking-wider text-[#9498A3] mt-0.5">
-            AVANÇAR SEMANA = <strong className="text-[#F5F5F7]">50% AUTOMÁTICO</strong> • JOGAR SESSÃO ={' '}
+            SIMULAR SEMANA = <strong className="text-[#F5F5F7]">50% AUTOMÁTICO</strong> • JOGAR TREINO ={' '}
             <strong className="text-[#C8A45D]">100% RENDIMENTO</strong> • BÔNUS ESTRUTURA{' '}
             <strong className="text-[#2DBE60]">+{bonuses.trainingXpBonusPct}%</strong>
           </div>
@@ -59,24 +58,24 @@ export const TrainingTab: React.FC = () => {
               onClick={handleRunActiveSession}
               className="console-btn-primary px-7 py-3 text-base cursor-pointer"
             >
-              EXECUTAR SESSÃO (100%) ›
+              EXECUTAR SESSÃO DE HOJE (100%) ›
             </button>
           ) : trainedToday ? (
-            <span className="px-5 py-2.5 bg-[#191B20] border border-[#C8A45D] font-condensed uppercase font-bold text-sm tracking-widest text-[#C8A45D]">
-              SESSÃO 100% CONCLUÍDA HOJE
-            </span>
-          ) : (
             <button
-              onClick={advanceDay}
-              className="px-5 py-2.5 bg-[#191B20] hover:bg-[#242730] border border-[#242730] font-condensed uppercase font-bold text-sm tracking-wider text-[#F5F5F7] cursor-pointer"
+              onClick={() => setActiveTab('CENTRAL')}
+              className="px-5 py-2.5 bg-[#191B20] border border-[#C8A45D] font-condensed uppercase font-bold text-sm tracking-widest text-[#C8A45D] cursor-pointer"
             >
-              PRÓXIMO TREINO: TERÇA/QUINTA • +1 DIA ({club.shortName})
+              SESSÃO CONCLUÍDA • VOLTAR À CENTRAL ›
             </button>
+          ) : (
+            <span className="px-4 py-2.5 bg-[#0E0F12] border border-[#242730] font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3]">
+              DISPONÍVEL NA TERÇA E QUINTA • CONFIGURE OS SLOTS ABAIXO
+            </span>
           )}
         </div>
       </div>
 
-      {/* OS 5 SLOTS VERTICAIS SEPARADOS LADO A LADO (PADRÃO FIFA 18) */}
+      {/* OS 5 SLOTS VERTICAIS SEPARADOS LADO A LADO */}
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-5 gap-4 min-h-0">
         {[0, 1, 2, 3, 4].map((slotIdx) => {
           const drill = getDrillById(drillSlots[slotIdx]);
@@ -108,7 +107,6 @@ export const TrainingTab: React.FC = () => {
               onClick={() => setEditingSlot(slotIdx)}
               className="console-tile console-tile-interactive border-t-[3px] border-t-[#C8A45D] p-5 flex flex-col justify-between cursor-pointer"
             >
-              {/* Cabeçalho do Slot */}
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] uppercase tracking-[0.2em] text-[#565A65] font-bold">
@@ -139,7 +137,6 @@ export const TrainingTab: React.FC = () => {
                 </h3>
               </div>
 
-              {/* Atributos Evoluídos por este Slot */}
               <div className="space-y-4 my-auto py-4 border-y border-[#242730]">
                 {drill.attributes.map((attrKey) => {
                   const val = player.attributes[attrKey];
