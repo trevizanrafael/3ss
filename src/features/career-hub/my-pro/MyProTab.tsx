@@ -213,7 +213,13 @@ export const MyProTab: React.FC = () => {
           {columns.map((col) => {
             const macroColor = getFifaStatColor(col.macroScore);
             return (
-              <div key={col.title} className="console-tile p-4 flex flex-col">
+              <div
+                key={col.title}
+                tabIndex={0}
+                data-focusable="true"
+                data-focus-label={`ATRIBUTOS DE ${col.title}`}
+                className="console-tile p-4 flex flex-col outline-none"
+              >
                 <div className="pb-3 mb-4 border-b border-[#242730]">
                   <div className="flex items-baseline justify-between">
                     <span className="font-condensed uppercase font-bold text-base tracking-wider text-[#9498A3]">

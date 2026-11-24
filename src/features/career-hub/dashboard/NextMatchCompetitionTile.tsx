@@ -200,8 +200,13 @@ export const NextMatchCompetitionTile: React.FC = () => {
 
   return (
     <section
+      id="central-next-comp"
       tabIndex={0}
       data-focusable="true"
+      data-nav-up="central-calendar"
+      data-nav-left="central-inbox"
+      data-nav-right="central-pro"
+      data-focus-label="ABRIR TABELA / CHAVES DA TEMPORADA"
       onClick={() => openSeasonCompetition(compId)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {

@@ -72,7 +72,8 @@ export const CompetitionsTab: React.FC = () => {
   );
 
   const qualifiers = worldSeason.international?.qualifiers ?? [];
-  const { requestedCompId, clearRequestedComp } = useNavigationStore();
+  const { requestedCompId, clearRequestedComp, setPreviewedSeasonCompId } =
+    useNavigationStore();
 
   useEffect(() => {
     if (!requestedCompId) return;
@@ -132,6 +133,11 @@ export const CompetitionsTab: React.FC = () => {
           ? cupId
           : leagueId;
   const theme = getCompetitionTheme(activeCompId);
+
+  useEffect(() => {
+    setPreviewedSeasonCompId(activeCompId);
+    return () => setPreviewedSeasonCompId(null);
+  }, [activeCompId, setPreviewedSeasonCompId]);
 
   const availableLeagues = useMemo(
     () => (mode === 'SUL_LIGAS' || mode === 'EURO_LIGAS' || mode === 'MLS' ? LEAGUES_MAP[mode] : []),

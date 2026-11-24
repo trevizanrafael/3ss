@@ -23,10 +23,12 @@ interface NavigationState {
   activeTab: HubTab;
   matchModalOpen: boolean;
   requestedCompId: AnyCompetitionId | null;
+  previewedSeasonCompId: AnyCompetitionId | null;
   setScreen: (screen: AppScreen) => void;
   setActiveTab: (tab: HubTab) => void;
   openSeasonCompetition: (compId: AnyCompetitionId) => void;
   clearRequestedComp: () => void;
+  setPreviewedSeasonCompId: (compId: AnyCompetitionId | null) => void;
   cycleTab: (direction: -1 | 1) => void;
   setMatchModalOpen: (open: boolean) => void;
 }
@@ -36,11 +38,13 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
   activeTab: 'CENTRAL',
   matchModalOpen: false,
   requestedCompId: null,
+  previewedSeasonCompId: null,
   setScreen: (screen) => set({ screen }),
   setActiveTab: (activeTab) => set({ activeTab }),
   openSeasonCompetition: (compId) =>
     set({ activeTab: 'TEMPORADA', requestedCompId: compId }),
   clearRequestedComp: () => set({ requestedCompId: null }),
+  setPreviewedSeasonCompId: (previewedSeasonCompId) => set({ previewedSeasonCompId }),
   cycleTab: (direction) => {
     const idx = HUB_TAB_ORDER.indexOf(get().activeTab);
     const next = (idx + direction + HUB_TAB_ORDER.length) % HUB_TAB_ORDER.length;

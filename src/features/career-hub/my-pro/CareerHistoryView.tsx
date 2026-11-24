@@ -150,7 +150,10 @@ export const CareerHistoryView: React.FC = () => {
           return (
             <div
               key={`${season.seasonYear}_${season.seasonNumber}`}
-              className={`console-tile p-4 border-l-[4px] ${
+              tabIndex={0}
+              data-focusable="true"
+              data-focus-label={`TEMPORADA ${season.seasonNumber} (${season.seasonYear})`}
+              className={`console-tile p-4 border-l-[4px] outline-none ${
                 season.isCurrent
                   ? 'border-l-[#C8A45D] bg-[#14161C]'
                   : 'border-l-[#323640]'

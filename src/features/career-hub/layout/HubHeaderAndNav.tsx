@@ -9,6 +9,7 @@ import {
   TOTAL_SEASON_WEEKS,
 } from '../../../domains/season/worldSeasonEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
+import { useUiSoundStore } from '../../../shared/audio/uiSoundEngine';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { CountryFlag } from '../../../shared/ui/CountryFlag';
@@ -39,6 +40,7 @@ export const HubHeaderAndNav: React.FC = () => {
   } = useCareerStore();
   const { activeTab, matchModalOpen, setActiveTab, cycleTab, setScreen } =
     useNavigationStore();
+  const { muted, toggleMuted } = useUiSoundStore();
 
   // LB / RB do controle já disparam 'q' e 'e' via useGlobalGamepadController
   useEffect(() => {
@@ -147,15 +149,24 @@ export const HubHeaderAndNav: React.FC = () => {
         </button>
       </nav>
 
-      <div className="hidden md:flex items-center gap-6 text-right">
+      <div className="hidden md:flex items-center gap-5 text-right">
+        <button
+          type="button"
+          data-nav-ignore="true"
+          onClick={toggleMuted}
+          title="Alternar sons sutis de menu"
+          className="px-2.5 py-1 bg-[#141720] border border-white/10 hover:border-[#C8A45D] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
+        >
+          SOM {muted ? 'OFF' : 'ON'}
+        </button>
         <div>
-          <span className="text-[10px] uppercase tracking-widest text-[#565A65] block">SALDO</span>
+          <span className="text-[10px] uppercase tracking-widest text-[#9498A3] block">SALDO</span>
           <span className="font-condensed font-bold text-base text-[#C8A45D]">
             {formatMoney(bankBalance)}
           </span>
         </div>
         <div>
-          <span className="text-[10px] uppercase tracking-widest text-[#565A65] block">
+          <span className="text-[10px] uppercase tracking-widest text-[#9498A3] block">
             TEMP {calendar.season}/{(calendar.season + 1).toString().slice(-2)}
           </span>
           <span className="font-condensed font-bold text-base text-[#F5F5F7]">

@@ -1,57 +1,36 @@
-# Manual de Identidade Visual (IDV) & UI System — Three Stars Soccer
+# Manual de Identidade Visual (IDV) & Sistema de Controle — Three Stars Soccer
 
-## 1. Diretriz Central ("Anti-Site / Zero AI Slop")
+## 1. Diretriz Central ("Broadcast Frostbite + Tematização Dinâmica estilo FIFA 23")
 
-A interface do **Three Stars Soccer** é um **menu nativo de videogame de esporte para PC/Console**, nunca um dashboard web corporativo:
+A interface do **Three Stars Soccer** combina a arquitetura geométrica limpa dos consoles (**FIFA 18 / FIFA 23 Frostbite**) com **Pacotes de Transmissão Dinâmicos por Campeonato**:
 
-- **Tela 100% Fixa (`100vw × 100vh`, `overflow: hidden`):** É proibido haver barra de rolagem na janela principal do jogo. Cada tela exibe apenas o essencial, respirando dentro do enquadramento fixo.
-- **Geometria 100% Reta (`border-radius: 0px`):** Proibido usar cards arredondados (`rounded-xl`, `rounded-2xl`), pílulas ou sombras difusas neon. Todos os blocos são retangulares, secos, separados por linhas de `1px` e espaçamento preciso.
-- **Zero Ícones Genéricos de Site:** Botões e títulos são guiados por **tipografia condensada pesada**, **números grandes**, **escudos oficiais** e as **3 Estrelas geométricas** — sem ícones decorativos de sacola, maleta ou foguinho.
-- **Zero Dropdowns Nativos do Sistema (`<select>`):** Toda troca de opção usa seletores horizontais de videogame (`‹  OPÇÃO  ›`) e navegação superior com atalhos `[Q / LB]` e `[E / RB]`.
-
----
-
-## 2. Paleta Oficial da Marca
-
-| Token | Hex | Função na Interface |
-| :--- | :--- | :--- |
-| `--bg-canvas` | `#0B0B0D` | Preto-grafite fosco profundo (fundo base de todas as telas) |
-| `--bg-panel` | `#121316` | Superfície padrão dos blocos retangulares |
-| `--bg-panel-hover` | `#191B20` | Superfície em foco/hover |
-| `--border-subtle` | `#23252C` | Linha divisória estrutural de `1px` |
-| `--gold-primary` | `#C8A45D` | **Ouro Fosco Metálico** — assinatura das 3 Estrelas, borda ativa (`3px`) e destaques nobres |
-| `--ink-primary` | `#F5F5F7` | Branco puro editorial para títulos, valores e estado invertido de seleção |
-| `--ink-secondary` | `#9498A3` | Cinza técnico para rótulos secundários |
-| `--ink-muted` | `#555963` | Índices numéricos (`01`, `02`), atalhos de tecla e divisores |
-
-### Atmosfera Dinâmica do Clube
-No Hub da Carreira, um véu radial ultra-sutil (`opacidade 12%–15%`) no canto superior aplica a **cor primária oficial do clube atual do jogador** (ex: azul `#010E80` na Inter de Milão, vermelho `#C52613` no Flamengo), mantendo mais de 88% da tela em grafite neutro para leitura perfeita.
-
-### Escala Semafórica de Atributos `0–99` (Padrão Clássico FIFA 18)
-Usada **exclusivamente** para leitura instantânea de notas de habilidade:
-- **`80 – 99` (Elite):** `#2DBE60` (Verde Forte)
-- **`65 – 79` (Bom):** `#B8C93A` (Verde-Amarelado)
-- **`50 – 64` (Mediano):** `#D9822B` (Laranja)
-- **`00 – 49` (Fraco):** `#C94040` (Vermelho)
+- **Tela 100% Fixa (`100vw × 100vh`, `overflow: hidden`):** Zero barra de rolagem na janela principal do navegador.
+- **Geometria 100% Reta (`border-radius: 0px`):** Os cards estruturais (`quadrados / divs`) mantêm cantos retos secos e vidro fosco (`backdrop-filter: blur(8px)`), enquanto o fundo da arena se transforma conforme a competição ativa.
+- **Atmosfera Dinâmica por Liga e Torneio (`CompetitionBackdrop.tsx`):**
+  - **Bundesliga:** Base cinza-aço técnico (`#16181E`) com cortes diagonais vermelho-vivo (`#E10600`) e prata.
+  - **Premier League:** Base violeta profunda (`#130920`) com prismas verde-menta elétrico (`#00FF85`) e magenta (`#FF2882`).
+  - **LaLiga:** Carvão vulcânico com chevrons coral (`#FF4B44`).
+  - **Serie A / Ligue 1 / Liga Portugal / MLS:** Cada liga nacional aplica suas cores, holofotes superiores, vetores e marca d'água oficial.
+  - **Champions League / Libertadores / Copa do Mundo / Copa América / Euro:** Nas semanas de noite continental ou Data FIFA, os holofotes e acentos (`--comp-primary`) assumem a identidade do torneio.
+- **Presença Viva do Atleta 3D (`ClubPlayer3DViewport.tsx`):**
+  - O boneco Blocky-Arcade 3D veste **o uniforme oficial real do clube atual** (incluindo listras verticais, faixas horizontais, diagonal, meio-a-meio e número nas costas) tanto no **Menu Principal** quanto no card **Meu Pro da Central**.
 
 ---
 
-## 3. Tipografia
+## 2. Sistema de Navegação Nativa no Controle (`Gamepad & Teclado`)
 
-- **Display / Títulos / Abas / Números Grandes:** `Barlow Condensed` (`600`, `700`, `800`), sempre em **CAIXA ALTA** nas chamadas estruturais, remetendo à família *DIN Condensed* dos menus Frostbite do *FIFA 18*.
-- **Dados Tabulares & Rótulos Curtos:** `Inter` (`400`, `500`, `600`) com `font-variant-numeric: tabular-nums` para alinhamento milimétrico de tabelas e barras `0–99`.
+Projetado para uso 100% fluido à distância no sofá sem depender de mouse:
 
----
-
-## 4. Arquitetura das 5 Abas da Carreira
-
-Navegáveis por clique, teclado (`Q` / `E`) ou controle (`LB` / `RB`):
-
-1. **`CENTRAL`:** Apenas **3 blocos retangulares**:
-   - *Bloco 01 (Semana & Confronto):* Faixa linear dos 7 dias (`SEG` a `DOM`) + Escudo Mandante vs. Visitante + Botão único de avanço/partida.
-   - *Bloco 02 (Meu Pro):* Overall gigante, posição, estrelas de reputação e barras de Confiança Sub-20 / Olheiro do Profissional (ou Meta Contratual).
-   - *Bloco 03 (Comunicado):* Apenas **1 mensagem direta** da comissão técnica/empresário (navegável com `‹ ›` se houver anteriores).
-2. **`MEU PRO`:** Inspirada diretamente na janela de habilidades do *FIFA 18* — **6 Macro-Atributos** grandes no topo (`RIT`, `FIN`, `PAS`, `DRI`, `DEF`, `FIS`) e **6 colunas limpas** abaixo com cada atributo `0–99` colorido pela faixa de nível e indicador `▲` nos que estão em evolução.
-3. **`TREINO`:** Inspirada nos **5 Slots Verticais do FIFA 18** — 5 colunas altas lado a lado. Cada slot exibe o exercício alocado (`OURO` / `PRATA` / `BRONZE`) e apenas os 2 atributos que ele desenvolve (`50%` automático ao avançar a semana ou `100%` ao executar a sessão).
-4. **`ESCRITÓRIO`:** Seletor superior `‹ CONTRATO & PROPOSTAS | EMPRESÁRIO | ESTRUTURA ›` exibindo apenas uma visão limpa por vez.
-5. **`TEMPORADA`:** Seletor `‹ REGIÃO ›` e `‹ LIGA ›` + Tabela enxuta à esquerda e Raio-X do Clube/Elenco à direita.
+1. **Rotas Determinísticas + Projeção Borda-a-Borda (`spatialNavigator.ts`):**
+   - Os cards assimétricos principais usam rotas explícitas (`data-nav-up/down/left/right`) combinadas com cálculo de distância borda-a-borda e corredor de sobreposição, eliminando pulos diagonais indesejados.
+2. **Memória de Foco por Aba (`scopeFocusMemory`):**
+   - Ao trocar de aba (`LB / RB`) ou fechar um modal (`B / Esc`), o cursor retorna exatamente ao card em que o jogador estava.
+3. **Foco Forte de Console + Rodapé Contextual + Micro-Áudio Sintetizado (`uiSoundEngine.ts`):**
+   - Cards focados ganham elevação física, borda dupla branca + halo na cor da liga (`--comp-primary`).
+   - O rodapé atualiza em tempo real a ação do botão `[A]` (`data-focus-label`).
+   - Sons sutis sintetizados via Web Audio API acompanham passos no D-Pad, trocas de aba (`LB/RB`), confirmação (`A`) e retorno (`B`), com chave `SOM ON/OFF` persistida.
+4. **Atalhos Diretos Sem Mirar em Botões Pequenos:**
+   - `LB / RB`: Troca entre as 5 abas principais com animação horizontal rápida.
+   - `LT / RT`: Passa mensagens da Caixa de Entrada na `CENTRAL` e alterna sub-abas/ligas em `MEU PRO`, `ESCRITÓRIO` e `TEMPORADA`.
+   - `X / □` e `Y / △`: Ações rápidas contextuais (`Estatísticas`, `Grupos ↔ Mata-Mata`, `Sessão 100%`, `Ir para o Jogo`).
+   - `RS` (Analógico Direito): Gira o boneco 3D ou rola listas longas suavemente.

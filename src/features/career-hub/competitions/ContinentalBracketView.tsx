@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { ContinentalCupData, KnockoutTie } from '../../../domains/season/seasonTypes';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 
@@ -70,8 +71,18 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
           return (
             <div
               key={club.id}
+              tabIndex={0}
+              data-focusable="true"
+              data-focus-label="INSPECIONAR ELENCO"
+              onFocus={() => onSelectClub(club.id)}
               onClick={() => onSelectClub(club.id)}
-              className={`flex items-center justify-between px-2 py-1.5 cursor-pointer border-l-2 ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectClub(club.id);
+                }
+              }}
+              className={`flex items-center justify-between px-2 py-1.5 cursor-pointer border-l-2 outline-none ${
                 isWin
                   ? 'bg-[#15221B] border-l-[#2DBE60] text-[#F5F5F7]'
                   : isEliminated
@@ -128,7 +139,16 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
           )}
         </div>
 
-        <div className="flex gap-1.5">
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            data-pad-y="true"
+            data-nav-ignore="true"
+            onClick={() => setSubView((v) => (v === 'GROUPS' ? 'KNOCKOUT' : 'GROUPS'))}
+            className="mr-1 cursor-pointer"
+          >
+            <GamepadBadge action="ALT_Y" />
+          </button>
           {(
             [
               ['GROUPS', 'GRUPOS A–H'],
@@ -137,11 +157,13 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
           ).map(([id, lbl]) => (
             <button
               key={id}
+              type="button"
+              data-focusable="true"
               onClick={() => setSubView(id)}
               className={`px-4 py-1.5 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
                 subView === id
                   ? 'bg-[#F5F5F7] text-[#0B0B0D]'
-                  : 'bg-[#0E0F12] text-[#9498A3]'
+                  : 'bg-[#0E0F12] text-[#9498A3] hover:text-[#F5F5F7]'
               }`}
             >
               {lbl}

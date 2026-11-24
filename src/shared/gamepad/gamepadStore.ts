@@ -6,7 +6,7 @@ export type ConsoleActionKey =
   | 'CONFIRM' // A / Cross / Enter
   | 'BACK'    // B / Circle / Esc
   | 'ALT_X'   // X / Square / X
-  | 'ALT_Y'   // Y / Triangle / Space
+  | 'ALT_Y'   // Y / Triangle / Y
   | 'LB'
   | 'RB'
   | 'LT'
@@ -17,8 +17,10 @@ interface GamepadUiState {
   brand: PadBrand;
   padConnected: boolean;
   padName: string;
+  focusedHint: string | null;
   setPadDetected: (idString: string) => void;
   setKeyboardUsed: () => void;
+  setFocusedHint: (hint: string | null) => void;
 }
 
 export function detectBrandFromGamepadId(id: string): PadBrand {
@@ -39,6 +41,7 @@ export const useGamepadStore = create<GamepadUiState>((set) => ({
   brand: 'XBOX',
   padConnected: false,
   padName: '',
+  focusedHint: null,
   setPadDetected: (idString) => {
     document.documentElement.dataset.inputMode = 'gamepad';
     set({
@@ -50,4 +53,5 @@ export const useGamepadStore = create<GamepadUiState>((set) => ({
   setKeyboardUsed: () => {
     document.documentElement.dataset.inputMode = 'gamepad';
   },
+  setFocusedHint: (focusedHint) => set({ focusedHint }),
 }));

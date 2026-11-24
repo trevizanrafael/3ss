@@ -147,13 +147,29 @@ export function createArcadeJerseyFrontTexture(
   ctx.fillStyle = c1;
   ctx.fillRect(0, 0, 512, 512);
 
-  // Listras clássicas para seleções listradas (ex: Argentina, Paraguai) ou linhas laterais estilo Real Madrid!
+  // Estampa oficial do clube ou seleção (listrado, horizontal, meio-a-meio, faixa diagonal ou liso!)
   const stripedNations = new Set(['ARG', 'PAR', 'URU_ALT', 'CRO', 'NGA']);
-  if (stripedNations.has(player.nationality)) {
+  const pat = natTeam.pattern;
+  if (pat === 'stripes' || (!pat && stripedNations.has(player.nationality))) {
     ctx.fillStyle = trim;
     for (const sx of [64, 176, 288, 400]) {
       ctx.fillRect(sx, 0, 48, 512);
     }
+  } else if (pat === 'hoops') {
+    ctx.fillStyle = trim;
+    for (const sy of [72, 196, 320, 444]) {
+      ctx.fillRect(0, sy, 512, 52);
+    }
+  } else if (pat === 'halves') {
+    ctx.fillStyle = trim;
+    ctx.fillRect(256, 0, 256, 512);
+  } else if (pat === 'diagonal') {
+    ctx.strokeStyle = trim;
+    ctx.lineWidth = 86;
+    ctx.beginPath();
+    ctx.moveTo(470, -20);
+    ctx.lineTo(42, 532);
+    ctx.stroke();
   } else {
     // Linhas curvas esportivas na frente igual à camisa branca da referência!
     ctx.strokeStyle = trim;

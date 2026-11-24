@@ -233,9 +233,13 @@ export const RollingWeekCalendarTile: React.FC = () => {
       )}
 
       <section
+        id="central-calendar"
         tabIndex={0}
         data-focusable="true"
         data-autofocus="true"
+        data-nav-down="central-inbox"
+        data-nav-right="central-pro"
+        data-focus-label={actionHeadline.replace(' ›', '')}
         data-simulating={isSimulating ? 'true' : undefined}
         onClick={handleTileClick}
         onKeyDown={(e) => {

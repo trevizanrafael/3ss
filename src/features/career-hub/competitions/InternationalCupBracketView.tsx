@@ -6,6 +6,7 @@ import {
   NationalCupTournament,
 } from '../../../domains/international/internationalTypes';
 import { FixtureMatch } from '../../../domains/season/seasonTypes';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 
@@ -135,8 +136,12 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
         ].map(({ team, goals, pen }) => (
           <div
             key={team.id}
+            tabIndex={0}
+            data-focusable="true"
+            data-focus-label="INSPECIONAR SELEÇÃO"
+            onFocus={() => onSelectTeam(team.id)}
             onClick={() => onSelectTeam(team.id)}
-            className={`flex items-center justify-between px-2 py-1 cursor-pointer ${
+            className={`flex items-center justify-between px-2 py-1 cursor-pointer outline-none ${
               m.winnerId === team.id ? 'bg-[#191C24] text-[#F5F5F7]' : 'text-[#9498A3]'
             }`}
           >
@@ -170,7 +175,16 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
           )}
         </div>
 
-        <div className="flex gap-1.5">
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            data-pad-y="true"
+            data-nav-ignore="true"
+            onClick={() => setSubView((v) => (v === 'GROUPS' ? 'KNOCKOUT' : 'GROUPS'))}
+            className="mr-1 cursor-pointer"
+          >
+            <GamepadBadge action="ALT_Y" />
+          </button>
           {(
             [
               ['GROUPS', 'FASE DE GRUPOS'],
@@ -183,7 +197,7 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
               data-focusable="true"
               onClick={() => setSubView(id)}
               className={`px-4 py-1.5 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
-                subView === id ? 'bg-[#F5F5F7] text-[#0B0B0D]' : 'bg-[#0E0F12] text-[#9498A3]'
+                subView === id ? 'bg-[#F5F5F7] text-[#0B0B0D]' : 'bg-[#0E0F12] text-[#9498A3] hover:text-[#F5F5F7]'
               }`}
             >
               {lbl}

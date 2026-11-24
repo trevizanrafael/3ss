@@ -231,8 +231,11 @@ export const TrophyCabinetView: React.FC = () => {
                     return (
                       <div
                         key={entry.id}
+                        tabIndex={0}
+                        data-focusable="true"
+                        data-focus-label={entry.title}
                         style={{ borderLeftColor: badge.color }}
-                        className="bg-[#0E0F12] border border-[#242730] border-l-[4px] p-4 flex items-center justify-between gap-3"
+                        className="bg-[#0E0F12] border border-[#242730] border-l-[4px] p-4 flex items-center justify-between gap-3 outline-none"
                       >
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">

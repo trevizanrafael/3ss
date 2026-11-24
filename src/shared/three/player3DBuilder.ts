@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getNationalTeamByCountry } from '../../data/clubs';
+import { ClubData } from '../../data/clubs/types';
 import { CareerPlayer } from '../../domains/player/playerTypes';
 import {
   createArcadeFaceTexture,
@@ -24,7 +25,10 @@ function mat(color: string, roughness = 0.5, metalness = 0.04): THREE.MeshStanda
   return new THREE.MeshStandardMaterial({ color, roughness, metalness });
 }
 
-export function buildBlockyArcadeFootballer3D(player: CareerPlayer): {
+export function buildBlockyArcadeFootballer3D(
+  player: CareerPlayer,
+  kitTeamOverride?: ClubData,
+): {
   root: THREE.Group;
   rig: AnimatedRigHandles;
   dispose: () => void;
@@ -32,9 +36,9 @@ export function buildBlockyArcadeFootballer3D(player: CareerPlayer): {
   const root = new THREE.Group();
   const texturesToDispose: THREE.Texture[] = [];
 
-  const natTeam = getNationalTeamByCountry(player.nationality);
-  const kitPrimary = natTeam.primaryColor || '#F5F5F7';
-  const kitSecondary = natTeam.secondaryColor || '#111827';
+  const activeTeam = kitTeamOverride ?? getNationalTeamByCountry(player.nationality);
+  const kitPrimary = activeTeam.primaryColor || '#F5F5F7';
+  const kitSecondary = activeTeam.secondaryColor || '#111827';
   const accentStripe =
     kitSecondary.toUpperCase() === kitPrimary.toUpperCase() ? '#111827' : kitSecondary;
 
@@ -89,8 +93,8 @@ export function buildBlockyArcadeFootballer3D(player: CareerPlayer): {
 
   // Texturas de Rosto, Camisa (Frente/Costas) e 3 Listras de Ombro/Calção
   const faceTex = createArcadeFaceTexture(player);
-  const frontJerseyTex = createArcadeJerseyFrontTexture(player, natTeam);
-  const backJerseyTex = createArcadeJerseyBackTexture(player, natTeam);
+  const frontJerseyTex = createArcadeJerseyFrontTexture(player, activeTeam);
+  const backJerseyTex = createArcadeJerseyBackTexture(player, activeTeam);
   const sleeveStripesTex = createThreeStripesTexture(kitPrimary, accentStripe);
   const shortsStripesTex = createThreeStripesTexture(shortsColor, accentStripe);
   texturesToDispose.push(

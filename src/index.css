@@ -2,12 +2,15 @@
 
 :root {
   --bg-canvas: #0b0b0d;
-  --bg-panel: #121316;
-  --bg-panel-alt: #16181d;
-  --bg-panel-hover: #1c1f26;
-  --border-line: #242730;
+  --bg-panel: rgba(15, 17, 23, 0.86);
+  --bg-panel-solid: #12141a;
+  --bg-panel-alt: #16181f;
+  --bg-panel-hover: rgba(26, 30, 40, 0.94);
+  --border-line: rgba(255, 255, 255, 0.09);
   --gold: #c8a45d;
   --gold-bright: #dfc07f;
+  --comp-primary: #c8a45d;
+  --comp-secondary: #f5f5f7;
   --ink: #f5f5f7;
   --ink-sec: #9498a3;
   --ink-muted: #565a65;
@@ -45,54 +48,104 @@
   letter-spacing: 0.03em;
 }
 
-/* Console tile with signature 3px top or left bar on focus/hover */
+/* Superfície Frostbite Broadcast: vidro grafite fosco sobre os holofotes da liga */
 .console-tile {
   background-color: var(--bg-panel);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--border-line);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   position: relative;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition:
+    background-color 130ms ease,
+    border-color 130ms ease,
+    transform 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 130ms ease;
 }
 
 .console-tile-interactive:hover {
   background-color: var(--bg-panel-hover);
-  border-color: var(--gold);
+  border-color: var(--comp-primary, var(--gold));
+  transform: translateY(-1.5px);
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .console-btn-primary {
   background-color: var(--ink);
-  color: var(--bg-canvas);
+  color: #0b0b0d;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border-left: 4px solid var(--gold);
-  transition: background-color 110ms ease, transform 90ms ease;
+  border-left: 4px solid var(--comp-primary, var(--gold));
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition:
+    background-color 110ms ease,
+    transform 100ms ease,
+    box-shadow 110ms ease;
 }
 
 .console-btn-primary:hover:not(:disabled) {
   background-color: var(--gold-bright);
   color: #0b0b0d;
+  transform: translateY(-1px);
 }
 
 .console-btn-primary:disabled {
   background-color: #1c1e24;
   color: #565a65;
   border-left-color: #2c303a;
+  box-shadow: none;
 }
 
-/* Destaque Nítido de Console quando navegando por Controle ou Teclado */
+/* Transição rápida estilo FIFA ao alternar abas (LB / RB) */
+@keyframes consoleTabEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.console-tab-stage {
+  animation: consoleTabEnter 140ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Foco Forte de Console (Elevação + Borda Dupla + Halo da Liga + Brilho Interno) */
 html[data-input-mode='gamepad'] button:focus,
 html[data-input-mode='gamepad'] input:focus,
 html[data-input-mode='gamepad'] [data-focusable='true']:focus {
   outline: 2px solid #f5f5f7 !important;
   outline-offset: -2px;
+  border-color: var(--comp-primary, #c8a45d) !important;
   box-shadow:
-    0 0 0 3px rgba(200, 164, 93, 0.55),
-    inset 0 0 24px rgba(200, 164, 93, 0.14) !important;
+    0 0 0 3px var(--comp-primary, rgba(200, 164, 93, 0.85)),
+    0 12px 30px rgba(0, 0, 0, 0.72),
+    inset 0 0 28px rgba(255, 255, 255, 0.09) !important;
+  z-index: 15;
+}
+
+html[data-input-mode='gamepad'] .console-tile-interactive:focus,
+html[data-input-mode='gamepad'] button.console-tile:focus {
+  transform: translateY(-2.5px) scale(1.008);
+  background-color: rgba(28, 32, 43, 0.96) !important;
+}
+
+html[data-input-mode='gamepad'] tr[data-focusable='true']:focus {
+  outline: 2px solid var(--comp-primary, #c8a45d) !important;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.12) !important;
 }
 
 html[data-input-mode='gamepad'] [data-simulating='true']:focus {
   outline: none !important;
+  transform: none !important;
   box-shadow: 0 0 80px rgba(0, 0, 0, 0.95) !important;
 }
 
@@ -110,7 +163,7 @@ html[data-input-mode='gamepad'] [data-simulating='true']:focus {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c8a45d;
+  background: var(--comp-primary, #c8a45d);
 }
 
 /* Leaflet Dark Console Integration */
