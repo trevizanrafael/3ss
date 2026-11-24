@@ -72,11 +72,31 @@ export const CompetitionsTab: React.FC = () => {
   const dropCount = leagueCfg.hasRelegation ? (leagueId === 'BRA_1' ? 4 : 3) : 0;
   const promoCount = leagueCfg.hasPromotion ? (leagueId === 'BRA_2' ? 4 : 3) : 0;
 
+  const cycleSubCompetition = (dir: -1 | 1) => {
+    if (mode === 'HISTORICO') return;
+    if (isCupMode) {
+      const cups: ContinentalCupId[] =
+        mode === 'CONMEBOL_CUPS'
+          ? ['LIBERTADORES', 'SUL_AMERICANA']
+          : ['CHAMPIONS_LEAGUE', 'EUROPA_LEAGUE'];
+      setCupId(cups[(cups.indexOf(cupId) + dir + cups.length) % cups.length]);
+    } else if (availableLeagues.length > 1) {
+      const nextLg =
+        availableLeagues[(availableLeagues.indexOf(leagueId) + dir + availableLeagues.length) % availableLeagues.length];
+      setLeagueId(nextLg);
+      const first = worldSeason.leagues[nextLg]?.standings[0]?.clubId;
+      if (first) setSelectedClubId(first);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col gap-5 min-h-0">
+      <button type="button" data-pad-lt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(-1)} />
+      <button type="button" data-pad-rt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(1)} />
       {/* Seletores Estilo Console */}
       <div className="grid sm:grid-cols-2 gap-4 shrink-0">
         <ConsoleStepper
+          autoFocus
           compact
           value={mode}
           onChange={handleModeChange}
@@ -196,8 +216,11 @@ export const CompetitionsTab: React.FC = () => {
                     return (
                       <tr
                         key={row.clubId}
+                        tabIndex={0}
+                        data-focusable="true"
+                        onFocus={() => setSelectedClubId(club.id)}
                         onClick={() => setSelectedClubId(club.id)}
-                        className={`cursor-pointer transition-colors ${
+                        className={`cursor-pointer transition-colors outline-none ${
                           selected
                             ? 'bg-[#F5F5F7] text-[#0B0B0D]'
                             : isMine

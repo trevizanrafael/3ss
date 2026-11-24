@@ -3,6 +3,7 @@ import { COUNTRY_LIST } from '../../data/countries/countries';
 import { POSITION_LABELS } from '../../domains/attributes/overallCalculator';
 import { createInitialPlayer, CreatePlayerInput } from '../../domains/player/createInitialPlayer';
 import { PlayerAppearance } from '../../domains/player/playerTypes';
+import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import { ConsoleStepper } from '../../shared/ui/ConsoleStepper';
 import { CountryCode, PositionCode, PreferredFoot } from '../../shared/types/common';
 import { useCareerStore } from '../../state/useCareerStore';
@@ -74,17 +75,18 @@ export const PlayerCreationScreen: React.FC = () => {
 
   return (
     <div className="w-screen h-screen bg-[#0B0B0D] flex flex-col justify-between px-8 md:px-14 py-6 overflow-hidden">
-      {/* Barra Superior Estilo FIFA 18 */}
       <header className="flex items-center justify-between border-b border-[#242730] pb-3">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
           <span className="font-condensed uppercase font-extrabold text-2xl tracking-wider text-[#F5F5F7]">
             CRIAR MEU PRO
           </span>
-          <div className="flex items-center gap-1">
-            <span className="px-2 py-0.5 bg-[#191B20] text-[10px] font-bold text-[#9498A3] mr-2">Q</span>
+          <div className="flex items-center gap-1.5">
+            <GamepadBadge action="LB" />
             {TABS.map((t, i) => (
               <button
                 key={t}
+                type="button"
+                data-nav-ignore="true"
                 onClick={() => setTab(t)}
                 className={`px-5 py-2 font-condensed uppercase font-bold text-base tracking-wider cursor-pointer border-b-2 transition-colors ${
                   tab === t
@@ -95,47 +97,28 @@ export const PlayerCreationScreen: React.FC = () => {
                 0{i + 1} {t}
               </button>
             ))}
-            <span className="px-2 py-0.5 bg-[#191B20] text-[10px] font-bold text-[#9498A3] ml-2">E</span>
+            <GamepadBadge action="RB" />
           </div>
         </div>
 
         <button
+          type="button"
+          data-pad-back="true"
+          data-nav-ignore="true"
           onClick={() => setScreen('MAIN_MENU')}
-          className="font-condensed uppercase text-sm tracking-widest text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
+          className="cursor-pointer"
         >
-          [ESC] VOLTAR
+          <GamepadBadge action="BACK" label="VOLTAR AO MENU" />
         </button>
       </header>
 
-      {/* Conteúdo Central sem Scroll */}
-      <main className="flex-1 grid lg:grid-cols-12 gap-8 py-6 min-h-0">
-        <div className="lg:col-span-8 console-tile p-8 flex flex-col justify-between">
+      {/* Fluxo Vertical Otimizado para Controle (D-Pad Cima/Baixo move linha, Esq/Dir gira ‹ Opção ›) */}
+      <main className="flex-1 grid lg:grid-cols-12 gap-8 py-5 min-h-0">
+        <div className="lg:col-span-8 console-tile p-7 flex flex-col justify-between">
           {tab === 'IDENTIDADE' && (
-            <div className="grid sm:grid-cols-2 gap-6">
-              <label className="block">
-                <span className="text-[11px] uppercase tracking-widest text-[#9498A3] block mb-1.5">
-                  NOME DO ATLETA
-                </span>
-                <input
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full h-11 bg-[#0E0F12] border border-[#242730] focus:border-[#C8A45D] px-4 font-condensed uppercase font-bold text-lg text-[#F5F5F7] outline-none"
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-[11px] uppercase tracking-widest text-[#9498A3] block mb-1.5">
-                  NOME NAS COSTAS
-                </span>
-                <input
-                  value={shirtName}
-                  maxLength={12}
-                  onChange={(e) => setShirtName(e.target.value.toUpperCase())}
-                  className="w-full h-11 bg-[#0E0F12] border border-[#242730] focus:border-[#C8A45D] px-4 font-condensed uppercase font-bold text-lg text-[#F5F5F7] outline-none"
-                />
-              </label>
-
+            <div className="max-w-xl space-y-4">
               <ConsoleStepper
+                autoFocus
                 label="NACIONALIDADE (DEFINE AS BASES DA PENEIRA)"
                 value={nationality}
                 onChange={setNationality}
@@ -146,7 +129,7 @@ export const PlayerCreationScreen: React.FC = () => {
               />
 
               <ConsoleStepper
-                label="IDADE INICIAL"
+                label="IDADE INICIAL NA BASE"
                 value={age}
                 onChange={(v) => setAge(v as 16 | 17 | 18)}
                 options={[
@@ -165,12 +148,38 @@ export const PlayerCreationScreen: React.FC = () => {
                   label: `CAMISA ${n}`,
                 }))}
               />
+
+              <div className="grid sm:grid-cols-2 gap-4 pt-1">
+                <label className="block">
+                  <span className="text-[11px] uppercase tracking-widest text-[#9498A3] block mb-1">
+                    NOME DO ATLETA
+                  </span>
+                  <input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full h-10 bg-[#0E0F12] border border-[#242730] focus:border-[#C8A45D] px-3.5 font-condensed uppercase font-bold text-base text-[#F5F5F7] outline-none"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="text-[11px] uppercase tracking-widest text-[#9498A3] block mb-1">
+                    NOME NAS COSTAS
+                  </span>
+                  <input
+                    value={shirtName}
+                    maxLength={12}
+                    onChange={(e) => setShirtName(e.target.value.toUpperCase())}
+                    className="w-full h-10 bg-[#0E0F12] border border-[#242730] focus:border-[#C8A45D] px-3.5 font-condensed uppercase font-bold text-base text-[#F5F5F7] outline-none"
+                  />
+                </label>
+              </div>
             </div>
           )}
 
           {tab === 'FISICO' && (
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="max-w-xl space-y-4">
               <ConsoleStepper
+                autoFocus
                 label="POSIÇÃO DE LINHA"
                 value={position}
                 onChange={setPosition}
@@ -217,19 +226,22 @@ export const PlayerCreationScreen: React.FC = () => {
             <AppearanceFormSection appearance={appearance} onChange={setAppearance} />
           )}
 
-          <div className="border-t border-[#242730] pt-5 flex items-center justify-between">
-            <span className="text-xs uppercase tracking-widest text-[#565A65]">
-              USE [Q] E [E] PARA NAVEGAR PELAS ETAPAS
+          <div className="border-t border-[#242730] pt-4 flex items-center justify-between">
+            <span className="text-xs uppercase tracking-widest text-[#9498A3]">
+              D-PAD ↑↓ NAVEGAR • D-PAD ←→ ALTERAR ‹ OPÇÃO ›
             </span>
 
             <button
+              type="button"
+              data-pad-y="true"
               onClick={() => {
                 beginCareerWithPlayer(inputPayload);
                 setScreen('TRYOUT');
               }}
-              className="console-btn-primary px-8 py-3.5 text-lg cursor-pointer"
+              className="console-btn-primary px-7 py-3 text-lg inline-flex items-center gap-3 cursor-pointer"
             >
-              INICIAR PENEIRA NACIONAL ›
+              <GamepadBadge action="ALT_Y" darkText />
+              <span>INICIAR PENEIRA NACIONAL ›</span>
             </button>
           </div>
         </div>
@@ -240,8 +252,12 @@ export const PlayerCreationScreen: React.FC = () => {
       </main>
 
       <footer className="border-t border-[#242730] pt-3 flex justify-between text-[11px] uppercase tracking-widest text-[#565A65]">
-        <span>[Q / E] MUDAR ABA DE CRIAÇÃO</span>
-        <span>SEM GOLEIRO JOGÁVEL • TODAS AS POSIÇÕES DE LINHA</span>
+        <div className="flex items-center gap-6">
+          <GamepadBadge action="LB" label="ABA ANTERIOR" />
+          <GamepadBadge action="RB" label="PRÓXIMA ABA" />
+          <GamepadBadge action="ALT_Y" label="AVANÇAR PARA A PENEIRA" />
+        </div>
+        <span>TODAS AS POSIÇÕES DE LINHA</span>
       </footer>
     </div>
   );

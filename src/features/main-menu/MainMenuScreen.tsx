@@ -1,5 +1,7 @@
 import React from 'react';
 import { getClubById } from '../../data/clubs';
+import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
+import { useGamepadStore } from '../../shared/gamepad/gamepadStore';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
 import { FifaStatBadge } from '../../shared/ui/FifaStatBadge';
 import { StarRatingBadge } from '../../shared/ui/StarRatingBadge';
@@ -10,8 +12,10 @@ import { useNavigationStore } from '../../state/useNavigationStore';
 export const MainMenuScreen: React.FC = () => {
   const { hasActiveSave, player, contract, calendar, resetCareer } = useCareerStore();
   const { setScreen } = useNavigationStore();
+  const { padConnected, brand } = useGamepadStore();
 
   const currentClub = contract ? getClubById(contract.clubId) : null;
+  const canContinue = Boolean(hasActiveSave && player && contract && currentClub);
 
   const handleNewCareer = () => {
     if (hasActiveSave) resetCareer();
@@ -20,7 +24,6 @@ export const MainMenuScreen: React.FC = () => {
 
   return (
     <div className="w-screen h-screen bg-[#0B0B0D] relative flex flex-col justify-between px-10 md:px-20 py-12 overflow-hidden">
-      {/* Marca d'água arquitetônica ultra-sutil da grande área */}
       <svg
         viewBox="0 0 800 600"
         className="pointer-events-none absolute right-0 top-0 h-full w-auto opacity-[0.04]"
@@ -34,7 +37,6 @@ export const MainMenuScreen: React.FC = () => {
         <path d="M520 220 A90 90 0 0 0 520 380" />
       </svg>
 
-      {/* Topo da Marca */}
       <header className="relative z-10 flex items-center justify-between border-b border-[#242730] pb-5">
         <div className="flex items-center gap-4">
           <StarRatingBadge stars={3} size="md" />
@@ -42,12 +44,11 @@ export const MainMenuScreen: React.FC = () => {
             THREE STARS SOCCER • EDIÇÃO CARREIRA
           </span>
         </div>
-        <span className="text-[11px] uppercase tracking-widest text-[#565A65]">
-          BUILD 0.2 • PC
+        <span className="text-[11px] uppercase tracking-widest text-[#C8A45D]">
+          {padConnected ? `CONTROLE CONECTADO (${brand})` : 'SUPORTE NATIVO A CONTROLE & TECLADO'}
         </span>
       </header>
 
-      {/* Corpo Assimétrico Estilo Console */}
       <main className="relative z-10 grid lg:grid-cols-12 gap-12 items-end my-auto">
         <div className="lg:col-span-7">
           <div className="text-xs uppercase tracking-[0.24em] text-[#C8A45D] font-semibold mb-3">
@@ -60,13 +61,14 @@ export const MainMenuScreen: React.FC = () => {
           </h1>
           <div className="w-20 h-[3px] bg-[#C8A45D] mt-6 mb-4" />
           <p className="text-xs uppercase tracking-[0.18em] text-[#9498A3]">
-            BASE • EVOLUÇÃO 0–99 • CONTRATOS • CAMPO
+            BASE • EVOLUÇÃO 0–99 • CONTRATOS • TEMPORADA MUNDIAL
           </p>
         </div>
 
         <div className="lg:col-span-5 flex flex-col gap-4">
-          {hasActiveSave && player && contract && currentClub && (
+          {canContinue && player && contract && currentClub && (
             <button
+              data-autofocus="true"
               onClick={() => setScreen('CAREER_HUB')}
               className="console-tile console-tile-interactive text-left p-6 border-l-4 border-l-[#C8A45D] cursor-pointer group"
             >
@@ -74,20 +76,11 @@ export const MainMenuScreen: React.FC = () => {
                 <span className="font-condensed uppercase text-xs tracking-[0.22em] text-[#C8A45D] font-bold">
                   01 // CONTINUAR CARREIRA
                 </span>
-                <span className="font-condensed uppercase text-xs tracking-widest text-[#9498A3] group-hover:text-[#F5F5F7]">
-                  ENTRAR ›
-                </span>
+                <GamepadBadge action="CONFIRM" label="ENTRAR" />
               </div>
 
               <div className="flex items-center gap-4">
-                <ClubCrest
-                  clubId={currentClub.id}
-                  shortName={currentClub.shortName}
-                  primaryColor={currentClub.primaryColor}
-                  secondaryColor={currentClub.secondaryColor}
-                  pattern={currentClub.pattern}
-                  size="lg"
-                />
+                <ClubCrest clubId={currentClub.id} size="lg" />
                 <div className="flex-1 min-w-0">
                   <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] truncate leading-none">
                     {player.fullName}
@@ -102,30 +95,31 @@ export const MainMenuScreen: React.FC = () => {
           )}
 
           <button
+            data-autofocus={!canContinue ? 'true' : undefined}
             onClick={handleNewCareer}
             className="console-tile console-tile-interactive text-left p-6 border-l-4 border-l-[#565A65] hover:border-l-[#C8A45D] cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="font-condensed uppercase text-xs tracking-[0.22em] text-[#9498A3] group-hover:text-[#C8A45D] font-bold">
-                {hasActiveSave ? '02 // NOVO JOGO' : '01 // INICIAR'}
+                {canContinue ? '02 // NOVO JOGO' : '01 // INICIAR'}
               </span>
-              <span className="font-condensed uppercase text-xs tracking-widest text-[#9498A3] group-hover:text-[#F5F5F7]">
-                CRIAR PRO ›
-              </span>
+              <GamepadBadge action="CONFIRM" label="CRIAR PRO" />
             </div>
             <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none">
               NOVA CARREIRA DE JOGADOR
             </div>
             <div className="text-xs text-[#9498A3] mt-2 uppercase tracking-wider">
-              16 A 18 ANOS • PENEIRA NACIONAL • CATEGORIAS DE BASE
+              16 A 18 ANOS • PENEIRA NACIONAL • 410 CLUBES REAIS
             </div>
           </button>
         </div>
       </main>
 
-      {/* Barra Inferior de Console */}
       <footer className="relative z-10 flex items-center justify-between border-t border-[#242730] pt-4 text-[11px] uppercase tracking-widest text-[#565A65]">
-        <span>NAVEGAÇÃO POR MOUSE, TECLADO [Q / E] E CONTROLE</span>
+        <div className="flex items-center gap-6">
+          <GamepadBadge action="CONFIRM" label="CONFIRMAR" />
+          <span>D-PAD / ANALÓGICO ESQUERDO PARA NAVEGAR</span>
+        </div>
         <span>THREE STARS SOCCER</span>
       </footer>
     </div>

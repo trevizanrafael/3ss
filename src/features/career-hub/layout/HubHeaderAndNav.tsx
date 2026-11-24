@@ -5,6 +5,7 @@ import {
   findClubLeagueIdInWorld,
   findUpcomingFixtureForClub,
 } from '../../../domains/season/worldSeasonEngine';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { FifaStatBadge } from '../../../shared/ui/FifaStatBadge';
@@ -33,33 +34,23 @@ export const HubHeaderAndNav: React.FC = () => {
   const { activeTab, matchModalOpen, setActiveTab, cycleTab, setScreen } =
     useNavigationStore();
 
+  // LB / RB do controle já disparam 'q' e 'e' via useGlobalGamepadController
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (matchModalOpen) return;
       if (e.key === 'q' || e.key === 'Q') cycleTab(-1);
       if (e.key === 'e' || e.key === 'E') cycleTab(1);
-      if (e.key === 'Escape') setScreen('MAIN_MENU');
+      if (e.key === 'Escape') {
+        if (activeTab !== 'CENTRAL') {
+          setActiveTab('CENTRAL');
+        } else {
+          setScreen('MAIN_MENU');
+        }
+      }
     };
     window.addEventListener('keydown', onKeyDown);
-
-    let prevLb = false;
-    let prevRb = false;
-    const poll = window.setInterval(() => {
-      const gp = navigator.getGamepads?.()[0];
-      if (!gp || matchModalOpen) return;
-      const lb = Boolean(gp.buttons[4]?.pressed);
-      const rb = Boolean(gp.buttons[5]?.pressed);
-      if (lb && !prevLb) cycleTab(-1);
-      if (rb && !prevRb) cycleTab(1);
-      prevLb = lb;
-      prevRb = rb;
-    }, 80);
-
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.clearInterval(poll);
-    };
-  }, [cycleTab, matchModalOpen, setScreen]);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [activeTab, cycleTab, matchModalOpen, setActiveTab, setScreen]);
 
   if (!player || !contract) return null;
   const club = getClubById(contract.clubId);
@@ -80,7 +71,6 @@ export const HubHeaderAndNav: React.FC = () => {
       className="h-16 shrink-0 border-b border-[#242730] bg-[#0B0B0D]/92 px-6 md:px-10 flex items-center justify-between relative z-10"
       style={{ borderBottomColor: `${theme.accentPrimary}55` }}
     >
-      {/* Esquerda: Clube + Jogador + OVR + Selo Oficial da Competição */}
       <div className="flex items-center gap-3.5 min-w-0">
         <ClubCrest clubId={club.id} size="md" />
         <div className="hidden sm:block leading-tight">
@@ -97,13 +87,15 @@ export const HubHeaderAndNav: React.FC = () => {
         </div>
       </div>
 
-      {/* Centro: Abas Estilo Console */}
-      <nav className="flex items-center gap-1 h-full">
+      {/* Abas Superiores (Ignoradas pelo D-Pad espacial pois são trocadas por LB / RB!) */}
+      <nav className="flex items-center gap-1.5 h-full">
         <button
+          type="button"
+          data-nav-ignore="true"
           onClick={() => cycleTab(-1)}
-          className="px-2 py-0.5 bg-[#191B20] border border-[#242730] text-[10px] font-bold text-[#9498A3] hover:text-[#F5F5F7] mr-2 cursor-pointer"
+          className="mr-1 cursor-pointer"
         >
-          Q / LB
+          <GamepadBadge action="LB" />
         </button>
 
         {TOP_TABS.map((t) => {
@@ -111,6 +103,8 @@ export const HubHeaderAndNav: React.FC = () => {
           return (
             <button
               key={t.id}
+              type="button"
+              data-nav-ignore="true"
               onClick={() => setActiveTab(t.id)}
               style={active ? { borderBottomColor: theme.accentPrimary } : undefined}
               className={`h-full px-4 md:px-6 font-condensed uppercase font-extrabold text-base md:text-lg tracking-wider border-b-[3px] transition-colors relative cursor-pointer ${
@@ -131,14 +125,15 @@ export const HubHeaderAndNav: React.FC = () => {
         })}
 
         <button
+          type="button"
+          data-nav-ignore="true"
           onClick={() => cycleTab(1)}
-          className="px-2 py-0.5 bg-[#191B20] border border-[#242730] text-[10px] font-bold text-[#9498A3] hover:text-[#F5F5F7] ml-2 cursor-pointer"
+          className="ml-1 cursor-pointer"
         >
-          E / RB
+          <GamepadBadge action="RB" />
         </button>
       </nav>
 
-      {/* Direita: Saldo + Temporada Anual */}
       <div className="hidden md:flex items-center gap-6 text-right">
         <div>
           <span className="text-[10px] uppercase tracking-widest text-[#565A65] block">SALDO</span>

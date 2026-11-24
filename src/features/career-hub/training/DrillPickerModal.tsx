@@ -33,7 +33,10 @@ export const DrillPickerModal: React.FC<DrillPickerModalProps> = ({
     ATTRIBUTE_DEFINITIONS.find((a) => a.key === key)?.label.toUpperCase() ?? key;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0B0B0D]/90 flex items-center justify-center p-6">
+    <div
+      data-modal-scope="true"
+      className="fixed inset-0 z-50 bg-[#0B0B0D]/90 flex items-center justify-center p-6"
+    >
       <div className="w-full max-w-4xl console-tile border-t-[3px] border-t-[#C8A45D] p-6">
         <div className="flex items-center justify-between border-b border-[#242730] pb-3 mb-5">
           <div>
@@ -47,6 +50,8 @@ export const DrillPickerModal: React.FC<DrillPickerModalProps> = ({
           <div className="flex items-center gap-4">
             {currentDrillId && (
               <button
+                type="button"
+                data-pad-x="true"
                 onClick={() => {
                   onSelect(null);
                   onClose();
@@ -57,10 +62,12 @@ export const DrillPickerModal: React.FC<DrillPickerModalProps> = ({
               </button>
             )}
             <button
+              type="button"
+              data-pad-back="true"
               onClick={onClose}
               className="font-condensed uppercase text-sm tracking-widest text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
             >
-              FECHAR [ESC]
+              FECHAR [B / ESC]
             </button>
           </div>
         </div>
@@ -68,9 +75,11 @@ export const DrillPickerModal: React.FC<DrillPickerModalProps> = ({
         <div className="grid sm:grid-cols-12 gap-6">
           {/* Categorias à Esquerda */}
           <div className="sm:col-span-4 space-y-1.5">
-            {CATEGORIES.map((c) => (
+            {CATEGORIES.map((c, idx) => (
               <button
                 key={c.id}
+                type="button"
+                data-autofocus={idx === 0 ? 'true' : undefined}
                 onClick={() => setCat(c.id)}
                 className={`w-full text-left px-4 py-3 font-condensed uppercase font-bold text-base tracking-wider border-l-[3px] cursor-pointer ${
                   cat === c.id

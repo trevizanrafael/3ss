@@ -58,7 +58,10 @@ export const ClubSquadInspector: React.FC<ClubSquadInspectorProps> = ({
         <span>POS • IDADE • OVR</span>
       </div>
 
-      <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 min-h-0">
+      <div
+        data-rs-scroll="true"
+        className="flex-1 space-y-1.5 overflow-y-auto pr-1 min-h-0"
+      >
         {loading ? (
           <div className="text-xs uppercase text-[#565A65] py-8 text-center">
             CARREGANDO ELENCO...

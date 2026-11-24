@@ -80,6 +80,18 @@
   border-left-color: #2c303a;
 }
 
+/* Destaque Nítido de Console quando navegando por Controle ou Teclado */
+html[data-input-mode='gamepad'] button:focus,
+html[data-input-mode='gamepad'] input:focus,
+html[data-input-mode='gamepad'] [data-focusable='true']:focus {
+  outline: 2px solid #f5f5f7 !important;
+  outline-offset: -2px;
+  box-shadow:
+    0 0 0 3px rgba(200, 164, 93, 0.55),
+    inset 0 0 24px rgba(200, 164, 93, 0.14) !important;
+  z-index: 15;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;

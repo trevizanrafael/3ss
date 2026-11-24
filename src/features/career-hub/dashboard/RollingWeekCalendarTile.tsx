@@ -9,6 +9,7 @@ import {
 } from '../../../domains/season/worldSeasonEngine';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { getRollingWeekWindow } from '../../../shared/utils/calendarDates';
 import { CareerState } from '../../../state/careerTypes';
 import { useCareerStore } from '../../../state/useCareerStore';
@@ -192,18 +193,30 @@ export const RollingWeekCalendarTile: React.FC = () => {
   return (
     <>
       {isSimulating && (
-        <div
+        <button
+          type="button"
+          data-pad-back="true"
           onClick={() => {
             stopRequestedRef.current = true;
           }}
           className="fixed inset-0 z-30 bg-[#0B0B0D]/75 backdrop-blur-md transition-opacity duration-200 cursor-pointer"
+          aria-label="Parar simulação"
         />
       )}
 
       <section
+        tabIndex={0}
+        data-focusable="true"
+        data-autofocus="true"
         onClick={handleTileClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleTileClick();
+          }
+        }}
         style={{ borderTopColor: isSimulating ? '#F5F5F7' : compTheme.accentPrimary }}
-        className={`lg:col-span-8 lg:row-span-4 console-tile border-t-[3px] p-6 flex flex-col justify-between cursor-pointer select-none transition-colors ${
+        className={`lg:col-span-8 lg:row-span-4 console-tile border-t-[3px] p-6 flex flex-col justify-between cursor-pointer select-none transition-colors outline-none ${
           isSimulating
             ? 'relative z-40 bg-[#14161B] shadow-[0_0_80px_rgba(0,0,0,0.95)]'
             : 'console-tile-interactive'
@@ -345,13 +358,16 @@ export const RollingWeekCalendarTile: React.FC = () => {
             {stopForTraining && !isSimulating && (
               <button
                 type="button"
+                data-pad-x="true"
+                data-nav-ignore="true"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsSimulating(true);
                 }}
-                className="px-4 py-2.5 bg-[#16181D] hover:bg-[#22252E] border border-[#242730] font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
+                className="px-3.5 py-2.5 bg-[#16181D] hover:bg-[#22252E] border border-[#242730] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
               >
-                SIMULAR 50% ›
+                <GamepadBadge action="ALT_X" />
+                <span>SIMULAR 50%</span>
               </button>
             )}
 
@@ -361,7 +377,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
                   ? { borderLeftColor: compTheme.accentPrimary }
                   : undefined
               }
-              className={`px-7 py-2.5 font-condensed uppercase font-extrabold text-lg tracking-wider ${
+              className={`px-6 py-2.5 font-condensed uppercase font-extrabold text-lg tracking-wider inline-flex items-center gap-2.5 ${
                 isSimulating
                   ? 'bg-[#C94040] text-[#F5F5F7]'
                   : stopForTraining
@@ -369,7 +385,8 @@ export const RollingWeekCalendarTile: React.FC = () => {
                     : 'bg-[#F5F5F7] text-[#0B0B0D] border-l-4'
               }`}
             >
-              {actionHeadline}
+              <GamepadBadge action={isSimulating ? 'BACK' : 'CONFIRM'} darkText={!isSimulating} />
+              <span>{actionHeadline}</span>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import {
   findClubLeagueIdInWorld,
   findUpcomingFixtureForClub,
 } from '../../domains/season/worldSeasonEngine';
+import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import { useCareerStore } from '../../state/useCareerStore';
 import { useNavigationStore } from '../../state/useNavigationStore';
 import { CompetitionsTab } from './competitions/CompetitionsTab';
@@ -36,7 +37,6 @@ export const CareerHubScreen: React.FC = () => {
 
   return (
     <div className="w-screen h-screen bg-[#0B0B0D] text-[#F5F5F7] flex flex-col overflow-hidden relative">
-      {/* Atmosfera Dinâmica: mistura o Tema Oficial da Competição (esquerda) + Clube (direita) */}
       {club && (
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-96 opacity-[0.22] transition-all duration-500"
@@ -56,12 +56,34 @@ export const CareerHubScreen: React.FC = () => {
         {activeTab === 'TEMPORADA' && <CompetitionsTab />}
       </main>
 
-      <footer className="h-9 shrink-0 border-t border-[#242730] bg-[#0B0B0D] px-6 md:px-10 flex items-center justify-between text-[11px] uppercase tracking-widest text-[#565A65] relative z-10">
-        <div className="flex items-center gap-6">
-          <span>[Q / E] OU [LB / RB] NAVEGAR ABAS</span>
-          <span>TEMA ATIVO: {compTheme.shortLabel}</span>
+      {/* Barra Inferior de Comandos do Controle (Contextual igual ao FIFA 18) */}
+      <footer className="h-10 shrink-0 border-t border-[#242730] bg-[#0B0B0D] px-6 md:px-10 flex items-center justify-between text-[11px] uppercase tracking-widest text-[#565A65] relative z-10">
+        <div className="flex flex-wrap items-center gap-5">
+          <GamepadBadge action="CONFIRM" label="CONFIRMAR" />
+          {activeTab === 'TREINO' && <GamepadBadge action="ALT_Y" label="SESSÃO 100%" />}
+          {activeTab === 'ESCRITORIO' && (
+            <>
+              <GamepadBadge action="LT" label="SEÇÃO" />
+              <GamepadBadge action="RT" />
+              <GamepadBadge action="ALT_Y" label="SONDAR" />
+            </>
+          )}
+          {activeTab === 'TEMPORADA' && (
+            <>
+              <GamepadBadge action="LT" label="LIGA" />
+              <GamepadBadge action="RT" />
+              <GamepadBadge action="RS" label="ROLAR ELENCO" />
+            </>
+          )}
+          <GamepadBadge
+            action="BACK"
+            label={activeTab === 'CENTRAL' ? 'MENU PRINCIPAL' : 'CENTRAL'}
+          />
         </div>
+
         <button
+          type="button"
+          data-nav-ignore="true"
           onClick={() => setScreen('MAIN_MENU')}
           className="hover:text-[#F5F5F7] uppercase tracking-widest cursor-pointer"
         >

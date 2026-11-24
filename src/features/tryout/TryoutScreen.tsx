@@ -84,9 +84,10 @@ export const TryoutScreen: React.FC = () => {
           </h2>
 
           <div className="grid sm:grid-cols-2 gap-6">
-            {TRYOUT_STAGES[step].options.map((opt) => (
+            {TRYOUT_STAGES[step].options.map((opt, idx) => (
               <button
                 key={opt.code}
+                data-autofocus={idx === 0 ? 'true' : undefined}
                 onClick={() => handleChoice(opt.bonus, opt.risk)}
                 className="console-tile console-tile-interactive text-left p-8 border-l-4 border-l-[#565A65] hover:border-l-[#C8A45D] cursor-pointer"
               >
@@ -164,6 +165,7 @@ export const TryoutScreen: React.FC = () => {
                 </div>
 
                 <button
+                  data-autofocus={idx === 0 ? 'true' : undefined}
                   onClick={() => {
                     signYouthOffer(offer);
                     setScreen('CAREER_HUB');

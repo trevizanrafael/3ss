@@ -3,6 +3,7 @@ import { ATTRIBUTE_DEFINITIONS } from '../../../domains/attributes/attributeDefi
 import { getOwnedEquipmentBonuses } from '../../../domains/economy/economyActions';
 import { getDrillById } from '../../../domains/training/trainingDrillsCatalog';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { StarRating } from '../../../shared/types/common';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { useNavigationStore } from '../../../state/useNavigationStore';
@@ -55,17 +56,23 @@ export const TrainingTab: React.FC = () => {
         <div className="flex items-center gap-3">
           {isTrainingDay && !trainedToday ? (
             <button
+              type="button"
+              data-pad-y="true"
               onClick={handleRunActiveSession}
-              className="console-btn-primary px-7 py-3 text-base cursor-pointer"
+              className="console-btn-primary px-6 py-3 text-base inline-flex items-center gap-2.5 cursor-pointer"
             >
-              EXECUTAR SESSÃO DE HOJE (100%) ›
+              <GamepadBadge action="ALT_Y" darkText />
+              <span>EXECUTAR SESSÃO DE HOJE (100%) ›</span>
             </button>
           ) : trainedToday ? (
             <button
+              type="button"
+              data-pad-y="true"
               onClick={() => setActiveTab('CENTRAL')}
-              className="console-btn-primary px-6 py-3 text-base cursor-pointer"
+              className="console-btn-primary px-6 py-3 text-base inline-flex items-center gap-2.5 cursor-pointer"
             >
-              CONCLUIR E VOLTAR À CENTRAL ›
+              <GamepadBadge action="ALT_Y" darkText />
+              <span>CONCLUIR E VOLTAR À CENTRAL ›</span>
             </button>
           ) : (
             <span className="px-4 py-2.5 bg-[#0E0F12] border border-[#242730] font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3]">
@@ -85,8 +92,10 @@ export const TrainingTab: React.FC = () => {
             return (
               <button
                 key={slotIdx}
+                type="button"
+                data-autofocus={slotIdx === 0 ? 'true' : undefined}
                 onClick={() => setEditingSlot(slotIdx)}
-                className="console-tile console-tile-interactive p-5 flex flex-col items-center justify-center text-center cursor-pointer group"
+                className="console-tile console-tile-interactive p-5 flex flex-col items-center justify-center text-center cursor-pointer group outline-none"
               >
                 <span className="text-[11px] uppercase tracking-[0.24em] text-[#565A65] mb-3">
                   SLOT 0{slotIdx + 1}
@@ -102,10 +111,12 @@ export const TrainingTab: React.FC = () => {
           }
 
           return (
-            <div
+            <button
               key={slotIdx}
+              type="button"
+              data-autofocus={slotIdx === 0 ? 'true' : undefined}
               onClick={() => setEditingSlot(slotIdx)}
-              className="console-tile console-tile-interactive border-t-[3px] border-t-[#C8A45D] p-5 flex flex-col justify-between cursor-pointer"
+              className="console-tile console-tile-interactive border-t-[3px] border-t-[#C8A45D] p-5 flex flex-col justify-between text-left cursor-pointer outline-none"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -166,10 +177,10 @@ export const TrainingTab: React.FC = () => {
                 })}
               </div>
 
-              <div className="font-condensed uppercase text-xs tracking-widest text-[#9498A3] text-center">
+              <div className="font-condensed uppercase text-xs tracking-widest text-[#9498A3] text-center w-full">
                 TROCAR EXERCÍCIO ›
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

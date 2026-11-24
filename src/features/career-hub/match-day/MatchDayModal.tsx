@@ -9,6 +9,7 @@ import {
 import { getClubFixtureOnExactDay } from '../../../domains/season/worldSeasonEngine';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { useNavigationStore } from '../../../state/useNavigationStore';
@@ -72,7 +73,10 @@ export const MatchDayModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 w-screen h-screen bg-[#0B0B0D] text-[#F5F5F7] flex flex-col overflow-hidden">
+    <div
+      data-modal-scope="true"
+      className="fixed inset-0 z-50 w-screen h-screen bg-[#0B0B0D] text-[#F5F5F7] flex flex-col overflow-hidden"
+    >
       {/* Cabeçalho Oficial de Transmissão da Competição */}
       <header
         className="h-16 shrink-0 border-b px-6 md:px-10 flex items-center justify-between"
@@ -91,33 +95,42 @@ export const MatchDayModal: React.FC = () => {
           {!result && (
             <button
               type="button"
+              data-pad-back="true"
               onClick={handleClose}
-              className="px-4 py-2 bg-[#16181D] hover:bg-[#22252E] border border-[#242730] font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
+              className="px-4 py-2 bg-[#16181D] hover:bg-[#22252E] border border-[#242730] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3] hover:text-[#F5F5F7] cursor-pointer"
             >
-              VOLTAR À CENTRAL
+              <GamepadBadge action="BACK" />
+              <span>VOLTAR</span>
             </button>
           )}
 
           {!result ? (
             <button
               type="button"
+              data-autofocus="true"
+              data-pad-y="true"
               onClick={() => {
                 const r = playCurrentMatch(mindset);
                 if (r) setResult(r);
               }}
               style={{ borderLeftColor: theme.accentPrimary }}
-              className="console-btn-primary px-8 py-2.5 text-lg cursor-pointer"
+              className="console-btn-primary px-7 py-2.5 text-lg inline-flex items-center gap-2.5 cursor-pointer"
             >
-              IR PARA O CAMPO / INICIAR ›
+              <GamepadBadge action="ALT_Y" darkText />
+              <span>IR PARA O CAMPO / INICIAR ›</span>
             </button>
           ) : (
             <button
               type="button"
+              data-autofocus="true"
+              data-pad-y="true"
+              data-pad-back="true"
               onClick={handleClose}
               style={{ borderLeftColor: theme.accentPrimary }}
-              className="console-btn-primary px-8 py-2.5 text-lg cursor-pointer"
+              className="console-btn-primary px-7 py-2.5 text-lg inline-flex items-center gap-2.5 cursor-pointer"
             >
-              ENCERRAR E VOLTAR À CENTRAL ›
+              <GamepadBadge action="CONFIRM" darkText />
+              <span>ENCERRAR E VOLTAR À CENTRAL ›</span>
             </button>
           )}
         </div>

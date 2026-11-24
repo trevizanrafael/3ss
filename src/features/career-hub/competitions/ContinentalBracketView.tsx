@@ -115,8 +115,11 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                     return (
                       <tr
                         key={r.clubId}
+                        tabIndex={0}
+                        data-focusable="true"
+                        onFocus={() => onSelectClub(c.id)}
                         onClick={() => onSelectClub(c.id)}
-                        className={`cursor-pointer ${
+                        className={`cursor-pointer outline-none ${
                           active ? 'bg-[#1C1F26] text-[#F5F5F7]' : 'hover:bg-[#16181D]'
                         }`}
                       >

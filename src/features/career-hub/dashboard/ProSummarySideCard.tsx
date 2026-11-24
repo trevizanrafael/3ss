@@ -21,8 +21,16 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
 }) => {
   return (
     <section
+      tabIndex={0}
+      data-focusable="true"
       onClick={onOpenMyPro}
-      className="lg:col-span-4 lg:row-span-6 console-tile console-tile-interactive p-6 flex flex-col justify-between cursor-pointer"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpenMyPro();
+        }
+      }}
+      className="lg:col-span-4 lg:row-span-6 console-tile console-tile-interactive p-6 flex flex-col justify-between cursor-pointer outline-none"
     >
       <div>
         <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#9498A3] pb-4 border-b border-[#242730]">

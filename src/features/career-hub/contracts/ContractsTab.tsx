@@ -4,6 +4,7 @@ import { getClubById } from '../../../data/clubs';
 import { LEAGUES } from '../../../data/leagues/leagues';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { formatMoney, formatSquadRole } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { EquipmentTab } from '../equipment/EquipmentTab';
@@ -28,21 +29,39 @@ export const ContractsTab: React.FC = () => {
 
   if (!contract) return null;
   const currentClub = getClubById(contract.clubId);
+  const SEC_ORDER: OfficeSection[] = ['CONTRATOS', 'EMPRESARIO', 'ESTRUTURA'];
+  const cycleSec = (dir: -1 | 1) => {
+    const next = SEC_ORDER[(SEC_ORDER.indexOf(section) + dir + SEC_ORDER.length) % SEC_ORDER.length];
+    setSection(next);
+    setNotice(null);
+  };
 
   return (
     <div className="h-full flex flex-col gap-5 min-h-0">
-      {/* Sub-Menu Seco do Escritório (Sem empilhar seções na mesma tela) */}
+      {/* Sub-Menu Seco do Escritório (Navegável também via LT / RT) */}
       <div className="console-tile px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            data-pad-lt="true"
+            data-nav-ignore="true"
+            onClick={() => cycleSec(-1)}
+            className="cursor-pointer"
+          >
+            <GamepadBadge action="LT" />
+          </button>
+
           {(
             [
               ['CONTRATOS', '01 VÍNCULO & PROPOSTAS'],
               ['EMPRESARIO', '02 EMPRESÁRIOS'],
               ['ESTRUTURA', '03 ESTRUTURA DE TREINO'],
             ] as const
-          ).map(([id, lbl]) => (
+          ).map(([id, lbl], idx) => (
             <button
               key={id}
+              type="button"
+              data-autofocus={idx === 0 ? 'true' : undefined}
               onClick={() => {
                 setSection(id);
                 setNotice(null);
@@ -56,16 +75,29 @@ export const ContractsTab: React.FC = () => {
               {lbl}
             </button>
           ))}
+
+          <button
+            type="button"
+            data-pad-rt="true"
+            data-nav-ignore="true"
+            onClick={() => cycleSec(1)}
+            className="cursor-pointer"
+          >
+            <GamepadBadge action="RT" />
+          </button>
         </div>
 
         {notice ? (
           <span className="font-condensed uppercase text-sm text-[#C8A45D] font-bold">{notice}</span>
         ) : (
           <button
+            type="button"
+            data-pad-y="true"
             onClick={requestLoanOrOffersFromAgent}
-            className="px-4 py-2 bg-[#191B20] hover:bg-[#242730] border border-[#C8A45D] font-condensed uppercase font-bold text-xs tracking-widest text-[#C8A45D] cursor-pointer"
+            className="px-4 py-2 bg-[#191B20] hover:bg-[#242730] border border-[#C8A45D] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-widest text-[#C8A45D] cursor-pointer"
           >
-            {contract.stage === 'YOUTH' ? 'PEDIR REUNIÃO NA BASE ›' : 'SONDAR MERCADO ›'}
+            <GamepadBadge action="ALT_Y" />
+            <span>{contract.stage === 'YOUTH' ? 'PEDIR REUNIÃO NA BASE ›' : 'SONDAR MERCADO ›'}</span>
           </button>
         )}
       </div>

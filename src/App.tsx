@@ -3,10 +3,13 @@ import { CareerHubScreen } from './features/career-hub/CareerHubScreen';
 import { MainMenuScreen } from './features/main-menu/MainMenuScreen';
 import { PlayerCreationScreen } from './features/player-creation/PlayerCreationScreen';
 import { TryoutScreen } from './features/tryout/TryoutScreen';
+import { useGlobalGamepadController } from './shared/gamepad/useGlobalGamepadController';
 import { useNavigationStore } from './state/useNavigationStore';
 
 export const App: React.FC = () => {
-  const { screen } = useNavigationStore();
+  const { screen, activeTab, matchModalOpen } = useNavigationStore();
+
+  useGlobalGamepadController([screen, activeTab, matchModalOpen]);
 
   if (screen === 'CREATE_PLAYER') return <PlayerCreationScreen />;
   if (screen === 'TRYOUT') return <TryoutScreen />;
