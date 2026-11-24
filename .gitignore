@@ -3,6 +3,7 @@ node_modules/
 dist/
 dist-ssr/
 src-tauri/target/
+*.tsbuildinfo
 *.local
 
 # OS / Editor
