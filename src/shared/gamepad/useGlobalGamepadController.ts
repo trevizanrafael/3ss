@@ -5,9 +5,14 @@ import {
   playStepTickSfx,
   playTabSwitchSfx,
 } from '../audio/uiSoundEngine';
+import {
+  attachGamepadConnectionListeners,
+  readNormalizedGamepad,
+} from './gamepadHardware';
 import { useGamepadStore } from './gamepadStore';
 import {
   focusInitialElementInScope,
+   getVisibleFocusables,
   moveSpatialFocus,
   NavDirection,
   recordFocusedElement,
@@ -23,14 +28,30 @@ function inferFocusHint(el: HTMLElement | null): string | null {
   return 'CONFIRMAR';
 }
 
+interface PrevPadButtons {
+  south: boolean;
+  east: boolean;
+  west: boolean;
+  north: boolean;
+  lb: boolean;
+  rb: boolean;
+  lt: boolean;
+  rt: boolean;
+  start: boolean;
+}
+
 export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
-  const { setPadDetected, setKeyboardUsed, setFocusedHint } = useGamepadStore();
+  const { setKeyboardUsed, setFocusedHint } = useGamepadStore();
   const scopeKey = depsForAutoFocus.slice(0, 2).map(String).join(':');
 
   // Auto-foca ou restaura a memória de foco sempre que troca de tela, aba ou modal
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      if (document.documentElement.dataset.inputMode === 'gamepad') {
+      if (
+        document.documentElement.dataset.inputMode === 'gamepad' ||
+        useGamepadStore.getState().padConnected
+      ) {
+        document.documentElement.dataset.inputMode = 'gamepad';
         focusInitialElementInScope(scopeKey);
         setFocusedHint(inferFocusHint(document.activeElement as HTMLElement | null));
       }
@@ -40,6 +61,8 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
   }, depsForAutoFocus);
 
   useEffect(() => {
+    attachGamepadConnectionListeners();
+
     const onFocusIn = (e: FocusEvent) => {
       const target = e.target as HTMLElement | null;
       recordFocusedElement(target);
@@ -47,6 +70,7 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
     };
 
     const onMouseDown = () => {
+      window.focus?.();
       if (!useGamepadStore.getState().padConnected) {
         delete document.documentElement.dataset.inputMode;
       }
@@ -100,32 +124,60 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
     window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('keydown', onKeyDown);
 
-    const prevBtns = new Array<boolean>(18).fill(false);
+    const prev: PrevPadButtons = {
+      south: false,
+      east: false,
+      west: false,
+      north: false,
+      lb: false,
+      rb: false,
+      lt: false,
+      rt: false,
+      start: false,
+    };
+    let hadPadFocusInitialized = false;
     let heldDir: NavDirection | null = null;
     let nextRepeatMs = 0;
     let rafId = 0;
 
     const pollGamepad = (now: number) => {
+      const gp = readNormalizedGamepad();
+
+      // Enquanto a Arena 3D estiver aberta, só sincroniza prev p/ evitar clique fantasma ao sair!
       if (document.querySelector('[data-pitch-3d-active="true"]')) {
+        if (gp) {
+          prev.south = gp.south;
+          prev.east = gp.east;
+          prev.west = gp.west;
+          prev.north = gp.north;
+          prev.lb = gp.lb;
+          prev.rb = gp.rb;
+          prev.lt = gp.lt;
+          prev.rt = gp.rt;
+          prev.start = gp.start;
+        }
+        heldDir = null;
         rafId = requestAnimationFrame(pollGamepad);
         return;
       }
-      const pads = navigator.getGamepads ? Array.from(navigator.getGamepads()) : [];
-      const gp = pads.find((p): p is Gamepad => Boolean(p && p.connected));
 
       if (gp) {
-        const anyPressed =
-          gp.buttons.some((b) => b.pressed) || gp.axes.some((ax) => Math.abs(ax) > 0.45);
-        if (anyPressed) {
-          setPadDetected(gp.id);
+        if (!hadPadFocusInitialized && gp.hasAnyInput) {
+          hadPadFocusInitialized = true;
+          document.documentElement.dataset.inputMode = 'gamepad';
+          const active = document.activeElement as HTMLElement | null;
+          if (!active || !getVisibleFocusables().includes(active)) {
+            focusInitialElementInScope();
+          }
         }
 
-        const justPressed = (idx: number) => Boolean(gp.buttons[idx]?.pressed) && !prevBtns[idx];
-
-        // A / Cross -> Confirmar!
-        if (justPressed(0)) {
+        // A / Cross (ou Start) -> Confirmar!
+        if ((gp.south && !prev.south) || (gp.start && !prev.start)) {
           const active = document.activeElement as HTMLElement | null;
-          if (active && active !== document.body) {
+          const visible = getVisibleFocusables();
+          const prematchModal = document.querySelector<HTMLElement>('[data-prematch-direct-pad="true"]');
+
+          if (active && visible.includes(active)) {
             if (active.dataset.consoleStepper === 'true') {
               playStepTickSfx();
               active.dispatchEvent(new CustomEvent('console-step', { detail: 1 }));
@@ -133,13 +185,20 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
               playConfirmSfx();
               active.click();
             }
+          } else if (prematchModal) {
+            const autoBtn = prematchModal.querySelector<HTMLElement>('[data-autofocus="true"]:not(:disabled)');
+            if (autoBtn) {
+              autoBtn.focus({ preventScroll: true });
+              playConfirmSfx();
+              autoBtn.click();
+            }
           } else {
             focusInitialElementInScope();
           }
         }
 
         // B / Circle -> Voltar!
-        if (justPressed(1)) {
+        if (gp.east && !prev.east) {
           playBackSfx();
           const active = document.activeElement as HTMLElement | null;
           if (active && active.tagName === 'INPUT') {
@@ -150,36 +209,34 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
         }
 
         // X / Square & Y / Triangle
-        if (justPressed(2)) triggerShortcutElement('data-pad-x');
-        if (justPressed(3)) triggerShortcutElement('data-pad-y');
+        if (gp.west && !prev.west) triggerShortcutElement('data-pad-x');
+        if (gp.north && !prev.north) triggerShortcutElement('data-pad-y');
 
         // LB / RB -> Abas principais!
-        if (justPressed(4)) {
+        if (gp.lb && !prev.lb) {
           playTabSwitchSfx();
           window.dispatchEvent(new KeyboardEvent('keydown', { key: 'q' }));
         }
-        if (justPressed(5)) {
+        if (gp.rb && !prev.rb) {
           playTabSwitchSfx();
           window.dispatchEvent(new KeyboardEvent('keydown', { key: 'e' }));
         }
 
-        // LT / RT -> Sub-abas ou mensagens da Caixa de Entrada!
-        if (justPressed(6)) triggerShortcutElement('data-pad-lt');
-        if (justPressed(7)) triggerShortcutElement('data-pad-rt');
+        // LT / RT -> Sub-abas, uniformes ou mensagens da Caixa de Entrada!
+        if (gp.lt && !prev.lt) triggerShortcutElement('data-pad-lt');
+        if (gp.rt && !prev.rt) triggerShortcutElement('data-pad-rt');
 
-        // D-Pad + Analógico Esquerdo com trava direcional limpa (evita drift diagonal!)
-        const axX = gp.axes[0] ?? 0;
-        const axY = gp.axes[1] ?? 0;
+        // D-Pad + Analógico Esquerdo com trava direcional limpa
         let dir: NavDirection | null = null;
-        if (gp.buttons[12]?.pressed) dir = 'UP';
-        else if (gp.buttons[13]?.pressed) dir = 'DOWN';
-        else if (gp.buttons[14]?.pressed) dir = 'LEFT';
-        else if (gp.buttons[15]?.pressed) dir = 'RIGHT';
-        else if (Math.abs(axY) > 0.52 || Math.abs(axX) > 0.52) {
-          if (Math.abs(axY) >= Math.abs(axX)) {
-            dir = axY < 0 ? 'UP' : 'DOWN';
+        if (gp.dpadUp) dir = 'UP';
+        else if (gp.dpadDown) dir = 'DOWN';
+        else if (gp.dpadLeft) dir = 'LEFT';
+        else if (gp.dpadRight) dir = 'RIGHT';
+        else if (Math.abs(gp.ly) > 0.52 || Math.abs(gp.lx) > 0.52) {
+          if (Math.abs(gp.ly) >= Math.abs(gp.lx)) {
+            dir = gp.ly < 0 ? 'UP' : 'DOWN';
           } else {
-            dir = axX < 0 ? 'LEFT' : 'RIGHT';
+            dir = gp.lx < 0 ? 'LEFT' : 'RIGHT';
           }
         }
 
@@ -196,27 +253,31 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
           heldDir = null;
         }
 
-        // Analógico Direito (RS: axes 2, 3) -> Rolagem suave de listas ou Rotação 3D / Mapa!
-        const rsX = gp.axes[2] ?? 0;
-        const rsY = gp.axes[3] ?? 0;
-        if (Math.abs(rsX) > 0.22 || Math.abs(rsY) > 0.22) {
+        // Analógico Direito (RS) -> Rolagem suave de listas ou Rotação 3D / Mapa!
+        if (Math.abs(gp.rx) > 0.22 || Math.abs(gp.ry) > 0.22) {
           window.dispatchEvent(
             new CustomEvent('gamepad-rs-move', {
               detail: {
-                dx: Math.abs(rsX) > 0.22 ? rsX : 0,
-                dy: Math.abs(rsY) > 0.22 ? rsY : 0,
+                dx: Math.abs(gp.rx) > 0.22 ? gp.rx : 0,
+                dy: Math.abs(gp.ry) > 0.22 ? gp.ry : 0,
               },
             }),
           );
           const scroller = document.querySelector<HTMLElement>('[data-rs-scroll="true"]');
-          if (scroller && Math.abs(rsY) > 0.22) {
-            scroller.scrollTop += rsY * 12;
+          if (scroller && Math.abs(gp.ry) > 0.22) {
+            scroller.scrollTop += gp.ry * 12;
           }
         }
 
-        for (let i = 0; i < Math.min(18, gp.buttons.length); i++) {
-          prevBtns[i] = Boolean(gp.buttons[i]?.pressed);
-        }
+        prev.south = gp.south;
+        prev.east = gp.east;
+        prev.west = gp.west;
+        prev.north = gp.north;
+        prev.lb = gp.lb;
+        prev.rb = gp.rb;
+        prev.lt = gp.lt;
+        prev.rt = gp.rt;
+        prev.start = gp.start;
       }
 
       rafId = requestAnimationFrame(pollGamepad);
@@ -229,5 +290,5 @@ export function useGlobalGamepadController(depsForAutoFocus: unknown[]): void {
       window.removeEventListener('keydown', onKeyDown);
       cancelAnimationFrame(rafId);
     };
-  }, [setFocusedHint, setKeyboardUsed, setPadDetected]);
+  }, [setFocusedHint, setKeyboardUsed]);
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ClubData } from '../../data/clubs/types';
+import { useGamepadStore } from '../../shared/gamepad/gamepadStore';
 import { StarRatingBadge } from '../../shared/ui/StarRatingBadge';
 import { getFifaStatColor } from '../../shared/ui/FifaStatBadge';
 import { ArenaHudSnapshot, ArenaSessionMode } from '../types';
@@ -27,6 +28,17 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
   onFinishNow,
   onExitCancel,
 }) => {
+  const { padConnected, brand } = useGamepadStore();
+  const isPS = brand === 'PLAYSTATION';
+  const lblShoot = isPS ? '○' : 'B';
+  const lblPass = isPS ? '✕' : 'A';
+  const lblThrough = isPS ? '△' : 'Y';
+  const lblLob = isPS ? '□' : 'X';
+  const lblLB = isPS ? 'L1' : 'LB';
+  const lblRB = isPS ? 'R1' : 'RB';
+  const lblRT = isPS ? 'R2' : 'RT';
+  const lblBack = isPS ? 'SHARE' : 'SELECT';
+  const lblStart = isPS ? 'OPTIONS' : 'START';
   const isScoredMode = mode !== 'FREE_PLAY';
   const powerColor =
     hud.shotPowerPct > 90
@@ -85,12 +97,26 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
         <div className="flex items-center gap-2 pointer-events-auto">
           <span
             className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
+              padConnected
+                ? 'bg-[#12261A]/90 text-[#2DBE60] border-[#2DBE60]'
+                : 'bg-[#0B0B0D]/88 text-[#FACC15] border-[#FACC15]/60'
+            }`}
+          >
+            {padConnected
+              ? `CONTROLE ATIVO (${brand})`
+              : 'APERTE UM BOTÃO NO CONTROLE'}
+          </span>
+
+          <span
+            className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
               hud.cameraMode === 'BALL_CAM'
                 ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
                 : 'bg-[#0B0B0D]/85 text-[#F5F5F7] border-white/15'
             }`}
           >
-            {hud.cameraMode === 'BALL_CAM' ? 'CÂMERA: TRAVA NA BOLA (LB)' : 'CÂMERA: LIVRE 360° (LB)'}
+            {hud.cameraMode === 'BALL_CAM'
+              ? `CÂMERA: BOLA (${lblLB})`
+              : `CÂMERA: LIVRE 360° (${lblLB})`}
           </span>
 
           <button
@@ -98,7 +124,7 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
             onClick={onResetBall}
             className="px-3 py-1.5 bg-[#0B0B0D]/88 hover:bg-[#1C1F28] border border-white/15 font-condensed uppercase font-bold text-xs tracking-wider text-[#F5F5F7] cursor-pointer"
           >
-            NOVA BOLA (V)
+            NOVA BOLA ({lblBack} / V)
           </button>
 
           {isScoredMode ? (
@@ -108,7 +134,7 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
               style={{ borderLeftColor: accentColor }}
               className="console-btn-primary px-4 py-1.5 text-xs cursor-pointer"
             >
-              CONCLUIR ({hud.currentStars}★) ›
+              CONCLUIR ({hud.currentStars}★ • {lblStart}) ›
             </button>
           ) : (
             onExitCancel && (
@@ -117,7 +143,7 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
                 onClick={onExitCancel}
                 className="px-4 py-1.5 bg-[#C94040] hover:bg-[#DC2626] text-[#F5F5F7] font-condensed uppercase font-extrabold text-xs tracking-wider cursor-pointer"
               >
-                SAIR DA ARENA ›
+                SAIR ({lblStart}) ›
               </button>
             )
           )}
@@ -165,7 +191,9 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
           <div>
             <div className="flex items-center justify-between text-[10px] font-condensed uppercase tracking-wider text-[#9498A3] mb-0.5">
               <span>
-                {hud.chargingFinesse ? 'CHUTE COLOCADO C/ CURVA (RB+B)' : 'FORÇA DO CHUTE (SEGURE B / ESPAÇO)'}
+                {hud.chargingFinesse
+                  ? `COLOCADO C/ CURVA (${lblRB}+${lblShoot})`
+                  : `FORÇA DO CHUTE (SEGURE ${lblShoot} / ESPAÇO)`}
               </span>
               <span className="text-[#F5F5F7] font-bold tabular-nums">
                 {Math.round(hud.shotPowerPct)}%
@@ -191,22 +219,25 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
         {/* Comandos Clássicos FIFA (Controle & Teclado) */}
         <div className="bg-[#0B0B0D]/85 border border-white/12 px-4 py-2.5 text-[11px] font-condensed uppercase tracking-wider text-[#D4D7E0] flex flex-wrap items-center gap-x-4 gap-y-1 backdrop-blur-md">
           <span>
-            <strong className="text-[#EF4444]">B / ESPAÇO:</strong> CHUTAR
+            <strong className="text-[#F5F5F7]">LS / D-PAD:</strong> MOVER
           </span>
           <span>
-            <strong className="text-[#C8A45D]">RB+B / Q+ESP:</strong> CURVA COLOCADA
+            <strong className="text-[#EF4444]">{lblShoot} / ESPAÇO:</strong> CHUTAR
           </span>
           <span>
-            <strong className="text-[#2DBE60]">A / E:</strong> PASSE / TABELINHA
+            <strong className="text-[#C8A45D]">{lblRB}+{lblShoot} / Q+ESP:</strong> CURVA COLOCADA
           </span>
           <span>
-            <strong className="text-[#FACC15]">Y / F:</strong> ENFIADA
+            <strong className="text-[#2DBE60]">{lblPass} / E:</strong> PASSE / TABELINHA
           </span>
           <span>
-            <strong className="text-[#38BDF8]">X / R:</strong> CRUZAR / CARRINHO
+            <strong className="text-[#FACC15]">{lblThrough} / F:</strong> ENFIADA
           </span>
           <span>
-            <strong className="text-[#F5F5F7]">RT / SHIFT:</strong> CORRER
+            <strong className="text-[#38BDF8]">{lblLob} / R:</strong> CRUZAR / CARRINHO
+          </span>
+          <span>
+            <strong className="text-[#F5F5F7]">{lblRT} / SHIFT:</strong> CORRER
           </span>
           <span>
             <strong className="text-[#F5F5F7]">RS / MOUSE:</strong> OLHAR 360°

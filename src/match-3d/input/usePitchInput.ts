@@ -1,3 +1,8 @@
+import {
+  attachGamepadConnectionListeners,
+  readNormalizedGamepad,
+} from '../../shared/gamepad/gamepadHardware';
+
 export interface LivePitchInput {
   moveX: number; // -1..1 (Esquerda/Direita relativo à câmera)
   moveZ: number; // -1..1 (-1 = Frente, +1 = Trás)
@@ -12,7 +17,8 @@ export interface LivePitchInput {
   throughJustPressed: boolean; // Y / F
   lobOrSlideJustPressed: boolean; // X / R
   toggleCameraJustPressed: boolean; // LB / R3 / Tab / C
-  resetBallJustPressed: boolean; // Select / Back / V
+  resetBallJustPressed: boolean; // Select / Back / Share / V / Backspace
+  exitOrFinishJustPressed: boolean; // Start / Options / Menu
 }
 
 export class PitchInputCollector {
@@ -27,12 +33,18 @@ export class PitchInputCollector {
   private prevLob = false;
   private prevToggleCam = false;
   private prevReset = false;
+  private prevStart = false;
+  private initializedFromPad = false;
 
   private hostEl: HTMLElement | null = null;
 
   private onKeyDown = (e: KeyboardEvent) => {
     this.keys.add(e.code);
-    if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+    if (
+      ['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace'].includes(
+        e.code,
+      )
+    ) {
       e.preventDefault();
     }
   };
@@ -49,6 +61,7 @@ export class PitchInputCollector {
   };
 
   private onMouseDown = (e: MouseEvent) => {
+    window.focus?.();
     if (!this.hostEl) return;
     if (document.pointerLockElement !== this.hostEl && e.target === this.hostEl.firstChild) {
       this.hostEl.requestPointerLock?.().catch?.(() => {});
@@ -61,6 +74,8 @@ export class PitchInputCollector {
   };
 
   attach(hostEl: HTMLElement): void {
+    attachGamepadConnectionListeners();
+    window.focus?.();
     this.hostEl = hostEl;
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
@@ -84,8 +99,19 @@ export class PitchInputCollector {
   }
 
   sample(dt: number): LivePitchInput {
-    const pads = navigator.getGamepads ? Array.from(navigator.getGamepads()) : [];
-    const gp = pads.find((p): p is Gamepad => Boolean(p && p.connected));
+    const gp = readNormalizedGamepad();
+
+    // No primeiro frame da Arena, sincroniza botões que já entraram pressionados (ex: entrou apertando A ou Y!)
+    if (gp && !this.initializedFromPad) {
+      this.initializedFromPad = true;
+      this.prevShoot = gp.east;
+      this.prevPass = gp.south;
+      this.prevThrough = gp.north;
+      this.prevLob = gp.west;
+      this.prevToggleCam = gp.lb || gp.r3;
+      this.prevReset = gp.back;
+      this.prevStart = gp.start;
+    }
 
     let moveX = 0;
     let moveZ = 0;
@@ -95,11 +121,20 @@ export class PitchInputCollector {
     if (this.keys.has('KeyS') || this.keys.has('ArrowDown')) moveZ += 1;
 
     if (gp) {
-      const lx = gp.axes[0] ?? 0;
-      const ly = gp.axes[1] ?? 0;
-      if (Math.hypot(lx, ly) > 0.16) {
-        moveX = lx;
-        moveZ = ly;
+      // Suporta TANTO Analógico Esquerdo (LS) QUANTO D-Pad para correr e mirar!
+      let dpadX = 0;
+      let dpadZ = 0;
+      if (gp.dpadLeft) dpadX -= 1;
+      if (gp.dpadRight) dpadX += 1;
+      if (gp.dpadUp) dpadZ -= 1;
+      if (gp.dpadDown) dpadZ += 1;
+
+      if (dpadX !== 0 || dpadZ !== 0) {
+        moveX = dpadX;
+        moveZ = dpadZ;
+      } else if (Math.hypot(gp.lx, gp.ly) > 0.15) {
+        moveX = gp.lx;
+        moveZ = gp.ly;
       }
     }
 
@@ -115,29 +150,28 @@ export class PitchInputCollector {
     this.mouseDY = 0;
 
     if (gp) {
-      const rx = gp.axes[2] ?? 0;
-      const ry = gp.axes[3] ?? 0;
-      if (Math.abs(rx) > 0.16) lookDeltaX += rx * 2.55 * dt;
-      if (Math.abs(ry) > 0.16) lookDeltaY += ry * 1.65 * dt;
+      if (Math.abs(gp.rx) > 0.16) lookDeltaX += gp.rx * 2.65 * dt;
+      if (Math.abs(gp.ry) > 0.16) lookDeltaY += gp.ry * 1.65 * dt;
     }
 
-    // Controles Clássicos FIFA (Controle Xbox/PS + Teclado/Mouse):
-    // B (btn 1) = Chute | A (btn 0) = Passe | Y (btn 3) = Enfiada | X (btn 2) = Cruzamento/Carrinho
-    // RT (btn 7) = Correr | LT (btn 6) = Proteger/Curto | RB (btn 5) = Colocado c/ Curva | LB (btn 4) / R3 (btn 11) = Trava na Bola
-    const gpBtn = (i: number) => Boolean(gp?.buttons[i]?.pressed);
-
+    // Controles Clássicos FIFA (Controle Xbox/PlayStation + Teclado/Mouse):
+    // B / Circle = Chute | A / Cross = Passe | Y / Triangle = Enfiada | X / Square = Cruzamento/Carrinho
+    // RT / R2 = Correr | LT / L2 = Condução Curta | RB / R1 = Colocado c/ Curva | LB / L1 / R3 = Trava na Bola
     const sprintHeld =
-      gpBtn(7) || (gp?.buttons[7]?.value ?? 0) > 0.35 || this.keys.has('ShiftLeft') || this.keys.has('ShiftRight');
+      Boolean(gp?.rt) || this.keys.has('ShiftLeft') || this.keys.has('ShiftRight');
     const closeControlHeld =
-      gpBtn(6) || (gp?.buttons[6]?.value ?? 0) > 0.35 || this.keys.has('ControlLeft');
-    const finesseHeld = gpBtn(5) || this.keys.has('KeyQ') || this.mouseBtns.has(2);
+      Boolean(gp?.lt) || this.keys.has('ControlLeft') || this.keys.has('ControlRight');
+    const finesseHeld = Boolean(gp?.rb) || this.keys.has('KeyQ') || this.mouseBtns.has(2);
 
-    const shootNow = gpBtn(1) || this.keys.has('Space') || this.mouseBtns.has(0);
-    const passNow = gpBtn(0) || this.keys.has('KeyE');
-    const throughNow = gpBtn(3) || this.keys.has('KeyF');
-    const lobNow = gpBtn(2) || this.keys.has('KeyR');
-    const toggleCamNow = gpBtn(4) || gpBtn(11) || this.keys.has('Tab') || this.keys.has('KeyC');
-    const resetNow = gpBtn(8) || this.keys.has('KeyV');
+    const shootNow = Boolean(gp?.east) || this.keys.has('Space') || this.mouseBtns.has(0);
+    const passNow = Boolean(gp?.south) || this.keys.has('KeyE');
+    const throughNow = Boolean(gp?.north) || this.keys.has('KeyF');
+    const lobNow = Boolean(gp?.west) || this.keys.has('KeyR');
+    const toggleCamNow =
+      Boolean(gp?.lb || gp?.r3) || this.keys.has('Tab') || this.keys.has('KeyC');
+    const resetNow =
+      Boolean(gp?.back) || this.keys.has('KeyV') || this.keys.has('Backspace');
+    const startNow = Boolean(gp?.start);
 
     const out: LivePitchInput = {
       moveX,
@@ -154,6 +188,7 @@ export class PitchInputCollector {
       lobOrSlideJustPressed: lobNow && !this.prevLob,
       toggleCameraJustPressed: toggleCamNow && !this.prevToggleCam,
       resetBallJustPressed: resetNow && !this.prevReset,
+      exitOrFinishJustPressed: startNow && !this.prevStart,
     };
 
     this.prevShoot = shootNow;
@@ -162,6 +197,7 @@ export class PitchInputCollector {
     this.prevLob = lobNow;
     this.prevToggleCam = toggleCamNow;
     this.prevReset = resetNow;
+    this.prevStart = startNow;
 
     return out;
   }

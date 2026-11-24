@@ -19,6 +19,7 @@ interface GamepadUiState {
   padName: string;
   focusedHint: string | null;
   setPadDetected: (idString: string) => void;
+  setPadDisconnected: () => void;
   setKeyboardUsed: () => void;
   setFocusedHint: (hint: string | null) => void;
 }
@@ -37,17 +38,25 @@ export function detectBrandFromGamepadId(id: string): PadBrand {
   return 'XBOX';
 }
 
-export const useGamepadStore = create<GamepadUiState>((set) => ({
+export const useGamepadStore = create<GamepadUiState>((set, get) => ({
   brand: 'XBOX',
   padConnected: false,
   padName: '',
   focusedHint: null,
   setPadDetected: (idString) => {
     document.documentElement.dataset.inputMode = 'gamepad';
+    const curr = get();
+    if (curr.padConnected && curr.padName === idString) return;
     set({
       brand: detectBrandFromGamepadId(idString),
       padConnected: true,
       padName: idString,
+    });
+  },
+  setPadDisconnected: () => {
+    set({
+      padConnected: false,
+      padName: '',
     });
   },
   setKeyboardUsed: () => {

@@ -124,6 +124,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       attributionControl: true,
       scrollWheelZoom: true,
       dragging: true,
+      keyboard: false,
       minZoom: 2,
       maxZoom: maxAllowedZoom,
       zoomSnap: 1,

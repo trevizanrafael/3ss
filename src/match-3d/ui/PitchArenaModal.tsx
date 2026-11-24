@@ -100,18 +100,22 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
   });
 
   const triggerResetSpawnRef = useRef<(() => void) | null>(null);
+  const callbacksRef = useRef({ onFinishSession, onCancel, player, club });
+  callbacksRef.current = { onFinishSession, onCancel, player, club };
 
   const finishWithCurrentScore = useCallback(() => {
     if (statsRef.current.finished) return;
     statsRef.current.finished = true;
     playWhistleSfx(true);
     const stars = computeEarnedStars(statsRef.current.points, mode);
-    onFinishSession(stars, statsRef.current.goals);
-  }, [mode, onFinishSession]);
+    callbacksRef.current.onFinishSession(stars, statsRef.current.goals);
+  }, [mode]);
 
   useEffect(() => {
     const host = canvasHostRef.current;
     if (!host) return;
+    const activePlayer = callbacksRef.current.player;
+    const activeClub = callbacksRef.current.club;
 
     playWhistleSfx(false);
 
@@ -139,13 +143,13 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     scene.add(floodRim);
 
     // 2. Estádio + Seu Atleta + Companheiro Camisa 8 + Goleiro Adversário
-    const stadium = buildStadium3D(club, compTheme);
+    const stadium = buildStadium3D(activeClub, compTheme);
     scene.add(stadium.root);
 
-    const userActor = createPitchFootballerActor(player, club);
+    const userActor = createPitchFootballerActor(activePlayer, activeClub);
     scene.add(userActor.root);
 
-    const mateBrain = createSupportTeammate(club);
+    const mateBrain = createSupportTeammate(activeClub);
     scene.add(mateBrain.actor.root);
 
     const rivalKeeperClub = getClubById('real_madrid_86');
@@ -154,7 +158,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
     // 3. Estados Vivos de Física e Câmera em 3ª Pessoa
     const ball = createInitialBallState(0, -13);
-    const pState = createInitialPlayerPitchState(player.stamina);
+    const pState = createInitialPlayerPitchState(activePlayer.stamina);
     const inputCollector = new PitchInputCollector();
     inputCollector.attach(host);
 
@@ -248,6 +252,14 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       if (inp.resetBallJustPressed) {
         respawnPlay(false);
       }
+      if (inp.exitOrFinishJustPressed) {
+        if (mode === 'FREE_PLAY' && callbacksRef.current.onCancel) {
+          callbacksRef.current.onCancel();
+          return;
+        }
+        finishWithCurrentScore();
+        return;
+      }
 
       if (mode !== 'FREE_PLAY' && !statsRef.current.finished) {
         timeLeft = Math.max(0, timeLeft - dt);
@@ -297,7 +309,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       } else {
         const { calledForBall } = stepPlayerAndBallControl(
           pState,
-          player,
+          activePlayer,
           ball,
           inp,
           camYaw,
@@ -402,7 +414,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         userPose,
         uSpeed,
         pState.shotCharge01,
-        player.preferredFoot === 'ESQUERDA',
+        activePlayer.preferredFoot === 'ESQUERDA',
         timeSec,
       );
 
@@ -477,7 +489,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         host.removeChild(renderer.domElement);
       }
     };
-  }, [club, compTheme, finishWithCurrentScore, maxAttempts, mode, player]);
+  }, [club.id, compTheme, finishWithCurrentScore, maxAttempts, mode]);
 
   return (
     <div
