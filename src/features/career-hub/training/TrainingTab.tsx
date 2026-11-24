@@ -119,13 +119,12 @@ export const TrainingTab: React.FC = () => {
                       </span>
                     )}
                     <span
-                      className={`px-2 py-0.5 font-condensed font-extrabold text-xs uppercase ${
-                        drill.tier === 'OURO'
-                          ? 'bg-[#C8A45D] text-[#0B0B0D]'
-                          : drill.tier === 'PRATA'
-                            ? 'bg-[#9498A3] text-[#0B0B0D]'
-                            : 'bg-[#8C5E3C] text-[#F5F5F7]'
-                      }`}
+                      className={`px-2 py-0.5 font-condensed font-extrabold text-xs uppercase ${drill.tier === 'OURO'
+                        ? 'bg-[#C8A45D] text-[#0B0B0D]'
+                        : drill.tier === 'PRATA'
+                          ? 'bg-[#9498A3] text-[#0B0B0D]'
+                          : 'bg-[#8C5E3C] text-[#F5F5F7]'
+                        }`}
                     >
                       {drill.tier}
                     </span>

@@ -47,7 +47,8 @@ export function getRollingWeekWindow(calendar: CalendarDate): {
   const elapsedDays = (calendar.week - 1) * 7 + (calendar.day - 1);
   const todayMs = startUtc + (mondayAdjust + elapsedDays) * 86_400_000;
 
-  const offsets = [-1, 0, 1, 2, 3, 4, 5];
+  // 8 células: 7 visíveis (-1..+5) + 1 célula extra (+6) fora da borda direita para entrada contínua sem pulo
+  const offsets = [-1, 0, 1, 2, 3, 4, 5, 6];
   const days: RollingDayCell[] = offsets.map((offset) => {
     const d = new Date(todayMs + offset * 86_400_000);
     const utcDow = d.getUTCDay(); // 0=Dom .. 6=Sáb
