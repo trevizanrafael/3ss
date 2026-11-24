@@ -4,7 +4,8 @@
 
 ## Status do Projeto
 
-- **Fase atual:** Concepção concluída / Definição final da Stack Tecnológica
+- **Fase atual:** Documentação base concluída — pronto para iniciar **Fase 1 (Protótipo Visual 3D)**
+- **Tecnologia Oficial:** `TypeScript` + `Three.js` + `Rapier3D` + `React` + `Vite` (+ `Tauri` para `.exe` Windows)
 - **Modo de jogo:** Singleplayer Offline — Carreira de Jogador (Atleta de linha)
 - **Mecânica-chave ("Three Stars"):** Sistema transversal de **0 a 3 Estrelas** presente na Peneira inicial, avaliação das partidas, aproveitamento de treinos e reputação na carreira.
 

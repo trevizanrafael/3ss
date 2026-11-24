@@ -1,5 +1,13 @@
+# Dependencies & Build
+node_modules/
+dist/
+dist-ssr/
+src-tauri/target/
+*.local
+
 # OS / Editor
 Thumbs.db
 Desktop.ini
 .DS_Store
 *.log
+

@@ -3,7 +3,7 @@
 ## Fase 0 — Concepção & Documentação (Concluída)
 - [x] Inicializar repositório Git e estrutura `docs/`
 - [x] Entrevista de Game Design (Gameplay, Carreira, Contratos, Treinos e Ligas)
-- [ ] Bater o martelo na tecnologia e validar o visual em protótipo
+- [x] Definir stack oficial (`Three.js` + `Rapier3D` + `React` + `TypeScript` + `Tauri`)
 
 ## Fase 1 — Protótipo Visual & Câmera 3ª Pessoa ("Prova de Fogo Gráfica")
 - [ ] Estádio 3D leve com gramado listrado, iluminação, traves com rede e arquibancada
