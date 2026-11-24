@@ -107,7 +107,7 @@ export const MainMenuScreen: React.FC = () => {
         </div>
       </header>
 
-      <main className="relative z-10 flex-1 grid lg:grid-cols-12 gap-8 items-center min-h-0 py-4">
+      <main className="relative z-10 flex-1 grid lg:grid-cols-12 lg:grid-rows-[minmax(0,1fr)] gap-8 items-center min-h-0 overflow-hidden py-3">
         {/* Coluna Esquerda: Marca Monumental + Vitrine da Liga Atual */}
         <div className={canContinue ? 'lg:col-span-4' : 'lg:col-span-7'}>
           <div
@@ -138,9 +138,9 @@ export const MainMenuScreen: React.FC = () => {
 
         {/* Coluna Central (Quando há Carreira Salva): Seu Craque 3D com a Camisa do Clube! */}
         {canContinue && player && currentClub && !arenaOpen && (
-          <div className="hidden lg:flex lg:col-span-4 h-full max-h-[500px] flex-col relative">
-            <div className="pointer-events-none absolute inset-x-0 top-2 text-center z-10">
-              <span className="font-condensed font-extrabold text-[110px] leading-none text-white/[0.06] select-none">
+          <div className="hidden lg:flex lg:col-span-4 h-full min-h-0 flex-col justify-between relative py-1 overflow-hidden">
+            <div className="pointer-events-none absolute inset-x-0 top-3 text-center z-0">
+              <span className="font-condensed font-extrabold text-[104px] leading-none text-white/[0.045] select-none">
                 #{player.shirtNumber}
               </span>
             </div>
@@ -150,9 +150,9 @@ export const MainMenuScreen: React.FC = () => {
               accentColor={theme.accentPrimary}
               framing="HERO"
               allowDragSpin
-              className="flex-1 w-full"
+              className="flex-1 w-full min-h-0 z-10"
             />
-            <div className="text-center text-[10px] uppercase tracking-[0.22em] text-[#9498A3] -mt-2">
+            <div className="shrink-0 pt-1 text-center text-[10px] uppercase tracking-[0.22em] text-[#9498A3] relative z-10">
               ARRASTE PARA GIRAR • UNIFORME OFICIAL {currentClub.shortName}
             </div>
           </div>

@@ -11,7 +11,7 @@ interface ClubPlayer3DViewportProps {
   player: CareerPlayer;
   club: ClubData;
   accentColor?: string;
-  /** 'HERO' = corpo inteiro grande p/ Menu Principal | 'BUST' = enquadramento da cintura p/ cima no card da Central */
+  /** 'HERO' = corpo inteiro + pedestal p/ Menu Principal | 'BUST' = cintura p/ cima no card da Central */
   framing?: 'HERO' | 'BUST';
   allowDragSpin?: boolean;
   className?: string;
@@ -26,13 +26,15 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
   className = '',
 }) => {
   const hostRef = useRef<HTMLDivElement | null>(null);
-  const targetYawRef = useRef(framing === 'HERO' ? -0.28 : -0.22);
-  const currentYawRef = useRef(framing === 'HERO' ? -0.28 : -0.22);
+  const targetYawRef = useRef(framing === 'HERO' ? -0.26 : -0.22);
+  const currentYawRef = useRef(framing === 'HERO' ? -0.26 : -0.22);
 
   const bundleRef = useRef<{
     actorHolder: THREE.Group;
     rig: AnimatedRigHandles | null;
     rimLight: THREE.DirectionalLight;
+    bounds: { minY: number; maxY: number; width: number; frontDepth: number };
+    fitCamera: () => void;
     disposeActor?: () => void;
   } | null>(null);
 
@@ -41,22 +43,16 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
     if (!host) return;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(framing === 'BUST' ? 28 : 31, 1, 0.1, 25);
-    const hRatio = player.heightCm / 178;
-
-    if (framing === 'BUST') {
-      camera.position.set(0, 1.18 * hRatio, 2.08);
-      camera.lookAt(0, 1.08 * hRatio, 0);
-    } else {
-      camera.position.set(0, 0.96, 2.95);
-      camera.lookAt(0, 0.83, 0);
-    }
+    const camera = new THREE.PerspectiveCamera(framing === 'BUST' ? 28 : 30, 1, 0.1, 30);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.14;
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
     host.appendChild(renderer.domElement);
 
     scene.add(new THREE.HemisphereLight('#FFFFFF', '#1E293B', 1.32));
@@ -70,17 +66,48 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
 
     const actorHolder = new THREE.Group();
     scene.add(actorHolder);
-    bundleRef.current = { actorHolder, rig: null, rimLight };
 
-    const syncSize = () => {
-      const w = Math.max(120, host.clientWidth);
-      const h = Math.max(120, host.clientHeight);
-      camera.aspect = w / h;
+    const fitCamera = () => {
+      const w = Math.max(80, host.clientWidth);
+      const h = Math.max(80, host.clientHeight);
+      const aspect = w / h;
+      camera.aspect = aspect;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
+
+      const b = bundleRef.current?.bounds ?? {
+        minY: -0.06,
+        maxY: 1.76,
+        width: 1.36,
+        frontDepth: 0.66,
+      };
+
+      const spanY = (b.maxY - b.minY) * (framing === 'HERO' ? 1.18 : 1.14);
+      const spanX = b.width * (framing === 'HERO' ? 1.18 : 1.15);
+      const centerY = (b.minY + b.maxY) * 0.5;
+
+      const vFovRad = THREE.MathUtils.degToRad(camera.fov);
+      const tanHalfV = Math.tan(vFovRad * 0.5);
+      const tanHalfH = Math.max(0.08, tanHalfV * aspect);
+
+      const distV = (spanY * 0.5) / tanHalfV + b.frontDepth;
+      const distH = (spanX * 0.5) / tanHalfH + b.frontDepth * 0.7;
+      const dist = Math.max(distV, distH);
+
+      camera.position.set(0, centerY + (framing === 'HERO' ? 0.14 : 0.06), dist);
+      camera.lookAt(0, centerY, 0);
     };
-    syncSize();
-    const ro = new ResizeObserver(syncSize);
+
+    bundleRef.current = {
+      actorHolder,
+      rig: null,
+      rimLight,
+      bounds: { minY: -0.06, maxY: 1.76, width: 1.36, frontDepth: 0.66 },
+      fitCamera,
+    };
+
+    fitCamera();
+    const ro = new ResizeObserver(fitCamera);
     ro.observe(host);
 
     let dragging = false;
@@ -118,12 +145,8 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
         rig.rightForearmPivot.rotation.x = -0.28;
       }
 
-      if (!dragging) {
-        // Oscilação sutil de vitrine de estádio
-        const idleSwing = (framing === 'HERO' ? -0.28 : -0.22) + Math.sin(t * 0.6) * 0.14;
-        if (!allowDragSpin) {
-          targetYawRef.current = idleSwing;
-        }
+      if (!dragging && !allowDragSpin) {
+        targetYawRef.current = (framing === 'HERO' ? -0.26 : -0.22) + Math.sin(t * 0.6) * 0.14;
       }
 
       currentYawRef.current += (targetYawRef.current - currentYawRef.current) * 0.1;
@@ -147,7 +170,7 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
         host.removeChild(renderer.domElement);
       }
     };
-  }, [allowDragSpin, framing, player.heightCm]);
+  }, [allowDragSpin, framing]);
 
   useEffect(() => {
     const bundle = bundleRef.current;
@@ -163,7 +186,6 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
 
     const built = buildBlockyArcadeFootballer3D(player, club);
     if (framing === 'BUST') {
-      // Esconde o pedestal no modo busto para flutuar limpo dentro do card Meu Pro!
       built.root.children.forEach((child) => {
         if (child !== built.rig.character) {
           child.visible = false;
@@ -171,14 +193,41 @@ export const ClubPlayer3DViewport: React.FC<ClubPlayer3DViewportProps> = ({
       });
     }
     bundle.actorHolder.add(built.root);
+
+    // Mede a caixa 3D real do atleta (altura + cabelo + pedestal) para NUNCA cortar cabeça ou pés!
+    built.root.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(
+      framing === 'BUST' ? built.rig.character : built.root,
+    );
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const hScale = player.heightCm / 178;
+
+    if (framing === 'BUST') {
+      bundle.bounds = {
+        minY: 0.72 * hScale,
+        maxY: Math.max(1.62 * hScale, box.max.y + 0.04),
+        width: Math.max(0.82, size.x),
+        frontDepth: 0.25,
+      };
+    } else {
+      bundle.bounds = {
+        minY: Math.min(-0.06, box.min.y),
+        maxY: Math.max(1.68 * hScale, box.max.y + 0.04),
+        width: Math.max(1.34, size.x, size.z),
+        frontDepth: 0.68,
+      };
+    }
+
     bundle.rig = built.rig;
     bundle.disposeActor = built.dispose;
+    bundle.fitCamera();
   }, [player, club, framing]);
 
   return (
     <div
       ref={hostRef}
-      className={`relative overflow-hidden ${allowDragSpin ? 'cursor-grab active:cursor-grabbing' : ''} ${className}`}
+      className={`relative min-h-0 min-w-0 overflow-hidden ${allowDragSpin ? 'cursor-grab active:cursor-grabbing' : ''} ${className}`}
     />
   );
 };
