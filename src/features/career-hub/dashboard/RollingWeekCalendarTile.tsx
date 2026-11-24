@@ -208,6 +208,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
         tabIndex={0}
         data-focusable="true"
         data-autofocus="true"
+        data-simulating={isSimulating ? 'true' : undefined}
         onClick={handleTileClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -218,7 +219,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
         style={{ borderTopColor: isSimulating ? '#F5F5F7' : compTheme.accentPrimary }}
         className={`lg:col-span-8 lg:row-span-4 console-tile border-t-[3px] p-6 flex flex-col justify-between cursor-pointer select-none transition-colors outline-none ${
           isSimulating
-            ? 'relative z-40 bg-[#14161B] shadow-[0_0_80px_rgba(0,0,0,0.95)]'
+            ? 'relative z-50 bg-[#14161B] shadow-[0_0_80px_rgba(0,0,0,0.95)]'
             : 'console-tile-interactive'
         }`}
       >

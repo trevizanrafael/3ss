@@ -89,7 +89,11 @@ html[data-input-mode='gamepad'] [data-focusable='true']:focus {
   box-shadow:
     0 0 0 3px rgba(200, 164, 93, 0.55),
     inset 0 0 24px rgba(200, 164, 93, 0.14) !important;
-  z-index: 15;
+}
+
+html[data-input-mode='gamepad'] [data-simulating='true']:focus {
+  outline: none !important;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.95) !important;
 }
 
 ::-webkit-scrollbar {
