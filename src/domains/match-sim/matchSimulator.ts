@@ -125,15 +125,15 @@ export function resolveMatchSimulation(
 
   const goalShareProb = clamp(
     (sector === 'ATK' ? 0.45 : sector === 'MID' ? 0.23 : 0.07) +
-      skillEdge * 0.08 +
-      (mindset === 'AGRESSIVO_GOL' ? 0.1 : -0.02),
+    skillEdge * 0.08 +
+    (mindset === 'AGRESSIVO_GOL' ? 0.1 : -0.02),
     0.04,
     0.74,
   );
   const assistShareProb = clamp(
     (sector === 'MID' ? 0.36 : sector === 'ATK' ? 0.2 : 0.14) +
-      skillEdge * 0.07 +
-      (mindset === 'COLETIVO_SEGURO' ? 0.1 : 0),
+    skillEdge * 0.07 +
+    (mindset === 'COLETIVO_SEGURO' ? 0.1 : 0),
     0.05,
     0.6,
   );
@@ -175,31 +175,12 @@ export function resolveMatchSimulation(
     scorePoints >= 75 ? 3 : scorePoints >= 52 ? 2 : scorePoints >= 34 ? 1 : 0;
 
   const narrative: string[] = [];
-  if (rivalry) {
-    narrative.push(
-      `Clima de clássico (${rivalry.derbyName} • ${rivalry.crowdDecibels} dB — ${
-        rivalry.stadiumMood === 'HOSTIL_CONTRA'
-          ? `Hostilidade ${rivalry.hostilityAgainstPlayer}% contra você`
-          : rivalry.stadiumMood === 'CALDEIRAO_FAVOR'
-            ? 'Caldeirão pulsando a favor'
-            : 'Estádio dividido'
-      }).`,
-    );
-  }
   narrative.push(
     !isStarter
       ? `Entrou vindo do banco aos ${minuteEntered}' do 2º tempo (${stageLabel}).`
       : `Titular desde o apito inicial (${stageLabel}).`,
   );
-  if (playerGoals > 0) {
-    narrative.push(
-      rivalry && rivalry.stadiumMood === 'HOSTIL_CONTRA'
-        ? `Calou o estádio rival! Marcou ${playerGoals} gol(s) sob vaias ensurdecedoras!`
-        : rivalry
-          ? `Herói do ${rivalry.derbyName}: marcou ${playerGoals} gol(s) decisivo(s)!`
-          : `Decisivo: marcou ${playerGoals} gol(s) na partida!`,
-    );
-  }
+  if (playerGoals > 0) narrative.push(`Decisivo: marcou ${playerGoals} gol(s) na partida!`);
   if (playerAssists > 0) narrative.push(`Serviu ${playerAssists} assistência(s) limpa(s).`);
   if (sector === 'DEF' && opponentGoals === 0) narrative.push(`Defesa intacta: ${keyActions} ações defensivas.`);
   if (subbedOffForStamina) narrative.push(`Substituído aos ${minuteExited}' por desgaste.`);

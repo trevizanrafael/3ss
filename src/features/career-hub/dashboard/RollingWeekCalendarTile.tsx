@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
-import { resolveRivalryMatchContext } from '../../../domains/rivalry/rivalryEngine';
 import {
   findClubLeagueIdInWorld,
   findUpcomingFixtureForClub,
@@ -186,14 +185,6 @@ export const RollingWeekCalendarTile: React.FC = () => {
   );
   const activeCompId = todayFixture?.competitionId ?? upcomingFx?.competitionId ?? clubLeagueId;
   const compTheme = getCompetitionTheme(activeCompId);
-  const highlightFx = todayFixture ?? upcomingFx;
-  const upcomingRivalry = highlightFx
-    ? resolveRivalryMatchContext(
-        highlightFx.myTeamId ?? contract.clubId,
-        highlightFx.opponentId,
-        highlightFx.isHome,
-      )
-    : null;
 
   const { currentMonthLabel, days } = getRollingWeekWindow(
     calendar,
@@ -270,9 +261,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
             competitionId={activeCompId}
             size="md"
             stageSubtitle={
-              upcomingRivalry
-                ? `${todayFixture?.stageLabel ?? upcomingFx?.stageLabel ?? ''} • CLÁSSICO: ${upcomingRivalry.derbyName}`
-                : (todayFixture?.stageLabel ?? upcomingFx?.stageLabel ?? 'PÓS-TEMPORADA')
+              todayFixture?.stageLabel ?? upcomingFx?.stageLabel ?? 'PÓS-TEMPORADA'
             }
           />
           <div className="font-condensed uppercase font-extrabold text-2xl tracking-wider text-[#F5F5F7]">
@@ -342,29 +331,18 @@ export const RollingWeekCalendarTile: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="h-11 flex flex-col items-center justify-center gap-0.5">
+                    <div className="h-9 flex items-center justify-center">
                       {cell.fixture ? (
-                        <>
-                          {resolveRivalryMatchContext(
-                            cell.fixture.myTeamId ?? contract.clubId,
-                            cell.fixture.opponentId,
-                            cell.fixture.isHome,
-                          ) && (
-                            <span className="px-1 bg-[#DC2626] text-[#F5F5F7] font-condensed uppercase font-extrabold text-[8px] tracking-widest leading-tight">
-                              CLÁSSICO
-                            </span>
+                        <div className="flex items-center gap-1">
+                          <ClubCrest clubId={cell.fixture.opponentId} size="sm" />
+                          {(cell.fixture.isContinental || cell.fixture.isNationalTeam) && (
+                            <CompetitionBadge
+                              competitionId={cell.fixture.competitionId}
+                              size="sm"
+                              showName={false}
+                            />
                           )}
-                          <div className="flex items-center gap-1">
-                            <ClubCrest clubId={cell.fixture.opponentId} size="sm" />
-                            {(cell.fixture.isContinental || cell.fixture.isNationalTeam) && (
-                              <CompetitionBadge
-                                competitionId={cell.fixture.competitionId}
-                                size="sm"
-                                showName={false}
-                              />
-                            )}
-                          </div>
-                        </>
+                        </div>
                       ) : cell.isTrainingDay ? (
                         <span
                           className={`px-2 py-0.5 font-condensed uppercase font-extrabold text-[10px] tracking-widest ${
@@ -399,14 +377,6 @@ export const RollingWeekCalendarTile: React.FC = () => {
                   </strong>{' '}
                   • {upcomingFx.stageLabel}
                 </span>
-                {upcomingRivalry && (
-                  <span className="hidden xl:inline-block px-2 py-0.5 bg-[#2A1013] border border-[#EF4444] text-[#FCA5A5] font-condensed uppercase font-extrabold text-xs tracking-wider shrink-0">
-                    {upcomingRivalry.derbyName} •{' '}
-                    {upcomingRivalry.stadiumMood === 'HOSTIL_CONTRA'
-                      ? `HOSTIL ${upcomingRivalry.crowdDecibels} dB`
-                      : `CALDEIRÃO ${upcomingRivalry.crowdDecibels} dB`}
-                  </span>
-                )}
               </>
             ) : (
               <span className="font-condensed uppercase font-bold text-base text-[#9498A3]">

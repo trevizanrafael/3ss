@@ -2,7 +2,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ClubData } from '../../../data/clubs/types';
-import { RivalryMatchContext } from '../../../domains/rivalry/rivalryEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { NavDirection } from '../../../shared/gamepad/spatialNavigator';
 
@@ -11,7 +10,6 @@ interface InteractiveTravelMapProps {
   opponentClub: ClubData;
   isHome: boolean;
   accentColor: string;
-  rivalry?: RivalryMatchContext;
 }
 
 export function computeDistanceKm(
@@ -80,7 +78,6 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
   opponentClub,
   isHome,
   accentColor,
-  rivalry,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -89,56 +86,56 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
   const originClub = myClub;
   const hostClub = isHome ? myClub : opponentClub;
 
-  const originCoords: [number, number] = useMemo(
-    () => [originClub.lat ?? -22.91, originClub.lng ?? -43.23],
-    [originClub.lat, originClub.lng],
-  );
-  const hostCoords: [number, number] = useMemo(
-    () => [hostClub.lat ?? -23.52, hostClub.lng ?? -46.67],
-    [hostClub.lat, hostClub.lng],
-  );
-  const visitorCoords: [number, number] = useMemo(
-    () => [opponentClub.lat ?? -23.52, opponentClub.lng ?? -46.67],
-    [opponentClub.lat, opponentClub.lng],
-  );
+  const originLat = originClub.lat ?? -22.91;
+  const originLng = originClub.lng ?? -43.23;
+  const hostLat = hostClub.lat ?? -23.52;
+  const hostLng = hostClub.lng ?? -46.67;
+  const visitorLat = opponentClub.lat ?? -23.52;
+  const visitorLng = opponentClub.lng ?? -46.67;
 
   const distanceKm = useMemo(
-    () =>
-      isHome
-        ? 0
-        : computeDistanceKm(originCoords[0], originCoords[1], hostCoords[0], hostCoords[1]),
-    [isHome, originCoords, hostCoords],
+    () => (isHome ? 0 : computeDistanceKm(originLat, originLng, hostLat, hostLng)),
+    [isHome, originLat, originLng, hostLat, hostLng],
   );
 
   const fitMapRoute = () => {
     const map = mapRef.current;
     if (!map) return;
     if (isHome) {
-      map.setView(hostCoords, mapStyle === 'SATELLITE' ? 15 : 12, { animate: true });
+      map.setView([hostLat, hostLng], mapStyle === 'SATELLITE' ? 15 : 12, { animate: true });
     } else if (distanceKm < 25) {
-      map.setView(hostCoords, 11, { animate: true });
+      map.setView([hostLat, hostLng], 11, { animate: true });
     } else {
-      const bounds = L.latLngBounds([originCoords, hostCoords]);
+      const bounds = L.latLngBounds([
+        [originLat, originLng],
+        [hostLat, hostLng],
+      ]);
       map.fitBounds(bounds, { padding: [54, 54], maxZoom: 11, animate: true });
     }
   };
 
+  // Depende ESTRITAMENTE de valores primitivos (IDs e estilo), NUNCA pisca ao mudar postura no D-Pad!
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const maxAllowedZoom = mapStyle === 'SATELLITE' ? 18 : 16;
     const map = L.map(containerRef.current, {
       zoomControl: true,
       attributionControl: true,
       scrollWheelZoom: true,
       dragging: true,
+      minZoom: 2,
+      maxZoom: maxAllowedZoom,
+      zoomSnap: 1,
+      zoomDelta: 1,
     });
     mapRef.current = map;
 
     if (mapStyle === 'DARK') {
-      // Esri ArcGIS World Dark Gray Base + Labels (100% gratuito, sem chave de API, nativo escuro!)
       L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
         {
+          minZoom: 2,
           maxZoom: 16,
           attribution: '© Esri, HERE, Garmin, OpenStreetMap',
         },
@@ -147,14 +144,15 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
         {
+          minZoom: 2,
           maxZoom: 16,
         },
       ).addTo(map);
     } else {
-      // Visão de Satélite Real dos Estádios e Cidades + Nomes
       L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         {
+          minZoom: 2,
           maxZoom: 18,
           attribution: '© Esri World Imagery',
         },
@@ -163,10 +161,15 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
         {
+          minZoom: 2,
           maxZoom: 18,
         },
       ).addTo(map);
     }
+
+    const hostCoords: [number, number] = [hostLat, hostLng];
+    const originCoords: [number, number] = [originLat, originLng];
+    const visitorCoords: [number, number] = [visitorLat, visitorLng];
 
     if (isHome) {
       L.circleMarker(hostCoords, {
@@ -185,7 +188,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         )
         .addTo(map);
 
-      if (computeDistanceKm(hostCoords[0], hostCoords[1], visitorCoords[0], visitorCoords[1]) > 8) {
+      if (computeDistanceKm(hostLat, hostLng, visitorLat, visitorLng) > 8) {
         const visitorArc = buildCurvedRoutePoints(visitorCoords, hostCoords);
         L.polyline(visitorArc, {
           color: '#9498A3',
@@ -222,24 +225,16 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         .bindPopup(`<b>Saída: ${originClub.name}</b><br/>${originClub.city ?? ''}`)
         .addTo(map);
 
-      const pinColor =
-        rivalry?.stadiumMood === 'HOSTIL_CONTRA' ? '#EF4444' : accentColor;
-      const pinTag = rivalry
-        ? rivalry.stadiumMood === 'HOSTIL_CONTRA'
-          ? `CALDEIRÃO HOSTIL • ${rivalry.crowdDecibels} dB`
-          : `CLÁSSICO • ${rivalry.crowdDecibels} dB`
-        : 'DESTINO • JOGO';
-
       L.circleMarker(hostCoords, {
-        radius: rivalry ? 32 : 24,
-        color: pinColor,
-        weight: rivalry ? 2.2 : 1.5,
-        fillColor: pinColor,
-        fillOpacity: rivalry ? 0.26 : 0.18,
+        radius: 24,
+        color: accentColor,
+        weight: 1.5,
+        fillColor: accentColor,
+        fillOpacity: 0.18,
       }).addTo(map);
 
       L.marker(hostCoords, {
-        icon: makeClubPinIcon(hostClub, pinTag, pinColor),
+        icon: makeClubPinIcon(hostClub, 'DESTINO • JOGO', accentColor),
       })
         .bindPopup(
           `<b>${hostClub.stadiumName ?? hostClub.name}</b><br/>${hostClub.city ?? ''} (${distanceKm} km)`,
@@ -258,59 +253,55 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
 
     window.setTimeout(() => map.invalidateSize(), 80);
 
-    // Suporte ao Analógico Direito (RS) para mover e D-Pad ↑/↓ para Zoom no Mapa!
-    const onRsMove = (ev: Event) => {
-      const { dx, dy } = (ev as CustomEvent<{ dx: number; dy: number }>).detail;
-      map.panBy([dx * 12, dy * 12], { animate: false });
-    };
-    const onDpadZoom = (ev: Event) => {
-      const dir = (ev as CustomEvent<NavDirection>).detail;
-      if (dir === 'UP') map.zoomIn();
-      else if (dir === 'DOWN') map.zoomOut();
-    };
-    window.addEventListener('gamepad-rs-move', onRsMove);
-    window.addEventListener('prematch-dpad', onDpadZoom);
-
     return () => {
-      window.removeEventListener('gamepad-rs-move', onRsMove);
-      window.removeEventListener('prematch-dpad', onDpadZoom);
       map.remove();
       mapRef.current = null;
     };
-  }, [
-    isHome,
-    mapStyle,
-    originClub,
-    hostClub,
-    opponentClub,
-    originCoords,
-    hostCoords,
-    visitorCoords,
-    distanceKm,
-    accentColor,
-    rivalry,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myClub.id, opponentClub.id, isHome, mapStyle, accentColor]);
+
+  // Listeners isolados de Controle (RS para mover e D-Pad ↑/↓ para Zoom + e Zoom -) sem recriar o mapa!
+  useEffect(() => {
+    const onRsMove = (ev: Event) => {
+      const map = mapRef.current;
+      if (!map) return;
+      const { dx, dy } = (ev as CustomEvent<{ dx: number; dy: number }>).detail;
+      map.panBy([dx * 12, dy * 12], { animate: false });
+    };
+
+    const onDpadZoom = (ev: Event) => {
+      const map = mapRef.current;
+      if (!map) return;
+      const dir = (ev as CustomEvent<NavDirection>).detail;
+      const curr = Math.round(map.getZoom());
+      if (dir === 'UP') {
+        map.setZoom(Math.min(map.getMaxZoom(), curr + 1), { animate: false });
+      } else if (dir === 'DOWN') {
+        map.setZoom(Math.max(map.getMinZoom(), curr - 1), { animate: false });
+      }
+    };
+
+    window.addEventListener('gamepad-rs-move', onRsMove);
+    window.addEventListener('prematch-dpad', onDpadZoom);
+    return () => {
+      window.removeEventListener('gamepad-rs-move', onRsMove);
+      window.removeEventListener('prematch-dpad', onDpadZoom);
+    };
+  }, []);
 
   return (
     <div className="console-tile flex flex-col h-full min-h-0 overflow-hidden">
       <div className="px-4 py-3 border-b border-[#242730] flex items-center justify-between gap-2 shrink-0 bg-[#101216]">
         <div className="min-w-0">
           <div
-            className="text-[10px] uppercase tracking-[0.2em] font-bold truncate"
-            style={{
-              color:
-                rivalry?.stadiumMood === 'HOSTIL_CONTRA' ? '#EF4444' : accentColor,
-            }}
+            className="text-[10px] uppercase tracking-[0.2em] font-bold"
+            style={{ color: accentColor }}
           >
-            {rivalry
-              ? `${rivalry.derbyName} • ${
-                  isHome ? 'CALDEIRÃO EM CASA' : `ARENA HOSTIL (${distanceKm} KM)`
-                }`
-              : isHome
-                ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
-                : distanceKm < 25
-                  ? 'FORA DE CASA • CLÁSSICO REGIONAL'
-                  : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
+            {isHome
+              ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
+              : distanceKm < 25
+                ? 'FORA DE CASA • CLÁSSICO REGIONAL'
+                : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
           </div>
           <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate">
             {isHome

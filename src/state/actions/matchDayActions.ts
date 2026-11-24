@@ -169,13 +169,12 @@ export function computePlayedMatchState(
     ? ` • AGREG. ${tls.aggMyGoals}x${tls.aggOppGoals} (${tls.qualified ? 'CLASSIFICADO' : 'ELIMINADO'})`
     : '';
   const penSuffix = pen ? ` • PÊN ${pen.myPenGoals}x${pen.oppPenGoals}` : '';
-  const derbyPrefix = result.rivalry ? `${result.rivalry.derbyName} • ` : '';
   nextFeed = [
     {
       ...makeEvent(
         calendar.week,
         `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${aggSuffix}${penSuffix} (${result.stars}★)`,
-        `${derbyPrefix}${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
+        `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
         'MATCH',
       ),
       clubId: activeTeamId,
