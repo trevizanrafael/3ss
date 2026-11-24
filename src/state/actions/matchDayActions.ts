@@ -24,6 +24,7 @@ import { makeEvent } from '../helpers/feedHelper';
 export function computePlayedMatchState(
   state: CareerState,
   mindset: TacticalMindset,
+  precomputedResult?: MatchPerformanceResult,
 ): { patch: Partial<CareerState>; result: MatchPerformanceResult } | null {
   const { player, contract, calendar, worldSeason, periodStats } = state;
   if (!player || !contract) return null;
@@ -45,18 +46,21 @@ export function computePlayedMatchState(
   const activeStage = isNatGame ? 'PRO' : contract.stage;
 
   const myTeam = getClubById(activeTeamId);
-  const result = resolveMatchSimulation(
-    player,
-    activeTeamId,
-    fixture.opponentId,
-    fixture.isHome,
-    fixture.competitionId,
-    fixture.stageLabel,
-    activeRole,
-    activeStage,
-    mindset,
-  );
+  const result =
+    precomputedResult ??
+    resolveMatchSimulation(
+      player,
+      activeTeamId,
+      fixture.opponentId,
+      fixture.isHome,
+      fixture.competitionId,
+      fixture.stageLabel,
+      activeRole,
+      activeStage,
+      mindset,
+    );
 
+  const pen = result.penaltyShootout;
   const nextWorld = simulateWorldCompetitionsOnDay(
     worldSeason,
     calendar.week,
@@ -65,6 +69,8 @@ export function computePlayedMatchState(
       clubId: activeTeamId,
       clubGoals: result.clubGoals,
       oppGoals: result.opponentGoals,
+      clubPenGoals: pen?.myPenGoals,
+      oppPenGoals: pen?.oppPenGoals,
     },
   );
 
@@ -147,11 +153,12 @@ export function computePlayedMatchState(
 
   const opponent = getClubById(fixture.opponentId);
   const compTheme = getCompetitionTheme(fixture.competitionId);
+  const penSuffix = pen ? ` • PÊN ${pen.myPenGoals}x${pen.oppPenGoals}` : '';
   nextFeed = [
     {
       ...makeEvent(
         calendar.week,
-        `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName} (${result.stars}★)`,
+        `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${penSuffix} (${result.stars}★)`,
         `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
         'MATCH',
       ),

@@ -125,12 +125,14 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
   const renderSingleMatch = (m: FixtureMatch) => {
     const h = getClubById(m.homeClubId);
     const a = getClubById(m.awayClubId);
+    const hasPen =
+      m.penHome !== undefined && m.penHome !== null && m.penAway !== undefined && m.penAway !== null;
     return (
       <div key={m.id} className="bg-[#0E0F12] border border-[#242730] p-3 text-xs space-y-1.5">
         {[
-          { team: h, goals: m.homeGoals },
-          { team: a, goals: m.awayGoals },
-        ].map(({ team, goals }) => (
+          { team: h, goals: m.homeGoals, pen: m.penHome },
+          { team: a, goals: m.awayGoals, pen: m.penAway },
+        ].map(({ team, goals, pen }) => (
           <div
             key={team.id}
             onClick={() => onSelectTeam(team.id)}
@@ -144,8 +146,8 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
                 {team.name}
               </span>
             </div>
-            <span className="font-condensed font-extrabold text-sm tabular-nums">
-              {m.played ? (goals ?? 0) : '—'}
+            <span className="font-condensed font-extrabold text-sm tabular-nums shrink-0">
+              {m.played ? `${goals ?? 0}${hasPen ? ` (PÊN ${pen})` : ''}` : '—'}
             </span>
           </div>
         ))}

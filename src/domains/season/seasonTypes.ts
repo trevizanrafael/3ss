@@ -20,6 +20,8 @@ export interface FixtureMatch {
   awayClubId: string;
   homeGoals: number | null;
   awayGoals: number | null;
+  penHome?: number | null;
+  penAway?: number | null;
   played: boolean;
   winnerId?: string;
 }
@@ -45,6 +47,8 @@ export interface KnockoutTie {
   leg1Away: number | null;
   leg2Home: number | null;
   leg2Away: number | null;
+  penHome?: number | null;
+  penAway?: number | null;
   winnerClubId: string | null;
 }
 
@@ -69,6 +73,11 @@ export interface ScheduledClubFixture {
   opponentId: string;
   isHome: boolean;
   dayOfWeek: 3 | 6 | 7;
+  /** True quando este jogo decide mata-mata (jogo único eliminatório ou jogo de VOLTA)! */
+  decidesKnockout?: boolean;
+  /** Placar da IDA (na perspectiva do time do usuário) quando for jogo de VOLTA */
+  prevLegMyGoals?: number;
+  prevLegOppGoals?: number;
 }
 
 export interface SeasonHistoryRecord {

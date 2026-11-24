@@ -137,8 +137,8 @@ export const useCareerStore = create<CareerState>()(
 
       advanceDay: () => set(computeNextDayState(get(), false)),
 
-      playCurrentMatch: (mindset) => {
-        const outcome = computePlayedMatchState(get(), mindset);
+      playCurrentMatch: (mindset, precomputedResult) => {
+        const outcome = computePlayedMatchState(get(), mindset, precomputedResult);
         if (!outcome) return null;
         set(outcome.patch);
         set(computeNextDayState(get(), true));

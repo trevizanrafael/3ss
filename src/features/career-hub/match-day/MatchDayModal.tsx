@@ -5,17 +5,23 @@ import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import {
   MatchPerformanceResult,
+  resolveMatchSimulation,
   TacticalMindset,
 } from '../../../domains/match-sim/matchSimulator';
+import {
+  PenaltyCorner,
+  resolveInteractiveShootout,
+} from '../../../domains/match-sim/penaltyShootoutEngine';
 import { getClubFixtureOnExactDay } from '../../../domains/season/worldSeasonEngine';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
-import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { useNavigationStore } from '../../../state/useNavigationStore';
 import { InteractiveTravelMap } from './InteractiveTravelMap';
 import { KitChoice, MatchKitsAndInfoPanel } from './MatchKitsAndInfoPanel';
+import { PenaltyChoiceStage, PenaltyScoreboardStrip } from './PenaltyShootoutPanel';
 import { TacticalLineupPitch } from './TacticalLineupPitch';
 
 export const MatchDayModal: React.FC = () => {
@@ -26,12 +32,17 @@ export const MatchDayModal: React.FC = () => {
   const [mindset, setMindset] = useState<TacticalMindset>('EQUILIBRADO');
   const [homeKit, setHomeKit] = useState<KitChoice>('HOME');
   const [awayKit, setAwayKit] = useState<KitChoice>('AWAY');
+  const [pendingPenMatch, setPendingPenMatch] = useState<{
+    sim90: MatchPerformanceResult;
+    aggLabel?: string;
+  } | null>(null);
   const [result, setResult] = useState<MatchPerformanceResult | null>(null);
 
   useEffect(() => {
     if (!matchModalOpen) return;
     setHomeKit('HOME');
     setAwayKit('AWAY');
+    setPendingPenMatch(null);
   }, [matchModalOpen]);
 
   if (!matchModalOpen || !player || !contract) return null;
@@ -46,13 +57,15 @@ export const MatchDayModal: React.FC = () => {
     callUp,
   );
 
-  const compId = result?.competitionId ?? liveFixture?.competitionId;
-  const opponentId = result?.opponentId ?? liveFixture?.opponentId;
-  const isHome = result ? result.isHome : (liveFixture?.isHome ?? true);
-  const stageLabel = result?.stageLabel ?? liveFixture?.stageLabel ?? 'PARTIDA OFICIAL';
+  const refMatch = result ?? pendingPenMatch?.sim90;
+  const compId = refMatch?.competitionId ?? liveFixture?.competitionId;
+  const opponentId = refMatch?.opponentId ?? liveFixture?.opponentId;
+  const isHome = refMatch ? refMatch.isHome : (liveFixture?.isHome ?? true);
+  const stageLabel = refMatch?.stageLabel ?? liveFixture?.stageLabel ?? 'PARTIDA OFICIAL';
   const isContinental = Boolean(liveFixture?.isContinental || liveFixture?.isNationalTeam);
-  const activeMyTeamId = result?.clubId ?? liveFixture?.myTeamId ?? contract.clubId;
+  const activeMyTeamId = refMatch?.clubId ?? liveFixture?.myTeamId ?? contract.clubId;
   const activeUserRole = liveFixture?.nationalRole ?? contract.role;
+  const activeStage = liveFixture?.isNationalTeam ? 'PRO' : contract.stage;
 
   if (!compId || !opponentId) return null;
 
@@ -62,7 +75,6 @@ export const MatchDayModal: React.FC = () => {
   const homeClub = isHome ? myClub : opponentClub;
   const awayClub = isHome ? opponentClub : myClub;
 
-  // Buscar posição na tabela quando for jogo de Liga Nacional
   let homeRank: number | null = null;
   let awayRank: number | null = null;
   if (!isContinental && worldSeason.leagues[compId as LeagueId]) {
@@ -73,7 +85,74 @@ export const MatchDayModal: React.FC = () => {
     if (aIdx !== -1) awayRank = aIdx + 1;
   }
 
+  const prevLegSubtitle =
+    liveFixture?.prevLegMyGoals !== undefined && liveFixture?.prevLegOppGoals !== undefined
+      ? ` • IDA: ${myClub.shortName} ${liveFixture.prevLegMyGoals}x${liveFixture.prevLegOppGoals} ${opponentClub.shortName}`
+      : '';
+
+  const handleStartMatch = () => {
+    if (!liveFixture) return;
+    const sim90 = resolveMatchSimulation(
+      player,
+      activeMyTeamId,
+      liveFixture.opponentId,
+      liveFixture.isHome,
+      liveFixture.competitionId,
+      liveFixture.stageLabel,
+      activeUserRole,
+      activeStage,
+      mindset,
+    );
+
+    const hasPrevLeg =
+      liveFixture.prevLegMyGoals !== undefined && liveFixture.prevLegOppGoals !== undefined;
+    const aggMy = (liveFixture.prevLegMyGoals ?? 0) + sim90.clubGoals;
+    const aggOpp = (liveFixture.prevLegOppGoals ?? 0) + sim90.opponentGoals;
+
+    const aggregateNote = hasPrevLeg
+      ? `AGREGADO: ${myClub.shortName} ${aggMy} x ${aggOpp} ${opponentClub.shortName} (IDA ${liveFixture.prevLegMyGoals}x${liveFixture.prevLegOppGoals})`
+      : undefined;
+
+    const simWithAgg: MatchPerformanceResult = {
+      ...sim90,
+      aggregateNote,
+    };
+
+    if (liveFixture.decidesKnockout && aggMy === aggOpp) {
+      setPendingPenMatch({ sim90: simWithAgg, aggLabel: aggregateNote });
+      return;
+    }
+
+    const committed = playCurrentMatch(mindset, simWithAgg);
+    if (committed) setResult(committed);
+  };
+
+  const handleSelectPenaltyCorner = (corner: PenaltyCorner) => {
+    if (!pendingPenMatch) return;
+    const shootout = resolveInteractiveShootout(
+      player,
+      pendingPenMatch.sim90.clubId,
+      pendingPenMatch.sim90.opponentId,
+      corner,
+    );
+
+    const penNarrative = shootout.userConverted
+      ? `Pênaltis: Você converteu sua cobrança (${corner})! Placar final nos pênaltis: ${shootout.myPenGoals}x${shootout.oppPenGoals}.`
+      : `Pênaltis: Goleiro levou a melhor na sua batida (${corner}). Placar final nos pênaltis: ${shootout.myPenGoals}x${shootout.oppPenGoals}.`;
+
+    const fullResult: MatchPerformanceResult = {
+      ...pendingPenMatch.sim90,
+      penaltyShootout: shootout,
+      matchNarrative: [...pendingPenMatch.sim90.matchNarrative, penNarrative],
+    };
+
+    setPendingPenMatch(null);
+    const committed = playCurrentMatch(mindset, fullResult);
+    if (committed) setResult(committed);
+  };
+
   const handleClose = () => {
+    setPendingPenMatch(null);
     setResult(null);
     setMatchModalOpen(false);
   };
@@ -94,11 +173,11 @@ export const MatchDayModal: React.FC = () => {
         <CompetitionBadge
           competitionId={compId}
           size="lg"
-          stageSubtitle={`${stageLabel} • ${isHome ? 'EM CASA' : 'FORA DE CASA'} • 2 TEMPOS DE 2:30 MIN`}
+          stageSubtitle={`${stageLabel} • ${isHome ? 'EM CASA' : 'FORA DE CASA'}${prevLegSubtitle}`}
         />
 
         <div className="flex items-center gap-4">
-          {!result && (
+          {!result && !pendingPenMatch && (
             <button
               type="button"
               data-pad-back="true"
@@ -110,22 +189,19 @@ export const MatchDayModal: React.FC = () => {
             </button>
           )}
 
-          {!result ? (
+          {!result && !pendingPenMatch ? (
             <button
               type="button"
               data-autofocus="true"
               data-pad-y="true"
-              onClick={() => {
-                const r = playCurrentMatch(mindset);
-                if (r) setResult(r);
-              }}
+              onClick={handleStartMatch}
               style={{ borderLeftColor: theme.accentPrimary }}
               className="console-btn-primary px-7 py-2.5 text-lg inline-flex items-center gap-2.5 cursor-pointer"
             >
               <GamepadBadge action="ALT_Y" darkText />
               <span>IR PARA O CAMPO / INICIAR ›</span>
             </button>
-          ) : (
+          ) : result ? (
             <button
               type="button"
               data-autofocus="true"
@@ -138,14 +214,25 @@ export const MatchDayModal: React.FC = () => {
               <GamepadBadge action="CONFIRM" darkText />
               <span>ENCERRAR E VOLTAR À CENTRAL ›</span>
             </button>
-          )}
+          ) : null}
         </div>
       </header>
 
-      {/* CORPO: CENTRAL PRÉ-JOGO DE 3 COLUNAS (OU TELA DE APITO FINAL) */}
-      {!result ? (
+      {/* CORPO: CENTRAL PRÉ-JOGO | DISPUTA DE PÊNALTIS | APITO FINAL */}
+      {pendingPenMatch ? (
+        <PenaltyChoiceStage
+          player={player}
+          myClub={myClub}
+          opponentClub={opponentClub}
+          isHome={isHome}
+          clubGoals={pendingPenMatch.sim90.clubGoals}
+          opponentGoals={pendingPenMatch.sim90.opponentGoals}
+          aggregateLabel={pendingPenMatch.aggLabel}
+          accentColor={theme.accentPrimary}
+          onSelectCorner={handleSelectPenaltyCorner}
+        />
+      ) : !result ? (
         <main className="flex-1 max-w-[1480px] w-full mx-auto px-6 md:px-10 py-5 grid lg:grid-cols-12 gap-5 min-h-0">
-          {/* Coluna 1: Escudos, Uniformes 1/2/3 e Dados do Jogo */}
           <div className="lg:col-span-4 min-h-0">
             <MatchKitsAndInfoPanel
               homeClub={homeClub}
@@ -165,7 +252,6 @@ export const MatchDayModal: React.FC = () => {
             />
           </div>
 
-          {/* Coluna 2: Mapa Interativo de Viagem Casa / Fora */}
           <div className="lg:col-span-4 min-h-0">
             <InteractiveTravelMap
               myClub={myClub}
@@ -175,7 +261,6 @@ export const MatchDayModal: React.FC = () => {
             />
           </div>
 
-          {/* Coluna 3: Campinho de Escalação com Seu Nome e Posição */}
           <div className="lg:col-span-4 min-h-0">
             <TacticalLineupPitch
               myClub={myClub}
@@ -187,13 +272,14 @@ export const MatchDayModal: React.FC = () => {
           </div>
         </main>
       ) : (
-        <main className="flex-1 max-w-3xl w-full mx-auto px-6 flex flex-col justify-center gap-6">
+        <main className="flex-1 max-w-3xl w-full mx-auto px-6 flex flex-col justify-center gap-5 overflow-y-auto py-4">
           <div
-            className="console-tile border-t-[4px] p-8"
+            className="console-tile border-t-[4px] p-7"
             style={{ borderTopColor: theme.accentPrimary }}
           >
-            <div className="text-center text-xs uppercase tracking-[0.25em] text-[#9498A3] mb-4">
+            <div className="text-center text-xs uppercase tracking-[0.25em] text-[#9498A3] mb-3">
               APITO FINAL • {homeClub.stadiumName ?? homeClub.name}
+              {result.aggregateNote ? ` • ${result.aggregateNote}` : ''}
             </div>
 
             <div className="flex items-center justify-around py-4 border-y border-[#242730]">
@@ -204,9 +290,19 @@ export const MatchDayModal: React.FC = () => {
                 </span>
               </div>
 
-              <div className="font-condensed font-extrabold text-7xl text-[#F5F5F7]">
-                {isHome ? result.clubGoals : result.opponentGoals} :{' '}
-                {isHome ? result.opponentGoals : result.clubGoals}
+              <div className="text-center">
+                <div className="font-condensed font-extrabold text-7xl text-[#F5F5F7]">
+                  {isHome ? result.clubGoals : result.opponentGoals} :{' '}
+                  {isHome ? result.opponentGoals : result.clubGoals}
+                </div>
+                {result.penaltyShootout && (
+                  <div className="font-condensed uppercase font-extrabold text-base text-[#C8A45D] mt-1">
+                    PÊNALTIS:{' '}
+                    {isHome
+                      ? `${result.penaltyShootout.myPenGoals} : ${result.penaltyShootout.oppPenGoals}`
+                      : `${result.penaltyShootout.oppPenGoals} : ${result.penaltyShootout.myPenGoals}`}
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col items-center w-44 text-center">
@@ -217,8 +313,16 @@ export const MatchDayModal: React.FC = () => {
               </div>
             </div>
 
+            {result.penaltyShootout && (
+              <PenaltyScoreboardStrip
+                shootout={result.penaltyShootout}
+                myClubShort={myClub.shortName}
+                oppClubShort={opponentClub.shortName}
+              />
+            )}
+
             <div
-              className="mt-6 bg-[#0E0F12] border-l-4 p-5 flex items-center justify-between"
+              className="mt-5 bg-[#0E0F12] border-l-4 p-4 flex items-center justify-between"
               style={{ borderLeftColor: theme.accentPrimary }}
             >
               <div>

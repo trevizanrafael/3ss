@@ -1,6 +1,6 @@
 import {
   applyScoreToStandings,
-  pickPenaltyShootoutWinner,
+  simulatePenaltyShootout,
   simulateRealisticScoreline,
   sortStandings,
 } from './poissonMatchMath';
@@ -28,13 +28,22 @@ export interface PlayerScoreOverride {
   clubId: string;
   clubGoals: number;
   oppGoals: number;
+  clubPenGoals?: number;
+  oppPenGoals?: number;
 }
 
 export function findClubContinentalFixtureInWeek(
   cup: ContinentalCupData,
   clubId: string,
   week: number,
-): { opponentId: string; isHome: boolean; stageLabel: string } | null {
+): {
+  opponentId: string;
+  isHome: boolean;
+  stageLabel: string;
+  decidesKnockout?: boolean;
+  prevLegMyGoals?: number;
+  prevLegOppGoals?: number;
+} | null {
   const gRound = CONTINENTAL_GROUP_WEEKS.indexOf(week as (typeof CONTINENTAL_GROUP_WEEKS)[number]);
   if (gRound !== -1) {
     for (const grp of cup.groups) {
@@ -61,7 +70,16 @@ export function findClubContinentalFixtureInWeek(
       if (leg === 2 && t.leg2Home === null && (t.homeClubId === clubId || t.awayClubId === clubId)) {
         // Na volta o mando inverte: awayClubId joga em casa!
         const isHome = t.awayClubId === clubId;
-        return { opponentId: isHome ? t.homeClubId : t.awayClubId, isHome, stageLabel: `${label} (VOLTA)` };
+        const prevLegMyGoals = isHome ? (t.leg1Away ?? 0) : (t.leg1Home ?? 0);
+        const prevLegOppGoals = isHome ? (t.leg1Home ?? 0) : (t.leg1Away ?? 0);
+        return {
+          opponentId: isHome ? t.homeClubId : t.awayClubId,
+          isHome,
+          stageLabel: `${label} (VOLTA)`,
+          decidesKnockout: true,
+          prevLegMyGoals,
+          prevLegOppGoals,
+        };
       }
     }
     return null;
@@ -81,6 +99,7 @@ export function findClubContinentalFixtureInWeek(
         opponentId: isHome ? cup.finalMatch.awayClubId : cup.finalMatch.homeClubId,
         isHome,
         stageLabel: 'GRANDE FINAL',
+        decidesKnockout: true,
       };
     }
   }
@@ -124,13 +143,47 @@ function simTiesLeg(ties: KnockoutTie[], leg: 1 | 2, ovr?: PlayerScoreOverride):
       const sc = resolveScore(t.awayClubId, t.homeClubId, false, ovr);
       const aggHome = (t.leg1Home ?? 0) + sc.awayGoals;
       const aggAway = (t.leg1Away ?? 0) + sc.homeGoals;
-      const winner =
-        aggHome > aggAway
-          ? t.homeClubId
-          : aggAway > aggHome
-            ? t.awayClubId
-            : pickPenaltyShootoutWinner(t.homeClubId, t.awayClubId);
-      return { ...t, leg2Home: sc.homeGoals, leg2Away: sc.awayGoals, winnerClubId: winner };
+
+      let winner: string;
+      let penHome: number | null = null;
+      let penAway: number | null = null;
+
+      if (aggHome > aggAway) {
+        winner = t.homeClubId;
+      } else if (aggAway > aggHome) {
+        winner = t.awayClubId;
+      } else {
+        const isUserTie =
+          ovr &&
+          ovr.clubPenGoals !== undefined &&
+          ovr.oppPenGoals !== undefined &&
+          (ovr.clubId === t.homeClubId || ovr.clubId === t.awayClubId);
+
+        if (isUserTie) {
+          if (ovr.clubId === t.homeClubId) {
+            penHome = ovr.clubPenGoals!;
+            penAway = ovr.oppPenGoals!;
+          } else {
+            penHome = ovr.oppPenGoals!;
+            penAway = ovr.clubPenGoals!;
+          }
+          winner = penHome > penAway ? t.homeClubId : t.awayClubId;
+        } else {
+          const pen = simulatePenaltyShootout(t.homeClubId, t.awayClubId);
+          penHome = pen.homePen;
+          penAway = pen.awayPen;
+          winner = pen.winnerId;
+        }
+      }
+
+      return {
+        ...t,
+        leg2Home: sc.homeGoals,
+        leg2Away: sc.awayGoals,
+        penHome,
+        penAway,
+        winnerClubId: winner,
+      };
     }
     return t;
   });
@@ -200,16 +253,50 @@ export function simulateContinentalWeek(
     return { ...cup, semiFinals, finalMatch };
   }
   if (week === FINAL_WEEK && cup.finalMatch && !cup.finalMatch.played) {
-    const sc = resolveScore(cup.finalMatch.homeClubId, cup.finalMatch.awayClubId, true, ovr);
-    const champ =
-      sc.homeGoals > sc.awayGoals
-        ? cup.finalMatch.homeClubId
-        : sc.awayGoals > sc.homeGoals
-          ? cup.finalMatch.awayClubId
-          : pickPenaltyShootoutWinner(cup.finalMatch.homeClubId, cup.finalMatch.awayClubId);
+    const fm = cup.finalMatch;
+    const sc = resolveScore(fm.homeClubId, fm.awayClubId, true, ovr);
+    let champ: string;
+    let penHome: number | null = null;
+    let penAway: number | null = null;
+
+    if (sc.homeGoals > sc.awayGoals) {
+      champ = fm.homeClubId;
+    } else if (sc.awayGoals > sc.homeGoals) {
+      champ = fm.awayClubId;
+    } else {
+      const isUserFinal =
+        ovr &&
+        ovr.clubPenGoals !== undefined &&
+        ovr.oppPenGoals !== undefined &&
+        (ovr.clubId === fm.homeClubId || ovr.clubId === fm.awayClubId);
+      if (isUserFinal) {
+        if (ovr.clubId === fm.homeClubId) {
+          penHome = ovr.clubPenGoals!;
+          penAway = ovr.oppPenGoals!;
+        } else {
+          penHome = ovr.oppPenGoals!;
+          penAway = ovr.clubPenGoals!;
+        }
+        champ = penHome > penAway ? fm.homeClubId : fm.awayClubId;
+      } else {
+        const pen = simulatePenaltyShootout(fm.homeClubId, fm.awayClubId);
+        penHome = pen.homePen;
+        penAway = pen.awayPen;
+        champ = pen.winnerId;
+      }
+    }
+
     return {
       ...cup,
-      finalMatch: { ...cup.finalMatch, homeGoals: sc.homeGoals, awayGoals: sc.awayGoals, played: true, winnerId: champ },
+      finalMatch: {
+        ...fm,
+        homeGoals: sc.homeGoals,
+        awayGoals: sc.awayGoals,
+        penHome,
+        penAway,
+        played: true,
+        winnerId: champ,
+      },
       championClubId: champ,
     };
   }

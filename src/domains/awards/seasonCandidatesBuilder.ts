@@ -3,7 +3,9 @@ import { SquadPosition } from '../../data/clubs/types';
 import { LeagueId, LEAGUES } from '../../data/leagues/leagues';
 import rawPool from '../../data/world/worldStarsPool.json';
 import { CareerStage } from '../../shared/types/common';
+import { clamp } from '../../shared/utils/math';
 import { getPositionSector } from '../attributes/overallCalculator';
+import { UserCompetitionStatsMap } from '../career-stats/careerHistoryTypes';
 import { CareerPlayer } from '../player/playerTypes';
 import { ContinentalCupData, WorldSeasonState } from '../season/seasonTypes';
 import { findClubLeagueIdInWorld } from '../season/worldSeasonEngine';
@@ -61,12 +63,18 @@ export interface SimCandidate {
   pos: SquadPosition;
   age: number;
   ovr: number;
-  goals: number;
-  assists: number;
+  /** Gols totais na temporada inteira (Liga + Copa Continental + Seleção) -> Bola de Ouro & Golden Boy */
+  totalGoals: number;
+  totalAssists: number;
+  /** Gols exclusivos na Liga Nacional -> Craque da Liga, Jovem da Liga e Chuteira de Ouro */
+  leagueGoals: number;
+  leagueAssists: number;
+  /** Gols exclusivos na Champions / Libertadores -> Craque da Champions & Rei da América */
   cupGoals: number;
   cupAssists: number;
   worldScore: number;
   leagueScore: number;
+  totsScore: number;
   uclScore: number;
   libScore: number;
   isUser: boolean;
@@ -84,19 +92,28 @@ function getNationalTrophyBonus(world: WorldSeasonState, natTeamId?: string): nu
   return bonus;
 }
 
-function getClubContinentalStageBonus(cup: ContinentalCupData, clubId: string): number {
-  if (!cup.participantIds.includes(clubId)) return -1;
-  if (cup.championClubId === clubId) return 10.5;
+function getClubContinentalStageInfo(
+  cup: ContinentalCupData,
+  clubId: string,
+): { stageBonus: number; matchesPlayed: number } {
+  if (!cup.participantIds.includes(clubId)) return { stageBonus: -1, matchesPlayed: 0 };
+  if (cup.championClubId === clubId) return { stageBonus: 11.5, matchesPlayed: 13 };
   if (
     cup.finalMatch &&
     (cup.finalMatch.homeClubId === clubId || cup.finalMatch.awayClubId === clubId)
   ) {
-    return 8.0;
+    return { stageBonus: 8.8, matchesPlayed: 13 };
   }
-  if (cup.semiFinals.some((t) => t.homeClubId === clubId || t.awayClubId === clubId)) return 5.5;
-  if (cup.quarterFinals.some((t) => t.homeClubId === clubId || t.awayClubId === clubId)) return 3.2;
-  if (cup.roundOf16.some((t) => t.homeClubId === clubId || t.awayClubId === clubId)) return 1.5;
-  return 0;
+  if (cup.semiFinals.some((t) => t.homeClubId === clubId || t.awayClubId === clubId)) {
+    return { stageBonus: 6.2, matchesPlayed: 12 };
+  }
+  if (cup.quarterFinals.some((t) => t.homeClubId === clubId || t.awayClubId === clubId)) {
+    return { stageBonus: 3.8, matchesPlayed: 10 };
+  }
+  if (cup.roundOf16.some((t) => t.homeClubId === clubId || t.awayClubId === clubId)) {
+    return { stageBonus: 1.8, matchesPlayed: 8 };
+  }
+  return { stageBonus: 0, matchesPlayed: 6 };
 }
 
 export function buildSeasonAwardCandidates(
@@ -107,12 +124,12 @@ export function buildSeasonAwardCandidates(
   world: WorldSeasonState,
   leagueChampions: Map<LeagueId, string>,
   clubRankMap: Map<string, number>,
+  userCompStats?: UserCompetitionStatsMap,
 ): SimCandidate[] {
   const userLeagueId = findClubLeagueIdInWorld(world, userClubId);
   const ucl = world.continentals.CHAMPIONS_LEAGUE;
   const lib = world.continentals.LIBERTADORES;
 
-  // Mapeia os gols reais marcados por cada clube na sua liga nesta temporada!
   const clubGoalsMap = new Map<string, number>();
   const clubGaMap = new Map<string, number>();
   for (const lgData of Object.values(world.leagues)) {
@@ -122,9 +139,18 @@ export function buildSeasonAwardCandidates(
     }
   }
 
-  // Ranking interno dentro de cada clube para não dar o mesmo nº de gols a 2 colegas de ataque!
-  const clubAttackOrder = new Map<string, number>();
-  const clubAssistOrder = new Map<string, number>();
+  // Topo de Overall relativo de cada liga para que artilheiros de BRA_1 / ARG_1 / POR_1 façam 18..26 gols reais!
+  const leagueMaxOvr = new Map<LeagueId, number>();
+  for (const s of STARS_POOL) {
+    const lg = findClubLeagueIdInWorld(world, s.clubId);
+    const prev = leagueMaxOvr.get(lg) ?? 75;
+    if (s.ovr > prev) leagueMaxOvr.set(lg, s.ovr);
+  }
+
+  // Slots separados por função dentro de cada clube (Ponta não rouba a cota de gols do Camisa 9!)
+  const clubStrikerOrder = new Map<string, number>();
+  const clubWingerOrder = new Map<string, number>();
+  const clubCreatorOrder = new Map<string, number>();
 
   const sortedByOvr = [...STARS_POOL].sort((a, b) => b.ovr - a.ovr);
 
@@ -133,9 +159,19 @@ export function buildSeasonAwardCandidates(
     const prestige = getLeaguePrestigeMultiplier(currLg, 'PRO');
     const r1 = detRand(`${world.seasonYear}_g_${s.id}`);
     const r2 = detRand(`${world.seasonYear}_a_${s.id}`);
-    const form = (r1 - 0.45) * 9;
+    const r3 = detRand(`${world.seasonYear}_c_${s.id}`);
+    const form = (r1 - 0.42) * 10;
 
-    const teamGoals = clubGoalsMap.get(s.clubId) ?? Math.round((s.ovr - 45) * 1.65);
+    const topLgOvr = leagueMaxOvr.get(currLg) ?? 80;
+    const u21Breakout = s.age <= 21 && r1 > 0.45 ? 0.16 : s.age <= 21 ? 0.08 : 0;
+    const relStar = clamp(1.04 - (topLgOvr - s.ovr) * 0.036 + u21Breakout, 0.72, 1.18);
+
+    // Gols reais marcados pelo clube na liga (ou estimativa realista de 52..66 para pools continentais)
+    const rawTeamGoals = clubGoalsMap.get(s.clubId);
+    const teamGoals =
+      rawTeamGoals && rawTeamGoals > 0
+        ? Math.max(36, rawTeamGoals)
+        : Math.round(48 + (s.ovr - 70) * 1.15);
     const teamGa = clubGaMap.get(s.clubId) ?? 38;
 
     const isStriker = s.pos === 'ATA' || s.pos === 'SA';
@@ -143,27 +179,33 @@ export function buildSeasonAwardCandidates(
     const isPlaymaker = s.pos === 'MEI' || s.pos === 'MD' || s.pos === 'ME';
     const isCentralMid = s.pos === 'MC' || s.pos === 'VOL';
 
-    let atkSlot = 0;
-    if (isStriker || isWinger) {
-      atkSlot = clubAttackOrder.get(s.clubId) ?? 0;
-      clubAttackOrder.set(s.clubId, atkSlot + 1);
+    let strkSlot = 0;
+    if (isStriker) {
+      strkSlot = clubStrikerOrder.get(s.clubId) ?? 0;
+      clubStrikerOrder.set(s.clubId, strkSlot + 1);
+    }
+
+    let wingSlot = 0;
+    if (isWinger) {
+      wingSlot = clubWingerOrder.get(s.clubId) ?? 0;
+      clubWingerOrder.set(s.clubId, wingSlot + 1);
     }
 
     let astSlot = 0;
     if (isPlaymaker || isWinger || isCentralMid) {
-      astSlot = clubAssistOrder.get(s.clubId) ?? 0;
-      clubAssistOrder.set(s.clubId, astSlot + 1);
+      astSlot = clubCreatorOrder.get(s.clubId) ?? 0;
+      clubCreatorOrder.set(s.clubId, astSlot + 1);
     }
 
     const goalShare =
       s.pos === 'GK'
         ? 0
         : isStriker
-          ? (atkSlot === 0 ? 0.31 : 0.17) + r1 * 0.14
+          ? (strkSlot === 0 ? 0.34 : 0.19) + r1 * 0.14
           : isWinger
-            ? (atkSlot === 0 ? 0.22 : 0.14) + r1 * 0.11
+            ? (wingSlot === 0 ? 0.24 : 0.15) + r1 * 0.12
             : isPlaymaker
-              ? 0.11 + r1 * 0.09
+              ? 0.13 + r1 * 0.10
               : isCentralMid
                 ? 0.05 + r1 * 0.06
                 : 0.02 + r1 * 0.04;
@@ -172,76 +214,144 @@ export function buildSeasonAwardCandidates(
       s.pos === 'GK'
         ? 0
         : isPlaymaker
-          ? (astSlot === 0 ? 0.22 : 0.13) + r2 * 0.11
+          ? (astSlot === 0 ? 0.24 : 0.15) + r2 * 0.12
           : isWinger
-            ? (astSlot === 0 ? 0.19 : 0.12) + r2 * 0.10
+            ? (astSlot <= 1 ? 0.21 : 0.13) + r2 * 0.11
             : isStriker
-              ? 0.08 + r2 * 0.08
+              ? 0.09 + r2 * 0.09
               : isCentralMid
-                ? 0.10 + r2 * 0.08
+                ? 0.11 + r2 * 0.09
                 : s.pos === 'LD' || s.pos === 'LE'
-                  ? 0.08 + r2 * 0.07
+                  ? 0.09 + r2 * 0.08
                   : 0.02 + r2 * 0.03;
 
-    const ovrBoost = Math.max(0.75, (s.ovr - 52) / 30);
-    const goals = s.pos === 'GK' ? 0 : Math.max(0, Math.round(teamGoals * goalShare * ovrBoost));
-    const assists =
-      s.pos === 'GK' ? 0 : Math.max(0, Math.round(teamGoals * 0.78 * assistShare * ovrBoost));
+    const leagueGoals =
+      s.pos === 'GK' ? 0 : Math.max(0, Math.round(teamGoals * goalShare * relStar));
+    const leagueAssists =
+      s.pos === 'GK' ? 0 : Math.max(0, Math.round(teamGoals * 0.82 * assistShare * relStar));
 
     const rank = clubRankMap.get(s.clubId) ?? 10;
-    const wonLeague = leagueChampions.get(currLg) === s.clubId ? 8 : 0;
-    const uclStageBonus = getClubContinentalStageBonus(ucl, s.clubId);
-    const libStageBonus = getClubContinentalStageBonus(lib, s.clubId);
+    const wonLeague = leagueChampions.get(currLg) === s.clubId ? 4.5 : 0;
+    const uclInfo = getClubContinentalStageInfo(ucl, s.clubId);
+    const libInfo = getClubContinentalStageInfo(lib, s.clubId);
+    const activeCupMatches = Math.max(uclInfo.matchesPlayed, libInfo.matchesPlayed);
 
-    const cupMatchesEst = uclStageBonus >= 8 || libStageBonus >= 8 ? 12 : uclStageBonus >= 3 || libStageBonus >= 3 ? 9 : 6;
+    // Gols e assistências realistas em Champions e Libertadores (artilheiros fazem 8..13 gols em 12..13 jogos!)
+    const cupGoalPerMatch =
+      s.pos === 'GK'
+        ? 0
+        : isStriker
+          ? (strkSlot === 0 ? 0.62 : 0.36) + r3 * 0.28
+          : isWinger
+            ? (wingSlot === 0 ? 0.46 : 0.28) + r3 * 0.24
+            : isPlaymaker
+              ? 0.26 + r3 * 0.20
+              : isCentralMid
+                ? 0.11 + r3 * 0.10
+                : 0.05 + r3 * 0.06;
+
+    const cupAssistPerMatch =
+      s.pos === 'GK'
+        ? 0
+        : isPlaymaker || isWinger
+          ? 0.32 + r2 * 0.26
+          : isStriker || isCentralMid
+            ? 0.18 + r2 * 0.18
+            : 0.08 + r2 * 0.10;
+
     const cupGoals =
-      uclStageBonus < 0 && libStageBonus < 0
+      activeCupMatches === 0
         ? 0
-        : Math.max(0, Math.round((goals / 34) * cupMatchesEst * (0.85 + r2 * 0.5)));
+        : Math.max(0, Math.round(activeCupMatches * cupGoalPerMatch * relStar));
     const cupAssists =
-      uclStageBonus < 0 && libStageBonus < 0
+      activeCupMatches === 0
         ? 0
-        : Math.max(0, Math.round((assists / 34) * cupMatchesEst * (0.85 + r1 * 0.5)));
-
-    // Defensores e Goleiros pontuam também pela solidez defensiva do time na liga!
-    const defCleanBonus =
-      s.pos === 'GK' || s.pos === 'ZAG' || s.pos === 'LD' || s.pos === 'LE' || s.pos === 'VOL'
-        ? Math.max(0, (46 - teamGa) * 0.45)
-        : 0;
-
-    const rawImpact =
-      s.ovr * 1.02 +
-      goals * 0.68 +
-      assists * 0.56 +
-      defCleanBonus +
-      Math.max(0, 8 - rank) * 0.9 +
-      form * 0.55;
+        : Math.max(0, Math.round(activeCupMatches * cupAssistPerMatch * relStar));
 
     const natId = PLAYER_NAT_ID_MAP.get(s.name.toLowerCase());
     const natBonus = getNationalTrophyBonus(world, natId);
+    const intlGoalsEst =
+      natId && s.pos !== 'GK' && (isStriker || isWinger || isPlaymaker)
+        ? Math.round((isStriker ? 3.2 : 1.8) * (0.6 + r1 * 0.8))
+        : 0;
+    const intlAssistsEst =
+      natId && s.pos !== 'GK' && (isPlaymaker || isWinger)
+        ? Math.round(2.2 * (0.5 + r2 * 0.8))
+        : 0;
+
+    const totalGoals = leagueGoals + cupGoals + intlGoalsEst;
+    const totalAssists = leagueAssists + cupAssists + intlAssistsEst;
+
+    // Bônus defensivo pesa forte na Seleção dos 11 Ideais (totsScore), sem fazer volante 2G/3A ganhar Craque da Liga!
+    const defCleanBonus =
+      s.pos === 'GK' || s.pos === 'ZAG' || s.pos === 'LD' || s.pos === 'LE' || s.pos === 'VOL'
+        ? Math.max(0, (48 - teamGa) * 0.65)
+        : 0;
+
+    // Score do Craque / Jovem da Liga: protagonismo real em campo (gols, assistências, vitórias e nível técnico)
+    const leagueScore =
+      s.ovr * 0.82 +
+      leagueGoals * 1.65 +
+      leagueAssists * 1.35 +
+      defCleanBonus * 0.22 +
+      Math.max(0, 7 - rank) * 0.85 +
+      wonLeague +
+      form * 0.45;
+
+    // Score dos 11 Ideais (TOTS): valoriza paredões na defesa/gol e artilheiros/garçons no ataque
+    const totsScore =
+      s.ovr * 0.95 +
+      leagueGoals * 1.35 +
+      leagueAssists * 1.15 +
+      defCleanBonus +
+      Math.max(0, 8 - rank) * 0.9 +
+      wonLeague;
+
+    const worldRaw =
+      s.ovr * 0.96 +
+      totalGoals * 0.95 +
+      totalAssists * 0.78 +
+      defCleanBonus * 0.35 +
+      Math.max(0, 7 - rank) * 0.8 +
+      form * 0.45;
 
     const worldScore =
-      rawImpact * prestige +
-      wonLeague * prestige +
-      Math.max(0, uclStageBonus) * 1.45 +
-      Math.max(0, libStageBonus) * 1.1 +
+      worldRaw * prestige +
+      wonLeague * 1.5 * prestige +
+      Math.max(0, uclInfo.stageBonus) * 1.5 +
+      Math.max(0, libInfo.stageBonus) * 1.15 +
       natBonus;
 
-    const leagueScore = rawImpact + wonLeague;
     const uclScore =
-      uclStageBonus >= 0 ? s.ovr * 0.95 + cupGoals * 2.8 + cupAssists * 2.1 + uclStageBonus * 1.8 + r1 * 2 : 0;
+      uclInfo.stageBonus >= 0
+        ? s.ovr * 0.82 +
+          cupGoals * 3.9 +
+          cupAssists * 2.7 +
+          uclInfo.stageBonus * 1.7 +
+          r3 * 2
+        : 0;
+
     const libScore =
-      libStageBonus >= 0 ? s.ovr * 0.95 + cupGoals * 2.8 + cupAssists * 2.1 + libStageBonus * 1.8 + r1 * 2 : 0;
+      libInfo.stageBonus >= 0
+        ? s.ovr * 0.82 +
+          cupGoals * 3.9 +
+          cupAssists * 2.7 +
+          libInfo.stageBonus * 1.7 +
+          r3 * 2
+        : 0;
 
     return {
       ...s,
       leagueId: currLg,
-      goals,
-      assists,
+      totalGoals,
+      totalAssists,
+      leagueGoals,
+      leagueAssists,
       cupGoals,
       cupAssists,
       worldScore,
       leagueScore,
+      totsScore,
       uclScore,
       libScore,
       isUser: false,
@@ -253,30 +363,48 @@ export function buildSeasonAwardCandidates(
     const sector = getPositionSector(player.position);
     const avgStars = period.seasonStarPoints / Math.max(1, period.seasonMatches);
     const myRank = clubRankMap.get(userClubId) ?? 10;
-    const wonLg = leagueChampions.get(userLeagueId) === userClubId ? 9 : 0;
-    const uclStage = getClubContinentalStageBonus(ucl, userClubId);
-    const libStage = getClubContinentalStageBonus(lib, userClubId);
+    const wonLg = leagueChampions.get(userLeagueId) === userClubId ? 5.5 : 0;
+    const uclInfo = getClubContinentalStageInfo(ucl, userClubId);
+    const libInfo = getClubContinentalStageInfo(lib, userClubId);
 
     const userNatId = `nt_${player.nationality.toLowerCase()}`;
     const userNatBonus =
       period.internationalMatches > 0
         ? getNationalTrophyBonus(world, userNatId) +
-          period.internationalGoals * 2.2 +
-          period.internationalAssists * 1.5
+          period.internationalGoals * 1.8 +
+          period.internationalAssists * 1.2
         : 0;
 
-    const clubGoals = Math.max(0, period.seasonGoals - period.internationalGoals);
-    const clubAssists = Math.max(0, period.seasonAssists - period.internationalAssists);
+    // Separa estritamente os gols e assistências da LIGA NACIONAL do total da temporada!
+    const trackedLg = userCompStats?.[userLeagueId];
+    const userLeagueGoals =
+      trackedLg && trackedLg.matches > 0
+        ? trackedLg.goals
+        : Math.max(0, period.seasonGoals - period.continentalGoals - period.internationalGoals);
+    const userLeagueAssists =
+      trackedLg && trackedLg.matches > 0
+        ? trackedLg.assists
+        : Math.max(0, period.seasonAssists - period.continentalAssists - period.internationalAssists);
 
-    const posImpact =
+    const leagueImpact =
       sector === 'ATK'
-        ? clubGoals * 0.95 + clubAssists * 0.65
+        ? userLeagueGoals * 1.65 + userLeagueAssists * 1.35 + avgStars * 3.5
         : sector === 'MID'
-          ? clubGoals * 0.85 + clubAssists * 1.05 + avgStars * 4
-          : clubGoals * 1.1 + clubAssists * 0.8 + avgStars * 8.5;
+          ? userLeagueGoals * 1.45 + userLeagueAssists * 1.6 + avgStars * 4.5
+          : userLeagueGoals * 1.6 + userLeagueAssists * 1.3 + avgStars * 9.5;
 
-    const rawUser =
-      player.overall * 0.92 + avgStars * 9 + posImpact + Math.max(0, 8 - myRank) * 1.1;
+    const userLeagueScore =
+      player.overall * 0.82 +
+      leagueImpact +
+      Math.max(0, 7 - myRank) * 0.9 +
+      wonLg;
+
+    const worldRawUser =
+      player.overall * 0.92 +
+      period.seasonGoals * 0.98 +
+      period.seasonAssists * 0.8 +
+      avgStars * (sector === 'DEF' ? 9 : 4.5) +
+      Math.max(0, 7 - myRank) * 0.85;
 
     candidates.push({
       id: '__USER__',
@@ -286,32 +414,35 @@ export function buildSeasonAwardCandidates(
       pos: player.position,
       age: player.age,
       ovr: player.overall,
-      goals: clubGoals,
-      assists: clubAssists,
+      totalGoals: period.seasonGoals,
+      totalAssists: period.seasonAssists,
+      leagueGoals: userLeagueGoals,
+      leagueAssists: userLeagueAssists,
       cupGoals: period.continentalGoals,
       cupAssists: period.continentalAssists,
       worldScore:
-        rawUser * prestige +
-        wonLg * prestige +
-        Math.max(0, uclStage) * 1.45 +
-        Math.max(0, libStage) * 1.1 +
+        worldRawUser * prestige +
+        wonLg * 1.5 * prestige +
+        Math.max(0, uclInfo.stageBonus) * 1.5 +
+        Math.max(0, libInfo.stageBonus) * 1.15 +
         userNatBonus,
-      leagueScore: rawUser + wonLg,
+      leagueScore: userLeagueScore,
+      totsScore: userLeagueScore + avgStars * 2,
       uclScore:
-        uclStage >= 0 && period.continentalMatches > 0
-          ? player.overall * 0.92 +
-            period.continentalGoals * 3.0 +
-            period.continentalAssists * 2.2 +
-            uclStage * 1.8 +
-            avgStars * 3
+        uclInfo.stageBonus >= 0 && period.continentalMatches > 0
+          ? player.overall * 0.82 +
+            period.continentalGoals * 3.9 +
+            period.continentalAssists * 2.7 +
+            uclInfo.stageBonus * 1.7 +
+            avgStars * 2.5
           : 0,
       libScore:
-        libStage >= 0 && period.continentalMatches > 0
-          ? player.overall * 0.92 +
-            period.continentalGoals * 3.0 +
-            period.continentalAssists * 2.2 +
-            libStage * 1.8 +
-            avgStars * 3
+        libInfo.stageBonus >= 0 && period.continentalMatches > 0
+          ? player.overall * 0.82 +
+            period.continentalGoals * 3.9 +
+            period.continentalAssists * 2.7 +
+            libInfo.stageBonus * 1.7 +
+            avgStars * 2.5
           : 0,
       isUser: true,
     });

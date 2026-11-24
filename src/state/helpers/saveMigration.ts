@@ -231,6 +231,7 @@ export function migratePersistedCareerState(
       merged.contract.stage,
       merged.periodStats,
       merged.worldSeason,
+      merged.userCompStats,
     );
     merged.latestGalaReport = recomputed.gala;
 

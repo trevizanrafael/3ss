@@ -18,22 +18,32 @@
       {
         "name": "M. Amoura",
         "pos": "ATA",
-        "ovr": 80
+        "ovr": 80,
+        "age": 25
       },
       {
         "name": "M. Arnold",
         "pos": "VOL",
-        "ovr": 79
+        "ovr": 79,
+        "age": 31
+      },
+      {
+        "name": "K. Grabara",
+        "pos": "GK",
+        "ovr": 79,
+        "age": 26
       },
       {
         "name": "L. Majer",
         "pos": "MC",
-        "ovr": 78
+        "ovr": 78,
+        "age": 27
       },
       {
         "name": "J. Mæhle",
         "pos": "LE",
-        "ovr": 78
+        "ovr": 78,
+        "age": 28
       }
     ],
     "city": "Wolfsburg",
@@ -60,22 +70,32 @@
       {
         "name": "P. Mainka",
         "pos": "ZAG",
-        "ovr": 76
+        "ovr": 76,
+        "age": 30
       },
       {
         "name": "M. Pieringer",
         "pos": "ATA",
-        "ovr": 75
+        "ovr": 75,
+        "age": 25
       },
       {
         "name": "N. Dorsch",
         "pos": "VOL",
-        "ovr": 74
+        "ovr": 74,
+        "age": 27
       },
       {
         "name": "M. Honsak",
         "pos": "ME",
-        "ovr": 74
+        "ovr": 74,
+        "age": 28
+      },
+      {
+        "name": "J. Schöppner",
+        "pos": "VOL",
+        "ovr": 74,
+        "age": 26
       }
     ],
     "city": "Heidenheim 1846",
@@ -100,24 +120,34 @@
     "squadSize": 28,
     "keyPlayers": [
       {
+        "name": "N. Vasilj",
+        "pos": "GK",
+        "ovr": 77,
+        "age": 29
+      },
+      {
         "name": "M. Pereira Lage",
         "pos": "PE",
-        "ovr": 75
+        "ovr": 75,
+        "age": 28
       },
       {
         "name": "J. Irvine",
         "pos": "MC",
-        "ovr": 75
+        "ovr": 75,
+        "age": 32
       },
       {
         "name": "E. Smith",
         "pos": "VOL",
-        "ovr": 75
+        "ovr": 75,
+        "age": 28
       },
       {
         "name": "H. Wahl",
         "pos": "ZAG",
-        "ovr": 74
+        "ovr": 74,
+        "age": 31
       }
     ],
     "city": "Hamburgo",
@@ -144,22 +174,32 @@
       {
         "name": "I. Sissoko",
         "pos": "VOL",
-        "ovr": 76
+        "ovr": 76,
+        "age": 27
       },
       {
         "name": "K. Vogt",
         "pos": "ZAG",
-        "ovr": 75
+        "ovr": 75,
+        "age": 33
       },
       {
         "name": "M. Bero",
         "pos": "MC",
-        "ovr": 74
+        "ovr": 74,
+        "age": 29
       },
       {
         "name": "M. Wittek",
         "pos": "LE",
-        "ovr": 73
+        "ovr": 73,
+        "age": 29
+      },
+      {
+        "name": "T. Horn",
+        "pos": "GK",
+        "ovr": 73,
+        "age": 32
       }
     ],
     "city": "Bochum",
@@ -186,22 +226,32 @@
       {
         "name": "F. Reese",
         "pos": "ATA",
-        "ovr": 75
+        "ovr": 75,
+        "age": 27
       },
       {
         "name": "M. Cuisance",
         "pos": "MC",
-        "ovr": 72
+        "ovr": 72,
+        "age": 25
       },
       {
         "name": "D. Kownacki",
         "pos": "ATA",
-        "ovr": 72
+        "ovr": 72,
+        "age": 28
       },
       {
         "name": "J. Brooks",
         "pos": "ZAG",
-        "ovr": 72
+        "ovr": 72,
+        "age": 32
+      },
+      {
+        "name": "P. Seguin",
+        "pos": "VOL",
+        "ovr": 71,
+        "age": 30
       }
     ],
     "city": "Berlim",
@@ -228,22 +278,32 @@
       {
         "name": "I. Lidberg",
         "pos": "ATA",
-        "ovr": 73
+        "ovr": 73,
+        "age": 26
       },
       {
         "name": "K. Corredor",
         "pos": "ME",
-        "ovr": 73
+        "ovr": 73,
+        "age": 24
+      },
+      {
+        "name": "M. Schuhen",
+        "pos": "GK",
+        "ovr": 72,
+        "age": 32
       },
       {
         "name": "F. Nürnberger",
         "pos": "ME",
-        "ovr": 71
+        "ovr": 71,
+        "age": 25
       },
       {
         "name": "F. Holland",
         "pos": "VOL",
-        "ovr": 71
+        "ovr": 71,
+        "age": 34
       }
     ],
     "city": "Darmstadt",
@@ -270,22 +330,32 @@
       {
         "name": "B. Atik",
         "pos": "PE",
-        "ovr": 72
+        "ovr": 72,
+        "age": 30
       },
       {
         "name": "M. Mathisen",
         "pos": "ZAG",
-        "ovr": 72
+        "ovr": 72,
+        "age": 29
       },
       {
         "name": "A. Onaiwu",
         "pos": "ATA",
-        "ovr": 72
+        "ovr": 72,
+        "age": 29
       },
       {
         "name": "J. Hugonet",
         "pos": "ZAG",
-        "ovr": 71
+        "ovr": 71,
+        "age": 25
+      },
+      {
+        "name": "S. Gnaka",
+        "pos": "VOL",
+        "ovr": 70,
+        "age": 26
       }
     ],
     "city": "Magdeburgo",
@@ -312,22 +382,32 @@
       {
         "name": "E. Leopold",
         "pos": "MC",
-        "ovr": 73
+        "ovr": 73,
+        "age": 24
       },
       {
         "name": "M. Neubauer",
         "pos": "LE",
-        "ovr": 73
+        "ovr": 73,
+        "age": 29
       },
       {
         "name": "B. Källman",
         "pos": "ATA",
-        "ovr": 72
+        "ovr": 72,
+        "age": 27
       },
       {
         "name": "B. Tomiak",
         "pos": "ZAG",
-        "ovr": 71
+        "ovr": 71,
+        "age": 26
+      },
+      {
+        "name": "D. Yokota",
+        "pos": "MEI",
+        "ovr": 70,
+        "age": 25
       }
     ],
     "city": "Hanôver",
@@ -354,22 +434,32 @@
       {
         "name": "S. Schwab",
         "pos": "MC",
-        "ovr": 73
+        "ovr": 73,
+        "age": 34
       },
       {
         "name": "S. Skrzybski",
         "pos": "ATA",
-        "ovr": 72
+        "ovr": 72,
+        "age": 32
       },
       {
         "name": "A. Bernhardsson",
         "pos": "ATA",
-        "ovr": 72
+        "ovr": 72,
+        "age": 26
       },
       {
         "name": "J. Tolkin",
         "pos": "LE",
-        "ovr": 71
+        "ovr": 71,
+        "age": 22
+      },
+      {
+        "name": "D. Zec",
+        "pos": "ZAG",
+        "ovr": 71,
+        "age": 25
       }
     ],
     "city": "Holstein Kiel",
@@ -396,22 +486,32 @@
       {
         "name": "P. Joly",
         "pos": "LD",
-        "ovr": 72
+        "ovr": 72,
+        "age": 25
       },
       {
         "name": "M. Ritter",
         "pos": "MEI",
-        "ovr": 71
+        "ovr": 71,
+        "age": 30
       },
       {
         "name": "S. Sahin",
         "pos": "VOL",
-        "ovr": 71
+        "ovr": 71,
+        "age": 25
       },
       {
         "name": "N. Skyttä",
         "pos": "MC",
-        "ovr": 71
+        "ovr": 71,
+        "age": 23
+      },
+      {
+        "name": "L. Sirch",
+        "pos": "ZAG",
+        "ovr": 71,
+        "age": 26
       }
     ],
     "city": "Kaiserslautern",
@@ -438,22 +538,32 @@
       {
         "name": "M. Wanitzek",
         "pos": "MC",
-        "ovr": 76
+        "ovr": 76,
+        "age": 32
       },
       {
         "name": "M. Franke",
         "pos": "ZAG",
-        "ovr": 71
+        "ovr": 71,
+        "age": 32
       },
       {
         "name": "A. Müller",
         "pos": "VOL",
-        "ovr": 70
+        "ovr": 70,
+        "age": 24
       },
       {
         "name": "S. Jung",
         "pos": "LD",
-        "ovr": 70
+        "ovr": 70,
+        "age": 35
+      },
+      {
+        "name": "P. Förster",
+        "pos": "MEI",
+        "ovr": 69,
+        "age": 30
       }
     ],
     "city": "Karlsruher",
@@ -480,22 +590,32 @@
       {
         "name": "J. Justvan",
         "pos": "MEI",
-        "ovr": 73
+        "ovr": 73,
+        "age": 27
       },
       {
         "name": "F. Becker",
         "pos": "MC",
-        "ovr": 72
+        "ovr": 72,
+        "age": 25
       },
       {
         "name": "R. Knoche",
         "pos": "ZAG",
-        "ovr": 71
+        "ovr": 71,
+        "age": 33
       },
       {
         "name": "P. Diop",
         "pos": "VOL",
-        "ovr": 69
+        "ovr": 69,
+        "age": 21
+      },
+      {
+        "name": "H. Koudossou",
+        "pos": "LD",
+        "ovr": 69,
+        "age": 25
       }
     ],
     "city": "Nuremberga",
@@ -522,22 +642,32 @@
       {
         "name": "J. Green",
         "pos": "MC",
-        "ovr": 71
+        "ovr": 71,
+        "age": 30
       },
       {
         "name": "B. Hrgota",
         "pos": "MEI",
-        "ovr": 71
+        "ovr": 71,
+        "age": 32
       },
       {
         "name": "P. Ziereis",
         "pos": "ZAG",
-        "ovr": 71
+        "ovr": 71,
+        "age": 32
       },
       {
         "name": "F. Klaus",
         "pos": "MEI",
-        "ovr": 70
+        "ovr": 70,
+        "age": 32
+      },
+      {
+        "name": "N. Futkeu",
+        "pos": "ATA",
+        "ovr": 70,
+        "age": 22
       }
     ],
     "city": "SpVgg Greuther Fürth",
@@ -562,24 +692,34 @@
     "squadSize": 28,
     "keyPlayers": [
       {
-        "name": "Maximilian Entrup",
-        "pos": "ATA",
-        "ovr": 72
+        "name": "Nick Bodon",
+        "pos": "GK",
+        "ovr": 72,
+        "age": 24
+      },
+      {
+        "name": "Ron-Thorben Hofmann",
+        "pos": "GK",
+        "ovr": 71,
+        "age": 27
       },
       {
         "name": "Lino Tempelmann",
         "pos": "MC",
-        "ovr": 71
+        "ovr": 71,
+        "age": 27
+      },
+      {
+        "name": "Benjamin Uphoff",
+        "pos": "GK",
+        "ovr": 68,
+        "age": 33
       },
       {
         "name": "Noah Katterbach",
         "pos": "ZAG",
-        "ovr": 68
-      },
-      {
-        "name": "Frederik Jakel",
-        "pos": "ZAG",
-        "ovr": 68
+        "ovr": 68,
+        "age": 25
       }
     ],
     "city": "TSV Eintracht Braunschweig",
@@ -606,22 +746,32 @@
       {
         "name": "M. Mehlem",
         "pos": "MC",
-        "ovr": 72
+        "ovr": 72,
+        "age": 27
       },
       {
         "name": "M. Wörl",
         "pos": "MC",
-        "ovr": 69
+        "ovr": 69,
+        "age": 21
       },
       {
         "name": "M. Corboz",
         "pos": "MC",
-        "ovr": 68
+        "ovr": 68,
+        "age": 30
       },
       {
         "name": "S. Russo",
         "pos": "VOL",
-        "ovr": 68
+        "ovr": 68,
+        "age": 25
+      },
+      {
+        "name": "T. Handwerker",
+        "pos": "LE",
+        "ovr": 68,
+        "age": 27
       }
     ],
     "city": "Arminia Bielefeld",
@@ -648,22 +798,32 @@
       {
         "name": "N. Hauptmann",
         "pos": "MC",
-        "ovr": 70
+        "ovr": 70,
+        "age": 29
       },
       {
         "name": "V. Šapina",
         "pos": "VOL",
-        "ovr": 69
+        "ovr": 69,
+        "age": 30
       },
       {
         "name": "C. Daferner",
         "pos": "ATA",
-        "ovr": 69
+        "ovr": 69,
+        "age": 27
       },
       {
         "name": "D. Kother",
         "pos": "PE",
-        "ovr": 69
+        "ovr": 69,
+        "age": 25
+      },
+      {
+        "name": "J. Lemmer",
+        "pos": "PD",
+        "ovr": 68,
+        "age": 25
       }
     ],
     "city": "Dynamo Dresden",
@@ -690,22 +850,32 @@
       {
         "name": "T. Ciğerci",
         "pos": "MEI",
-        "ovr": 69
+        "ovr": 69,
+        "age": 30
+      },
+      {
+        "name": "E. Bethke",
+        "pos": "GK",
+        "ovr": 69,
+        "age": 22
       },
       {
         "name": "E. Engelhardt",
         "pos": "ATA",
-        "ovr": 66
+        "ovr": 66,
+        "age": 27
       },
       {
         "name": "D. Pelivan",
         "pos": "VOL",
-        "ovr": 66
+        "ovr": 66,
+        "age": 29
       },
       {
         "name": "A. Lucoqui",
         "pos": "LE",
-        "ovr": 66
+        "ovr": 66,
+        "age": 27
       }
     ],
     "city": "Energie Cottbus",
@@ -732,22 +902,32 @@
       {
         "name": "K. Pröger",
         "pos": "ATA",
-        "ovr": 68
+        "ovr": 68,
+        "age": 33
       },
       {
         "name": "J. Müller",
         "pos": "ZAG",
-        "ovr": 68
+        "ovr": 68,
+        "age": 31
       },
       {
         "name": "L. Kehl",
         "pos": "ATA",
-        "ovr": 67
+        "ovr": 67,
+        "age": 23
       },
       {
         "name": "D. Kopacz",
         "pos": "MD",
-        "ovr": 67
+        "ovr": 67,
+        "age": 26
+      },
+      {
+        "name": "B. Henning",
+        "pos": "MC",
+        "ovr": 66,
+        "age": 30
       }
     ],
     "city": "Osnabrück",

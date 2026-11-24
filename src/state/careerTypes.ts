@@ -70,7 +70,10 @@ export interface CareerState {
   setDrillSlot: (slotIndex: number, drillId: string | null) => void;
   completeActiveTraining: (stars: StarRating) => void;
   advanceDay: () => void;
-  playCurrentMatch: (mindset: TacticalMindset) => MatchPerformanceResult | null;
+  playCurrentMatch: (
+    mindset: TacticalMindset,
+    precomputedResult?: MatchPerformanceResult,
+  ) => MatchPerformanceResult | null;
   acceptYouthTransition: (proposal: YouthTransitionProposal) => void;
   acceptMarketProposal: (offer: TransferMarketOffer) => void;
   requestLoanOrOffersFromAgent: () => void;

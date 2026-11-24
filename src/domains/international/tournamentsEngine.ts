@@ -5,7 +5,7 @@ import { PlayerScoreOverride } from '../season/continentalEngine';
 import {
   applyScoreToStandings,
   createEmptyStandings,
-  pickPenaltyShootoutWinner,
+  simulatePenaltyShootout,
   simulateRealisticScoreline,
   sortStandings,
 } from '../season/poissonMatchMath';
@@ -63,17 +63,41 @@ function playSingleKnockoutRound(
         : { homeGoals: override.oppGoals, awayGoals: override.clubGoals }
       : simulateRealisticScoreline(m.homeClubId, m.awayClubId, true);
 
-    const winnerId =
-      sc.homeGoals > sc.awayGoals
-        ? m.homeClubId
-        : sc.awayGoals > sc.homeGoals
-          ? m.awayClubId
-          : pickPenaltyShootoutWinner(m.homeClubId, m.awayClubId);
+    let winnerId: string;
+    let penHome: number | null = null;
+    let penAway: number | null = null;
+
+    if (sc.homeGoals > sc.awayGoals) {
+      winnerId = m.homeClubId;
+    } else if (sc.awayGoals > sc.homeGoals) {
+      winnerId = m.awayClubId;
+    } else if (
+      isUser &&
+      override &&
+      override.clubPenGoals !== undefined &&
+      override.oppPenGoals !== undefined
+    ) {
+      if (m.homeClubId === override.clubId) {
+        penHome = override.clubPenGoals;
+        penAway = override.oppPenGoals;
+      } else {
+        penHome = override.oppPenGoals;
+        penAway = override.clubPenGoals;
+      }
+      winnerId = penHome > penAway ? m.homeClubId : m.awayClubId;
+    } else {
+      const pen = simulatePenaltyShootout(m.homeClubId, m.awayClubId);
+      penHome = pen.homePen;
+      penAway = pen.awayPen;
+      winnerId = pen.winnerId;
+    }
 
     return {
       ...m,
       homeGoals: sc.homeGoals,
       awayGoals: sc.awayGoals,
+      penHome,
+      penAway,
       played: true,
       winnerId,
     };

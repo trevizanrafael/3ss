@@ -27,13 +27,14 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
     const aggH = (tie.leg1Home ?? 0) + (tie.leg2Away ?? 0);
     const aggA = (tie.leg1Away ?? 0) + (tie.leg2Home ?? 0);
     const hasPlayed = tie.leg1Home !== null;
+    const hasPen = tie.penHome !== undefined && tie.penHome !== null && tie.penAway !== undefined && tie.penAway !== null;
 
     return (
       <div key={tie.id} className="bg-[#0E0F12] border border-[#242730] p-3 text-xs space-y-1.5">
         {[
-          { club: home, leg1: tie.leg1Home, leg2: tie.leg2Away, agg: aggH },
-          { club: away, leg1: tie.leg1Away, leg2: tie.leg2Home, agg: aggA },
-        ].map(({ club, leg1, leg2, agg }) => {
+          { club: home, leg1: tie.leg1Home, leg2: tie.leg2Away, agg: aggH, pen: tie.penHome },
+          { club: away, leg1: tie.leg1Away, leg2: tie.leg2Home, agg: aggA, pen: tie.penAway },
+        ].map(({ club, leg1, leg2, agg, pen }) => {
           const isWin = tie.winnerClubId === club.id;
           return (
             <div
@@ -50,7 +51,9 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                 </span>
               </div>
               <div className="font-condensed font-bold text-sm tabular-nums shrink-0">
-                {hasPlayed ? `${leg1 ?? '-'} / ${leg2 ?? '-'} (${agg})` : '—'}
+                {hasPlayed
+                  ? `${leg1 ?? '-'} / ${leg2 ?? '-'} (${agg})${hasPen ? ` • PÊN ${pen}` : ''}`
+                  : '—'}
               </div>
             </div>
           );
@@ -159,7 +162,11 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                 </span>
                 <span className="font-condensed font-extrabold text-2xl text-[#C8A45D]">
                   {cup.finalMatch.played
-                    ? `${cup.finalMatch.homeGoals} : ${cup.finalMatch.awayGoals}`
+                    ? `${cup.finalMatch.homeGoals} : ${cup.finalMatch.awayGoals}${
+                        cup.finalMatch.penHome !== undefined && cup.finalMatch.penHome !== null
+                          ? ` (PÊN ${cup.finalMatch.penHome}:${cup.finalMatch.penAway})`
+                          : ''
+                      }`
                     : 'VS'}
                 </span>
                 <span className="font-condensed uppercase font-bold text-lg">

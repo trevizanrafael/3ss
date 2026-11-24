@@ -21,16 +21,20 @@ export function simulateRealisticScoreline(
   homeClubId: string,
   awayClubId: string,
   neutralVenue = false,
+  customHomeOvr?: number,
+  customAwayOvr?: number,
 ): { homeGoals: number; awayGoals: number } {
   const home = getClubById(homeClubId);
   const away = getClubById(awayClubId);
 
-  const homeAdv = neutralVenue ? 0 : 1.7;
-  const ovrDiff = home.squadAvgOvr - away.squadAvgOvr + homeAdv;
+  const hOvr = customHomeOvr ?? home.squadAvgOvr;
+  const aOvr = customAwayOvr ?? away.squadAvgOvr;
+  const homeAdv = neutralVenue ? 0 : 1.65;
+  const ovrDiff = hOvr - aOvr + homeAdv;
 
-  // Bayern (86) em casa vs Bochum (74) -> diff ~13.7 -> lambdaH ~2.55, lambdaA ~0.55 (típico 2x0, 3x1, 2x1)
-  const lambdaHome = clamp(1.32 * Math.exp(0.048 * ovrDiff), 0.28, 3.05);
-  const lambdaAway = clamp(1.08 * Math.exp(-0.048 * ovrDiff), 0.20, 2.70);
+  // Coeficiente 0.040 gera campeões realistas com ~74..82 pontos em 38 rodadas (sem líderes invictos de 95 pts!)
+  const lambdaHome = clamp(1.32 * Math.exp(0.04 * ovrDiff), 0.28, 3.15);
+  const lambdaAway = clamp(1.08 * Math.exp(-0.04 * ovrDiff), 0.2, 2.75);
 
   return {
     homeGoals: samplePoissonGoals(lambdaHome),
@@ -38,11 +42,55 @@ export function simulateRealisticScoreline(
   };
 }
 
+/**
+ * Simula uma disputa real de pênaltis padrão FIFA (5 cobranças + alternadas se empatar),
+ * respeitando encerramento matemático antecipado (ex: 4x2 após 4 cobranças).
+ */
+export function simulatePenaltyShootout(
+  homeClubId: string,
+  awayClubId: string,
+): { homePen: number; awayPen: number; winnerId: string } {
+  const h = getClubById(homeClubId);
+  const a = getClubById(awayClubId);
+  const pHome = clamp(0.76 + (h.squadAvgOvr - a.squadAvgOvr) * 0.008, 0.66, 0.85);
+  const pAway = clamp(0.75 + (a.squadAvgOvr - h.squadAvgOvr) * 0.008, 0.65, 0.84);
+
+  let homePen = 0;
+  let awayPen = 0;
+
+  for (let round = 1; round <= 5; round++) {
+    if (Math.random() < pHome) homePen++;
+    const remHome = 5 - round;
+    const remAway = 5 - round + 1;
+    if (homePen - awayPen > remAway || awayPen - homePen > remHome) break;
+
+    if (Math.random() < pAway) awayPen++;
+    const remAfterBoth = 5 - round;
+    if (Math.abs(homePen - awayPen) > remAfterBoth) break;
+  }
+
+  let guard = 0;
+  while (homePen === awayPen && guard < 20) {
+    guard++;
+    const hScored = Math.random() < pHome;
+    const aScored = Math.random() < pAway;
+    if (hScored) homePen++;
+    if (aScored) awayPen++;
+  }
+
+  if (homePen === awayPen) {
+    homePen += 1;
+  }
+
+  return {
+    homePen,
+    awayPen,
+    winnerId: homePen > awayPen ? homeClubId : awayClubId,
+  };
+}
+
 export function pickPenaltyShootoutWinner(clubAId: string, clubBId: string): string {
-  const a = getClubById(clubAId);
-  const b = getClubById(clubBId);
-  const probA = clamp(0.5 + (a.squadAvgOvr - b.squadAvgOvr) * 0.015, 0.32, 0.68);
-  return Math.random() < probA ? clubAId : clubBId;
+  return simulatePenaltyShootout(clubAId, clubBId).winnerId;
 }
 
 export function createEmptyStandings(clubIds: string[]): ClubStandingRow[] {

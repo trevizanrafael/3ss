@@ -78,6 +78,7 @@ function findInMatchList(
   stageLabel: string,
   compId: InternationalCompId,
   dayOfWeek: 3 | 7,
+  decidesKnockout = false,
 ) {
   const m = list.find(
     (fx) => !fx.played && (fx.homeClubId === teamId || fx.awayClubId === teamId),
@@ -90,6 +91,7 @@ function findInMatchList(
     opponentId: isHome ? m.awayClubId : m.homeClubId,
     isHome,
     dayOfWeek,
+    decidesKnockout,
   };
 }
 
@@ -122,16 +124,16 @@ function findSummerCupMatch(cup: NationalCupTournament | null, teamId: string, w
   if (week === 39 && day === 7) return findInGroups(cup.groups, 1, teamId, cup.compId, 7);
   if (week === 40 && day === 3) return findInGroups(cup.groups, 2, teamId, cup.compId, 3);
   if (week === 40 && day === 7 && cup.roundOf16.length > 0) {
-    return findInMatchList(cup.roundOf16, teamId, 'OITAVAS DE FINAL', cup.compId, 7);
+    return findInMatchList(cup.roundOf16, teamId, 'OITAVAS DE FINAL', cup.compId, 7, true);
   }
   if (week === 41 && day === 3) {
-    return findInMatchList(cup.quarterFinals, teamId, 'QUARTAS DE FINAL', cup.compId, 3);
+    return findInMatchList(cup.quarterFinals, teamId, 'QUARTAS DE FINAL', cup.compId, 3, true);
   }
   if (week === 41 && day === 7) {
-    return findInMatchList(cup.semiFinals, teamId, 'SEMIFINAL', cup.compId, 7);
+    return findInMatchList(cup.semiFinals, teamId, 'SEMIFINAL', cup.compId, 7, true);
   }
   if (week === 42 && day === 7 && cup.finalMatch) {
-    return findInMatchList([cup.finalMatch], teamId, 'GRANDE FINAL', cup.compId, 7);
+    return findInMatchList([cup.finalMatch], teamId, 'GRANDE FINAL', cup.compId, 7, true);
   }
   return null;
 }
@@ -173,10 +175,10 @@ export function findNationalTeamFixtureOnDay(
           return findInGroups(nl.leagueBGroups, gIdx, nationalTeamId, 'NATIONS_LEAGUE', 7, 'LIGA B • ');
         }
       }
-      if (week === 28) return findInMatchList(nl.quarterFinals, nationalTeamId, 'QUARTAS • LIGA DAS NAÇÕES', 'NATIONS_LEAGUE', 7);
-      if (week === 32) return findInMatchList(nl.semiFinals, nationalTeamId, 'SEMIFINAL • LIGA DAS NAÇÕES', 'NATIONS_LEAGUE', 7);
+      if (week === 28) return findInMatchList(nl.quarterFinals, nationalTeamId, 'QUARTAS • LIGA DAS NAÇÕES', 'NATIONS_LEAGUE', 7, true);
+      if (week === 32) return findInMatchList(nl.semiFinals, nationalTeamId, 'SEMIFINAL • LIGA DAS NAÇÕES', 'NATIONS_LEAGUE', 7, true);
       if (week === 36 && nl.finalMatch) {
-        return findInMatchList([nl.finalMatch], nationalTeamId, 'FINAL • LIGA DAS NAÇÕES', 'NATIONS_LEAGUE', 7);
+        return findInMatchList([nl.finalMatch], nationalTeamId, 'FINAL • LIGA DAS NAÇÕES', 'NATIONS_LEAGUE', 7, true);
       }
     }
 

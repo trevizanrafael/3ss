@@ -4,7 +4,8 @@ import { CareerStage, SquadRole, StarRating } from '../../shared/types/common';
 import { clamp, randomInt } from '../../shared/utils/math';
 import { getPositionSector } from '../attributes/overallCalculator';
 import { CareerPlayer } from '../player/playerTypes';
-import { simulateRealisticScoreline } from '../season/poissonMatchMath';
+import { samplePoissonGoals } from '../season/poissonMatchMath';
+import { UserPenaltyShootoutSummary } from './penaltyShootoutEngine';
 
 export type TacticalMindset = 'AGRESSIVO_GOL' | 'EQUILIBRADO' | 'COLETIVO_SEGURO';
 
@@ -27,6 +28,8 @@ export interface MatchPerformanceResult {
   stars: StarRating;
   staminaSpent: number;
   matchNarrative: string[];
+  penaltyShootout?: UserPenaltyShootoutSummary;
+  aggregateNote?: string;
 }
 
 export function resolveMatchSimulation(
@@ -40,40 +43,65 @@ export function resolveMatchSimulation(
   stage: CareerStage,
   mindset: TacticalMindset,
 ): MatchPerformanceResult {
+  const myClub = getClubById(clubId);
   const opponent = getClubById(opponentId);
   const sector = getPositionSector(player.position);
 
   const isStarter =
     role === 'BASE_TITULAR' || role === 'TITULAR' || role === 'ESTRELA';
   const minuteEntered = isStarter ? 1 : randomInt(56, 72);
-  const subbedOffForStamina = isStarter && player.stamina < 68;
-  const minuteExited = subbedOffForStamina ? randomInt(66, 79) : 90;
+  const subbedOffForStamina = isStarter && player.stamina < 65;
+  const minuteExited = subbedOffForStamina ? randomInt(68, 81) : 90;
   const minutesPlayed = Math.max(15, minuteExited - minuteEntered + (isStarter ? 1 : 0));
+  const playTimeFactor = minutesPlayed / 90;
 
-  // Placar base gerado pelo modelo Poisson realista (zero 13x0!)
-  const rawScore = isHome
-    ? simulateRealisticScoreline(clubId, opponentId, stageLabel.includes('FINAL') && !stageLabel.includes('SEMI'))
-    : simulateRealisticScoreline(opponentId, clubId, stageLabel.includes('FINAL') && !stageLabel.includes('SEMI'));
+  // Impacto Real de Craque: quando seu Overall supera a média do elenco, você eleva o patamar competitivo do time!
+  const starCarryBoost =
+    Math.max(0, player.overall - myClub.squadAvgOvr) *
+    (isStarter ? 0.52 : 0.25) *
+    playTimeFactor;
 
-  let clubGoals = isHome ? rawScore.homeGoals : rawScore.awayGoals;
-  const opponentGoals = isHome ? rawScore.awayGoals : rawScore.homeGoals;
+  const effectiveMyOvr = myClub.squadAvgOvr + starCarryBoost;
+  const isNeutralFinal = stageLabel.includes('FINAL') && !stageLabel.includes('SEMI');
+  const homeAdv = isNeutralFinal ? 0 : isHome ? 1.65 : -1.65;
+  const ovrDiffForMyClub = effectiveMyOvr - opponent.squadAvgOvr + homeAdv;
+
+  const atkMindsetMult =
+    mindset === 'AGRESSIVO_GOL' ? 1.13 : mindset === 'COLETIVO_SEGURO' ? 0.94 : 1.0;
+  const defMindsetMult =
+    mindset === 'AGRESSIVO_GOL' ? 1.06 : mindset === 'COLETIVO_SEGURO' ? 0.86 : 1.0;
+
+  const baseMyLambda = isHome ? 1.34 : 1.1;
+  const baseOppLambda = isHome ? 1.06 : 1.3;
+
+  const lambdaMy = clamp(
+    baseMyLambda * Math.exp(0.042 * ovrDiffForMyClub) * atkMindsetMult,
+    0.3,
+    3.35,
+  );
+  const lambdaOpp = clamp(
+    baseOppLambda * Math.exp(-0.042 * ovrDiffForMyClub) * defMindsetMult,
+    0.18,
+    2.7,
+  );
+
+  let clubGoals = samplePoissonGoals(lambdaMy);
+  const opponentGoals = samplePoissonGoals(lambdaOpp);
 
   const benchmarkOvr =
     stage === 'YOUTH' ? Math.max(54, opponent.squadAvgOvr - 16) : opponent.squadAvgOvr - 2;
   const skillEdge = (player.overall - benchmarkOvr) / 10;
-  const playTimeFactor = minutesPlayed / 90;
 
   let playerGoals = 0;
   let playerAssists = 0;
   let keyActions = Math.max(1, Math.round((2 + skillEdge + Math.random() * 3) * playTimeFactor));
 
-  // Distribuir participação realista nos gols do seu time (ou criar 1 gol decisivo extra se destruiu)
   const goalShareProb = clamp(
-    (sector === 'ATK' ? 0.44 : sector === 'MID' ? 0.22 : 0.07) +
+    (sector === 'ATK' ? 0.45 : sector === 'MID' ? 0.23 : 0.07) +
       skillEdge * 0.08 +
       (mindset === 'AGRESSIVO_GOL' ? 0.1 : -0.02),
     0.04,
-    0.72,
+    0.74,
   );
   const assistShareProb = clamp(
     (sector === 'MID' ? 0.36 : sector === 'ATK' ? 0.2 : 0.14) +
@@ -92,10 +120,20 @@ export function resolveMatchSimulation(
     }
   }
 
-  // Chance de um lance individual seu mudar um jogo truncado (máx +1 gol, mantendo placar 100% realista!)
-  if (clubGoals === 0 && Math.random() < goalShareProb * 0.35 * playTimeFactor) {
-    clubGoals += 1;
-    playerGoals += 1;
+  // Poder de decisão: em jogos empatados ou perdendo por 1 gol, craques acima do nível rival podem decidir!
+  if (clubGoals <= opponentGoals && opponentGoals - clubGoals <= 1) {
+    const clutchProb =
+      clamp(0.14 + Math.max(0, skillEdge) * 0.14, 0.08, 0.52) *
+      (sector === 'ATK' ? 1.0 : sector === 'MID' ? 0.78 : 0.4) *
+      playTimeFactor;
+    if (Math.random() < clutchProb) {
+      clubGoals += 1;
+      if (sector === 'MID' && Math.random() < 0.45) {
+        playerAssists += 1;
+      } else {
+        playerGoals += 1;
+      }
+    }
   }
 
   if (sector === 'DEF') keyActions += randomInt(2, 5);
@@ -119,7 +157,7 @@ export function resolveMatchSimulation(
   if (sector === 'DEF' && opponentGoals === 0) narrative.push(`Defesa intacta: ${keyActions} ações defensivas.`);
   if (subbedOffForStamina) narrative.push(`Substituído aos ${minuteExited}' por desgaste.`);
 
-  const baseStaminaDrain = Math.round(minutesPlayed * (mindset === 'AGRESSIVO_GOL' ? 0.34 : 0.25));
+  const baseStaminaDrain = Math.round(minutesPlayed * (mindset === 'AGRESSIVO_GOL' ? 0.32 : 0.23));
 
   return {
     competitionId,
@@ -138,7 +176,7 @@ export function resolveMatchSimulation(
     playerAssists,
     keyActions,
     stars,
-    staminaSpent: clamp(baseStaminaDrain, 10, 42),
+    staminaSpent: clamp(baseStaminaDrain, 10, 38),
     matchNarrative: narrative,
   };
 }

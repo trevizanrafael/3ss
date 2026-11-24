@@ -1,6 +1,7 @@
 import { SquadPosition } from '../../data/clubs/types';
 import { LeagueId, LEAGUES } from '../../data/leagues/leagues';
 import { CareerStage } from '../../shared/types/common';
+import { UserCompetitionStatsMap } from '../career-stats/careerHistoryTypes';
 import { CareerPlayer } from '../player/playerTypes';
 import { WorldSeasonState } from '../season/seasonTypes';
 import { findClubLeagueIdInWorld } from '../season/worldSeasonEngine';
@@ -44,6 +45,7 @@ export function evaluateEndOfSeasonAwards(
   stage: CareerStage,
   period: PlayerPeriodStats,
   world: WorldSeasonState,
+  userCompStats?: UserCompetitionStatsMap,
 ): { gala: SeasonAwardsGalaReport; newTrophies: PlayerTrophyEntry[] } {
   const userLeagueId = findClubLeagueIdInWorld(world, userClubId);
   const uclWinner = world.continentals.CHAMPIONS_LEAGUE.championClubId;
@@ -69,6 +71,7 @@ export function evaluateEndOfSeasonAwards(
     world,
     leagueChampions,
     clubRankMap,
+    userCompStats,
   );
 
   const makeAward = (
@@ -134,48 +137,54 @@ export function evaluateEndOfSeasonAwards(
     makeAward(
       'BALLON_DOR',
       'BOLA DE OURO',
-      'MELHOR JOGADOR DO MUNDO NA TEMPORADA',
+      'MELHOR JOGADOR DO MUNDO NA TEMPORADA (TODAS AS COMPETIÇÕES)',
       candidates,
       (c) => c.worldScore,
-      (c) => `${c.goals}G • ${c.assists}A • ${c.ovr} OVR`,
+      (c) => `${c.totalGoals}G • ${c.totalAssists}A NA TEMP • ${c.ovr} OVR`,
       450000,
     ),
     makeAward(
       'GOLDEN_BOY',
       'GOLDEN BOY (YOUNGSTER)',
-      'MELHOR JOGADOR SUB-21 DO MUNDO',
+      'MELHOR JOGADOR SUB-21 DO MUNDO NA TEMPORADA',
       candidates.filter((c) => c.age <= 21),
       (c) => c.worldScore,
-      (c) => `${c.age} ANOS • ${c.goals}G ${c.assists}A`,
+      (c) => `${c.age} ANOS • ${c.totalGoals}G ${c.totalAssists}A NA TEMP`,
       180000,
     ),
     makeAward(
       'GOLDEN_BOOT',
       'CHUTEIRA DE OURO',
-      'ARTILHARIA PONDERADA (×2.0 TOP-5 EUROPA • ×1.5 DEMAIS 1ª DIV)',
+      'ARTILHARIA DAS LIGAS NACIONAIS (×2.0 TOP-5 EUROPA • ×1.5 DEMAIS 1ª DIV)',
       candidates.filter((c) => c.pos !== 'GK'),
-      (c) => c.goals * getBootFactor(c.leagueId),
+      (c) => c.leagueGoals * getBootFactor(c.leagueId),
       (c) => {
         const f = getBootFactor(c.leagueId);
-        return `${c.goals} GOLS × ${f.toFixed(1)} = ${(c.goals * f).toFixed(0)} PTS`;
+        return `${c.leagueGoals} GOLS LIGA × ${f.toFixed(1)} = ${(c.leagueGoals * f).toFixed(0)} PTS`;
       },
       200000,
       3,
-      (a, b) => b.goals - a.goals || b.assists - a.assists || b.ovr - a.ovr,
+      (a, b) =>
+        b.leagueGoals - a.leagueGoals ||
+        b.leagueAssists - a.leagueAssists ||
+        b.ovr - a.ovr,
     ),
     makeAward(
       'GOLDEN_PLAYMAKER',
       'GARÇOM DE OURO',
-      'LÍDER MUNDIAL PONDERADO DE ASSISTÊNCIAS',
+      'LÍDER DE ASSISTÊNCIAS NAS LIGAS NACIONAIS (PONDERADO)',
       candidates.filter((c) => c.pos !== 'GK'),
-      (c) => c.assists * getBootFactor(c.leagueId),
+      (c) => c.leagueAssists * getBootFactor(c.leagueId),
       (c) => {
         const f = getBootFactor(c.leagueId);
-        return `${c.assists} ASSIST × ${f.toFixed(1)} = ${(c.assists * f).toFixed(0)} PTS`;
+        return `${c.leagueAssists} ASSIST LIGA × ${f.toFixed(1)} = ${(c.leagueAssists * f).toFixed(0)} PTS`;
       },
       140000,
       3,
-      (a, b) => b.assists - a.assists || b.goals - a.goals || b.ovr - a.ovr,
+      (a, b) =>
+        b.leagueAssists - a.leagueAssists ||
+        b.leagueGoals - a.leagueGoals ||
+        b.ovr - a.ovr,
     ),
     makeAward(
       'UCL_BEST',
@@ -200,19 +209,19 @@ export function evaluateEndOfSeasonAwards(
     makeAward(
       'LEAGUE_MVP',
       `CRAQUE • ${myLeagueName}`,
-      'MELHOR JOGADOR DO SEU CAMPEONATO',
+      'MELHOR JOGADOR EXCLUSIVO DA SUA LIGA NACIONAL',
       myLeaguePool,
       (c) => c.leagueScore,
-      (c) => `${c.goals}G • ${c.assists}A • ${c.ovr} OVR`,
+      (c) => `${c.leagueGoals}G • ${c.leagueAssists}A NA LIGA • ${c.ovr} OVR`,
       isDiv1 ? 95000 : 28000,
     ),
     makeAward(
       'LEAGUE_YOUNG_PLAYER',
       `JOVEM DO ANO • ${myLeagueName}`,
-      'REVELAÇÃO SUB-21 DO SEU CAMPEONATO',
+      'REVELAÇÃO SUB-21 EXCLUSIVA DA SUA LIGA NACIONAL',
       myLeaguePool.filter((c) => c.age <= 21),
       (c) => c.leagueScore,
-      (c) => `${c.age} ANOS • ${c.goals}G ${c.assists}A`,
+      (c) => `${c.age} ANOS • ${c.leagueGoals}G ${c.leagueAssists}A NA LIGA`,
       isDiv1 ? 55000 : 18000,
     ),
   ];
@@ -222,14 +231,14 @@ export function evaluateEndOfSeasonAwards(
   const leagueTots: TeamOfTheSeasonSlot[] = TOTS_SLOTS_SPEC.map(({ slot, primary, fallback }) => {
     const primaryMatches = myLeaguePool
       .filter((c) => !usedTots.has(c.id) && primary.includes(c.pos))
-      .sort((a, b) => b.leagueScore - a.leagueScore);
+      .sort((a, b) => b.totsScore - a.totsScore);
 
     const fallbackMatches =
       primaryMatches.length > 0
         ? []
         : myLeaguePool
             .filter((c) => !usedTots.has(c.id) && fallback.includes(c.pos))
-            .sort((a, b) => b.leagueScore - a.leagueScore);
+            .sort((a, b) => b.totsScore - a.totsScore);
 
     const best = primaryMatches[0] ?? fallbackMatches[0];
     if (best) {

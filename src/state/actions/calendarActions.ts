@@ -93,7 +93,7 @@ export function computeNextDayState(
   nextPlayer = {
     ...nextPlayer,
     stamina: clamp(
-      nextPlayer.stamina + 14 + Math.round(bonuses.staminaRecoveryBonus / 3),
+      nextPlayer.stamina + 17 + Math.round(bonuses.staminaRecoveryBonus / 3),
       0,
       100,
     ),
@@ -229,6 +229,7 @@ export function computeNextDayState(
         contract.stage,
         nextPeriod,
         nextWorld,
+        nextUserCompStats,
       );
       nextGala = gala;
       nextGalaOpen = true;

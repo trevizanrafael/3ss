@@ -115,6 +115,7 @@ export function getClubFixtureOnExactDay(
         opponentId: ntFx.opponentId,
         isHome: ntFx.isHome,
         dayOfWeek: ntFx.dayOfWeek,
+        decidesKnockout: ntFx.decidesKnockout,
       };
     }
   }
@@ -132,6 +133,9 @@ export function getClubFixtureOnExactDay(
           opponentId: found.opponentId,
           isHome: found.isHome,
           dayOfWeek: 3,
+          decidesKnockout: found.decidesKnockout,
+          prevLegMyGoals: found.prevLegMyGoals,
+          prevLegOppGoals: found.prevLegOppGoals,
         };
       }
     }
