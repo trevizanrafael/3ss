@@ -24,9 +24,13 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   previewPlayer,
   cameraPreset,
 }) => {
-  const mountRef = useRef<HTMLDivElement | null>(null);
+  // Container exclusivo e vazio apenas para o <canvas> do Three.js (nunca mistura filhos do React!)
+  const canvasHostRef = useRef<HTMLDivElement | null>(null);
   const manualYawRef = useRef(0);
   const targetYawRef = useRef(-0.18);
+  const heightCmRef = useRef(previewPlayer.heightCm);
+  heightCmRef.current = previewPlayer.heightCm;
+
   const [zoomFaceOverride, setZoomFaceOverride] = useState<boolean | null>(null);
   const [modelReady, setModelReady] = useState(false);
 
@@ -64,8 +68,8 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   } | null>(null);
 
   useEffect(() => {
-    const container = mountRef.current;
-    if (!container) return;
+    const host = canvasHostRef.current;
+    if (!host) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 30);
@@ -76,9 +80,8 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
-    container.appendChild(renderer.domElement);
+    host.appendChild(renderer.domElement);
 
-    // Iluminação equilibrada para pele humana realista
     scene.add(new THREE.HemisphereLight('#F8FAFC', '#1E2430', 1.25));
     const keyLight = new THREE.DirectionalLight('#FFFBF2', 1.65);
     keyLight.position.set(2.2, 3.2, 3.5);
@@ -93,15 +96,15 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     sceneBundleRef.current = { actorHolder, mixer: null };
 
     const syncSize = () => {
-      const w = Math.max(200, container.clientWidth);
-      const h = Math.max(200, container.clientHeight);
+      const w = Math.max(200, host.clientWidth);
+      const h = Math.max(200, host.clientHeight);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
     syncSize();
     const ro = new ResizeObserver(syncSize);
-    ro.observe(container);
+    ro.observe(host);
 
     let dragging = false;
     let prevX = 0;
@@ -118,7 +121,7 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     const onUp = () => {
       dragging = false;
     };
-    container.addEventListener('pointerdown', onDown);
+    host.addEventListener('pointerdown', onDown);
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
 
@@ -131,15 +134,16 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     window.addEventListener('gamepad-rs-move', onRsMove);
 
     let rafId = 0;
-    const clock = new THREE.Clock();
+    let prevTimeMs = performance.now();
     const lookCurrent = new THREE.Vector3(0, 0.95, 0);
 
-    const animate = () => {
-      const dt = Math.min(0.05, clock.getDelta());
+    const animate = (nowMs: number) => {
+      const dt = Math.min(0.05, Math.max(0, (nowMs - prevTimeMs) / 1000));
+      prevTimeMs = nowMs;
       sceneBundleRef.current?.mixer?.update(dt);
 
       const p = presetRef.current;
-      const hRatio = previewPlayer.heightCm / 178;
+      const hRatio = heightCmRef.current / 178;
       const desiredCamPos =
         p === 'HEAD_CLOSEUP'
           ? new THREE.Vector3(0, 1.66 * hRatio, 0.95)
@@ -164,36 +168,42 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     return () => {
       cancelAnimationFrame(rafId);
       ro.disconnect();
-      container.removeEventListener('pointerdown', onDown);
+      host.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('gamepad-rs-move', onRsMove);
       sceneBundleRef.current?.disposeActor?.();
+      sceneBundleRef.current = null;
       renderer.dispose();
-      container.innerHTML = '';
+      if (renderer.domElement.parentNode === host) {
+        host.removeChild(renderer.domElement);
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     let cancelled = false;
-    buildRealisticHumanFootballer3D(previewPlayer).then((built) => {
-      if (cancelled) {
-        built.dispose();
-        return;
-      }
-      const bundle = sceneBundleRef.current;
-      if (!bundle) {
-        built.dispose();
-        return;
-      }
-      bundle.disposeActor?.();
-      bundle.actorHolder.clear();
-      bundle.actorHolder.add(built.root);
-      bundle.mixer = built.mixer;
-      bundle.disposeActor = built.dispose;
-      setModelReady(true);
-    });
+    buildRealisticHumanFootballer3D(previewPlayer)
+      .then((built) => {
+        if (cancelled) {
+          built.dispose();
+          return;
+        }
+        const bundle = sceneBundleRef.current;
+        if (!bundle) {
+          built.dispose();
+          return;
+        }
+        bundle.disposeActor?.();
+        bundle.actorHolder.clear();
+        bundle.actorHolder.add(built.root);
+        bundle.mixer = built.mixer;
+        bundle.disposeActor = built.dispose;
+        setModelReady(true);
+      })
+      .catch((err) => {
+        console.error('Erro ao montar modelo 3D:', err);
+      });
     return () => {
       cancelled = true;
     };
@@ -247,9 +257,15 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 relative min-h-0 cursor-grab active:cursor-grabbing" ref={mountRef}>
+      {/* Wrapper separado: canvasHostRef fica 100% isolado dos overlays do React */}
+      <div className="flex-1 relative min-h-0">
+        <div
+          ref={canvasHostRef}
+          className="absolute inset-0 cursor-grab active:cursor-grabbing"
+        />
+
         {!modelReady && (
-          <div className="absolute inset-0 flex items-center justify-center font-condensed uppercase tracking-widest text-sm text-[#9498A3]">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center font-condensed uppercase tracking-widest text-sm text-[#9498A3] z-10">
             CARREGANDO ATLETA 3D...
           </div>
         )}
