@@ -63,9 +63,9 @@ export const TrainingTab: React.FC = () => {
           ) : trainedToday ? (
             <button
               onClick={() => setActiveTab('CENTRAL')}
-              className="px-5 py-2.5 bg-[#191B20] border border-[#C8A45D] font-condensed uppercase font-bold text-sm tracking-widest text-[#C8A45D] cursor-pointer"
+              className="console-btn-primary px-6 py-3 text-base cursor-pointer"
             >
-              SESSÃO CONCLUÍDA • VOLTAR À CENTRAL ›
+              CONCLUIR E VOLTAR À CENTRAL ›
             </button>
           ) : (
             <span className="px-4 py-2.5 bg-[#0E0F12] border border-[#242730] font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3]">

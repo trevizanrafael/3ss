@@ -54,7 +54,7 @@ export const HubHeaderAndNav: React.FC = () => {
   const hasAlert = transitionProposals.length + marketOffers.length > 0;
 
   return (
-    <header className="h-16 shrink-0 border-b border-[#242730] bg-[#0B0B0D]/90 px-6 md:px-10 flex items-center justify-between relative z-20">
+    <header className="h-16 shrink-0 border-b border-[#242730] bg-[#0B0B0D]/90 px-6 md:px-10 flex items-center justify-between relative z-10">
       {/* Esquerda: Clube + Jogador + OVR */}
       <div className="flex items-center gap-3.5 min-w-0">
         <ClubCrest

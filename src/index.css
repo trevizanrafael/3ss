@@ -80,6 +80,19 @@
   border-left-color: #2c303a;
 }
 
+@keyframes conveyorSlideLeft {
+  from {
+    transform: translateX(14.285%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+.animate-conveyor-tick {
+  animation: conveyorSlideLeft 330ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;

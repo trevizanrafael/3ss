@@ -29,7 +29,7 @@ export const CareerHubScreen: React.FC = () => {
 
       <HubHeaderAndNav />
 
-      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 md:px-10 py-5 min-h-0 relative z-10">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 md:px-10 py-5 min-h-0 relative">
         {activeTab === 'CENTRAL' && <DashboardTab />}
         {activeTab === 'MEU_PRO' && <MyProTab />}
         {activeTab === 'TREINO' && <TrainingTab />}
