@@ -64,6 +64,8 @@ export interface CareerState {
 
   beginCareerWithPlayer: (input: CreatePlayerInput) => void;
   finishTryout: (stars: StarRating) => void;
+  resetTryoutSession: () => void;
+  rerollTryoutClubs: () => void;
   signYouthOffer: (offer: YouthAcademyOffer) => void;
   setDrillSlot: (slotIndex: number, drillId: string | null) => void;
   completeActiveTraining: (stars: StarRating) => void;

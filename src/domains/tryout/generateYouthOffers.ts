@@ -36,9 +36,13 @@ function findDirectCompetitor(club: ClubData, pos: PositionCode): RealSquadStar 
 export function generateYouthOffersFromTryout(
   player: CareerPlayer,
   tryoutStars: StarRating,
+  excludeClubIds: string[] = [],
 ): YouthAcademyOffer[] {
   const targetCountry = player.startingLeagueCountry ?? 'BRA';
-  const countryClubs = getNationalClubsByCountry(targetCountry);
+  const allCountryClubs = getNationalClubsByCountry(targetCountry);
+  const excluded = new Set(excludeClubIds);
+  const freshPool = allCountryClubs.filter((c) => !excluded.has(c.id));
+  const countryClubs = freshPool.length >= 6 ? freshPool : allCountryClubs;
   const div1Giants = shuffleArray(countryClubs.filter((c) => c.squadAvgOvr >= 79));
   const div1Mid = shuffleArray(
     countryClubs.filter((c) => LEAGUES[c.leagueId].division === 1 && c.squadAvgOvr < 79),

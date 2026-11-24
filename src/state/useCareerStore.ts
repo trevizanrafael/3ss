@@ -73,9 +73,24 @@ export const useCareerStore = create<CareerState>()(
         }),
 
       finishTryout: (stars) => {
-        const { player } = get();
+        const { player, tryoutOffers } = get();
         if (!player) return;
-        set({ tryoutStars: stars, tryoutOffers: generateYouthOffersFromTryout(player, stars) });
+        const prevIds = tryoutOffers.map((o) => o.clubId);
+        set({
+          tryoutStars: stars,
+          tryoutOffers: generateYouthOffersFromTryout(player, stars, prevIds),
+        });
+      },
+
+      resetTryoutSession: () => set({ tryoutStars: null, tryoutOffers: [] }),
+
+      rerollTryoutClubs: () => {
+        const { player, tryoutStars, tryoutOffers } = get();
+        if (!player || tryoutStars === null) return;
+        const prevIds = tryoutOffers.map((o) => o.clubId);
+        set({
+          tryoutOffers: generateYouthOffersFromTryout(player, tryoutStars, prevIds),
+        });
       },
 
       signYouthOffer: (offer) =>

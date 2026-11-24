@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getClubById } from '../../data/clubs';
 import { COUNTRIES, TRYOUT_LEAGUE_COUNTRIES } from '../../data/countries/countries';
 import { LEAGUES } from '../../data/leagues/leagues';
+import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
+import { focusInitialElementInScope } from '../../shared/gamepad/spatialNavigator';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
 import { CountryFlag } from '../../shared/ui/CountryFlag';
 import { FifaStatBadge } from '../../shared/ui/FifaStatBadge';
@@ -39,11 +41,28 @@ const TRYOUT_STAGES = [
 ];
 
 export const TryoutScreen: React.FC = () => {
-  const { player, tryoutStars, tryoutOffers, finishTryout, signYouthOffer } = useCareerStore();
+  const {
+    player,
+    tryoutStars,
+    tryoutOffers,
+    finishTryout,
+    resetTryoutSession,
+    rerollTryoutClubs,
+    signYouthOffer,
+  } = useCareerStore();
   const { setScreen } = useNavigationStore();
 
   const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (document.documentElement.dataset.inputMode === 'gamepad') {
+        focusInitialElementInScope();
+      }
+    }, 35);
+    return () => window.clearTimeout(t);
+  }, [step, tryoutStars, tryoutOffers]);
 
   if (!player) return null;
   const natCountry = COUNTRIES[player.nationality] ?? COUNTRIES.BRA;
@@ -64,9 +83,15 @@ export const TryoutScreen: React.FC = () => {
     }
   };
 
+  const handleRedoFullTest = () => {
+    setStep(0);
+    setScore(0);
+    resetTryoutSession();
+  };
+
   return (
     <div className="w-screen h-screen bg-[#0B0B0D] flex flex-col justify-between px-8 md:px-14 py-6 overflow-hidden">
-      <header className="flex items-center justify-between border-b border-[#242730] pb-4">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#242730] pb-4 shrink-0">
         <div>
           <span className="text-[11px] uppercase tracking-[0.24em] text-[#C8A45D] font-semibold inline-flex items-center gap-2">
             <span>SELETIVA PROFISSIONAL •</span>
@@ -77,10 +102,51 @@ export const TryoutScreen: React.FC = () => {
             <span>{natCountry.name}</span>
           </span>
           <h1 className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] leading-none mt-1">
-            {tryoutStars === null ? 'AVALIAÇÃO DE PRÉ-TEMPORADA PROFISSIONAL' : 'PROPOSTAS DE CONTRATO PROFISSIONAL'}
+            {tryoutStars === null
+              ? 'AVALIAÇÃO DE PRÉ-TEMPORADA PROFISSIONAL'
+              : 'PROPOSTAS DE CONTRATO PROFISSIONAL'}
           </h1>
         </div>
-        {tryoutStars !== null && <StarRatingBadge stars={tryoutStars} size="lg" showLabel />}
+
+        <div className="flex flex-wrap items-center gap-3">
+          {tryoutStars !== null && (
+            <>
+              <StarRatingBadge stars={tryoutStars} size="lg" showLabel />
+
+              <button
+                type="button"
+                data-focusable="true"
+                data-pad-y="true"
+                onClick={rerollTryoutClubs}
+                className="px-4 py-2 bg-[#16181D] hover:bg-[#222630] border border-[#C8A45D] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-wider text-[#C8A45D] cursor-pointer"
+              >
+                <GamepadBadge action="ALT_Y" />
+                <span>SORTEAR OUTROS CLUBES</span>
+              </button>
+
+              <button
+                type="button"
+                data-focusable="true"
+                data-pad-x="true"
+                onClick={handleRedoFullTest}
+                className="px-4 py-2 bg-[#16181D] hover:bg-[#222630] border border-[#242730] inline-flex items-center gap-2 font-condensed uppercase font-bold text-xs tracking-wider text-[#F5F5F7] cursor-pointer"
+              >
+                <GamepadBadge action="ALT_X" />
+                <span>REFAZER TESTE</span>
+              </button>
+            </>
+          )}
+
+          <button
+            type="button"
+            data-pad-back="true"
+            data-nav-ignore="true"
+            onClick={() => setScreen('CREATE_PLAYER')}
+            className="px-3 py-2 bg-[#121316] border border-[#242730] hover:border-[#565A65] cursor-pointer"
+          >
+            <GamepadBadge action="BACK" label="CRIAR PRO" />
+          </button>
+        </div>
       </header>
 
       {tryoutStars === null ? (
@@ -96,9 +162,11 @@ export const TryoutScreen: React.FC = () => {
             {TRYOUT_STAGES[step].options.map((opt, idx) => (
               <button
                 key={opt.code}
+                type="button"
+                data-focusable="true"
                 data-autofocus={idx === 0 ? 'true' : undefined}
                 onClick={() => handleChoice(opt.bonus, opt.risk)}
-                className="console-tile console-tile-interactive text-left p-8 border-l-4 border-l-[#565A65] hover:border-l-[#C8A45D] cursor-pointer"
+                className="console-tile console-tile-interactive text-left p-8 border-l-4 border-l-[#565A65] hover:border-l-[#C8A45D] cursor-pointer outline-none"
               >
                 <span className="font-condensed text-xs tracking-[0.24em] text-[#C8A45D] font-bold">
                   OPÇÃO {opt.code}
@@ -126,7 +194,7 @@ export const TryoutScreen: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between text-[11px] text-[#565A65] uppercase tracking-widest mb-4">
                     <span>PROPOSTA 0{idx + 1}</span>
-                    <span>{league.name}</span>
+                    <span className="truncate ml-2">{league.name}</span>
                   </div>
 
                   <div className="flex flex-col items-center text-center pb-4 border-b border-[#242730]">
@@ -174,6 +242,8 @@ export const TryoutScreen: React.FC = () => {
                 </div>
 
                 <button
+                  type="button"
+                  data-focusable="true"
                   data-autofocus={idx === 0 ? 'true' : undefined}
                   onClick={() => {
                     signYouthOffer(offer);
@@ -189,9 +259,18 @@ export const TryoutScreen: React.FC = () => {
         </main>
       )}
 
-      <footer className="border-t border-[#242730] pt-3 flex justify-between text-[11px] uppercase tracking-widest text-[#565A65]">
-        <span>{player.fullName} • {player.position} • {player.overall} OVR</span>
-        <span>CLUBES MENORES DÃO SUBIDA MAIS RÁPIDA AO PROFISSIONAL</span>
+      <footer className="border-t border-[#242730] pt-3 flex flex-wrap items-center justify-between gap-4 text-[11px] uppercase tracking-widest text-[#565A65]">
+        <span>
+          {player.fullName} • {player.position} • {player.overall} OVR
+        </span>
+        {tryoutStars !== null ? (
+          <div className="flex items-center gap-5">
+            <GamepadBadge action="ALT_Y" label="SORTEAR OUTROS CLUBES" />
+            <GamepadBadge action="ALT_X" label="REFAZER TESTE" />
+          </div>
+        ) : (
+          <span>ESCOLHA SUA EXECUÇÃO EM CADA BATERIA PARA DEFINIR AS PROPOSTAS</span>
+        )}
       </footer>
     </div>
   );
