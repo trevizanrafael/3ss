@@ -187,10 +187,10 @@ export const PitchHudOverlay: React.FC<PitchHudOverlayProps> = ({
             <strong className="text-[#C8A45D]">{lblRB}+{lblShoot}:</strong> COLOCADO
           </span>
           <span>
-            <strong className="text-[#A78BFA]">{lblLB}:</strong> CAVADINHA
+            <strong className="text-[#A78BFA]">{lblLB}+{lblShoot}:</strong> CAVADINHA
           </span>
           <span>
-            <strong className="text-[#F472B6]">{lblShoot}+{lblPass}:</strong> FINGIR CHUTE
+            <strong className="text-[#F472B6]">{lblShoot}➔{lblPass}:</strong> FINGIR CHUTE
           </span>
           <span>
             <strong className="text-[#2DBE60]">{lblPass}:</strong> PASSE

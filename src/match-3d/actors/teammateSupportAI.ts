@@ -19,6 +19,9 @@ export interface SupportTeammateBrain {
   holdTimer: number;
   kickAnimTimer: number;
   receivedFromUser: boolean;
+  /** Alvo inteligente da bola enfiada (Y) para o parceiro disparar imediatamente nas costas! */
+  throughRunTarget: THREE.Vector3 | null;
+  throughRunTimer: number;
 }
 
 function shortestAngleDiff(from: number, to: number): number {
@@ -27,10 +30,6 @@ function shortestAngleDiff(from: number, to: number): number {
   return diff;
 }
 
-/**
- * Calcula o ponto futuro exato da bola onde o companheiro consegue interceptar mais rápido
- * (seja passe no pé, bola enfiada na frente, passe curto atrás ou bola espirrada!).
- */
 function predictPassInterceptPoint(
   ball: BallState,
   matePos: THREE.Vector3,
@@ -44,9 +43,8 @@ function predictPassInterceptPoint(
 
   let bestX = px;
   let bestZ = pz;
-  let bestMargin = -999;
 
-  for (let i = 1; i <= 26; i++) {
+  for (let i = 1; i <= 28; i++) {
     const t = i * stepDt;
     const speed = Math.hypot(vx, vz);
     if (speed > 0.05 && ball.pos.y <= 0.45) {
@@ -62,14 +60,10 @@ function predictPassInterceptPoint(
     pz = Math.max(-PITCH.HALF_L + 0.8, Math.min(PITCH.HALF_L - 0.8, pz + vz * stepDt));
 
     const mateTimeNeeded = Math.hypot(px - matePos.x, pz - matePos.z) / mateMaxSpeed;
-    const margin = t - mateTimeNeeded;
     bestX = px;
     bestZ = pz;
-    if (margin >= -0.05) {
+    if (t - mateTimeNeeded >= -0.04) {
       return new THREE.Vector3(bestX, 0, bestZ);
-    }
-    if (margin > bestMargin) {
-      bestMargin = margin;
     }
   }
 
@@ -104,9 +98,9 @@ export function createSupportTeammate(club: ClubData): SupportTeammateBrain {
       bootColor: '#EC4899',
     },
     attributes: {
-      acceleration: 84, sprintSpeed: 84, agility: 83, balance: 82, stamina: 86, strength: 76,
-      finishing: 82, shotPower: 83, longShots: 80, positioning: 86, shortPass: 86, longPass: 84,
-      dribbling: 82, ballControl: 85, tackling: 68, interceptions: 74,
+      acceleration: 85, sprintSpeed: 85, agility: 84, balance: 82, stamina: 86, strength: 76,
+      finishing: 84, shotPower: 84, longShots: 80, positioning: 88, shortPass: 86, longPass: 84,
+      dribbling: 82, ballControl: 86, tackling: 68, interceptions: 74,
     },
     attributeXp: {
       acceleration: 0, sprintSpeed: 0, agility: 0, balance: 0, stamina: 0, strength: 0,
@@ -131,6 +125,8 @@ export function createSupportTeammate(club: ClubData): SupportTeammateBrain {
     holdTimer: 0,
     kickAnimTimer: 0,
     receivedFromUser: false,
+    throughRunTarget: null,
+    throughRunTimer: 0,
   };
 }
 
@@ -148,6 +144,10 @@ export function stepSupportTeammateAI(
   let deliveredAssistPass = false;
   let shotByMateFromUserPass = false;
   mate.kickAnimTimer = Math.max(0, mate.kickAnimTimer - dt);
+  if (mate.throughRunTimer > 0) {
+    mate.throughRunTimer = Math.max(0, mate.throughRunTimer - dt);
+    if (mate.throughRunTimer <= 0) mate.throughRunTarget = null;
+  }
 
   const distToBall = Math.hypot(ball.pos.x - mate.pos.x, ball.pos.z - mate.pos.z);
   const userDistToBall = Math.hypot(ball.pos.x - userPos.x, ball.pos.z - userPos.z);
@@ -157,39 +157,47 @@ export function stepSupportTeammateAI(
     ball.lastTouchBy = 'MATE';
     ball.touchCooldown = 0.25;
 
-    // Bate cruzado tirando do goleiro!
     const openSide = gkPos.x >= 0 ? -1 : 1;
-    const aimX = openSide * (2.15 + Math.random() * 0.75);
+    const aimX = openSide * (2.25 + Math.random() * 0.65);
     const dx = aimX - mate.pos.x;
     const dz = -PITCH.HALF_L - mate.pos.z;
-    const dist = Math.max(3, Math.hypot(dx, dz));
-    const spd = Math.min(30, 22.5 + dist * 0.22);
-    const loftY = dist > 15 ? 4.4 : 2.6;
+    const dist = Math.max(3.5, Math.hypot(dx, dz));
+    const spd = Math.min(31, 24 + dist * 0.24);
+    const tGoal = dist / spd;
+    // Altura firme de chute na rede (sobe bonito sem pingar!)
+    const targetGoalY = dist > 14 ? 1.75 : 1.35;
+    const vy0 = (targetGoalY - PITCH.BALL_RADIUS - 0.5 * BALL_AERO.GRAVITY * tGoal * tGoal) / tGoal;
 
-    ball.vel.set((dx / dist) * spd, loftY, (dz / dist) * spd);
-    ball.spin.set(-3.5, openSide * -5, 0);
+    ball.vel.set((dx / dist) * spd, Math.max(2.2, vy0), (dz / dist) * spd);
+    ball.spin.set(-2.5, openSide * -4, 0);
     mate.facingYaw = Math.atan2(dx, dz);
     mate.kickAnimTimer = 0.28;
-    playBallKickSfx(0.82);
+    playBallKickSfx(0.84);
 
     if (mate.receivedFromUser) {
       shotByMateFromUserPass = true;
     }
   };
 
-  // 1. Domínio ou finalização de primeira em cruzamento/passe na área!
+  // 1. Domínio ou finalização de primeira!
   if (
     ball.ownerId === null &&
     ball.touchCooldown <= 0 &&
-    distToBall < 1.22 &&
-    ball.pos.y < 2.15
+    distToBall < 1.25 &&
+    ball.pos.y < 2.2
   ) {
     const cameFromUser = ball.lastTouchBy === 'USER';
     mate.receivedFromUser = cameFromUser;
+    mate.throughRunTarget = null;
+    mate.throughRunTimer = 0;
 
-    // Se vier um cruzamento/passe limpo dentro da área (z < -29) e você não pediu de volta, bate de primeira pro gol!
     const inPrimeBox = mate.pos.z < -29.5 && Math.abs(mate.pos.x) < 11.5;
-    if (cameFromUser && inPrimeBox && calledForBall === null && (ball.pos.y > 0.65 || Math.abs(gkPos.x - mate.pos.x) > 1.3)) {
+    if (
+      cameFromUser &&
+      inPrimeBox &&
+      calledForBall === null &&
+      (ball.pos.y > 0.65 || Math.abs(gkPos.x - mate.pos.x) > 1.35)
+    ) {
       shootAtOpenGoalCorner();
       mate.actor.root.position.copy(mate.pos);
       mate.actor.root.rotation.y = mate.facingYaw;
@@ -200,25 +208,30 @@ export function stepSupportTeammateAI(
     ball.ownerId = 'MATE';
     ball.lastTouchBy = 'MATE';
     ball.spin.set(0, 0, 0);
-    // Segura e conduz com calma (até 1.45s) em vez de rifar bola aleatória!
-    mate.holdTimer = 1.45;
+    mate.holdTimer = 1.4;
   }
 
-  // 2. Comportamento COM A BOLA NO PÉ (inteligente: conduz pro gol, chuta se tiver livre, ou devolve redondinho!)
+  // 2. Com a bola no pé
   if (ball.ownerId === 'MATE') {
     mate.holdTimer -= dt;
 
-    // Conduz em direção ao gol desviando da linha do goleiro
-    const goalLaneX = mate.pos.x > 3 ? mate.pos.x - 2.5 : mate.pos.x < -3 ? mate.pos.x + 2.5 : mate.pos.x;
-    const dribDir = new THREE.Vector3(goalLaneX - mate.pos.x, 0, -PITCH.HALF_L + 7 - mate.pos.z).normalize();
-    const dribSpd = 6.2;
+    const goalLaneX =
+      mate.pos.x > 3 ? mate.pos.x - 2.5 : mate.pos.x < -3 ? mate.pos.x + 2.5 : mate.pos.x;
+    const dribDir = new THREE.Vector3(
+      goalLaneX - mate.pos.x,
+      0,
+      -PITCH.HALF_L + 7 - mate.pos.z,
+    ).normalize();
+    const dribSpd = 6.3;
     mate.vel.x += (dribDir.x * dribSpd - mate.vel.x) * Math.min(1, 10 * dt);
     mate.vel.z += (dribDir.z * dribSpd - mate.vel.z) * Math.min(1, 10 * dt);
     mate.pos.addScaledVector(mate.vel, dt);
     mate.pos.x = Math.max(-PITCH.HALF_W + 1.2, Math.min(PITCH.HALF_W - 1.2, mate.pos.x));
     mate.pos.z = Math.max(-PITCH.HALF_L + 2.5, Math.min(PITCH.HALF_L - 1.5, mate.pos.z));
 
-    mate.facingYaw += shortestAngleDiff(mate.facingYaw, Math.atan2(mate.vel.x, mate.vel.z)) * Math.min(1, 12 * dt);
+    mate.facingYaw +=
+      shortestAngleDiff(mate.facingYaw, Math.atan2(mate.vel.x, mate.vel.z)) *
+      Math.min(1, 12 * dt);
 
     ball.pos.set(
       mate.pos.x + Math.sin(mate.facingYaw) * 0.58,
@@ -229,17 +242,16 @@ export function stepSupportTeammateAI(
 
     const distToGoal = Math.hypot(mate.pos.x, -PITCH.HALF_L - mate.pos.z);
     const distToGk = Math.hypot(mate.pos.x - gkPos.x, mate.pos.z - gkPos.z);
-    const hasGreatShotAngle = mate.pos.z < -25.0 && Math.abs(mate.pos.x) < 13.5 && distToGoal < 19.5;
+    const hasGreatShotAngle =
+      mate.pos.z < -25.0 && Math.abs(mate.pos.x) < 13.5 && distToGoal < 19.5;
     const gkClosingIn = distToGk < 4.8 && mate.pos.z < -30;
 
-    // Se você mandou chutar (B), ou se ele entrou livre na cara do gol e você não pediu passe, FINALIZA!
     if (
       commandedMateShoot ||
       (calledForBall === null && (gkClosingIn || (hasGreatShotAngle && mate.holdTimer < 1.05)))
     ) {
       shootAtOpenGoalCorner();
     } else if (calledForBall !== null || mate.holdTimer <= 0) {
-      // Devolve o passe! Se você estiver PARADO, toca NO SEU PÉ (nunca joga bola perdida lá na frente!)
       ball.ownerId = null;
       ball.lastTouchBy = 'MATE';
       ball.touchCooldown = 0.24;
@@ -255,7 +267,7 @@ export function stepSupportTeammateAI(
 
       if (deliveryMode === 'THROUGH') {
         const leadX = userSpeed > 1.5 ? userVel.x * 0.75 : 0;
-        const leadZ = userSpeed > 1.5 ? Math.min(-3.8, userVel.z * 0.85) : -4.8;
+        const leadZ = userSpeed > 1.5 ? Math.min(-4.2, userVel.z * 0.9) : -5.2;
         targetX = Math.max(-PITCH.HALF_W + 2, Math.min(PITCH.HALF_W - 2, userPos.x + leadX));
         targetZ = Math.max(-PITCH.HALF_L + 5.0, userPos.z + leadZ);
       } else if (deliveryMode === 'CROSS') {
@@ -270,14 +282,19 @@ export function stepSupportTeammateAI(
       const dirZ = dz / dist;
 
       if (deliveryMode === 'CROSS') {
-        const horizSpd = Math.min(22, Math.max(12.5, dist * 0.96));
+        const horizSpd = Math.min(22, Math.max(12.5, dist * 0.98));
         const tFlight = dist / horizSpd;
-        const loftY = Math.min(10.2, Math.max(5.2, 0.5 * Math.abs(BALL_AERO.GRAVITY) * tFlight * 0.9));
+        const loftY = Math.min(
+          11.2,
+          Math.max(5.5, 0.5 * Math.abs(BALL_AERO.GRAVITY) * tFlight * 0.9),
+        );
         ball.vel.set(dirX * horizSpd, loftY, dirZ * horizSpd);
         ball.spin.set(-3.5, 0, 0);
       } else {
-        // Velocidade calibrada com o atrito da grama para chegar firme no seu pé sem passar direto!
-        const spd = Math.min(24, Math.max(11.5, Math.sqrt(2 * BALL_AERO.GRASS_FRICTION * dist + 72)));
+        const spd = Math.min(
+          24.5,
+          Math.max(12.0, Math.sqrt(2 * BALL_AERO.GRASS_FRICTION * dist + 74)),
+        );
         ball.vel.set(dirX * spd, 0.25, dirZ * spd);
         ball.spin.set(0, 0, 0);
       }
@@ -288,22 +305,26 @@ export function stepSupportTeammateAI(
       deliveredAssistPass = true;
     }
   } else {
-    // 3. SEM A BOLA: Corre igual jogador de verdade p/ buscar qualquer passe/enfiada/bola próxima!
-    const mateMaxSprint = 8.9;
+    // 3. SEM A BOLA: Dispara no alvo teleguiado se você apertou Y (Enfiada), ou intercepta passes!
+    const mateMaxSprint = 9.1;
     let chasingLooseBall = false;
     let targetX = mate.pos.x;
     let targetZ = mate.pos.z;
 
-    if (ball.ownerId === null) {
+    if (ball.ownerId === null && mate.throughRunTarget && mate.throughRunTimer > 0) {
+      chasingLooseBall = true;
+      const intercept = predictPassInterceptPoint(ball, mate.pos, mateMaxSprint);
+      targetX = intercept.x;
+      targetZ = intercept.z;
+    } else if (ball.ownerId === null) {
       const intercept = predictPassInterceptPoint(ball, mate.pos, mateMaxSprint);
       const mateDistToIntercept = Math.hypot(intercept.x - mate.pos.x, intercept.z - mate.pos.z);
       const userDistToIntercept = Math.hypot(intercept.x - userPos.x, intercept.z - userPos.z);
 
-      // Se você tocou a bola (lastTouchBy === 'USER' e não está colada em você) OU ele chega antes/perto, VAI BUSCAR!
       const passIntendedForMate =
         ball.lastTouchBy === 'USER' &&
-        (userDistToBall > 1.8 || mateDistToIntercept < userDistToIntercept + 4.5) &&
-        mateDistToIntercept < 28;
+        (userDistToBall > 1.8 || mateDistToIntercept < userDistToIntercept + 5.0) &&
+        mateDistToIntercept < 30;
 
       const looseNearMate =
         distToBall < 14 && mateDistToIntercept <= userDistToIntercept + 1.5;
@@ -316,9 +337,6 @@ export function stepSupportTeammateAI(
     }
 
     if (!chasingLooseBall) {
-      // Posicionamento tático inteligente:
-      // - Se você abriu na ponta (|x| > 9.5 e z < -18), ele infiltra na área (x oposto curto, z = -33) pronto pro cruzamento ou passe da morte!
-      // - Senão, abre linha limpa de passe ao seu lado/diagonal sem se esconder atrás do goleiro!
       if (Math.abs(userPos.x) > 9.5 && userPos.z < -18) {
         targetX = userPos.x > 0 ? -2.8 : 2.8;
         targetZ = Math.max(-PITCH.HALF_L + 6.5, Math.min(-31, userPos.z - 3.5));
@@ -332,17 +350,17 @@ export function stepSupportTeammateAI(
     const dz = targetZ - mate.pos.z;
     const d = Math.hypot(dx, dz);
     const desiredSpd = chasingLooseBall
-      ? d > 0.15
+      ? d > 0.12
         ? mateMaxSprint
         : 0
       : d > 0.5
-        ? Math.min(7.4, d * 2.6)
+        ? Math.min(7.5, d * 2.6)
         : 0;
 
     const wishVx = d > 0.08 ? (dx / d) * desiredSpd : 0;
     const wishVz = d > 0.08 ? (dz / d) * desiredSpd : 0;
-    mate.vel.x += (wishVx - mate.vel.x) * Math.min(1, 12 * dt);
-    mate.vel.z += (wishVz - mate.vel.z) * Math.min(1, 12 * dt);
+    mate.vel.x += (wishVx - mate.vel.x) * Math.min(1, 13 * dt);
+    mate.vel.z += (wishVz - mate.vel.z) * Math.min(1, 13 * dt);
     mate.pos.addScaledVector(mate.vel, dt);
 
     const moveSpd = Math.hypot(mate.vel.x, mate.vel.z);

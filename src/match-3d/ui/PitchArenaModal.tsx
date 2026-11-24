@@ -157,7 +157,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     const inputCollector = new PitchInputCollector();
     inputCollector.attach(host);
 
-    // Câmera SEMPRE travada inteligente na bola/gol com liberdade de espiar no RS / Mouse!
     let camYaw = 0;
     let camPitch = 0.24;
     let manualAimOffsetYaw = 0;
@@ -199,6 +198,9 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       pState.facingYaw = Math.atan2(-preset.px, -PITCH.HALF_L - preset.pz);
       pState.powerCharge01 = 0;
       pState.chargeIntent = null;
+      pState.windupTimer = 0;
+      pState.lockedIntent = null;
+      pState.fakeShotAnimTimer = 0;
       pState.hudPower01 = 0;
 
       ball.pos.set(preset.bx, PITCH.BALL_RADIUS, preset.bz);
@@ -207,14 +209,19 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       ball.ownerId = null;
       ball.lastTouchBy = null;
       ball.touchCooldown = 0;
+      ball.enteredGoalSide = null;
 
       mateBrain.pos.set(preset.mx, 0, preset.mz);
       mateBrain.vel.set(0, 0, 0);
       mateBrain.receivedFromUser = false;
+      mateBrain.throughRunTarget = null;
+      mateBrain.throughRunTimer = 0;
+
       gkBrain.pos.set(0, 0, -PITCH.HALF_L + 0.75);
       gkBrain.vel.set(0, 0, 0);
       gkBrain.diveTimer = 0;
       gkBrain.diveDir = 0;
+      gkBrain.inSpreadStance = false;
 
       mateAssistArmed = false;
       userAssistArmed = false;
@@ -272,7 +279,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         if (bannerTimer <= 0) bannerObj = null;
       }
 
-      // Câmera sempre focada inteligente na bola / gol com olhadinha livre no RS!
       manualAimOffsetYaw = Math.max(
         -0.95,
         Math.min(0.95, manualAimOffsetYaw - inp.lookDeltaX * 0.95),
@@ -298,17 +304,28 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           respawnPlay(true);
         }
       } else {
-        const { kicked, calledForBall, commandedMateShoot, triggeredFakeShotDirX } =
-          stepPlayerAndBallControl(
-            pState,
-            activePlayer,
-            ball,
-            inp,
-            camYaw,
-            mateBrain.pos,
-            mateBrain.vel,
-            dt,
-          );
+        const {
+          kicked,
+          calledForBall,
+          commandedMateShoot,
+          triggeredFakeShotDirX,
+          throughBallTarget,
+        } = stepPlayerAndBallControl(
+          pState,
+          activePlayer,
+          ball,
+          inp,
+          camYaw,
+          mateBrain.pos,
+          mateBrain.vel,
+          gkBrain.pos,
+          dt,
+        );
+
+        if (throughBallTarget) {
+          mateBrain.throughRunTarget = throughBallTarget;
+          mateBrain.throughRunTimer = 2.2;
+        }
 
         if (kicked === 'POWER_SHOT' || kicked === 'FINESSE_SHOT' || kicked === 'CHIP_SHOT') {
           lastUserShotKind = kicked;
@@ -338,7 +355,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           lastUserShotKind = null;
         }
 
-        const gkDifficulty = mode === 'TRYOUT_PRO' ? 0.56 : 0.68;
+        const gkDifficulty = mode === 'TRYOUT_PRO' ? 0.52 : 0.62;
         const { madeSave, caughtFirmly } = stepGoalkeeperAI(
           gkBrain,
           ball,
@@ -353,7 +370,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           statsRef.current.saves += 1;
           statsRef.current.points += 12;
           showBanner(
-            caughtFirmly ? 'GOLEIRO ENCAIXOU FIRME!' : 'ESPALMOU O GOLEIRO!',
+            caughtFirmly ? 'GOLEIRO ENCAIXOU!' : 'ESPALMOU! OLHA O REBOTE!',
             '#F59E0B',
             1.3,
           );
@@ -421,25 +438,42 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       userActor.root.rotation.y = pState.facingYaw;
 
       const uSpeed = Math.hypot(pState.vel.x, pState.vel.z);
+      const fakeShotProgress =
+        pState.fakeShotAnimTimer > 0 ? 1 - pState.fakeShotAnimTimer / 0.34 : 0;
+
       const userPose: PitchPoseState =
         celebrationTimer > 0
           ? 'CELEBRATE'
           : pState.slideTimer > 0
             ? 'SLIDE'
-            : pState.kickAnimTimer > 0
-              ? 'KICK'
-              : pState.chargeIntent !== null
-                ? 'CHARGE'
-                : uSpeed > 0.2
-                  ? 'RUN'
-                  : 'IDLE';
+            : pState.fakeShotAnimTimer > 0
+              ? 'FAKE_SHOT'
+              : pState.kickAnimTimer > 0
+                ? 'KICK'
+                : pState.chargeIntent !== null || pState.windupTimer > 0
+                  ? 'CHARGE'
+                  : uSpeed > 0.2
+                    ? 'RUN'
+                    : 'IDLE';
+
+      const animParam =
+        userPose === 'FAKE_SHOT'
+          ? fakeShotProgress
+          : pState.windupTimer > 0
+            ? pState.lockedPower01
+            : pState.powerCharge01;
+
+      const animUseLeftFoot =
+        userPose === 'KICK' || userPose === 'FAKE_SHOT'
+          ? pState.lastKickUsedLeftFoot
+          : activePlayer.preferredFoot === 'ESQUERDA';
 
       animatePitchActor(
         userActor,
         userPose,
         uSpeed,
-        pState.powerCharge01,
-        activePlayer.preferredFoot === 'ESQUERDA',
+        animParam,
+        animUseLeftFoot,
         dt,
         timeSec,
       );
