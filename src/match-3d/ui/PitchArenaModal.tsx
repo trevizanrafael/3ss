@@ -130,6 +130,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.12;
+    renderer.domElement.style.display = 'block';
     host.appendChild(renderer.domElement);
 
     scene.add(new THREE.HemisphereLight('#E0F2FE', '#14532D', 1.25));
@@ -232,7 +233,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       const h = Math.max(240, host.clientHeight);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
+      renderer.setSize(w, h);
     };
     syncSize();
     const ro = new ResizeObserver(syncSize);
