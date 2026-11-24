@@ -1,0 +1,1142 @@
+[
+  {
+    "id": "river_plate_16",
+    "name": "River Plate",
+    "shortName": "RIV",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "River Plate Reserva Sub-20",
+    "youthQuality": 83,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#792DCD",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Acuña",
+        "pos": "LE",
+        "ovr": 78
+      },
+      {
+        "name": "G. Montiel",
+        "pos": "LD",
+        "ovr": 78
+      },
+      {
+        "name": "K. Castaño",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "S. Driussi",
+        "pos": "ATA",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "boca_juniors_5",
+    "name": "Boca Juniors",
+    "shortName": "CABJ",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Boca  Reserva Sub-20",
+    "youthQuality": 82,
+    "primaryColor": "#fcb000",
+    "secondaryColor": "#0060f0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "L. Paredes",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Ander Herrera",
+        "pos": "VOL",
+        "ovr": 78
+      },
+      {
+        "name": "M. Braida",
+        "pos": "ME",
+        "ovr": 76
+      },
+      {
+        "name": "R. Battaglia",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "estudiantes_de_la_plata_8",
+    "name": "Estudiantes de La Plata",
+    "shortName": "EST",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Estudiantes Reserva Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#288A00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "S. Ascacíbar",
+        "pos": "VOL",
+        "ovr": 78
+      },
+      {
+        "name": "G. Neves",
+        "pos": "VOL",
+        "ovr": 75
+      },
+      {
+        "name": "T. Palacios",
+        "pos": "MD",
+        "ovr": 75
+      },
+      {
+        "name": "L. González Pirez",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "racing_club_15",
+    "name": "Racing Club",
+    "shortName": "RAC",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Racing  Reserva Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#409fff",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Martínez",
+        "pos": "ATA",
+        "ovr": 78
+      },
+      {
+        "name": "S. Sosa",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "R. Sánchez",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "G. Martirena",
+        "pos": "LD",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "rosario_central_17",
+    "name": "Rosario Central",
+    "shortName": "ROS",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Rosario Central Reserva Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#792DCD",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Á. Di María",
+        "pos": "PD",
+        "ovr": 82
+      },
+      {
+        "name": "V. Malcorra",
+        "pos": "MEI",
+        "ovr": 76
+      },
+      {
+        "name": "J. Campaz",
+        "pos": "ME",
+        "ovr": 76
+      },
+      {
+        "name": "C. Quintana",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "talleres_cordoba_19",
+    "name": "Talleres (Córdoba)",
+    "shortName": "TALL",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Talleres  Reserva Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/19.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "E. Reynoso",
+        "pos": "MEI",
+        "ovr": 77
+      },
+      {
+        "name": "R. Botta",
+        "pos": "MEI",
+        "ovr": 76
+      },
+      {
+        "name": "J. Rodríguez",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "M. Galarza",
+        "pos": "VOL",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "velez_sarsfield_21",
+    "name": "Vélez Sarsfield",
+    "shortName": "VEL",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Vélez  Reserva Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#0070b0",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "D. Valdés",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "E. Mammana",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "R. Aliendro",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "B. Romero",
+        "pos": "ATA",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "argentinos_juniors_3",
+    "name": "Argentinos Juniors",
+    "shortName": "ARGJ",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Argentinos  Reserva Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#0060f0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "F. Fattori",
+        "pos": "VOL",
+        "ovr": 76
+      },
+      {
+        "name": "L. Lozano",
+        "pos": "LD",
+        "ovr": 74
+      },
+      {
+        "name": "F. Álvarez",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "N. Oroz",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "belgrano_cordoba_4",
+    "name": "Belgrano (Córdoba)",
+    "shortName": "BEL",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Belgrano  Reserva Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#0060f0",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "L. Zelarayán",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "N. Fernández",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "L. Morales",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "L. Menossi",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "central_cordoba_santiago_del_estero_11989",
+    "name": "Central Córdoba (Santiago del Estero)",
+    "shortName": "CTR",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "C. Córdoba (SE) Reserva Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11989.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Felipe Aguilar",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Dario Cáceres",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Fernando Martínez",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Leonardo Marchi",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "independiente_11",
+    "name": "Independiente",
+    "shortName": "IND",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Independiente Reserva Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "I. Marcone",
+        "pos": "VOL",
+        "ovr": 76
+      },
+      {
+        "name": "S. Montiel",
+        "pos": "ME",
+        "ovr": 75
+      },
+      {
+        "name": "G. Ávalos",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "L. Godoy",
+        "pos": "LD",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "lanus_12",
+    "name": "Lanús",
+    "shortName": "LAN",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Lanús  Reserva Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#9f0000",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/12.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Moreno",
+        "pos": "MEI",
+        "ovr": 78
+      },
+      {
+        "name": "E. Salvio",
+        "pos": "MD",
+        "ovr": 76
+      },
+      {
+        "name": "R. Carrera",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "C. Izquierdoz",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "huracan_10",
+    "name": "Huracán",
+    "shortName": "HUR",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Huracán  Reserva Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Nervo",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "F. Waller",
+        "pos": "ME",
+        "ovr": 72
+      },
+      {
+        "name": "A. Urzi",
+        "pos": "ME",
+        "ovr": 72
+      },
+      {
+        "name": "F. Pereyra",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "newell_s_old_boys_14",
+    "name": "Newell's Old Boys",
+    "shortName": "NOB",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Newell's Reserva Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/14.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "É. Banega",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "V. Cuesta",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "C. González",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "L. Lollo",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "atletico_tucuman_9785",
+    "name": "Atlético Tucumán",
+    "shortName": "CAT",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Atl Tucumán Reserva Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#0093EC",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9785.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "L. Díaz",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "M. Coronel",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "C. Auzqui",
+        "pos": "MEI",
+        "ovr": 70
+      },
+      {
+        "name": "R. Ruiz Rodríguez",
+        "pos": "ATA",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "defensa_y_justicia_8950",
+    "name": "Defensa y Justicia",
+    "shortName": "DYJ",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Def. y Jus. Reserva Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#288A00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8950.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Molinas",
+        "pos": "MEI",
+        "ovr": 73
+      },
+      {
+        "name": "R. Delgado",
+        "pos": "LE",
+        "ovr": 71
+      },
+      {
+        "name": "K. Gutiérrez",
+        "pos": "VOL",
+        "ovr": 71
+      },
+      {
+        "name": "L. González",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "estudiantes_de_rio_cuarto_19685",
+    "name": "Estudiantes de Río Cuarto",
+    "shortName": "AAE",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Estudiantes RC Reserva Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#008bd0",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/19685.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Matías Ruiz Díaz",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Facundo Cobos",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Juan Antonini",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Sergio Ojeda",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "gimnasia_mendoza_11972",
+    "name": "Gimnasia (Mendoza)",
+    "shortName": "GMZ",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Gimnasia (M) Reserva Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11972.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Diego Mondino",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Ezequiel Muñoz",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Ismael Cortez",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Juan Franco",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "san_lorenzo_18",
+    "name": "San Lorenzo",
+    "shortName": "SLO",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "San Lorenzo  Reserva Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#0060f0",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Vombergar",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "J. Romaña",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "N. Tripichio",
+        "pos": "LD",
+        "ovr": 73
+      },
+      {
+        "name": "G. Hernández",
+        "pos": "ZAG",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "banfield_235",
+    "name": "Banfield",
+    "shortName": "BAN",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Banfield Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/235.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Furch",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "F. Castañeda",
+        "pos": "MEI",
+        "ovr": 70
+      },
+      {
+        "name": "S. Vittor",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "M. Río",
+        "pos": "MC",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "barracas_central_10060",
+    "name": "Barracas Central",
+    "shortName": "BAR",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Barracas Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10060.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "N. Barrios",
+        "pos": "PE",
+        "ovr": 74
+      },
+      {
+        "name": "I. Tapia",
+        "pos": "MEI",
+        "ovr": 71
+      },
+      {
+        "name": "F. Bruera",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Y. Rak",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "gimnasia_la_plata_9",
+    "name": "Gimnasia La Plata",
+    "shortName": "GLP",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Gimnasia LP Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#0060f0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Enzo Martínez",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Matías Melluso",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Pedro Silva Torrejón",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Bautista Barros Schelotto",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "independiente_rivadavia_9744",
+    "name": "Independiente Rivadavia",
+    "shortName": "RIV",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Ind. Rivadavia Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#000061",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9744.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "S. Villa",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "A. Arce",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "E. Bonifacio",
+        "pos": "LD",
+        "ovr": 70
+      },
+      {
+        "name": "L. Gómez",
+        "pos": "LD",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "instituto_cordoba_2975",
+    "name": "Instituto (Córdoba)",
+    "shortName": "IACC",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Instituto Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2975.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "G. Lódico",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "F. Alarcón",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "A. Luna",
+        "pos": "MEI",
+        "ovr": 70
+      },
+      {
+        "name": "F. Mac Allister",
+        "pos": "VOL",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "platense_7764",
+    "name": "Platense",
+    "shortName": "PLA",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Platense Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7764.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Luna Diale",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "I. Vázquez",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "A. Lotti",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "F. Zapiola",
+        "pos": "ME",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "tigre_7767",
+    "name": "Tigre",
+    "shortName": "TIG",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Tigre Reserva Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#792DCD",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7767.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "T. Cardona",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "J. Elías",
+        "pos": "VOL",
+        "ovr": 71
+      },
+      {
+        "name": "J. López",
+        "pos": "VOL",
+        "ovr": 70
+      },
+      {
+        "name": "B. Leyes",
+        "pos": "VOL",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "aldosivi_9739",
+    "name": "Aldosivi",
+    "shortName": "ALDO",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Aldosivi Reserva Sub-20",
+    "youthQuality": 75,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#ffff00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9739.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "I. Guerrico",
+        "pos": "LE",
+        "ovr": 71
+      },
+      {
+        "name": "J. Giani",
+        "pos": "MEI",
+        "ovr": 71
+      },
+      {
+        "name": "N. Breitenbruch",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "G. Mottes",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "deportivo_riestra_17702",
+    "name": "Deportivo Riestra",
+    "shortName": "RIE",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Riestra Reserva Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#212121",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17702.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Herrera",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "M. Barbieri",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "N. Benegas",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "A. Díaz",
+        "pos": "ATA",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "sarmiento_junin_10158",
+    "name": "Sarmiento (Junín)",
+    "shortName": "SARM",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Sarmiento (J) Reserva Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10158.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Nicolás Pasquini",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Thiago Santamaría",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Manuel Garcia",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Renzo Orihuela",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "union_santa_fe_20",
+    "name": "Unión (Santa Fe)",
+    "shortName": "USF",
+    "country": "ARG",
+    "leagueId": "ARG_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Unión (SF) Reserva Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Mauro Luna Diale",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Joaquín Mosqueira",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Juan Pintado",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Matías Rocha",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  }
+]

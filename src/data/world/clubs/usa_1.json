@@ -1,0 +1,1142 @@
+[
+  {
+    "id": "inter_miami_cf_20232",
+    "name": "Inter Miami CF",
+    "shortName": "MIA",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Miami MLS NEXT",
+    "youthQuality": 81,
+    "primaryColor": "#231f20",
+    "secondaryColor": "#f7b5cd",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20232.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "L. Messi",
+        "pos": "PD",
+        "ovr": 86
+      },
+      {
+        "name": "R. De Paul",
+        "pos": "MC",
+        "ovr": 84
+      },
+      {
+        "name": "Sergio Busquets",
+        "pos": "VOL",
+        "ovr": 80
+      },
+      {
+        "name": "L. Suárez",
+        "pos": "ATA",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "fc_cincinnati_18267",
+    "name": "FC Cincinnati",
+    "shortName": "CIN",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Cincinnati MLS NEXT",
+    "youthQuality": 79,
+    "primaryColor": "#003087",
+    "secondaryColor": "#fe5000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18267.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Evander",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "K. Denkey",
+        "pos": "ATA",
+        "ovr": 77
+      },
+      {
+        "name": "P. Bucha",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "O. Nwobodo",
+        "pos": "VOL",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "la_galaxy_187",
+    "name": "LA Galaxy",
+    "shortName": "LA",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "LA Galaxy MLS NEXT",
+    "youthQuality": 79,
+    "primaryColor": "#00235d",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/187.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Riqui Puig",
+        "pos": "MC",
+        "ovr": 80
+      },
+      {
+        "name": "M. Reus",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "J. Paintsil",
+        "pos": "ME",
+        "ovr": 76
+      },
+      {
+        "name": "Gabriel Pec",
+        "pos": "MD",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "seattle_sounders_fc_9726",
+    "name": "Seattle Sounders FC",
+    "shortName": "SEA",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Seattle MLS NEXT",
+    "youthQuality": 79,
+    "primaryColor": "#2dc84d",
+    "secondaryColor": "#0033a0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Rusnák",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "R. Kent",
+        "pos": "PE",
+        "ovr": 75
+      },
+      {
+        "name": "Y. Gómez Andrade",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "C. Roldan",
+        "pos": "VOL",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "vancouver_whitecaps_9727",
+    "name": "Vancouver Whitecaps",
+    "shortName": "VAN",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Vancouver MLS NEXT",
+    "youthQuality": 79,
+    "primaryColor": "#ffffff",
+    "secondaryColor": "#12284c",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "T. Müller",
+        "pos": "MEI",
+        "ovr": 80
+      },
+      {
+        "name": "R. Gauld",
+        "pos": "PE",
+        "ovr": 78
+      },
+      {
+        "name": "B. White",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "A. Cubas",
+        "pos": "VOL",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "atlanta_united_fc_18418",
+    "name": "Atlanta United FC",
+    "shortName": "ATL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Atlanta MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#9d2235",
+    "secondaryColor": "#aa9767",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18418.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "A. Miranchuk",
+        "pos": "MEI",
+        "ovr": 78
+      },
+      {
+        "name": "M. Almirón",
+        "pos": "PD",
+        "ovr": 76
+      },
+      {
+        "name": "S. Lobjanidze",
+        "pos": "MD",
+        "ovr": 74
+      },
+      {
+        "name": "B. Slisz",
+        "pos": "VOL",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "charlotte_fc_21300",
+    "name": "Charlotte FC",
+    "shortName": "CLT",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Charlotte MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#0085ca",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21300.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "W. Zaha",
+        "pos": "PE",
+        "ovr": 77
+      },
+      {
+        "name": "Pep Biel",
+        "pos": "MEI",
+        "ovr": 77
+      },
+      {
+        "name": "L. Abada",
+        "pos": "MD",
+        "ovr": 74
+      },
+      {
+        "name": "A. Westwood",
+        "pos": "VOL",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "chicago_fire_fc_182",
+    "name": "Chicago Fire FC",
+    "shortName": "CHI",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Chicago MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#7ccdef",
+    "secondaryColor": "#ff0000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/182.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Bamba",
+        "pos": "ME",
+        "ovr": 77
+      },
+      {
+        "name": "H. Cuypers",
+        "pos": "ATA",
+        "ovr": 77
+      },
+      {
+        "name": "P. Zinckernagel",
+        "pos": "PD",
+        "ovr": 75
+      },
+      {
+        "name": "R. Kouamé",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "d_c_united_193",
+    "name": "D.C. United",
+    "shortName": "DC",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "D.C. United MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#000000",
+    "secondaryColor": "#d61018",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/193.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Louis Munteanu",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "Jared Stroud",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Tai Baribo",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "Kimito Nono",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "minnesota_united_fc_17362",
+    "name": "Minnesota United FC",
+    "shortName": "MIN",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Minnesota MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#000000",
+    "secondaryColor": "#9bcde4",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17362.png",
+    "squadSize": 21,
+    "keyPlayers": [
+      {
+        "name": "D. Fitz",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "J. Pereyra",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "R. Lod",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "J. Gressel",
+        "pos": "MD",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "new_england_revolution_189",
+    "name": "New England Revolution",
+    "shortName": "NE",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "New England MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#022166",
+    "secondaryColor": "#ce0e2d",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/189.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "Carles Gil",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "T. Chancalay",
+        "pos": "ME",
+        "ovr": 73
+      },
+      {
+        "name": "A. Yusuf",
+        "pos": "VOL",
+        "ovr": 72
+      },
+      {
+        "name": "I. Ganago",
+        "pos": "ATA",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "portland_timbers_9723",
+    "name": "Portland Timbers",
+    "shortName": "POR",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Portland MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#2c5234",
+    "secondaryColor": "#c99700",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9723.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "J. Rodríguez",
+        "pos": "ME",
+        "ovr": 76
+      },
+      {
+        "name": "David da Costa",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "M. Rojas",
+        "pos": "PD",
+        "ovr": 74
+      },
+      {
+        "name": "F. Carballo",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "san_diego_fc_22529",
+    "name": "San Diego FC",
+    "shortName": "SD",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "San Diego MLS NEXT",
+    "youthQuality": 78,
+    "primaryColor": "#697a7C",
+    "secondaryColor": "#F89E1A",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/22529.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "H. Lozano",
+        "pos": "PE",
+        "ovr": 78
+      },
+      {
+        "name": "A. Dreyer",
+        "pos": "PD",
+        "ovr": 77
+      },
+      {
+        "name": "M. Ingvartsen",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "P. McNair",
+        "pos": "ZAG",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "austin_fc_20906",
+    "name": "Austin FC",
+    "shortName": "ATX",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Austin MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#00b140",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20906.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "M. Uzuni",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "M. Desler",
+        "pos": "LD",
+        "ovr": 73
+      },
+      {
+        "name": "B. Vazquez",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "O. Bukari",
+        "pos": "PD",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "colorado_rapids_184",
+    "name": "Colorado Rapids",
+    "shortName": "COL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Colorado MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#8a2432",
+    "secondaryColor": "#8ab7e9",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/184.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "P. Aaronson",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "A. Manyoma",
+        "pos": "MD",
+        "ovr": 72
+      },
+      {
+        "name": "R. Holding",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "R. Cannon",
+        "pos": "LD",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "columbus_crew_183",
+    "name": "Columbus Crew",
+    "shortName": "CLB",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Columbus MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#fedd00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/183.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "D. Nagbe",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "D. Rossi",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "D. Gazdag",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "S. Moreira",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "lafc_18966",
+    "name": "LAFC",
+    "shortName": "LAFC",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "LAFC MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#c7a36f",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18966.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Igor Jesus",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Aaron Long",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Ryan Porteous",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Yevhen Cheberko",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "nashville_sc_18986",
+    "name": "Nashville SC",
+    "shortName": "NSH",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Nashville MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#ece83a",
+    "secondaryColor": "#1f1646",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18986.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "H. Mukhtar",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "W. Zimmerman",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "S. Surridge",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "G. Brugman",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "new_york_city_fc_17606",
+    "name": "New York City FC",
+    "shortName": "NYC",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "NYCFC MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#9fd2ff",
+    "secondaryColor": "#000229",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17606.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "N. Fernández",
+        "pos": "MD",
+        "ovr": 75
+      },
+      {
+        "name": "M. Moralez",
+        "pos": "MEI",
+        "ovr": 72
+      },
+      {
+        "name": "K. Parks",
+        "pos": "VOL",
+        "ovr": 72
+      },
+      {
+        "name": "H. Wolf",
+        "pos": "MD",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "orlando_city_sc_12011",
+    "name": "Orlando City SC",
+    "shortName": "ORL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Orlando MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#60269e",
+    "secondaryColor": "#f0d283",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/12011.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "L. Muriel",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "E. Atuesta",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "M. Ojeda",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "M. Pašalić",
+        "pos": "MD",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "philadelphia_union_10739",
+    "name": "Philadelphia Union",
+    "shortName": "PHI",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Philadelphia MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#051f31",
+    "secondaryColor": "#e0d0a6",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10739.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "K. Wagner",
+        "pos": "LE",
+        "ovr": 75
+      },
+      {
+        "name": "J. Glesnes",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "M. Uhre",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "T. Baribo",
+        "pos": "ATA",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "real_salt_lake_4771",
+    "name": "Real Salt Lake",
+    "shortName": "RSL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Salt Lake MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#a32035",
+    "secondaryColor": "#daa900",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4771.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Diogo Gonçalves",
+        "pos": "ME",
+        "ovr": 74
+      },
+      {
+        "name": "V. Olatunji",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "D. Luna",
+        "pos": "ME",
+        "ovr": 72
+      },
+      {
+        "name": "D. Yedlin",
+        "pos": "LD",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "san_jose_earthquakes_191",
+    "name": "San Jose Earthquakes",
+    "shortName": "SJ",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "San Jose MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#003da6",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/191.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "C. Arango",
+        "pos": "ATA",
+        "ovr": 78
+      },
+      {
+        "name": "C. Espinoza",
+        "pos": "MD",
+        "ovr": 75
+      },
+      {
+        "name": "J. Martínez",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "D. Jones",
+        "pos": "LE",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "sporting_kansas_city_186",
+    "name": "Sporting Kansas City",
+    "shortName": "SKC",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Kansas City MLS NEXT",
+    "youthQuality": 77,
+    "primaryColor": "#a7c6ed",
+    "secondaryColor": "#0a2240",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/186.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "D. Joveljić",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "Manu García",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "E. Thommy",
+        "pos": "MEI",
+        "ovr": 73
+      },
+      {
+        "name": "N. Radoja",
+        "pos": "VOL",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "houston_dynamo_fc_6077",
+    "name": "Houston Dynamo FC",
+    "shortName": "HOU",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Houston MLS NEXT",
+    "youthQuality": 76,
+    "primaryColor": "#ff6b00",
+    "secondaryColor": "#101820",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "E. Ponce",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "O. Lingr",
+        "pos": "ME",
+        "ovr": 72
+      },
+      {
+        "name": "J. McGlynn",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "E. Sviatchenko",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "st_louis_city_sc_21812",
+    "name": "St. Louis CITY SC",
+    "shortName": "STL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "St. Louis MLS NEXT",
+    "youthQuality": 76,
+    "primaryColor": "#ec1458",
+    "secondaryColor": "#001544",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21812.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Hartel",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "E. Löwen",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Klauss",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "C. Wallem",
+        "pos": "ME",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "toronto_fc_7318",
+    "name": "Toronto FC",
+    "shortName": "TOR",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Toronto MLS NEXT",
+    "youthQuality": 75,
+    "primaryColor": "#aa182c",
+    "secondaryColor": "#a2a9ad",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7318.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "D. Mihailovic",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "J. Cifuentes",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "R. Laryea",
+        "pos": "MD",
+        "ovr": 72
+      },
+      {
+        "name": "M. Dominguez",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "fc_dallas_185",
+    "name": "FC Dallas",
+    "shortName": "DAL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Dallas MLS NEXT",
+    "youthQuality": 74,
+    "primaryColor": "#c6093b",
+    "secondaryColor": "#001f5b",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/185.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "P. Musa",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "Ramiro",
+        "pos": "VOL",
+        "ovr": 70
+      },
+      {
+        "name": "S. Moore",
+        "pos": "LD",
+        "ovr": 69
+      },
+      {
+        "name": "O. Urhoghide",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "cf_montreal_9720",
+    "name": "CF Montréal",
+    "shortName": "MTL",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "CF Montréal MLS NEXT",
+    "youthQuality": 72,
+    "primaryColor": "#003da6",
+    "secondaryColor": "#c1c5c8",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9720.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "S. Piette",
+        "pos": "VOL",
+        "ovr": 69
+      },
+      {
+        "name": "G. Vrioni",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "P. Owusu",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "M. Longstaff",
+        "pos": "MC",
+        "ovr": 66
+      }
+    ]
+  },
+  {
+    "id": "red_bull_new_york_190",
+    "name": "Red Bull New York",
+    "shortName": "RBNY",
+    "country": "USA",
+    "leagueId": "USA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Red Bull NY MLS NEXT",
+    "youthQuality": 72,
+    "primaryColor": "#ba0c2f",
+    "secondaryColor": "#ffc72c",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/190.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Tim Parker",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Omar Valencia",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Dylan Nealis",
+        "pos": "ZAG",
+        "ovr": 66
+      },
+      {
+        "name": "Cameron Harper",
+        "pos": "ZAG",
+        "ovr": 66
+      }
+    ]
+  }
+]

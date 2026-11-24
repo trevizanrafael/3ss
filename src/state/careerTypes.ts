@@ -1,9 +1,9 @@
 import { AttributeKey } from '../data/equipment/catalog';
-import { AllLeagueTables } from '../domains/competition/leagueSimulator';
 import { ActiveContract, TransferMarketOffer } from '../domains/contracts/contractEngine';
 import { MatchPerformanceResult, TacticalMindset } from '../domains/match-sim/matchSimulator';
 import { CreatePlayerInput } from '../domains/player/createInitialPlayer';
 import { CareerPlayer } from '../domains/player/playerTypes';
+import { WorldSeasonState } from '../domains/season/seasonTypes';
 import { DrillGrade } from '../domains/training/trainingEngine';
 import { YouthAcademyOffer } from '../domains/tryout/generateYouthOffers';
 import { YouthAcademyState, YouthTransitionProposal } from '../domains/youth-academy/youthModel';
@@ -25,34 +25,32 @@ export interface CareerState {
   agentId: string;
   ownedEquipmentIds: string[];
 
-  // Sistema 5 Slots FIFA 18
   drillSlots: (string | null)[];
   lastSlotGrades: (DrillGrade | null)[];
   recentLeveledKeys: AttributeKey[];
   trainedToday: boolean;
 
-  // Fluxo Peneira
   tryoutStars: StarRating | null;
   tryoutOffers: YouthAcademyOffer[];
 
-  // Carreira ativa
   contract: ActiveContract | null;
   youthState: YouthAcademyState | null;
   transitionProposals: YouthTransitionProposal[];
   marketOffers: TransferMarketOffer[];
-  leagueTables: AllLeagueTables;
-  nextOpponentId: string | null;
+
+  // Motor Anual Completo (17 Ligas + 4 Continentais + Histórico)
+  worldSeason: WorldSeasonState;
+  seasonGoalsCount: number;
+  seasonAssistsCount: number;
   lastMatchResult: MatchPerformanceResult | null;
   feed: FeedEvent[];
 
-  // Actions
   beginCareerWithPlayer: (input: CreatePlayerInput) => void;
   finishTryout: (stars: StarRating) => void;
   signYouthOffer: (offer: YouthAcademyOffer) => void;
   setDrillSlot: (slotIndex: number, drillId: string | null) => void;
   completeActiveTraining: (stars: StarRating) => void;
   advanceDay: () => void;
-  advanceToMatchDay: () => void;
   playCurrentMatch: (mindset: TacticalMindset) => MatchPerformanceResult | null;
   acceptYouthTransition: (proposal: YouthTransitionProposal) => void;
   acceptMarketProposal: (offer: TransferMarketOffer) => void;

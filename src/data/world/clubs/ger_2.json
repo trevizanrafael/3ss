@@ -1,0 +1,686 @@
+[
+  {
+    "id": "vfl_wolfsburg_138",
+    "name": "VfL Wolfsburg",
+    "shortName": "WOB",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Wolfsburg U19 Campus",
+    "youthQuality": 84,
+    "primaryColor": "#81f733",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/138.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Amoura",
+        "pos": "ATA",
+        "ovr": 80
+      },
+      {
+        "name": "M. Arnold",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "L. Majer",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "J. Mæhle",
+        "pos": "LE",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "1_fc_heidenheim_1846_6418",
+    "name": "1. FC Heidenheim 1846",
+    "shortName": "HDH",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Heidenheim U19 Campus",
+    "youthQuality": 80,
+    "primaryColor": "#DA0308",
+    "secondaryColor": "#003399",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6418.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "P. Mainka",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "M. Pieringer",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "N. Dorsch",
+        "pos": "VOL",
+        "ovr": 74
+      },
+      {
+        "name": "M. Honsak",
+        "pos": "ME",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "st_pauli_270",
+    "name": "St. Pauli",
+    "shortName": "STP",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "St. Pauli U19 Campus",
+    "youthQuality": 79,
+    "primaryColor": "#442e23",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/270.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Pereira Lage",
+        "pos": "PE",
+        "ovr": 75
+      },
+      {
+        "name": "J. Irvine",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "E. Smith",
+        "pos": "VOL",
+        "ovr": 75
+      },
+      {
+        "name": "H. Wahl",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "vfl_bochum_121",
+    "name": "VfL Bochum",
+    "shortName": "BOC",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Bochum U19 Campus",
+    "youthQuality": 78,
+    "primaryColor": "#000055",
+    "secondaryColor": "#aac4f2",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/121.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "I. Sissoko",
+        "pos": "VOL",
+        "ovr": 76
+      },
+      {
+        "name": "K. Vogt",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "M. Bero",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "M. Wittek",
+        "pos": "LE",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "hertha_berlin_129",
+    "name": "Hertha Berlin",
+    "shortName": "BSC",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Hertha U19 Campus",
+    "youthQuality": 77,
+    "primaryColor": "#0000dd",
+    "secondaryColor": "#091453",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/129.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "F. Reese",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "M. Cuisance",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "D. Kownacki",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "J. Brooks",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "sv_darmstadt_98_3812",
+    "name": "SV Darmstadt 98",
+    "shortName": "SVD",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Darmstadt U19 Campus",
+    "youthQuality": 77,
+    "primaryColor": "#003399",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3812.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "I. Lidberg",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "K. Corredor",
+        "pos": "ME",
+        "ovr": 73
+      },
+      {
+        "name": "F. Nürnberger",
+        "pos": "ME",
+        "ovr": 71
+      },
+      {
+        "name": "F. Holland",
+        "pos": "VOL",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "1_fc_magdeburg_10382",
+    "name": "1. FC Magdeburg",
+    "shortName": "FCM",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Magdeburg U19 Campus",
+    "youthQuality": 76,
+    "primaryColor": "#0068B2",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10382.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "B. Atik",
+        "pos": "PE",
+        "ovr": 72
+      },
+      {
+        "name": "M. Mathisen",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "A. Onaiwu",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "J. Hugonet",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "hannover_96_2428",
+    "name": "Hannover 96",
+    "shortName": "H96",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Hannover U19 Campus",
+    "youthQuality": 76,
+    "primaryColor": "#179D33",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2428.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "E. Leopold",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "M. Neubauer",
+        "pos": "LE",
+        "ovr": 73
+      },
+      {
+        "name": "B. Källman",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "B. Tomiak",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "holstein_kiel_7884",
+    "name": "Holstein Kiel",
+    "shortName": "KSV",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Holstein Kiel U19 Campus",
+    "youthQuality": 76,
+    "primaryColor": "#0754ba",
+    "secondaryColor": "#f9fbfc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7884.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "S. Schwab",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "S. Skrzybski",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "A. Bernhardsson",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "J. Tolkin",
+        "pos": "LE",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "kaiserslautern_130",
+    "name": "Kaiserslautern",
+    "shortName": "FCK",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Kaiserslautern U19 Campus",
+    "youthQuality": 76,
+    "primaryColor": "#8C273D",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/130.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "P. Joly",
+        "pos": "LD",
+        "ovr": 72
+      },
+      {
+        "name": "M. Ritter",
+        "pos": "MEI",
+        "ovr": 71
+      },
+      {
+        "name": "S. Sahin",
+        "pos": "VOL",
+        "ovr": 71
+      },
+      {
+        "name": "N. Skyttä",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "karlsruher_sc_4471",
+    "name": "Karlsruher SC",
+    "shortName": "KSC",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Karlsruher U19 Campus",
+    "youthQuality": 76,
+    "primaryColor": "#2563B8",
+    "secondaryColor": "#2563B8",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4471.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "M. Wanitzek",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "M. Franke",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "A. Müller",
+        "pos": "VOL",
+        "ovr": 70
+      },
+      {
+        "name": "S. Jung",
+        "pos": "LD",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "1_fc_nurnberg_269",
+    "name": "1. FC Nürnberg",
+    "shortName": "FCN",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "1. FC Nürnberg U19 Campus",
+    "youthQuality": 75,
+    "primaryColor": "#9f0000",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/269.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Justvan",
+        "pos": "MEI",
+        "ovr": 73
+      },
+      {
+        "name": "F. Becker",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "R. Knoche",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "P. Diop",
+        "pos": "VOL",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "spvgg_greuther_furth_3070",
+    "name": "SpVgg Greuther Fürth",
+    "shortName": "SGF",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Greuther Furth U19 Campus",
+    "youthQuality": 75,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3070.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Green",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "B. Hrgota",
+        "pos": "MEI",
+        "ovr": 71
+      },
+      {
+        "name": "P. Ziereis",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "F. Klaus",
+        "pos": "MEI",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "tsv_eintracht_braunschweig_3067",
+    "name": "TSV Eintracht Braunschweig",
+    "shortName": "EBS",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "E Braunschweig U19 Campus",
+    "youthQuality": 75,
+    "primaryColor": "#ffde16",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3067.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Maximilian Entrup",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "Lino Tempelmann",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Noah Katterbach",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Frederik Jakel",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "arminia_bielefeld_2506",
+    "name": "Arminia Bielefeld",
+    "shortName": "DSC",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Bielefeld U19 Campus",
+    "youthQuality": 74,
+    "primaryColor": "#00599f",
+    "secondaryColor": "#2c2d37",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2506.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Mehlem",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "M. Wörl",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "M. Corboz",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "S. Russo",
+        "pos": "VOL",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "dynamo_dresden_7017",
+    "name": "Dynamo Dresden",
+    "shortName": "SGD",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "D Dresden U19 Campus",
+    "youthQuality": 74,
+    "primaryColor": "#f2a71d",
+    "secondaryColor": "#962807",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7017.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "N. Hauptmann",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "V. Šapina",
+        "pos": "VOL",
+        "ovr": 69
+      },
+      {
+        "name": "C. Daferner",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "D. Kother",
+        "pos": "PE",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "energie_cottbus_123",
+    "name": "Energie Cottbus",
+    "shortName": "COT",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Cottbus U19 Campus",
+    "youthQuality": 72,
+    "primaryColor": "#cc0000",
+    "secondaryColor": "#ffff00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/123.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "T. Ciğerci",
+        "pos": "MEI",
+        "ovr": 69
+      },
+      {
+        "name": "E. Engelhardt",
+        "pos": "ATA",
+        "ovr": 66
+      },
+      {
+        "name": "D. Pelivan",
+        "pos": "VOL",
+        "ovr": 66
+      },
+      {
+        "name": "A. Lucoqui",
+        "pos": "LE",
+        "ovr": 66
+      }
+    ]
+  },
+  {
+    "id": "vfl_osnabruck_7013",
+    "name": "VfL Osnabruck",
+    "shortName": "OSN",
+    "country": "GER",
+    "leagueId": "GER_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Osnabruck U19 Campus",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7013.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "K. Pröger",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "J. Müller",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "L. Kehl",
+        "pos": "ATA",
+        "ovr": 67
+      },
+      {
+        "name": "D. Kopacz",
+        "pos": "MD",
+        "ovr": 67
+      }
+    ]
+  }
+]

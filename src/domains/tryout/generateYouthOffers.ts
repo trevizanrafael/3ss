@@ -21,7 +21,9 @@ function findDirectCompetitor(club: ClubData, pos: PositionCode): RealSquadStar 
   if (exact) return exact;
 
   const sector = getPositionSector(pos);
-  const sameSector = club.keyPlayers.find((p) => getPositionSector(p.pos) === sector);
+  const sameSector = club.keyPlayers.find(
+    (p) => p.pos !== 'GK' && getPositionSector(p.pos) === sector,
+  );
   if (sameSector) return sameSector;
 
   return {

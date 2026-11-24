@@ -1,9 +1,9 @@
 import { getClubById } from '../../data/clubs';
-import { createInitialLeagueTables } from '../../domains/competition/leagueSimulator';
 import {
   createSeasonContractGoal,
   TransferMarketOffer,
 } from '../../domains/contracts/contractEngine';
+import { createInitialWorldSeason } from '../../domains/season/worldSeasonEngine';
 import { YouthAcademyOffer } from '../../domains/tryout/generateYouthOffers';
 import {
   createInitialYouthState,
@@ -11,7 +11,7 @@ import {
 } from '../../domains/youth-academy/youthModel';
 import { formatMoney } from '../../shared/utils/formatters';
 import { CareerState } from '../careerTypes';
-import { makeEvent, pickNextOpponent } from '../helpers/feedHelper';
+import { makeEvent } from '../helpers/feedHelper';
 
 export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer): Partial<CareerState> {
   if (!state.player) return {};
@@ -35,8 +35,9 @@ export function buildSignYouthPatch(state: CareerState, offer: YouthAcademyOffer
     youthState: createInitialYouthState(offer.role),
     transitionProposals: [],
     marketOffers: [],
-    leagueTables: createInitialLeagueTables(),
-    nextOpponentId: pickNextOpponent(offer.clubId),
+    worldSeason: createInitialWorldSeason(2026),
+    seasonGoalsCount: 0,
+    seasonAssistsCount: 0,
     lastMatchResult: null,
     feed: [
       makeEvent(
@@ -69,7 +70,6 @@ export function buildYouthTransitionPatch(
     },
     youthState: null,
     transitionProposals: [],
-    nextOpponentId: pickNextOpponent(proposal.targetClubId),
     feed: [
       makeEvent(
         state.calendar.week,
@@ -101,7 +101,6 @@ export function buildMarketSignPatch(
       seasonGoal: createSeasonContractGoal(state.player, 'PRO', offer.monthlySalary),
     },
     marketOffers: [],
-    nextOpponentId: pickNextOpponent(offer.clubId),
     feed: [
       makeEvent(
         state.calendar.week,

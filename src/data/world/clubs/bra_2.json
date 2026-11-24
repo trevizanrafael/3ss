@@ -1,0 +1,762 @@
+[
+  {
+    "id": "fortaleza_6272",
+    "name": "Fortaleza",
+    "shortName": "FOR",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Fortaleza Sub-20",
+    "youthQuality": 84,
+    "primaryColor": "#1A1C22",
+    "secondaryColor": "#F5F5F7",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6272.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Luan",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "Lucas Crispim",
+        "pos": "MC",
+        "ovr": 79
+      },
+      {
+        "name": "Welliton",
+        "pos": "ATA",
+        "ovr": 79
+      },
+      {
+        "name": "Luiz Fernando",
+        "pos": "ATA",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "cuiaba_17313",
+    "name": "Cuiabá",
+    "shortName": "CUI",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Cuiabá Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#004526",
+    "secondaryColor": "#FFD65A",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17313.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Otávio",
+        "pos": "MC",
+        "ovr": 82
+      },
+      {
+        "name": "Pepê",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Vitor Mendes",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Joao Basso",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "juventude_6270",
+    "name": "Juventude",
+    "shortName": "JUV",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Juventude Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#417505",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6270.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Lucas Mineiro",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Messias",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Bernardo",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Pablo",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "ceara_9969",
+    "name": "Ceará",
+    "shortName": "CEA",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Ceará Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#010101",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9969.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Savio",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Rafael Ramos",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Vinicius",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "Matheus Andrade",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "sport_7635",
+    "name": "Sport",
+    "shortName": "SPO",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Sport Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7635.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Ze Marcos",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "José Gabriel",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Marcelo Benevenuto",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Biel",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "criciuma_9971",
+    "name": "Criciúma",
+    "shortName": "CRI",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Criciúma Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#F8E71C",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9971.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Rômulo",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Marcinho",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Luciano Castan",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Willean Lepu",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "america_mineiro_6154",
+    "name": "América Mineiro",
+    "shortName": "AMG",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "América-MG Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#417505",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6154.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Emerson Santos",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Felipe Amaral",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "Rafael Barcelos",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Pedro Vinicius Da Rosa Kappel",
+        "pos": "ZAG",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "avai_9966",
+    "name": "Avaí",
+    "shortName": "AVA",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Avaí Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#0093EC",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9966.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Wallison",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Douglas",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Pedro Cuiabá",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Gabriel Simples",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "goias_3395",
+    "name": "Goiás",
+    "shortName": "GOI",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Goiás Sub-20",
+    "youthQuality": 78,
+    "primaryColor": "#417505",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3395.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Luiz Felipe",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Felipe Clemente",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "Machado",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Ramon Menezes",
+        "pos": "ZAG",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "athletic_20851",
+    "name": "Athletic",
+    "shortName": "ACMG",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Athletic Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20851.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jota",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Gustavinho",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Zeca",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Lucas Belezi",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "atletico_goianiense_10357",
+    "name": "Atlético Goianiense",
+    "shortName": "AGO",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Atlético-GO Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#FF0000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10357.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Guilherme",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Warley",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Natã",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Ewerton",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "botafogo_sp_10281",
+    "name": "Botafogo-SP",
+    "shortName": "BFC",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Botafogo-SP Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10281.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Victor Souza",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Barreto",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Leandro Maciel",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Heron",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "novorizontino_18127",
+    "name": "Novorizontino",
+    "shortName": "NOV",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Novorizontino Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#FFD704",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18127.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Luis",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Carlinhos",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Marlon",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Eduardo Brock",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "ponte_preta_3459",
+    "name": "Ponte Preta",
+    "shortName": "PON",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Ponte Preta Sub-20",
+    "youthQuality": 75,
+    "primaryColor": "#000000",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3459.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "André",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Pedrinho",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Miguel",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Jonathan",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "crb_9970",
+    "name": "CRB",
+    "shortName": "CRB",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "CRB Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9970.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Kevin",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Danielzinho",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Fábio Augusto Schirmann",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Crystopher",
+        "pos": "MC",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "operario_pr_18187",
+    "name": "Operário PR",
+    "shortName": "OPE",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Operário PR Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18187.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Juninho",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Gabriel Boschilia",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Caio Bruno De Vicq Chada Vilela",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "João Gabriel Rodrigues Botao",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "sao_bernardo_11268",
+    "name": "São Bernardo",
+    "shortName": "BER",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "São Bernardo Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11268.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Rodrigo Ferreira",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Lucas Lima",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Helder Gomes Maciel",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Felipe Garcia",
+        "pos": "ATA",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "vila_nova_9973",
+    "name": "Vila Nova",
+    "shortName": "VIL",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Vila Nova Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9973.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Dodô",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Jonathan Costa",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Willian Maranhão",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Douglas Mendes",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "londrina_17333",
+    "name": "Londrina",
+    "shortName": "LON",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Londrina Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#0093EC",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17333.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Artur",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "William Pottker",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Weverton",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Nino Paraíba",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "nautico_7633",
+    "name": "Náutico",
+    "shortName": "NAU",
+    "country": "BRA",
+    "leagueId": "BRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Náutico Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7633.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Guilherme",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Matheus Ribeiro",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Índio",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "Igor",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  }
+]

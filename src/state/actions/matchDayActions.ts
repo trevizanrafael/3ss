@@ -1,10 +1,14 @@
 import { getClubById } from '../../data/clubs';
-import { simulateLeagueRound } from '../../domains/competition/leagueSimulator';
+import { getCompetitionTheme } from '../../data/world/competitionThemes';
 import {
   MatchPerformanceResult,
   resolveMatchSimulation,
   TacticalMindset,
 } from '../../domains/match-sim/matchSimulator';
+import {
+  getClubFixtureOnExactDay,
+  simulateWorldCompetitionsOnDay,
+} from '../../domains/season/worldSeasonEngine';
 import {
   generateYouthTransitionProposals,
   updateYouthAfterMatch,
@@ -13,32 +17,48 @@ import { StarRating } from '../../shared/types/common';
 import { formatMoney } from '../../shared/utils/formatters';
 import { clamp } from '../../shared/utils/math';
 import { CareerState } from '../careerTypes';
-import { makeEvent, pickNextOpponent } from '../helpers/feedHelper';
+import { makeEvent } from '../helpers/feedHelper';
 
 export function computePlayedMatchState(
   state: CareerState,
   mindset: TacticalMindset,
 ): { patch: Partial<CareerState>; result: MatchPerformanceResult } | null {
-  const { player, contract, nextOpponentId, calendar } = state;
-  if (!player || !contract || !nextOpponentId) return null;
+  const { player, contract, calendar, worldSeason } = state;
+  if (!player || !contract) return null;
+
+  const fixture = getClubFixtureOnExactDay(
+    worldSeason,
+    contract.clubId,
+    contract.stage,
+    calendar.week,
+    calendar.day,
+  );
+  if (!fixture) return null;
 
   const club = getClubById(contract.clubId);
   const result = resolveMatchSimulation(
     player,
     contract.clubId,
-    nextOpponentId,
+    fixture.opponentId,
+    fixture.isHome,
+    fixture.competitionId,
+    fixture.stageLabel,
     contract.role,
     contract.stage,
     mindset,
   );
 
-  const nextTables = simulateLeagueRound(state.leagueTables, {
-    leagueId: club.leagueId,
-    clubId: contract.clubId,
-    opponentId: nextOpponentId,
-    clubGoals: result.clubGoals,
-    oppGoals: result.opponentGoals,
-  });
+  // Simula simultaneamente todos os outros jogos da mesma rodada (Liga ou Continental)!
+  const nextWorld = simulateWorldCompetitionsOnDay(
+    worldSeason,
+    calendar.week,
+    calendar.day,
+    {
+      clubId: contract.clubId,
+      clubGoals: result.clubGoals,
+      oppGoals: result.opponentGoals,
+    },
+  );
 
   let nextRole = contract.role;
   let nextYouth = state.youthState;
@@ -57,7 +77,7 @@ export function computePlayedMatchState(
     nextYouth = youthUpdate.updatedYouth;
     if (youthUpdate.newRole) nextRole = youthUpdate.newRole;
     if (youthUpdate.eventNote) {
-      nextFeed = [makeEvent(calendar.week, 'Destaque na Base!', youthUpdate.eventNote, 'CONTRACT'), ...nextFeed];
+      nextFeed = [makeEvent(calendar.week, 'Destaque na Base', youthUpdate.eventNote, 'CONTRACT'), ...nextFeed];
     }
     if (nextYouth.transitionReady && nextProposals.length === 0) {
       nextProposals = generateYouthTransitionProposals(player, contract.clubId);
@@ -101,12 +121,13 @@ export function computePlayedMatchState(
           ? 1
           : 0;
 
-  const opponent = getClubById(nextOpponentId);
+  const opponent = getClubById(fixture.opponentId);
+  const compTheme = getCompetitionTheme(fixture.competitionId);
   nextFeed = [
     makeEvent(
       calendar.week,
-      `${club.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName} (${result.stars}★)`,
-      `${result.minutesPlayed} min em campo • ${result.playerGoals}G ${result.playerAssists}A`,
+      `[${compTheme.shortLabel}] ${club.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName} (${result.stars}★)`,
+      `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
       'MATCH',
     ),
     ...nextFeed,
@@ -125,9 +146,10 @@ export function computePlayedMatchState(
       bankBalance: state.bankBalance + bonusEarned,
       youthState: nextYouth,
       transitionProposals: nextProposals,
-      leagueTables: nextTables,
+      worldSeason: nextWorld,
+      seasonGoalsCount: state.seasonGoalsCount + result.playerGoals,
+      seasonAssistsCount: state.seasonAssistsCount + result.playerAssists,
       lastMatchResult: result,
-      nextOpponentId: pickNextOpponent(contract.clubId),
       feed: nextFeed.slice(0, 25),
     },
   };

@@ -1,0 +1,762 @@
+[
+  {
+    "id": "internazionale_110",
+    "name": "Internazionale",
+    "shortName": "INT",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 85,
+    "youthAcademyName": "Inter Milan Primavera",
+    "youthQuality": 91,
+    "primaryColor": "#00239c",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "L. Martínez",
+        "pos": "ATA",
+        "ovr": 88
+      },
+      {
+        "name": "N. Barella",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "A. Bastoni",
+        "pos": "ZAG",
+        "ovr": 87
+      },
+      {
+        "name": "H. Çalhanoğlu",
+        "pos": "VOL",
+        "ovr": 86
+      }
+    ]
+  },
+  {
+    "id": "napoli_114",
+    "name": "Napoli",
+    "shortName": "NAP",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 83,
+    "youthAcademyName": "Napoli Primavera",
+    "youthQuality": 89,
+    "primaryColor": "#0677d2",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "K. De Bruyne",
+        "pos": "MC",
+        "ovr": 87
+      },
+      {
+        "name": "S. McTominay",
+        "pos": "MC",
+        "ovr": 85
+      },
+      {
+        "name": "R. Lukaku",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "G. Di Lorenzo",
+        "pos": "LD",
+        "ovr": 83
+      }
+    ]
+  },
+  {
+    "id": "ac_milan_103",
+    "name": "AC Milan",
+    "shortName": "MIL",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Milan Primavera",
+    "youthQuality": 88,
+    "primaryColor": "#e4002b",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
+    "squadSize": 23,
+    "keyPlayers": [
+      {
+        "name": "C. Pulisic",
+        "pos": "PD",
+        "ovr": 84
+      },
+      {
+        "name": "Rafael Leão",
+        "pos": "PE",
+        "ovr": 84
+      },
+      {
+        "name": "A. Rabiot",
+        "pos": "MEI",
+        "ovr": 83
+      },
+      {
+        "name": "L. Modrić",
+        "pos": "MC",
+        "ovr": 83
+      }
+    ]
+  },
+  {
+    "id": "juventus_111",
+    "name": "Juventus",
+    "shortName": "JUV",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Juventus Primavera",
+    "youthQuality": 88,
+    "primaryColor": "#000000",
+    "secondaryColor": "#E8A2B0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Bremer",
+        "pos": "ZAG",
+        "ovr": 85
+      },
+      {
+        "name": "M. Locatelli",
+        "pos": "VOL",
+        "ovr": 84
+      },
+      {
+        "name": "L. Openda",
+        "pos": "ATA",
+        "ovr": 83
+      },
+      {
+        "name": "D. Vlahović",
+        "pos": "ATA",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "as_roma_104",
+    "name": "AS Roma",
+    "shortName": "ROMA",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "AS Roma Primavera",
+    "youthQuality": 87,
+    "primaryColor": "#990a2c",
+    "secondaryColor": "#F5F3E5",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/104.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Gianluca Mancini",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "Leonardo Balerdi",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "Evan Ndicka",
+        "pos": "ZAG",
+        "ovr": 81
+      },
+      {
+        "name": "Mario Hermoso",
+        "pos": "ZAG",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "atalanta_105",
+    "name": "Atalanta",
+    "shortName": "ATA",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Atalanta Primavera",
+    "youthQuality": 87,
+    "primaryColor": "#1157bf",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/105.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "A. Lookman",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "Éderson",
+        "pos": "MC",
+        "ovr": 82
+      },
+      {
+        "name": "C. De Ketelaere",
+        "pos": "MEI",
+        "ovr": 82
+      },
+      {
+        "name": "M. de Roon",
+        "pos": "MC",
+        "ovr": 81
+      }
+    ]
+  },
+  {
+    "id": "lazio_112",
+    "name": "Lazio",
+    "shortName": "LAZ",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Lazio Primavera",
+    "youthQuality": 86,
+    "primaryColor": "#74bde7",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/112.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Zaccagni",
+        "pos": "ME",
+        "ovr": 84
+      },
+      {
+        "name": "M. Guendouzi",
+        "pos": "VOL",
+        "ovr": 82
+      },
+      {
+        "name": "A. Romagnoli",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "V. Castellanos",
+        "pos": "ATA",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "fiorentina_109",
+    "name": "Fiorentina",
+    "shortName": "FIO",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Fiorentina Primavera",
+    "youthQuality": 85,
+    "primaryColor": "#4c1d84",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Kean",
+        "pos": "ATA",
+        "ovr": 83
+      },
+      {
+        "name": "E. Džeko",
+        "pos": "ATA",
+        "ovr": 81
+      },
+      {
+        "name": "R. Gosens",
+        "pos": "LE",
+        "ovr": 80
+      },
+      {
+        "name": "A. Guðmundsson",
+        "pos": "ATA",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "bologna_107",
+    "name": "Bologna",
+    "shortName": "BOL",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Bologna Primavera",
+    "youthQuality": 84,
+    "primaryColor": "#04043d",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "R. Orsolini",
+        "pos": "MD",
+        "ovr": 82
+      },
+      {
+        "name": "R. Freuler",
+        "pos": "VOL",
+        "ovr": 81
+      },
+      {
+        "name": "L. Ferguson",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "C. Immobile",
+        "pos": "ATA",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "como_2572",
+    "name": "Como",
+    "shortName": "COMO",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Como Primavera",
+    "youthQuality": 84,
+    "primaryColor": "#4169E1",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2572.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Morata",
+        "pos": "ATA",
+        "ovr": 81
+      },
+      {
+        "name": "Nico Paz",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "S. Posch",
+        "pos": "LD",
+        "ovr": 79
+      },
+      {
+        "name": "M. Baturina",
+        "pos": "MEI",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "torino_239",
+    "name": "Torino",
+    "shortName": "TOR",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Torino Primavera",
+    "youthQuality": 83,
+    "primaryColor": "#9f0000",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/239.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "D. Zapata",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "N. Vlašić",
+        "pos": "MEI",
+        "ovr": 79
+      },
+      {
+        "name": "C. Biraghi",
+        "pos": "LE",
+        "ovr": 78
+      },
+      {
+        "name": "C. Adams",
+        "pos": "ATA",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "cagliari_2925",
+    "name": "Cagliari",
+    "shortName": "CAG",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Cagliari Primavera",
+    "youthQuality": 81,
+    "primaryColor": "#282846",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2925.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Belotti",
+        "pos": "ATA",
+        "ovr": 77
+      },
+      {
+        "name": "Y. Mina",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "S. Luperto",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "M. Folorunsho",
+        "pos": "MEI",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "sassuolo_3997",
+    "name": "Sassuolo",
+    "shortName": "SAS",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Sassuolo Primavera",
+    "youthQuality": 81,
+    "primaryColor": "#0fa653",
+    "secondaryColor": "#ADAEB0",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "D. Berardi",
+        "pos": "PD",
+        "ovr": 82
+      },
+      {
+        "name": "A. Laurienté",
+        "pos": "PE",
+        "ovr": 80
+      },
+      {
+        "name": "N. Matić",
+        "pos": "VOL",
+        "ovr": 77
+      },
+      {
+        "name": "K. Thorstvedt",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "genoa_3263",
+    "name": "Genoa",
+    "shortName": "GEN",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Genoa Primavera",
+    "youthQuality": 80,
+    "primaryColor": "#08305d",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "N. Stanciu",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "R. Malinovskyi",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "M. Frendrup",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Vitinha",
+        "pos": "ATA",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "lecce_113",
+    "name": "Lecce",
+    "shortName": "LEC",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Lecce Primavera",
+    "youthQuality": 80,
+    "primaryColor": "#FCED0B",
+    "secondaryColor": "#08305d",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/113.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Gallo",
+        "pos": "LE",
+        "ovr": 75
+      },
+      {
+        "name": "F. Guilbert",
+        "pos": "LD",
+        "ovr": 75
+      },
+      {
+        "name": "R. Sottil",
+        "pos": "ME",
+        "ovr": 75
+      },
+      {
+        "name": "L. Coulibaly",
+        "pos": "VOL",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "parma_115",
+    "name": "Parma",
+    "shortName": "PAR",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Parma Primavera",
+    "youthQuality": 80,
+    "primaryColor": "#19161D",
+    "secondaryColor": "#ffdd30",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "E. Valeri",
+        "pos": "LE",
+        "ovr": 75
+      },
+      {
+        "name": "Hernani",
+        "pos": "VOL",
+        "ovr": 75
+      },
+      {
+        "name": "E. Delprato",
+        "pos": "LD",
+        "ovr": 75
+      },
+      {
+        "name": "P. Cutrone",
+        "pos": "ATA",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "udinese_118",
+    "name": "Udinese",
+    "shortName": "UDI",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Udinese Primavera",
+    "youthQuality": 80,
+    "primaryColor": "#19161D",
+    "secondaryColor": "#0F1C3F",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/118.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "O. Solet",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "N. Zaniolo",
+        "pos": "MD",
+        "ovr": 76
+      },
+      {
+        "name": "S. Lovrič",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "J. Karlström",
+        "pos": "VOL",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "monza_4007",
+    "name": "Monza",
+    "shortName": "MON",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Monza Primavera",
+    "youthQuality": 79,
+    "primaryColor": "#C8142F",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Colpani",
+        "pos": "MD",
+        "ovr": 78
+      },
+      {
+        "name": "M. Pessina",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Dany Mota",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "S. Birindelli",
+        "pos": "LD",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "venezia_17530",
+    "name": "Venezia",
+    "shortName": "VEN",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Venezia Primavera",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "G. Busio",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Kike Pérez",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "A. Duncan",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Casas",
+        "pos": "ATA",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "frosinone_4057",
+    "name": "Frosinone",
+    "shortName": "FRO",
+    "country": "ITA",
+    "leagueId": "ITA_1",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Frosinone Primavera",
+    "youthQuality": 74,
+    "primaryColor": "#FACF08",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "G. Calò",
+        "pos": "VOL",
+        "ovr": 69
+      },
+      {
+        "name": "R. Marchizza",
+        "pos": "LE",
+        "ovr": 69
+      },
+      {
+        "name": "N. Corrado",
+        "pos": "LE",
+        "ovr": 68
+      },
+      {
+        "name": "D. Biraschi",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  }
+]

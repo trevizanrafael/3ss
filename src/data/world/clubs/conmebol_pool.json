@@ -1,0 +1,1066 @@
+[
+  {
+    "id": "nacional_2684",
+    "name": "Nacional",
+    "shortName": "NAC",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Nacional Sub-20",
+    "youthQuality": 83,
+    "primaryColor": "#345BBC",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2684.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Agustin Rogel",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "Emiliano Ancheta",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "Lucas Rodríguez",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Maximiliano Silvera",
+        "pos": "ATA",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "penarol_2683",
+    "name": "Peñarol",
+    "shortName": "PEN",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Peñarol Sub-20",
+    "youthQuality": 83,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2683.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Facundo Batista",
+        "pos": "ATA",
+        "ovr": 80
+      },
+      {
+        "name": "Mauricio Lemos",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "Franco Romero",
+        "pos": "MC",
+        "ovr": 79
+      },
+      {
+        "name": "Germán Pezzella",
+        "pos": "ZAG",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "independiente_del_valle_17086",
+    "name": "Independiente del Valle",
+    "shortName": "IDV",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Ind. del Valle Sub-20",
+    "youthQuality": 83,
+    "primaryColor": "#000D5D",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17086.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Juan Viacava",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "Junior Sornoza",
+        "pos": "MC",
+        "ovr": 79
+      },
+      {
+        "name": "Jhon Jairo Espinoza",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "Youri Ochoa",
+        "pos": "MC",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "2_de_mayo_6097",
+    "name": "2 de Mayo",
+    "shortName": "MAY",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "2 de Mayo Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6097.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Fernando Cáceres",
+        "pos": "ATA",
+        "ovr": 78
+      },
+      {
+        "name": "Nicolás Rossi",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Ulises Coronel",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Marcelo González",
+        "pos": "ATA",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "always_ready_19425",
+    "name": "Always Ready",
+    "shortName": "CAR",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Always Ready Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#ff0000",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/19425.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Rai Lima",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Thiago Angel Barba Saucedo",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "Fabian Vaca Guardia",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "José Herrera",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "atletico_junior_4815",
+    "name": "Atlético Junior",
+    "shortName": "JUN",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Atl. Junior Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000055",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4815.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Daniel Rivera",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Pablo Ortíz",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Guillermo Paiva",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "Luis Muriel",
+        "pos": "ATA",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "barcelona_sc_2686",
+    "name": "Barcelona SC",
+    "shortName": "BAR",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Barcelona Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2686.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Willian Vargas",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "Brian Quintero",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Kevin Angulo",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "Alex Rangel",
+        "pos": "ZAG",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "cerro_porteno_2671",
+    "name": "Cerro Porteño",
+    "shortName": "CPT",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Cerro Porteño Sub-20",
+    "youthQuality": 81,
+    "primaryColor": "#EF2D24",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2671.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Lucas Quintana",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Fabricio Domínguez",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Brian Luciatti",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Cristhian Paredes",
+        "pos": "MC",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "cusco_fc_11995",
+    "name": "Cusco FC",
+    "shortName": "CFC",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Cusco Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11995.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Carlos Gamarra",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Carlos Diez",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "Alex Custodio",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Iván Colman",
+        "pos": "MC",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "bolivar_2681",
+    "name": "Bolívar",
+    "shortName": "BOL",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Bolívar Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#3c96c4",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2681.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "José Sagredo",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Billy Arce",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Marvin Hurtado",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "Xavier Arreaga",
+        "pos": "ZAG",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "deportes_tolima_5489",
+    "name": "Deportes Tolima",
+    "shortName": "TOL",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Tolima Sub-20",
+    "youthQuality": 80,
+    "primaryColor": "#5b0528",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5489.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Cristian Trujillo",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Juan Mera",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Anderson Angulo",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Luis Sandoval",
+        "pos": "ATA",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "coquimbo_unido_8186",
+    "name": "Coquimbo Unido",
+    "shortName": "COQ",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Coquimbo Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#000000",
+    "secondaryColor": "#FBE805",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8186.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Guido Vadalá",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "Benjamin Gazzolo",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Francisco Salinas",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Sebastián Galani",
+        "pos": "MC",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "carabobo_6037",
+    "name": "Carabobo",
+    "shortName": "CAR",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Carabobo Sub-20",
+    "youthQuality": 79,
+    "primaryColor": "#000169",
+    "secondaryColor": "#753000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6037.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Edson Castillo",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Jean Franco Fuentes",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Freddy Yanez",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Dimas Meza",
+        "pos": "MC",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "guarani_7385",
+    "name": "Guaraní",
+    "shortName": "GUA",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Guaraní Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7385.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Alcides Barbotte",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Maximiliano Añasco",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Armando Méndez",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Imanol Segovia",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "independiente_medellin_2690",
+    "name": "Independiente Medellín",
+    "shortName": "DIM",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Ind. Medellín Sub-20",
+    "youthQuality": 77,
+    "primaryColor": "#d70000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2690.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Léider Berrío",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Joaquín Varela",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Jaidinson Córdoba",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Kevin Mantilla",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "huachipato_4134",
+    "name": "Huachipato",
+    "shortName": "HUA",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Huachipato Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#023396",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4134.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jose Ignacio Castro",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Claudio Torres",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Juan Figueroa",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Benjamín Mellado",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "independiente_santa_fe_5488",
+    "name": "Independiente Santa Fe",
+    "shortName": "SFE",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Santa Fe Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#E33439",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5488.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Omar Fernández",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "Mateo Puerta",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Helibelton Palacios",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Jeison Angulo",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "deportivo_la_guaira_17090",
+    "name": "Deportivo La Guaira",
+    "shortName": "LGA",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "La Guaira Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#fc4401",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17090.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Carlos Rivero",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Carlos Faya",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Tobías Quiroz",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Juan Carlos Castellanos",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "deportivo_tachira_4818",
+    "name": "Deportivo Táchira",
+    "shortName": "TAC",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Táchira Sub-20",
+    "youthQuality": 76,
+    "primaryColor": "#1a1a1a",
+    "secondaryColor": "#F8DD00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4818.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Óscar Hernández",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Guillermo Fratta",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Adrían Montañez",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Brayan Palmezano",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "juventud_8416",
+    "name": "Juventud",
+    "shortName": "JUV",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Juventud Sub-20",
+    "youthQuality": 75,
+    "primaryColor": "#023396",
+    "secondaryColor": "#023396",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8416.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Agustín Rodríguez",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "Kevin Rolon",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Leonel Roldán",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Alejo Cruz Techera",
+        "pos": "ATA",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "liga_de_quito_4816",
+    "name": "Liga de Quito",
+    "shortName": "LDU",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "LDU Sub-20",
+    "youthQuality": 75,
+    "primaryColor": "#1c1d5c",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4816.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Ricardo Adé",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Luis Segovia",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Richard Mina",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Lucas Rodríguez",
+        "pos": "MC",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "libertad_2670",
+    "name": "Libertad",
+    "shortName": "LIB",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Libertad Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#212121",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2670.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Nicolás Freire",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Matías Rojas",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Thiago Fernández",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Gilberto Flores",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "nacional_potosi_10311",
+    "name": "Nacional Potosí",
+    "shortName": "POT",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "N Potosí Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#212121",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10311.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Sebastian Alvarez",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Rodrigo Ávila",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Mateo Abastoflor",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Juan Orellana",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "o_higgins_6072",
+    "name": "O'Higgins",
+    "shortName": "OHI",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "O'Higgins Sub-20",
+    "youthQuality": 74,
+    "primaryColor": "#517ab7",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6072.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Arnaldo Castillo",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Luis Pavez",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Cristián Morales",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Martín Maturana",
+        "pos": "MC",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "liverpool_5492",
+    "name": "Liverpool",
+    "shortName": "LIV",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Liverpool Sub-20",
+    "youthQuality": 73,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5492.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Vicenzo Macchia Labandera",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Facundo Perdomo",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Nicolás Garayalde",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Enzo Castillo",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "sporting_cristal_2673",
+    "name": "Sporting Cristal",
+    "shortName": "SCR",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Sporting Cristal Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#3bb8e2",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2673.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Agustín Álvarez Wallace",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Herná Barcos",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Rafael Lutiger",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Luis Abram",
+        "pos": "ZAG",
+        "ovr": 66
+      }
+    ]
+  },
+  {
+    "id": "ucv_fc_10094",
+    "name": "UCV FC",
+    "shortName": "UCV",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "UCV FC Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10094.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Williams Velásquez",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Williams Lugo",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Juan Alegría",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "Daniel Carrillo",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "universidad_catolica_885",
+    "name": "Universidad Católica",
+    "shortName": "CDUC",
+    "country": "ARG",
+    "leagueId": "CONMEBOL_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "U Católica Sub-20",
+    "youthQuality": 72,
+    "primaryColor": "#0a4f8d",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/885.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Justo Giani",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Tomas Astaburuaga",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Eugenio Mena",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Daniel Gónzalez",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  }
+]

@@ -1,0 +1,686 @@
+[
+  {
+    "id": "nantes_165",
+    "name": "Nantes",
+    "shortName": "NAN",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Nantes National U19",
+    "youthQuality": 80,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#011F68",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/165.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "M. Abline",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "F. Coquelin",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "J. Lepenant",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Hong Hyeon Seok",
+        "pos": "MEI",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "stade_de_reims_3243",
+    "name": "Stade de Reims",
+    "shortName": "REIM",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Reims National U19",
+    "youthQuality": 78,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#0000bf",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3243.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "K. Nakamura",
+        "pos": "ME",
+        "ovr": 76
+      },
+      {
+        "name": "T. Teuma",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "Akieme",
+        "pos": "LE",
+        "ovr": 73
+      },
+      {
+        "name": "M. Daramy",
+        "pos": "ME",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "dijon_fco_3170",
+    "name": "Dijon FCO",
+    "shortName": "DIJO",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Dijon FCO National U19",
+    "youthQuality": 77,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3170.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Boubacar Diallo",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Quentin Bernard",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Waly Diouf",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Ismail Bouleghcha",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "montpellier_274",
+    "name": "Montpellier",
+    "shortName": "MON",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Montpellier National U19",
+    "youthQuality": 77,
+    "primaryColor": "#011F68",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/274.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "T. Savanier",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "B. Omeragić",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "J. Laporte",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "L. Mincarelli",
+        "pos": "LE",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "saint_etienne_178",
+    "name": "Saint-Étienne",
+    "shortName": "ASSE",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "St. Étienne National U19",
+    "youthQuality": 77,
+    "primaryColor": "#51cc5f",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/178.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Julien Le Cardinal",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Zuriko Davitashvili",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "Irvin Cardona",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "João Ferreira",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "metz_177",
+    "name": "Metz",
+    "shortName": "METZ",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Metz National U19",
+    "youthQuality": 76,
+    "primaryColor": "#8C3140",
+    "secondaryColor": "#e6c168",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/177.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Nampalys Mendy",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Jessy Deminguet",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Cristian Devenish",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Florian Miguel",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "guingamp_171",
+    "name": "Guingamp",
+    "shortName": "EAG",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Guingamp National U19",
+    "youthQuality": 75,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/171.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "A. Sissoko",
+        "pos": "LD",
+        "ovr": 71
+      },
+      {
+        "name": "K. Sidibé",
+        "pos": "VOL",
+        "ovr": 71
+      },
+      {
+        "name": "A. Hemia",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "L. Mafouta",
+        "pos": "ATA",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "dunkerque_7732",
+    "name": "Dunkerque",
+    "shortName": "DUN",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Dunkerque National U19",
+    "youthQuality": 74,
+    "primaryColor": "#005a9c",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7732.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "E. Bardeli",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "V. Sasso",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Eguaras",
+        "pos": "VOL",
+        "ovr": 70
+      },
+      {
+        "name": "A. Georgen",
+        "pos": "LD",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "grenoble_6994",
+    "name": "Grenoble",
+    "shortName": "GRE",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Grenoble National U19",
+    "youthQuality": 74,
+    "primaryColor": "#005da3",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6994.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "T. Valls",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "J. Benet",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "S. Delos",
+        "pos": "LD",
+        "ovr": 68
+      },
+      {
+        "name": "C. Vidal",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "pau_10678",
+    "name": "Pau",
+    "shortName": "PAU",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Pau National U19",
+    "youthQuality": 74,
+    "primaryColor": "#0070b1",
+    "secondaryColor": "#f3cf56",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10678.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Jessy Benet",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Anthony Briancon",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Mathys Tourraine",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Axel Bamba",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "red_star_fc_93_11884",
+    "name": "Red Star FC 93",
+    "shortName": "RSFC",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Red Star FC  National U19",
+    "youthQuality": 74,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11884.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "S. Khaoui",
+        "pos": "MEI",
+        "ovr": 70
+      },
+      {
+        "name": "G. Haag",
+        "pos": "VOL",
+        "ovr": 70
+      },
+      {
+        "name": "P. Lemonnier",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "R. Hachem",
+        "pos": "ME",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "stade_laval_3266",
+    "name": "Stade Laval",
+    "shortName": "SLFC",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Stade Laval National U19",
+    "youthQuality": 74,
+    "primaryColor": "#1a1a1a",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3266.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "T. Vargas",
+        "pos": "LD",
+        "ovr": 71
+      },
+      {
+        "name": "S. Sanna",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "T. Pellenard",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "M. Tchokounté",
+        "pos": "ATA",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "annecy_18066",
+    "name": "Annecy",
+    "shortName": "ANN",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Annecy National U19",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18066.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Kashi",
+        "pos": "VOL",
+        "ovr": 69
+      },
+      {
+        "name": "A. Larose",
+        "pos": "MD",
+        "ovr": 69
+      },
+      {
+        "name": "V. Pajot",
+        "pos": "VOL",
+        "ovr": 68
+      },
+      {
+        "name": "F. N'Sakala",
+        "pos": "LE",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "clermont_foot_3171",
+    "name": "Clermont Foot",
+    "shortName": "CLE",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Clermont Foot National U19",
+    "youthQuality": 73,
+    "primaryColor": "#8C3140",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3171.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Gastien",
+        "pos": "VOL",
+        "ovr": 69
+      },
+      {
+        "name": "Y. Salmier",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "A. Bamba",
+        "pos": "ME",
+        "ovr": 68
+      },
+      {
+        "name": "M. Caufriez",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "sochaux_272",
+    "name": "Sochaux",
+    "shortName": "SOC",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Sochaux National U19",
+    "youthQuality": 73,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#000040",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/272.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Yohan Demoncy",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Mohamed Toure",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Saad Agouzoul",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Dylan Tavares",
+        "pos": "ZAG",
+        "ovr": 66
+      }
+    ]
+  },
+  {
+    "id": "rodez_aveyron_7719",
+    "name": "Rodez Aveyron",
+    "shortName": "AVE",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Rodez Aveyron National U19",
+    "youthQuality": 72,
+    "primaryColor": "#a5042b",
+    "secondaryColor": "#a5042b",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7719.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Tourraine",
+        "pos": "LD",
+        "ovr": 69
+      },
+      {
+        "name": "A. Trouillet",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "W. Younoussa",
+        "pos": "MC",
+        "ovr": 67
+      },
+      {
+        "name": "T. Arconte",
+        "pos": "MD",
+        "ovr": 65
+      }
+    ]
+  },
+  {
+    "id": "as_nancy_lorraine_3267",
+    "name": "AS Nancy Lorraine",
+    "shortName": "ASNL",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 65,
+    "youthAcademyName": "Nancy National U19",
+    "youthQuality": 71,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#0000bf",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3267.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "F. Maouassa",
+        "pos": "LE",
+        "ovr": 69
+      },
+      {
+        "name": "A. Dabasse",
+        "pos": "ATA",
+        "ovr": 66
+      },
+      {
+        "name": "W. Bouabdeli",
+        "pos": "MEI",
+        "ovr": 65
+      },
+      {
+        "name": "N. Saint-Ruf",
+        "pos": "ZAG",
+        "ovr": 65
+      }
+    ]
+  },
+  {
+    "id": "boulogne_7869",
+    "name": "Boulogne",
+    "shortName": "BOU",
+    "country": "FRA",
+    "leagueId": "FRA_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 62,
+    "youthAcademyName": "Boulogne National U19",
+    "youthQuality": 68,
+    "primaryColor": "#fb2e29",
+    "secondaryColor": "#fb2e29",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7869.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "J. Boyer",
+        "pos": "LE",
+        "ovr": 64
+      },
+      {
+        "name": "A. El Farissi",
+        "pos": "MEI",
+        "ovr": 63
+      },
+      {
+        "name": "J. Bultel",
+        "pos": "VOL",
+        "ovr": 63
+      },
+      {
+        "name": "D. Thiam",
+        "pos": "ZAG",
+        "ovr": 63
+      }
+    ]
+  }
+]

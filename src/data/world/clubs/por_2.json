@@ -1,0 +1,686 @@
+[
+  {
+    "id": "gd_chaves_12705",
+    "name": "GD Chaves",
+    "shortName": "GDC",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "GD Chaves Sub-23",
+    "youthQuality": 78,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#005099",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/12705.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Roberto",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "Bruno Rodrigues",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Junior Mendes",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "Aarón Romero",
+        "pos": "ZAG",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "portimonense_3719",
+    "name": "Portimonense",
+    "shortName": "PTMO",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Portimonense Sub-23",
+    "youthQuality": 77,
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffea01",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3719.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "João Pedro",
+        "pos": "MC",
+        "ovr": 79
+      },
+      {
+        "name": "Diogo Cabral",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "Edney Silva",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Shoya Nakajima",
+        "pos": "MC",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "torreense_21615",
+    "name": "Torreense",
+    "shortName": "TOR",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Torreense Sub-23",
+    "youthQuality": 77,
+    "primaryColor": "#950025",
+    "secondaryColor": "#293D87",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21615.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Alejandro Alfaro",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Danilo",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Javier Vazquez",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Mohamed Diadié",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "pacos_de_ferreira_3713",
+    "name": "Paços de Ferreira",
+    "shortName": "PFC",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Ferreira Sub-23",
+    "youthQuality": 76,
+    "primaryColor": "#ffea01",
+    "secondaryColor": "#fdfdf7",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3713.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "João Pedro",
+        "pos": "ATA",
+        "ovr": 79
+      },
+      {
+        "name": "Marcao",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Wesley Junio Da Silva Araujo",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "João Sidónio",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "tondela_12706",
+    "name": "Tondela",
+    "shortName": "CDT",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Tondela Sub-23",
+    "youthQuality": 76,
+    "primaryColor": "#ffea01",
+    "secondaryColor": "#293dc2",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/12706.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "Farru",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Richarlysson Carvalho Alves",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "João Lima",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Henry Addo",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "vizela_20995",
+    "name": "Vizela",
+    "shortName": "VIZ",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Vizela Sub-23",
+    "youthQuality": 76,
+    "primaryColor": "#293dc2",
+    "secondaryColor": "#ff541c",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20995.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jean-Pierre Rhyner",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Angel Bastunov",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Yassin Fortuné",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "José Gabriel González",
+        "pos": "ZAG",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "uniao_leiria_2724",
+    "name": "Uniao Leiria",
+    "shortName": "LEIR",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Uniao Leiria Sub-23",
+    "youthQuality": 76,
+    "primaryColor": "#de1f26",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2724.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Zé Pedro",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Marc Baró",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Kouassi Eboue",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Juan Muñoz",
+        "pos": "ATA",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "felgueiras_1932_21625",
+    "name": "Felgueiras 1932",
+    "shortName": "FEL",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Felgueiras Sub-23",
+    "youthQuality": 75,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21625.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Afonso Freitas",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "João Costa",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Henrique Martins",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Afonso Peixoto",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "feirense_3717",
+    "name": "Feirense",
+    "shortName": "FEI",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Feirense Sub-23",
+    "youthQuality": 74,
+    "primaryColor": "#005099",
+    "secondaryColor": "#ffea01",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3717.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Diego Moreno",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Edgar Ié",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Antonio Leal",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Tiago Castro",
+        "pos": "MC",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "os_belenenses_21596",
+    "name": "Os Belenenses",
+    "shortName": "OSB",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Os Belenenses Sub-23",
+    "youthQuality": 74,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21596.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Mário Rui Silva Duarte",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Afonso Alexandre Cunha Afonso",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Evandro Miguel Ramos Barros",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Eduardo Fabrício De Souza",
+        "pos": "ATA",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "academica_de_coimbra_3698",
+    "name": "Académica de Coimbra",
+    "shortName": "ACD",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Académica Sub-23",
+    "youthQuality": 74,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3698.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Guilherme",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Leandro Silva",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Rui Gomes",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Ilies Hassaine",
+        "pos": "ATA",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "beira_mar_1423",
+    "name": "Beira Mar",
+    "shortName": "BEI",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Beira Mar Sub-23",
+    "youthQuality": 74,
+    "primaryColor": "#1a1a1a",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/1423.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "Flávio",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Diogo Abdul",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Ibrahima Sy",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "David Oliveira Souza",
+        "pos": "ATA",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "fc_penafiel_3695",
+    "name": "FC Penafiel",
+    "shortName": "PEN",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "FC Penafiel Sub-23",
+    "youthQuality": 74,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3695.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Adrián",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Max Svensson",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Àlex Carbonell",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Juan Fuentes",
+        "pos": "ATA",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "mafra_21622",
+    "name": "Mafra",
+    "shortName": "MAF",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Mafra Sub-23",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21622.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "João Ferreira",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Gonçalo Cardoso",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Rodrigo Matos",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Mamor Niang",
+        "pos": "ATA",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "oliveirense_21628",
+    "name": "Oliveirense",
+    "shortName": "OLIV",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Oliveirense Sub-23",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21628.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Théo Fonseca",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "João Felix",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "André Filipe Lopes Almeida",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Kazuya Onohara",
+        "pos": "MC",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "varzim_21611",
+    "name": "Varzim",
+    "shortName": "VAR",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Varzim Sub-23",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21611.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "David Peres Polito",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "João Pedro Cardoso Couto",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Luís Oliveira",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Renan Silva",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "avs_22064",
+    "name": "AVS",
+    "shortName": "AVS",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "AVS Sub-23",
+    "youthQuality": 73,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/22064.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Lazar Rosic",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Rodrigo Pinho",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Abdoulaye Keita",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Carlos Ponck",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "leixoes_2543",
+    "name": "Leixoes",
+    "shortName": "LEI",
+    "country": "POR",
+    "leagueId": "POR_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Leixoes Sub-23",
+    "youthQuality": 72,
+    "primaryColor": "#ee1c0f",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2543.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Paulinho",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "José Bica",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Fernando Fonseca",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Miguel Sousa",
+        "pos": "MC",
+        "ovr": 67
+      }
+    ]
+  }
+]

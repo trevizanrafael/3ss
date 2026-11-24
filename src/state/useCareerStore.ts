@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getClubById } from '../data/clubs';
-import { createInitialLeagueTables } from '../domains/competition/leagueSimulator';
 import { generateWindowTransferOffers } from '../domains/contracts/contractEngine';
 import {
   getOwnedEquipmentBonuses,
@@ -9,6 +8,7 @@ import {
   purchaseTrainingEquipment,
 } from '../domains/economy/economyActions';
 import { createInitialPlayer } from '../domains/player/createInitialPlayer';
+import { createInitialWorldSeason } from '../domains/season/worldSeasonEngine';
 import {
   applyFiveSlotsTraining,
   DEFAULT_FIVE_DRILL_SLOTS,
@@ -45,8 +45,9 @@ export const useCareerStore = create<CareerState>()(
       youthState: null,
       transitionProposals: [],
       marketOffers: [],
-      leagueTables: createInitialLeagueTables(),
-      nextOpponentId: null,
+      worldSeason: createInitialWorldSeason(2026),
+      seasonGoalsCount: 0,
+      seasonAssistsCount: 0,
       lastMatchResult: null,
       feed: [],
 
@@ -84,12 +85,7 @@ export const useCareerStore = create<CareerState>()(
         const club = getClubById(contract.clubId);
         const bonuses = getOwnedEquipmentBonuses(ownedEquipmentIds);
         const { updatedPlayer, report } = applyFiveSlotsTraining(
-          player,
-          drillSlots,
-          'ACTIVE_100',
-          club.youthQuality,
-          bonuses.trainingXpBonusPct,
-          stars,
+          player, drillSlots, 'ACTIVE_100', club.youthQuality, bonuses.trainingXpBonusPct, stars,
         );
         set({
           player: { ...updatedPlayer, stamina: clamp(updatedPlayer.stamina - 8, 35, 100) },
@@ -111,21 +107,13 @@ export const useCareerStore = create<CareerState>()(
         });
       },
 
-      advanceDay: () => set(computeNextDayState(get())),
-
-      advanceToMatchDay: () => {
-        let guard = 0;
-        while (get().calendar.day !== 6 && guard < 8) {
-          set(computeNextDayState(get()));
-          guard++;
-        }
-      },
+      advanceDay: () => set(computeNextDayState(get(), false)),
 
       playCurrentMatch: (mindset) => {
         const outcome = computePlayedMatchState(get(), mindset);
         if (!outcome) return null;
         set(outcome.patch);
-        set(computeNextDayState(get()));
+        set(computeNextDayState(get(), true));
         return outcome.result;
       },
 
@@ -159,9 +147,7 @@ export const useCareerStore = create<CareerState>()(
             player: res.updatedPlayer,
             bankBalance: res.updatedBalance,
             ownedEquipmentIds: res.updatedOwnedIds,
-            recentLeveledKeys: Object.keys(
-              res.updatedPlayer.attributes,
-            ).filter(
+            recentLeveledKeys: Object.keys(res.updatedPlayer.attributes).filter(
               (k) =>
                 res.updatedPlayer.attributes[k as keyof typeof player.attributes] >
                 player.attributes[k as keyof typeof player.attributes],
@@ -197,6 +183,6 @@ export const useCareerStore = create<CareerState>()(
           feed: [],
         }),
     }),
-    { name: 'three-stars-soccer-career-v2' },
+    { name: 'three-stars-soccer-career-v3' },
   ),
 );

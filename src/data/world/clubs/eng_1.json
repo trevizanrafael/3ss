@@ -1,0 +1,762 @@
+[
+  {
+    "id": "liverpool_364",
+    "name": "Liverpool",
+    "shortName": "LIV",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 87,
+    "youthAcademyName": "Liverpool U21 Academy",
+    "youthQuality": 93,
+    "primaryColor": "#d11317",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Salah",
+        "pos": "MD",
+        "ovr": 91
+      },
+      {
+        "name": "V. van Dijk",
+        "pos": "ZAG",
+        "ovr": 90
+      },
+      {
+        "name": "F. Wirtz",
+        "pos": "MEI",
+        "ovr": 89
+      },
+      {
+        "name": "A. Isak",
+        "pos": "ATA",
+        "ovr": 88
+      }
+    ]
+  },
+  {
+    "id": "arsenal_359",
+    "name": "Arsenal",
+    "shortName": "ARS",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 86,
+    "youthAcademyName": "Arsenal U21 Academy",
+    "youthQuality": 92,
+    "primaryColor": "#e20520",
+    "secondaryColor": "#003399",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "B. Saka",
+        "pos": "PD",
+        "ovr": 88
+      },
+      {
+        "name": "Gabriel",
+        "pos": "ZAG",
+        "ovr": 88
+      },
+      {
+        "name": "D. Rice",
+        "pos": "VOL",
+        "ovr": 87
+      },
+      {
+        "name": "M. Ødegaard",
+        "pos": "MC",
+        "ovr": 87
+      }
+    ]
+  },
+  {
+    "id": "manchester_city_382",
+    "name": "Manchester City",
+    "shortName": "MNC",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 86,
+    "youthAcademyName": "Man City U21 Academy",
+    "youthQuality": 92,
+    "primaryColor": "#99c5ea",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Rodri",
+        "pos": "VOL",
+        "ovr": 90
+      },
+      {
+        "name": "E. Haaland",
+        "pos": "ATA",
+        "ovr": 90
+      },
+      {
+        "name": "T. Reijnders",
+        "pos": "MC",
+        "ovr": 86
+      },
+      {
+        "name": "Rúben Dias",
+        "pos": "ZAG",
+        "ovr": 86
+      }
+    ]
+  },
+  {
+    "id": "aston_villa_362",
+    "name": "Aston Villa",
+    "shortName": "AVL",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Aston Villa U21 Academy",
+    "youthQuality": 88,
+    "primaryColor": "#660e36",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/362.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "Y. Tielemans",
+        "pos": "MC",
+        "ovr": 85
+      },
+      {
+        "name": "O. Watkins",
+        "pos": "ATA",
+        "ovr": 84
+      },
+      {
+        "name": "B. Kamara",
+        "pos": "VOL",
+        "ovr": 83
+      },
+      {
+        "name": "M. Rogers",
+        "pos": "MEI",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "chelsea_363",
+    "name": "Chelsea",
+    "shortName": "CHE",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Chelsea U21 Academy",
+    "youthQuality": 88,
+    "primaryColor": "#144992",
+    "secondaryColor": "#FFFFFF",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/363.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Caicedo",
+        "pos": "VOL",
+        "ovr": 87
+      },
+      {
+        "name": "C. Palmer",
+        "pos": "MEI",
+        "ovr": 87
+      },
+      {
+        "name": "E. Fernández",
+        "pos": "MC",
+        "ovr": 84
+      },
+      {
+        "name": "Marc Cucurella",
+        "pos": "LE",
+        "ovr": 84
+      }
+    ]
+  },
+  {
+    "id": "newcastle_united_361",
+    "name": "Newcastle United",
+    "shortName": "NEW",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Newcastle U21 Academy",
+    "youthQuality": 88,
+    "primaryColor": "#000000",
+    "secondaryColor": "#0B1B3D",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/361.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "S. Tonali",
+        "pos": "VOL",
+        "ovr": 86
+      },
+      {
+        "name": "Bruno Guimarães",
+        "pos": "MC",
+        "ovr": 86
+      },
+      {
+        "name": "A. Gordon",
+        "pos": "PE",
+        "ovr": 83
+      },
+      {
+        "name": "Joelinton",
+        "pos": "MC",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "tottenham_hotspur_367",
+    "name": "Tottenham Hotspur",
+    "shortName": "TOT",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Spurs U21 Academy",
+    "youthQuality": 88,
+    "primaryColor": "#ffffff",
+    "secondaryColor": "#0B1426",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Maddison",
+        "pos": "MC",
+        "ovr": 84
+      },
+      {
+        "name": "X. Simons",
+        "pos": "MEI",
+        "ovr": 84
+      },
+      {
+        "name": "D. Kulusevski",
+        "pos": "MC",
+        "ovr": 83
+      },
+      {
+        "name": "Palhinha",
+        "pos": "VOL",
+        "ovr": 83
+      }
+    ]
+  },
+  {
+    "id": "manchester_united_360",
+    "name": "Manchester United",
+    "shortName": "MAN",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Man Utd U21 Academy",
+    "youthQuality": 87,
+    "primaryColor": "#da020e",
+    "secondaryColor": "#4169E1",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Bruno Fernandes",
+        "pos": "MEI",
+        "ovr": 87
+      },
+      {
+        "name": "B. Mbeumo",
+        "pos": "PD",
+        "ovr": 85
+      },
+      {
+        "name": "Matheus Cunha",
+        "pos": "MEI",
+        "ovr": 83
+      },
+      {
+        "name": "M. de Ligt",
+        "pos": "ZAG",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "nottingham_forest_393",
+    "name": "Nottingham Forest",
+    "shortName": "NFO",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 81,
+    "youthAcademyName": "Nottm Forest U21 Academy",
+    "youthQuality": 87,
+    "primaryColor": "#c8102e",
+    "secondaryColor": "#1B3624",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/393.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Murillo",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "N. Milenković",
+        "pos": "ZAG",
+        "ovr": 83
+      },
+      {
+        "name": "M. Gibbs-White",
+        "pos": "MEI",
+        "ovr": 82
+      },
+      {
+        "name": "C. Wood",
+        "pos": "ATA",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "crystal_palace_384",
+    "name": "Crystal Palace",
+    "shortName": "CRY",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "C Palace U21 Academy",
+    "youthQuality": 86,
+    "primaryColor": "#0202fb",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/384.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "J. Mateta",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "M. Guéhi",
+        "pos": "ZAG",
+        "ovr": 82
+      },
+      {
+        "name": "D. Muñoz",
+        "pos": "LD",
+        "ovr": 81
+      },
+      {
+        "name": "Yeremy Pino",
+        "pos": "MD",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "afc_bournemouth_349",
+    "name": "AFC Bournemouth",
+    "shortName": "BOU",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Bournemouth U21 Academy",
+    "youthQuality": 85,
+    "primaryColor": "#f42727",
+    "secondaryColor": "#B57EDC",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/349.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "A. Semenyo",
+        "pos": "MD",
+        "ovr": 80
+      },
+      {
+        "name": "Evanilson",
+        "pos": "ATA",
+        "ovr": 80
+      },
+      {
+        "name": "R. Christie",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "L. Cook",
+        "pos": "VOL",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "brighton_hove_albion_331",
+    "name": "Brighton & Hove Albion",
+    "shortName": "BHA",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Brighton U21 Academy",
+    "youthQuality": 85,
+    "primaryColor": "#0606fa",
+    "secondaryColor": "#005F60",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/331.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "K. Mitoma",
+        "pos": "ME",
+        "ovr": 82
+      },
+      {
+        "name": "C. Baleba",
+        "pos": "VOL",
+        "ovr": 81
+      },
+      {
+        "name": "M. De Cuyper",
+        "pos": "LE",
+        "ovr": 80
+      },
+      {
+        "name": "J. van Hecke",
+        "pos": "ZAG",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "everton_368",
+    "name": "Everton",
+    "shortName": "EVE",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Everton U21 Academy",
+    "youthQuality": 85,
+    "primaryColor": "#0606fa",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/368.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "J. Grealish",
+        "pos": "PE",
+        "ovr": 80
+      },
+      {
+        "name": "J. Tarkowski",
+        "pos": "ZAG",
+        "ovr": 80
+      },
+      {
+        "name": "I. Gueye",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "I. Ndiaye",
+        "pos": "ME",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "fulham_370",
+    "name": "Fulham",
+    "shortName": "FUL",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 79,
+    "youthAcademyName": "Fulham U21 Academy",
+    "youthQuality": 85,
+    "primaryColor": "#ffffff",
+    "secondaryColor": "#CC0000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/370.png",
+    "squadSize": 24,
+    "keyPlayers": [
+      {
+        "name": "A. Robinson",
+        "pos": "LE",
+        "ovr": 82
+      },
+      {
+        "name": "A. Iwobi",
+        "pos": "ME",
+        "ovr": 80
+      },
+      {
+        "name": "S. Chukwueze",
+        "pos": "MD",
+        "ovr": 80
+      },
+      {
+        "name": "S. Berge",
+        "pos": "VOL",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "brentford_337",
+    "name": "Brentford",
+    "shortName": "BRE",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Brentford U21 Academy",
+    "youthQuality": 84,
+    "primaryColor": "#f42727",
+    "secondaryColor": "#0f1c3f",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/337.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Damsgaard",
+        "pos": "MEI",
+        "ovr": 80
+      },
+      {
+        "name": "J. Henderson",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "N. Collins",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "K. Schade",
+        "pos": "ME",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "sunderland_366",
+    "name": "Sunderland",
+    "shortName": "SUN",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Sunderland U21 Academy",
+    "youthQuality": 84,
+    "primaryColor": "#EB172B",
+    "secondaryColor": "#FFB6C1",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "G. Xhaka",
+        "pos": "VOL",
+        "ovr": 85
+      },
+      {
+        "name": "Reinildo",
+        "pos": "LE",
+        "ovr": 79
+      },
+      {
+        "name": "N. Mukiele",
+        "pos": "LD",
+        "ovr": 79
+      },
+      {
+        "name": "L. Geertruida",
+        "pos": "ZAG",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "leeds_united_357",
+    "name": "Leeds United",
+    "shortName": "LEE",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Leeds U21 Academy",
+    "youthQuality": 83,
+    "primaryColor": "#ffffff",
+    "secondaryColor": "#FFCD00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "A. Stach",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "G. Gudmundsson",
+        "pos": "LE",
+        "ovr": 77
+      },
+      {
+        "name": "J. Bijol",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "A. Tanaka",
+        "pos": "VOL",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "ipswich_town_373",
+    "name": "Ipswich Town",
+    "shortName": "IPS",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Ipswich U21 Academy",
+    "youthQuality": 81,
+    "primaryColor": "#0000fa",
+    "secondaryColor": "#F5F2DC",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/373.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "L. Davis",
+        "pos": "LE",
+        "ovr": 76
+      },
+      {
+        "name": "A. Matusiwa",
+        "pos": "VOL",
+        "ovr": 76
+      },
+      {
+        "name": "C. Akpom",
+        "pos": "ATA",
+        "ovr": 76
+      },
+      {
+        "name": "J. Cajuste",
+        "pos": "VOL",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "coventry_city_388",
+    "name": "Coventry City",
+    "shortName": "COV",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Coventry U21 Academy",
+    "youthQuality": 78,
+    "primaryColor": "#87cced",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/388.png",
+    "squadSize": 23,
+    "keyPlayers": [
+      {
+        "name": "J. Rudoni",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "M. van Ewijk",
+        "pos": "LD",
+        "ovr": 74
+      },
+      {
+        "name": "M. Grimes",
+        "pos": "VOL",
+        "ovr": 74
+      },
+      {
+        "name": "H. Wright",
+        "pos": "ATA",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "hull_city_306",
+    "name": "Hull City",
+    "shortName": "HUL",
+    "country": "ENG",
+    "leagueId": "ENG_1",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Hull U21 Academy",
+    "youthQuality": 78,
+    "primaryColor": "#f28800",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/306.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "O. McBurnie",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "A. Hadžiahmetović",
+        "pos": "VOL",
+        "ovr": 73
+      },
+      {
+        "name": "J. Lundstram",
+        "pos": "VOL",
+        "ovr": 73
+      },
+      {
+        "name": "M. Belloumi",
+        "pos": "MD",
+        "ovr": 73
+      }
+    ]
+  }
+]

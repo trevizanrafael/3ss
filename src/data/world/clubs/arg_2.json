@@ -1,0 +1,762 @@
+[
+  {
+    "id": "acassuso_10145",
+    "name": "Acassuso",
+    "shortName": "ACA",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Acassuso Inferiores",
+    "youthQuality": 75,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10145.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Manuel Mónaco",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Jeremías Martínez",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "Alex Ruíz",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Joel Ghirardello",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "almirante_brown_9740",
+    "name": "Almirante Brown",
+    "shortName": "ALM",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Alte Brown Inferiores",
+    "youthQuality": 75,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9740.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Máximo Levi",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Ramiro Fernández",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Ramón Gonzalez",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Tobias Quinteros",
+        "pos": "MC",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "all_boys_9786",
+    "name": "All Boys",
+    "shortName": "ALLB",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "All Boys Inferiores",
+    "youthQuality": 74,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9786.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Alejo Tabares",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Gustavo Turraca",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Franco Quiroz",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Alexis Melo",
+        "pos": "MC",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "almagro_2",
+    "name": "Almagro",
+    "shortName": "ALM",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Almagro  Inferiores",
+    "youthQuality": 74,
+    "primaryColor": "#212121",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Nicolás Tolosa",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Julián Vitale",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Joaquín Flores",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Brian Negro",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "colon_santa_fe_7",
+    "name": "Colón (Santa Fe)",
+    "shortName": "COL",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Colón SF Inferiores",
+    "youthQuality": 74,
+    "primaryColor": "#370000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Federico Rasmussen",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Matías Muñoz",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Alan Bonansea",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Mauro Peinipil",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "agropecuario_13913",
+    "name": "Agropecuario",
+    "shortName": "AGR",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Agropecuario Inferiores",
+    "youthQuality": 74,
+    "primaryColor": "#212121",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/13913.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Natanael Pereyra",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Tomas Lecanda",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Juan Cruz Vega",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Rodrigo Castro",
+        "pos": "MC",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "defensores_de_belgrano_10151",
+    "name": "Defensores de Belgrano",
+    "shortName": "DEF",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Defensores Inferiores",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10151.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "Ian Pérez",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Agustín Benítez",
+        "pos": "MC",
+        "ovr": 70
+      },
+      {
+        "name": "Diego Garcia",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Enzo González",
+        "pos": "ATA",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "deportivo_maipu_11978",
+    "name": "Deportivo Maipú",
+    "shortName": "CDM",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Maipú Inferiores",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11978.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "Ian Sambueza",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Mateo Ortale",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Tiago Ferreyra",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Enzo Pérez",
+        "pos": "MC",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "estudiantes_buenos_aires_17352",
+    "name": "Estudiantes (Buenos Aires)",
+    "shortName": "EST",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Estudiantes  Inferiores",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17352.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jorge Benítez",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Darío Rostagno",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Santiago Camacho",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Valentino Pereyra",
+        "pos": "MC",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "gimnasia_y_esgrima_jujuy_5263",
+    "name": "Gimnasia y Esgrima (Jujuy)",
+    "shortName": "GEJ",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Gimnasia J. Inferiores",
+    "youthQuality": 73,
+    "primaryColor": "#0e5196",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5263.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Diego Lopez",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "Jesús Endrizzi",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Pablo Toledo",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Cristian Menéndez",
+        "pos": "ATA",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "atletico_rafaela_9747",
+    "name": "Atletico Rafaela",
+    "shortName": "RAF",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Rafaela Inferiores",
+    "youthQuality": 73,
+    "primaryColor": "#0a82ab",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9747.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Facundo Soloa",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Matias Pardo",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Gabriel Fernández",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Agustín Solveyra",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "atlanta_10146",
+    "name": "Atlanta",
+    "shortName": "ATL",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Atlanta Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10146.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Rodrigo Moreira",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Lautaro López",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Gustavo Mendoza",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "Kevin Benitez",
+        "pos": "MC",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "chacarita_juniors_6",
+    "name": "Chacarita Juniors",
+    "shortName": "CHA",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Chacarita  Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Lucas Gastón Núñez Ojeda",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Mario Sanabria",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Brian Calderara",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Nicolás Pantaleone",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "chaco_for_ever_11963",
+    "name": "Chaco For Ever",
+    "shortName": "CFE",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Chaco Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11963.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Federico Moreno",
+        "pos": "MC",
+        "ovr": 69
+      },
+      {
+        "name": "Juan Cruz Cerrudo",
+        "pos": "ATA",
+        "ovr": 68
+      },
+      {
+        "name": "David Valdez",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Lucas Pruzzo",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "colegiales_10149",
+    "name": "Colegiales",
+    "shortName": "COL",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Colegiales Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10149.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "Mateo Jose Mamani",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Franco Hanashiro",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Federico Marín",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Enzo Trinidad",
+        "pos": "MC",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "deportivo_madryn_18260",
+    "name": "Deportivo Madryn",
+    "shortName": "DMA",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Dep. Madryn Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18260.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Víctor Cabrera",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Fernando Bersano",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Nicolás Ortíz",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Camilo Machado",
+        "pos": "MC",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "ferro_carril_oeste_9743",
+    "name": "Ferro Carril Oeste",
+    "shortName": "FCO",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Ferro Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9743.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Juan Orellana",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Lautaro Parisi",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Nicolás Gómez",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Enzo Hoyos",
+        "pos": "MC",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "ciudad_de_bolivar_21799",
+    "name": "Ciudad de Bolívar",
+    "shortName": "CDB",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Ciudad Bolívar Inferiores",
+    "youthQuality": 72,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21799.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Nicolás Ihitz",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Álex Díaz",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Francisco Ilarregui",
+        "pos": "ATA",
+        "ovr": 67
+      },
+      {
+        "name": "Ezequiel Navarro",
+        "pos": "ZAG",
+        "ovr": 66
+      }
+    ]
+  },
+  {
+    "id": "central_norte_11993",
+    "name": "Central Norte",
+    "shortName": "CNO",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Central Norte Inferiores",
+    "youthQuality": 71,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11993.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Gianluca Mancuso",
+        "pos": "MC",
+        "ovr": 68
+      },
+      {
+        "name": "Joaquin Mateo",
+        "pos": "ATA",
+        "ovr": 67
+      },
+      {
+        "name": "Leonardo Felissia",
+        "pos": "ZAG",
+        "ovr": 66
+      },
+      {
+        "name": "Elías Calderón",
+        "pos": "ZAG",
+        "ovr": 66
+      }
+    ]
+  },
+  {
+    "id": "deportivo_moron_10154",
+    "name": "Deportivo Morón",
+    "shortName": "MOR",
+    "country": "ARG",
+    "leagueId": "ARG_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Morón Inferiores",
+    "youthQuality": 71,
+    "primaryColor": "#212121",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10154.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "Emilio Lazza",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Mateo Levato",
+        "pos": "ATA",
+        "ovr": 67
+      },
+      {
+        "name": "Maximiliano González",
+        "pos": "MC",
+        "ovr": 67
+      },
+      {
+        "name": "Francisco Flores",
+        "pos": "ZAG",
+        "ovr": 66
+      }
+    ]
+  }
+]

@@ -1,5 +1,3 @@
-import { getClubById, getClubsByLeague } from '../../data/clubs';
-import { pickRandom } from '../../shared/utils/math';
 import { FeedEvent } from '../careerTypes';
 
 export function makeEvent(
@@ -15,10 +13,4 @@ export function makeEvent(
     detail,
     category,
   };
-}
-
-export function pickNextOpponent(clubId: string): string {
-  const club = getClubById(clubId);
-  const peers = getClubsByLeague(club.leagueId).filter((c) => c.id !== clubId);
-  return peers.length > 0 ? pickRandom(peers).id : clubId;
 }

@@ -1,0 +1,838 @@
+[
+  {
+    "id": "girona_9812",
+    "name": "Girona",
+    "shortName": "GIR",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Girona Juvenil A",
+    "youthQuality": 84,
+    "primaryColor": "#C60000",
+    "secondaryColor": "#004996",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9812.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "V. Tsygankov",
+        "pos": "MD",
+        "ovr": 79
+      },
+      {
+        "name": "Arnau Martínez",
+        "pos": "LD",
+        "ovr": 79
+      },
+      {
+        "name": "Bryan Gil",
+        "pos": "ME",
+        "ovr": 78
+      },
+      {
+        "name": "T. Lemar",
+        "pos": "MC",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "mallorca_84",
+    "name": "Mallorca",
+    "shortName": "MLL",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "Mallorca Juvenil A",
+    "youthQuality": 84,
+    "primaryColor": "#C8142F",
+    "secondaryColor": "#ccff00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/84.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Sergi Darder",
+        "pos": "ME",
+        "ovr": 81
+      },
+      {
+        "name": "Raíllo",
+        "pos": "ZAG",
+        "ovr": 81
+      },
+      {
+        "name": "V. Muriqi",
+        "pos": "ATA",
+        "ovr": 79
+      },
+      {
+        "name": "J. Mojica",
+        "pos": "LE",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "real_oviedo_92",
+    "name": "Real Oviedo",
+    "shortName": "OVI",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Real Oviedo Juvenil A",
+    "youthQuality": 80,
+    "primaryColor": "#e23627",
+    "secondaryColor": "#ffd200",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/92.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "David Carmo",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "L. Dendoncker",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "Santi Cazorla",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "J. Brekalo",
+        "pos": "ME",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "almeria_6832",
+    "name": "Almería",
+    "shortName": "ALM",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Almería Juvenil A",
+    "youthQuality": 79,
+    "primaryColor": "#C8142F",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6832.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "André Horta",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "Embarba",
+        "pos": "ME",
+        "ovr": 74
+      },
+      {
+        "name": "Arribas",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "Álex Muñoz",
+        "pos": "LE",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "cd_sabadell_11487",
+    "name": "CD Sabadell",
+    "shortName": "CDS",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "CD Sabadell Juvenil A",
+    "youthQuality": 79,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11487.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Pipa",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Juan Carlos Lázaro Cervera",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Miquel Codina",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Javi López",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "las_palmas_98",
+    "name": "Las Palmas",
+    "shortName": "LPA",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Las Palmas Juvenil A",
+    "youthQuality": 79,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#3366CC",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/98.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Kirian",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Sandro",
+        "pos": "MD",
+        "ovr": 75
+      },
+      {
+        "name": "Mika Mármol",
+        "pos": "LE",
+        "ovr": 75
+      },
+      {
+        "name": "Manu Fuster",
+        "pos": "ME",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "leganes_17534",
+    "name": "Leganés",
+    "shortName": "LEG",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Leganés Juvenil A",
+    "youthQuality": 78,
+    "primaryColor": "#6cace4",
+    "secondaryColor": "#32cd32",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17534.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Juan Cruz",
+        "pos": "MD",
+        "ovr": 76
+      },
+      {
+        "name": "S. Cisse",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Melero",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Rubén Peña",
+        "pos": "LD",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "cadiz_3842",
+    "name": "Cádiz",
+    "shortName": "CAD",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Cádiz Juvenil A",
+    "youthQuality": 77,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3842.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Suso",
+        "pos": "MD",
+        "ovr": 77
+      },
+      {
+        "name": "Luís Hernández",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Ontiveros",
+        "pos": "ME",
+        "ovr": 73
+      },
+      {
+        "name": "Álex Fernández",
+        "pos": "MC",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "real_valladolid_95",
+    "name": "Real Valladolid",
+    "shortName": "VLL",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Valladolid Juvenil A",
+    "youthQuality": 77,
+    "primaryColor": "#7a2d9d",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/95.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Ponceau",
+        "pos": "ME",
+        "ovr": 74
+      },
+      {
+        "name": "A. Ndiaye",
+        "pos": "ME",
+        "ovr": 72
+      },
+      {
+        "name": "Javi Sánchez",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Sergi Canós",
+        "pos": "ME",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "sporting_gijon_3788",
+    "name": "Sporting Gijón",
+    "shortName": "RSG",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Gijón Juvenil A",
+    "youthQuality": 77,
+    "primaryColor": "#C8142F",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3788.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Otero",
+        "pos": "ATA",
+        "ovr": 73
+      },
+      {
+        "name": "J. Dubasin",
+        "pos": "MD",
+        "ovr": 73
+      },
+      {
+        "name": "César Gelabert",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Àlex Corredera",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "albacete_2737",
+    "name": "Albacete",
+    "shortName": "ALB",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Albacete Juvenil A",
+    "youthQuality": 76,
+    "primaryColor": "#BC0814",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2737.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Puertas",
+        "pos": "ME",
+        "ovr": 72
+      },
+      {
+        "name": "Vallejo",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Morci",
+        "pos": "ME",
+        "ovr": 71
+      },
+      {
+        "name": "Carlos Neva",
+        "pos": "LE",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "burgos_12597",
+    "name": "Burgos",
+    "shortName": "BUR",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Burgos Juvenil A",
+    "youthQuality": 76,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/12597.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Aitor Córdoba",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Iñigo Córdoba",
+        "pos": "ME",
+        "ovr": 71
+      },
+      {
+        "name": "Mollejo",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Curro Sánchez",
+        "pos": "MEI",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "eibar_3752",
+    "name": "Eibar",
+    "shortName": "EIB",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Eibar Juvenil A",
+    "youthQuality": 76,
+    "primaryColor": "#c00000",
+    "secondaryColor": "#000099",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3752.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Corpas",
+        "pos": "MD",
+        "ovr": 72
+      },
+      {
+        "name": "Nolaskoain",
+        "pos": "VOL",
+        "ovr": 72
+      },
+      {
+        "name": "Olaetxea",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Jon Bautista",
+        "pos": "ATA",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "eldense_7320",
+    "name": "Eldense",
+    "shortName": "ELD",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Eldense Juvenil A",
+    "youthQuality": 76,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7320.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Floris Smand",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Álex Serra",
+        "pos": "ZAG",
+        "ovr": 71
+      },
+      {
+        "name": "Iker Ortega",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Jesus Clemente",
+        "pos": "ZAG",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "granada_3747",
+    "name": "Granada",
+    "shortName": "GRA",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Granada Juvenil A",
+    "youthQuality": 76,
+    "primaryColor": "#C8142F",
+    "secondaryColor": "#3366CC",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3747.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Álex Sola",
+        "pos": "MD",
+        "ovr": 72
+      },
+      {
+        "name": "Rubén Alcaraz",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "M. Hongla",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "Manu Trigueros",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "cordoba_8447",
+    "name": "Córdoba",
+    "shortName": "COR",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Córdoba Juvenil A",
+    "youthQuality": 75,
+    "primaryColor": "#288A00",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8447.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Florentín",
+        "pos": "MC",
+        "ovr": 71
+      },
+      {
+        "name": "L. Heredia",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "G. Verón",
+        "pos": "ATA",
+        "ovr": 71
+      },
+      {
+        "name": "I. Gómez",
+        "pos": "MC",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "castellon_4438",
+    "name": "Castellón",
+    "shortName": "CAS",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "Castellón Juvenil A",
+    "youthQuality": 74,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4438.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Álex Calatrava",
+        "pos": "MD",
+        "ovr": 71
+      },
+      {
+        "name": "Israel Suero",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "J. Mellot",
+        "pos": "LD",
+        "ovr": 69
+      },
+      {
+        "name": "F. Brignani",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "ceuta_5404",
+    "name": "Ceuta",
+    "shortName": "CEU",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Ceuta Juvenil A",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5404.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Anuar",
+        "pos": "MD",
+        "ovr": 69
+      },
+      {
+        "name": "Salvi Sánchez",
+        "pos": "MD",
+        "ovr": 69
+      },
+      {
+        "name": "Juanto Ortuño",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Y. Bodiger",
+        "pos": "VOL",
+        "ovr": 68
+      }
+    ]
+  },
+  {
+    "id": "fc_andorra_20179",
+    "name": "FC Andorra",
+    "shortName": "AND",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "FC Andorra Juvenil A",
+    "youthQuality": 73,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20179.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "Imanol",
+        "pos": "LE",
+        "ovr": 70
+      },
+      {
+        "name": "Álex Petxa",
+        "pos": "LD",
+        "ovr": 67
+      },
+      {
+        "name": "Manu Nieto",
+        "pos": "ATA",
+        "ovr": 67
+      },
+      {
+        "name": "Minsu",
+        "pos": "ME",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "rc_celta_fortuna_131858",
+    "name": "RC Celta Fortuna",
+    "shortName": "CEL",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 67,
+    "youthAcademyName": "Celta Fortuna Juvenil A",
+    "youthQuality": 73,
+    "primaryColor": "#6cace4",
+    "secondaryColor": "#004996",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/131858.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Stefan Bajcetic",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Joel Lopez Salguero",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Pablo Meixús",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Frank Germain Jonathan Miller",
+        "pos": "ZAG",
+        "ovr": 67
+      }
+    ]
+  },
+  {
+    "id": "tenerife_245",
+    "name": "Tenerife",
+    "shortName": "TEN",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 66,
+    "youthAcademyName": "Tenerife Juvenil A",
+    "youthQuality": 72,
+    "primaryColor": "#008bc4",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/245.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jorge Moreno",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "David Rodríguez Ramos",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Neal Viereck",
+        "pos": "ZAG",
+        "ovr": 67
+      },
+      {
+        "name": "Marc Mateu",
+        "pos": "ZAG",
+        "ovr": 65
+      }
+    ]
+  },
+  {
+    "id": "real_sociedad_ii_20983",
+    "name": "Real Sociedad II",
+    "shortName": "RSO2",
+    "country": "ESP",
+    "leagueId": "ESP_2",
+    "reputationStars": 1,
+    "squadAvgOvr": 65,
+    "youthAcademyName": "Real Sociedad II Juvenil A",
+    "youthQuality": 71,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20983.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Beñat Isasa Torrea",
+        "pos": "ZAG",
+        "ovr": 65
+      },
+      {
+        "name": "Peru Larrañaga Vázquez",
+        "pos": "ZAG",
+        "ovr": 65
+      },
+      {
+        "name": "Iñaki Rupérez",
+        "pos": "ZAG",
+        "ovr": 64
+      },
+      {
+        "name": "Luken Beitia",
+        "pos": "ZAG",
+        "ovr": 64
+      }
+    ]
+  }
+]

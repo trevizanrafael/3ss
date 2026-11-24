@@ -1,0 +1,1066 @@
+[
+  {
+    "id": "galatasaray_432",
+    "name": "Galatasaray",
+    "shortName": "GAL",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 3,
+    "squadAvgOvr": 82,
+    "youthAcademyName": "Galatasaray U19 Academy",
+    "youthQuality": 88,
+    "primaryColor": "#aa0031",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/432.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "V. Osimhen",
+        "pos": "ATA",
+        "ovr": 87
+      },
+      {
+        "name": "L. Torreira",
+        "pos": "VOL",
+        "ovr": 83
+      },
+      {
+        "name": "İ. Gündoğan",
+        "pos": "MC",
+        "ovr": 83
+      },
+      {
+        "name": "L. Sané",
+        "pos": "MD",
+        "ovr": 82
+      }
+    ]
+  },
+  {
+    "id": "fenerbahce_436",
+    "name": "Fenerbahce",
+    "shortName": "FEN",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 3,
+    "squadAvgOvr": 80,
+    "youthAcademyName": "Fenerbahce U19 Academy",
+    "youthQuality": 86,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/436.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Y. En-Nesyri",
+        "pos": "ATA",
+        "ovr": 82
+      },
+      {
+        "name": "Anderson Talisca",
+        "pos": "MEI",
+        "ovr": 81
+      },
+      {
+        "name": "M. Škriniar",
+        "pos": "ZAG",
+        "ovr": 81
+      },
+      {
+        "name": "Fred",
+        "pos": "MC",
+        "ovr": 80
+      }
+    ]
+  },
+  {
+    "id": "psv_eindhoven_148",
+    "name": "PSV Eindhoven",
+    "shortName": "PSV",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 3,
+    "squadAvgOvr": 78,
+    "youthAcademyName": "PSV U19 Academy",
+    "youthQuality": 84,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/148.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "I. Perišić",
+        "pos": "PD",
+        "ovr": 81
+      },
+      {
+        "name": "J. Schouten",
+        "pos": "VOL",
+        "ovr": 80
+      },
+      {
+        "name": "Mauro Júnior",
+        "pos": "LE",
+        "ovr": 79
+      },
+      {
+        "name": "S. Dest",
+        "pos": "LD",
+        "ovr": 79
+      }
+    ]
+  },
+  {
+    "id": "bodo_glimt_2980",
+    "name": "Bodo/Glimt",
+    "shortName": "BODO",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Bodo/Glimt U19 Academy",
+    "youthQuality": 83,
+    "primaryColor": "#FCEE33",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2980.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jostein Gundersen",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "Tobias Solbakken",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "Odin Bjørtuft",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Patrick Berg",
+        "pos": "MC",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "besiktas_1895",
+    "name": "Besiktas",
+    "shortName": "BES",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Besiktas U19 Academy",
+    "youthQuality": 83,
+    "primaryColor": "#ffffff",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/1895.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "O. Kökçü",
+        "pos": "MC",
+        "ovr": 82
+      },
+      {
+        "name": "Rafa",
+        "pos": "MEI",
+        "ovr": 82
+      },
+      {
+        "name": "Gabriel Paulista",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "V. Černý",
+        "pos": "MD",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "celtic_256",
+    "name": "Celtic",
+    "shortName": "CEL",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 77,
+    "youthAcademyName": "Celtic U19 Academy",
+    "youthQuality": 83,
+    "primaryColor": "#009921",
+    "secondaryColor": "#f9e900",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/256.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "C. McGregor",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "D. Maeda",
+        "pos": "PE",
+        "ovr": 79
+      },
+      {
+        "name": "C. Carter-Vickers",
+        "pos": "ZAG",
+        "ovr": 79
+      },
+      {
+        "name": "A. Johnston",
+        "pos": "LD",
+        "ovr": 78
+      }
+    ]
+  },
+  {
+    "id": "aek_athens_887",
+    "name": "AEK Athens",
+    "shortName": "AEK",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "AEK Athens U19 Academy",
+    "youthQuality": 82,
+    "primaryColor": "#ffff00",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/887.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "João Mário",
+        "pos": "ME",
+        "ovr": 78
+      },
+      {
+        "name": "O. Pineda",
+        "pos": "MEI",
+        "ovr": 77
+      },
+      {
+        "name": "A. Martial",
+        "pos": "PE",
+        "ovr": 77
+      },
+      {
+        "name": "R. Pereyra",
+        "pos": "MC",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "feyenoord_rotterdam_142",
+    "name": "Feyenoord Rotterdam",
+    "shortName": "FEY",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Feyenoord U19 Academy",
+    "youthQuality": 82,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/142.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Q. Timber",
+        "pos": "MC",
+        "ovr": 80
+      },
+      {
+        "name": "S. Steijn",
+        "pos": "MEI",
+        "ovr": 78
+      },
+      {
+        "name": "Hwang In Beom",
+        "pos": "MC",
+        "ovr": 77
+      },
+      {
+        "name": "C. Larin",
+        "pos": "ATA",
+        "ovr": 77
+      }
+    ]
+  },
+  {
+    "id": "sabah_fk_21922",
+    "name": "Sabah FK",
+    "shortName": "SAB",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 76,
+    "youthAcademyName": "Sabah U19 Academy",
+    "youthQuality": 82,
+    "primaryColor": "#000000",
+    "secondaryColor": "#FF1493",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21922.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Rahman Dashdamirov",
+        "pos": "ZAG",
+        "ovr": 78
+      },
+      {
+        "name": "Steve Solvet",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "Aden McCarthy",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Godfred Boakye",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "club_brugge_570",
+    "name": "Club Brugge",
+    "shortName": "BRU",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 75,
+    "youthAcademyName": "Club Brugge U19 Academy",
+    "youthQuality": 81,
+    "primaryColor": "#0081ff",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/570.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "H. Vanaken",
+        "pos": "MEI",
+        "ovr": 80
+      },
+      {
+        "name": "C. Tzolis",
+        "pos": "ME",
+        "ovr": 80
+      },
+      {
+        "name": "R. Onyedika",
+        "pos": "VOL",
+        "ovr": 77
+      },
+      {
+        "name": "B. Mechele",
+        "pos": "ZAG",
+        "ovr": 76
+      }
+    ]
+  },
+  {
+    "id": "slavia_prague_494",
+    "name": "Slavia Prague",
+    "shortName": "SLP",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "Slavia Prague U19 Academy",
+    "youthQuality": 80,
+    "primaryColor": "#dc1f26",
+    "secondaryColor": "#81c0ff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/494.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Lukás Provod",
+        "pos": "MC",
+        "ovr": 78
+      },
+      {
+        "name": "Tomás Holes",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Michal Sadílek",
+        "pos": "MC",
+        "ovr": 76
+      },
+      {
+        "name": "Ange N'Guessan",
+        "pos": "ZAG",
+        "ovr": 75
+      }
+    ]
+  },
+  {
+    "id": "slovan_bratislava_521",
+    "name": "Slovan Bratislava",
+    "shortName": "SLB",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "S Bratislava U19 Academy",
+    "youthQuality": 80,
+    "primaryColor": "#81c0ff",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/521.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Jurij Medvedev",
+        "pos": "ZAG",
+        "ovr": 76
+      },
+      {
+        "name": "Sandro Cruz",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Alen Mustafic",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "Kenan Bajric",
+        "pos": "ZAG",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "az_alkmaar_140",
+    "name": "AZ Alkmaar",
+    "shortName": "AZ",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 74,
+    "youthAcademyName": "AZ Alkmaar U19 Academy",
+    "youthQuality": 80,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/140.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "J. Clasie",
+        "pos": "VOL",
+        "ovr": 79
+      },
+      {
+        "name": "W. Goes",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "S. Mijnans",
+        "pos": "MEI",
+        "ovr": 75
+      },
+      {
+        "name": "S. Maikuma",
+        "pos": "LD",
+        "ovr": 74
+      }
+    ]
+  },
+  {
+    "id": "shakhtar_donetsk_493",
+    "name": "Shakhtar Donetsk",
+    "shortName": "SHK",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Shakhtar U19 Academy",
+    "youthQuality": 79,
+    "primaryColor": "#ff5900",
+    "secondaryColor": "#1a1a1a",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/493.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Bondarenko",
+        "pos": "MEI",
+        "ovr": 77
+      },
+      {
+        "name": "M. Matviienko",
+        "pos": "ZAG",
+        "ovr": 77
+      },
+      {
+        "name": "V. Bondar",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "Pedrinho",
+        "pos": "MD",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "anderlecht_441",
+    "name": "Anderlecht",
+    "shortName": "AND",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Anderlecht U19 Academy",
+    "youthQuality": 79,
+    "primaryColor": "#695196",
+    "secondaryColor": "#fafafc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/441.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "A. Bertaccini",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "M. Stroeykens",
+        "pos": "MC",
+        "ovr": 74
+      },
+      {
+        "name": "T. Hazard",
+        "pos": "PE",
+        "ovr": 73
+      },
+      {
+        "name": "C. Huerta",
+        "pos": "PE",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "dinamo_zagreb_597",
+    "name": "Dinamo Zagreb",
+    "shortName": "DZG",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Dinamo Zagreb U19 Academy",
+    "youthQuality": 79,
+    "primaryColor": "#0000bb",
+    "secondaryColor": "#ccff00",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/597.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "I. Bennacer",
+        "pos": "VOL",
+        "ovr": 80
+      },
+      {
+        "name": "S. McKenna",
+        "pos": "ZAG",
+        "ovr": 75
+      },
+      {
+        "name": "D. Ljubičić",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "R. Pierre-Gabriel",
+        "pos": "LD",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "ferencvaros_622",
+    "name": "Ferencvaros",
+    "shortName": "FER",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 73,
+    "youthAcademyName": "Ferencvaros U19 Academy",
+    "youthQuality": 79,
+    "primaryColor": "#239B56",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/622.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Abu Fani",
+        "pos": "MC",
+        "ovr": 75
+      },
+      {
+        "name": "B. Varga",
+        "pos": "ATA",
+        "ovr": 75
+      },
+      {
+        "name": "Cadu",
+        "pos": "ME",
+        "ovr": 74
+      },
+      {
+        "name": "N. Keïta",
+        "pos": "MC",
+        "ovr": 73
+      }
+    ]
+  },
+  {
+    "id": "ararat_armenia_20024",
+    "name": "Ararat-Armenia",
+    "shortName": "ARA",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "Ararat-Armenia U19 Academy",
+    "youthQuality": 78,
+    "primaryColor": "#000000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20024.png",
+    "squadSize": 25,
+    "keyPlayers": [
+      {
+        "name": "Rochdi Achenteh",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "Aleksandar Damchevski",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Alex Christian",
+        "pos": "ZAG",
+        "ovr": 73
+      },
+      {
+        "name": "Àngelo Rafael Teixeira",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "nec_nijmegen_147",
+    "name": "NEC Nijmegen",
+    "shortName": "NEC",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 2,
+    "squadAvgOvr": 72,
+    "youthAcademyName": "NEC U19 Academy",
+    "youthQuality": 78,
+    "primaryColor": "#ef2f24",
+    "secondaryColor": "#84aee7",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/147.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "T. Chery",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "P. Sandler",
+        "pos": "ZAG",
+        "ovr": 74
+      },
+      {
+        "name": "K. Sano",
+        "pos": "VOL",
+        "ovr": 71
+      },
+      {
+        "name": "D. Proper",
+        "pos": "VOL",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "lech_poznan_2990",
+    "name": "Lech Poznan",
+    "shortName": "LECH",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Lech Poznan U19 Academy",
+    "youthQuality": 77,
+    "primaryColor": "#004B92",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2990.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "M. Ishak",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "Joel Pereira",
+        "pos": "LD",
+        "ovr": 72
+      },
+      {
+        "name": "M. Skrzypczak",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "A. Kozubal",
+        "pos": "MC",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "levski_sofia_490",
+    "name": "Levski Sofia",
+    "shortName": "LEV",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Levski Sofia U19 Academy",
+    "youthQuality": 77,
+    "primaryColor": "#6182cf",
+    "secondaryColor": "#fcfcfc",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/490.png",
+    "squadSize": 29,
+    "keyPlayers": [
+      {
+        "name": "Marko Grujic",
+        "pos": "MC",
+        "ovr": 73
+      },
+      {
+        "name": "Christian Makoun",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "Álex Centelles",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Aldair",
+        "pos": "ZAG",
+        "ovr": 72
+      }
+    ]
+  },
+  {
+    "id": "lillestrom_987",
+    "name": "Lillestrom",
+    "shortName": "LSK",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 71,
+    "youthAcademyName": "Lillestrom U19 Academy",
+    "youthQuality": 77,
+    "primaryColor": "#e8e337",
+    "secondaryColor": "#FF0000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/987.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Sander Moen Foss",
+        "pos": "ZAG",
+        "ovr": 72
+      },
+      {
+        "name": "Espen Garnas",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Lars Ranger",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Betim Hasanaj",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "lask_linz_4411",
+    "name": "LASK Linz",
+    "shortName": "LAS",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "LASK Linz U19 Academy",
+    "youthQuality": 76,
+    "primaryColor": "#ffffff",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4411.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "S. Kalajdžić",
+        "pos": "ATA",
+        "ovr": 74
+      },
+      {
+        "name": "S. Horvath",
+        "pos": "MC",
+        "ovr": 72
+      },
+      {
+        "name": "M. Entrup",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "M. Usor",
+        "pos": "MD",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "viking_fk_510",
+    "name": "Viking FK",
+    "shortName": "VFK",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Viking FK U19 Academy",
+    "youthQuality": 76,
+    "primaryColor": "#000080",
+    "secondaryColor": "#ffffff",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/510.png",
+    "squadSize": 28,
+    "keyPlayers": [
+      {
+        "name": "Z. Tripić",
+        "pos": "PD",
+        "ovr": 76
+      },
+      {
+        "name": "J. Bell",
+        "pos": "VOL",
+        "ovr": 74
+      },
+      {
+        "name": "K. Haugen",
+        "pos": "LE",
+        "ovr": 71
+      },
+      {
+        "name": "N. D'Agostino",
+        "pos": "ATA",
+        "ovr": 70
+      }
+    ]
+  },
+  {
+    "id": "jagiellonia_bialystok_11505",
+    "name": "Jagiellonia Bialystok",
+    "shortName": "JAG",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 70,
+    "youthAcademyName": "Jagiellonia  U19 Academy",
+    "youthQuality": 76,
+    "primaryColor": "#FFED00",
+    "secondaryColor": "#D81921",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11505.png",
+    "squadSize": 26,
+    "keyPlayers": [
+      {
+        "name": "Jesús Imaz",
+        "pos": "MEI",
+        "ovr": 74
+      },
+      {
+        "name": "A. Pululu",
+        "pos": "ATA",
+        "ovr": 72
+      },
+      {
+        "name": "Álex Pozo",
+        "pos": "LD",
+        "ovr": 71
+      },
+      {
+        "name": "T. Romanczuk",
+        "pos": "VOL",
+        "ovr": 71
+      }
+    ]
+  },
+  {
+    "id": "hapoel_be_er_13083",
+    "name": "Hapoel Be'er",
+    "shortName": "HBE",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "Hapoel Be'er U19 Academy",
+    "youthQuality": 75,
+    "primaryColor": "#fd0000",
+    "secondaryColor": "#C60000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/13083.png",
+    "squadSize": 27,
+    "keyPlayers": [
+      {
+        "name": "Ben Bitton",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Loai Taha",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Samuel Scheimann",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Miguel Vítor",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "ofi_crete_1010",
+    "name": "OFI Crete",
+    "shortName": "OFI",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 69,
+    "youthAcademyName": "OFI Crete U19 Academy",
+    "youthQuality": 75,
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#000000",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/1010.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Achilleas Poungouras",
+        "pos": "ZAG",
+        "ovr": 70
+      },
+      {
+        "name": "Kenan Kodro",
+        "pos": "ATA",
+        "ovr": 70
+      },
+      {
+        "name": "Dimitris Nikolaou",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Nicolaos Athanasiou",
+        "pos": "ZAG",
+        "ovr": 69
+      }
+    ]
+  },
+  {
+    "id": "nk_celje_3362",
+    "name": "NK Celje",
+    "shortName": "NKC",
+    "country": "GER",
+    "leagueId": "UEFA_POOL",
+    "reputationStars": 1,
+    "squadAvgOvr": 68,
+    "youthAcademyName": "NK Celje U19 Academy",
+    "youthQuality": 74,
+    "primaryColor": "#000099",
+    "secondaryColor": "#ff6600",
+    "pattern": "solid",
+    "crestUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3362.png",
+    "squadSize": 30,
+    "keyPlayers": [
+      {
+        "name": "Luka Kolar",
+        "pos": "ATA",
+        "ovr": 69
+      },
+      {
+        "name": "Ivan Calusic",
+        "pos": "ZAG",
+        "ovr": 69
+      },
+      {
+        "name": "Alpha Dionkou",
+        "pos": "ZAG",
+        "ovr": 68
+      },
+      {
+        "name": "Lukasz Bejger",
+        "pos": "ZAG",
+        "ovr": 68
+      }
+    ]
+  }
+]

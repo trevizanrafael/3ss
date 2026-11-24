@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { CLUB_CREST_URLS } from '../../data/clubs/crestUrls';
+import { getClubById, hasClubId } from '../../data/clubs';
 
 interface ClubCrestProps {
   clubId: string;
-  shortName: string;
-  primaryColor: string;
-  secondaryColor: string;
+  shortName?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
   pattern?: 'stripes' | 'hoops' | 'halves' | 'diagonal' | 'solid';
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
@@ -22,18 +22,21 @@ export const ClubCrest: React.FC<ClubCrestProps> = ({
   shortName,
   primaryColor,
   secondaryColor,
-  pattern = 'stripes',
   size = 'md',
 }) => {
   const [imgFailed, setImgFailed] = useState(false);
-  const crestUrl = CLUB_CREST_URLS[clubId];
+  const club = hasClubId(clubId) ? getClubById(clubId) : null;
+  const crestUrl = club?.crestUrl ?? '';
+  const abbr = (shortName ?? club?.shortName ?? 'CLB').slice(0, 3).toUpperCase();
+  const c1 = primaryColor ?? club?.primaryColor ?? '#1A1C22';
+  const c2 = secondaryColor ?? club?.secondaryColor ?? '#C8A45D';
 
   if (crestUrl && !imgFailed) {
     return (
       <div className={`${SIZE_MAP[size]} shrink-0 flex items-center justify-center select-none`}>
         <img
           src={crestUrl}
-          alt={shortName}
+          alt={abbr}
           className="w-full h-full object-contain drop-shadow-md"
           onError={() => setImgFailed(true)}
           loading="lazy"
@@ -42,56 +45,26 @@ export const ClubCrest: React.FC<ClubCrestProps> = ({
     );
   }
 
-  const gradId = `crest-${clubId}-${size}`;
-
   return (
     <div className={`${SIZE_MAP[size]} shrink-0 relative flex items-center justify-center select-none`}>
-      <svg viewBox="0 0 64 72" className="w-full h-full drop-shadow-md">
-        <defs>
-          {pattern === 'stripes' && (
-            <pattern id={gradId} width="16" height="72" patternUnits="userSpaceOnUse">
-              <rect width="8" height="72" fill={primaryColor} />
-              <rect x="8" width="8" height="72" fill={secondaryColor} />
-            </pattern>
-          )}
-          {pattern === 'hoops' && (
-            <pattern id={gradId} width="64" height="16" patternUnits="userSpaceOnUse">
-              <rect width="64" height="8" fill={primaryColor} />
-              <rect y="8" width="64" height="8" fill={secondaryColor} />
-            </pattern>
-          )}
-          {pattern === 'halves' && (
-            <linearGradient id={gradId} x1="0" x2="1" y1="0" y2="0">
-              <stop offset="50%" stopColor={primaryColor} />
-              <stop offset="50%" stopColor={secondaryColor} />
-            </linearGradient>
-          )}
-          {pattern === 'diagonal' && (
-            <linearGradient id={gradId} x1="0" x2="1" y1="0" y2="1">
-              <stop offset="44%" stopColor={primaryColor} />
-              <stop offset="44%" stopColor={secondaryColor} />
-              <stop offset="56%" stopColor={secondaryColor} />
-              <stop offset="56%" stopColor={primaryColor} />
-            </linearGradient>
-          )}
-        </defs>
+      <svg viewBox="0 0 64 72" className="w-full h-full">
         <path
           d="M8 6 H56 V34 C56 52 32 66 32 66 C32 66 8 52 8 34 Z"
-          fill={pattern === 'solid' ? primaryColor : `url(#${gradId})`}
-          stroke="#e2e8f0"
+          fill={c1}
+          stroke={c2}
           strokeWidth="3"
         />
-        <rect x="10" y="25" width="44" height="18" rx="3" fill="rgba(6,10,18,0.82)" />
+        <rect x="10" y="25" width="44" height="18" fill="rgba(11,11,13,0.86)" />
         <text
           x="32"
           y="38"
           textAnchor="middle"
-          fill="#f8fafc"
+          fill="#f5f5f7"
           fontWeight="800"
           fontSize="13"
-          fontFamily="Rajdhani, Inter, sans-serif"
+          fontFamily="Barlow Condensed, sans-serif"
         >
-          {shortName.slice(0, 3).toUpperCase()}
+          {abbr}
         </text>
       </svg>
     </div>

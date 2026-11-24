@@ -1,5 +1,10 @@
 import React from 'react';
 import { getClubById } from '../../data/clubs';
+import { getCompetitionTheme } from '../../data/world/competitionThemes';
+import {
+  findClubLeagueIdInWorld,
+  findUpcomingFixtureForClub,
+} from '../../domains/season/worldSeasonEngine';
 import { useCareerStore } from '../../state/useCareerStore';
 import { useNavigationStore } from '../../state/useNavigationStore';
 import { CompetitionsTab } from './competitions/CompetitionsTab';
@@ -12,17 +17,31 @@ import { TrainingTab } from './training/TrainingTab';
 
 export const CareerHubScreen: React.FC = () => {
   const { activeTab, setScreen } = useNavigationStore();
-  const { contract } = useCareerStore();
+  const { contract, calendar, worldSeason } = useCareerStore();
   const club = contract ? getClubById(contract.clubId) : null;
+
+  const activeLeagueId = contract
+    ? findClubLeagueIdInWorld(worldSeason, contract.clubId)
+    : 'BRA_1';
+  const nextFx = contract
+    ? findUpcomingFixtureForClub(
+        worldSeason,
+        contract.clubId,
+        contract.stage,
+        calendar.week,
+        calendar.day,
+      )
+    : null;
+  const compTheme = getCompetitionTheme(nextFx ? nextFx.competitionId : activeLeagueId);
 
   return (
     <div className="w-screen h-screen bg-[#0B0B0D] text-[#F5F5F7] flex flex-col overflow-hidden relative">
-      {/* Atmosfera Dinâmica nas Cores Reais do Clube Atual (Sutil e Sofisticada) */}
+      {/* Atmosfera Dinâmica: mistura o Tema Oficial da Competição (esquerda) + Clube (direita) */}
       {club && (
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-80 opacity-[0.16] transition-colors duration-500"
+          className="pointer-events-none absolute inset-x-0 top-0 h-96 opacity-[0.22] transition-all duration-500"
           style={{
-            background: `radial-gradient(ellipse 80% 100% at 85% 0%, ${club.primaryColor}, transparent 72%)`,
+            background: `radial-gradient(ellipse 65% 95% at 15% 0%, ${compTheme.accentPrimary}66, transparent 70%), radial-gradient(ellipse 65% 95% at 88% 0%, ${club.primaryColor}88, transparent 72%)`,
           }}
         />
       )}
@@ -37,11 +56,10 @@ export const CareerHubScreen: React.FC = () => {
         {activeTab === 'TEMPORADA' && <CompetitionsTab />}
       </main>
 
-      {/* Rodapé Minimalista de Console */}
       <footer className="h-9 shrink-0 border-t border-[#242730] bg-[#0B0B0D] px-6 md:px-10 flex items-center justify-between text-[11px] uppercase tracking-widest text-[#565A65] relative z-10">
         <div className="flex items-center gap-6">
           <span>[Q / E] OU [LB / RB] NAVEGAR ABAS</span>
-          <span>[ESC] MENU PRINCIPAL</span>
+          <span>TEMA ATIVO: {compTheme.shortLabel}</span>
         </div>
         <button
           onClick={() => setScreen('MAIN_MENU')}
