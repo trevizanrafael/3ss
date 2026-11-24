@@ -128,10 +128,7 @@ export const MyProTab: React.FC = () => {
             </h2>
             <p className="text-xs uppercase tracking-widest text-[#9498A3] mt-1 flex flex-wrap items-center gap-1.5">
               <CountryFlag code={natMeta.code} size="xs" />
-              <span>
-                {natMeta.name} ({player.careerTotals.nationalCaps ?? 0}J /{' '}
-                {player.careerTotals.nationalGoals ?? 0}G) •
-              </span>
+              <span>{natMeta.name} •</span>
               <strong className={callUp.calledUp ? 'text-[#2DBE60]' : 'text-[#C8A45D]'}>
                 {callUp.calledUp
                   ? `CONVOCADO (${callUp.role})`

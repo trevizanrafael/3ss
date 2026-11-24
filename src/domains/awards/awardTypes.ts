@@ -73,6 +73,7 @@ export interface PlayerPeriodStats {
   seasonGoals: number;
   seasonAssists: number;
   seasonStarPoints: number;
+  seasonThreeStarMatches: number;
   continentalMatches: number;
   continentalGoals: number;
   continentalAssists: number;
@@ -90,6 +91,7 @@ export const INITIAL_PERIOD_STATS: PlayerPeriodStats = {
   seasonGoals: 0,
   seasonAssists: 0,
   seasonStarPoints: 0,
+  seasonThreeStarMatches: 0,
   continentalMatches: 0,
   continentalGoals: 0,
   continentalAssists: 0,

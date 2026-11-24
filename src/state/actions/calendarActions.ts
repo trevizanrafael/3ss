@@ -29,6 +29,7 @@ export function computeNextDayState(
   if (!player || !contract) return {};
 
   let nextPlayer = { ...player };
+  let nextContract = { ...contract };
   let nextFeed = [...state.feed];
   let nextBalance = state.bankBalance;
   let nextWorld = state.worldSeason;
@@ -334,6 +335,15 @@ export function computeNextDayState(
       nextWeek = 1;
       nextSeason += 1;
       nextPlayer = { ...nextPlayer, age: nextPlayer.age + 1 };
+      nextContract = {
+        ...nextContract,
+        seasonsRemaining: Math.max(1, nextContract.seasonsRemaining - 1),
+        seasonGoal: {
+          ...nextContract.seasonGoal,
+          current: 0,
+          completed: false,
+        },
+      };
       nextWorld = rolloverSeasonWithPromotionAndQualification(
         nextWorld,
         contract.clubId,
@@ -368,6 +378,7 @@ export function computeNextDayState(
 
   return {
     player: nextPlayer,
+    contract: nextContract,
     calendar: { season: nextSeason, week: nextWeek, day: nextDay },
     trainedToday: false,
     recentLeveledKeys: nextLeveled,

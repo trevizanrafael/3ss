@@ -169,6 +169,32 @@ export function migratePersistedCareerState(
     merged.userCompStats = {};
   }
 
+  if (persisted.periodStats?.seasonThreeStarMatches === undefined) {
+    merged.periodStats = {
+      ...merged.periodStats,
+      seasonThreeStarMatches: Object.values(merged.userCompStats).reduce(
+        (acc, s) => acc + (s.threeStarMatches ?? 0),
+        0,
+      ),
+    };
+  }
+
+  // Garante que a meta contratual da temporada recomece zerada caso uma nova temporada já tenha iniciado
+  if (
+    merged.contract &&
+    merged.periodStats.seasonMatches === 0 &&
+    (merged.contract.seasonGoal.current > 0 || merged.contract.seasonGoal.completed)
+  ) {
+    merged.contract = {
+      ...merged.contract,
+      seasonGoal: {
+        ...merged.contract.seasonGoal,
+        current: 0,
+        completed: false,
+      },
+    };
+  }
+
   if (merged.worldSeason && !merged.worldSeason.international) {
     const seasonYear = merged.worldSeason.seasonYear ?? merged.calendar?.season ?? 2026;
     let intl = createInitialInternationalState(seasonYear);

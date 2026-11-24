@@ -1,4 +1,6 @@
 import React from 'react';
+import { PlayerPeriodStats } from '../../../domains/awards/awardTypes';
+import { UserCompetitionStatsMap } from '../../../domains/career-stats/careerHistoryTypes';
 import { ActiveContract } from '../../../domains/contracts/contractEngine';
 import { formatBirthDatePt } from '../../../domains/player/createInitialPlayer';
 import { CareerPlayer } from '../../../domains/player/playerTypes';
@@ -10,6 +12,9 @@ import { formatSquadRole } from '../../../shared/utils/formatters';
 interface ProSummarySideCardProps {
   player: CareerPlayer;
   contract: ActiveContract;
+  seasonYear: number;
+  periodStats: PlayerPeriodStats;
+  userCompStats: UserCompetitionStatsMap;
   youthState?: YouthAcademyState | null;
   onOpenMyPro: () => void;
 }
@@ -17,6 +22,9 @@ interface ProSummarySideCardProps {
 export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
   player,
   contract,
+  seasonYear,
+  periodStats,
+  userCompStats,
   onOpenMyPro,
 }) => {
   const birthStr = formatBirthDatePt(
@@ -24,6 +32,9 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
     player.birthMonth ?? 5,
     player.birthYear ?? 2008,
   );
+  const seasonThreeStars =
+    periodStats.seasonThreeStarMatches ??
+    Object.values(userCompStats).reduce((acc, s) => acc + (s.threeStarMatches ?? 0), 0);
 
   return (
     <section
@@ -41,7 +52,7 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
       <div>
         <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[#9498A3] pb-4 border-b border-[#242730]">
           <span>MEU PRO</span>
-          <span>HABILIDADES & TROFÉUS ({player.careerTotals.trophies}) ›</span>
+          <span>HABILIDADES, TROFÉUS & CARREIRA ›</span>
         </div>
 
         <div className="flex items-end justify-between py-5 border-b border-[#242730]">
@@ -116,18 +127,28 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-4 border-t border-[#242730] pt-4 text-center">
-        {[
-          ['JOGOS', player.careerTotals.matches],
-          ['GOLS', player.careerTotals.goals],
-          ['ASSIST', player.careerTotals.assists],
-          ['3★', player.careerTotals.threeStarMatches],
-        ].map(([lbl, val]) => (
-          <div key={lbl}>
-            <div className="font-condensed font-extrabold text-3xl text-[#F5F5F7]">{val}</div>
-            <div className="text-[10px] uppercase tracking-widest text-[#565A65]">{lbl}</div>
-          </div>
-        ))}
+      <div className="border-t border-[#242730] pt-3.5">
+        <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[#9498A3] mb-2.5">
+          <span>
+            TEMPORADA {seasonYear}/{String(seasonYear + 1).slice(-2)}
+          </span>
+          <span className="text-[#C8A45D]">TOTAIS EM MEU PRO ›</span>
+        </div>
+        <div className="grid grid-cols-4 text-center">
+          {[
+            ['JOGOS', periodStats.seasonMatches],
+            ['GOLS', periodStats.seasonGoals],
+            ['ASSIST', periodStats.seasonAssists],
+            ['3★', seasonThreeStars],
+          ].map(([lbl, val]) => (
+            <div key={lbl}>
+              <div className="font-condensed font-extrabold text-3xl text-[#F5F5F7] tabular-nums">
+                {val}
+              </div>
+              <div className="text-[10px] uppercase tracking-widest text-[#565A65]">{lbl}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -169,6 +169,8 @@ export function computePlayedMatchState(
     seasonGoals: periodStats.seasonGoals + result.playerGoals,
     seasonAssists: periodStats.seasonAssists + result.playerAssists,
     seasonStarPoints: periodStats.seasonStarPoints + result.stars,
+    seasonThreeStarMatches:
+      (periodStats.seasonThreeStarMatches ?? 0) + (result.stars === 3 ? 1 : 0),
     continentalMatches: periodStats.continentalMatches + (fixture.isContinental ? 1 : 0),
     continentalGoals:
       periodStats.continentalGoals + (fixture.isContinental ? result.playerGoals : 0),

@@ -9,6 +9,9 @@ export const DashboardTab: React.FC = () => {
   const {
     player,
     contract,
+    calendar,
+    periodStats,
+    userCompStats,
     youthState,
     transitionProposals,
     marketOffers,
@@ -38,6 +41,9 @@ export const DashboardTab: React.FC = () => {
       <ProSummarySideCard
         player={player}
         contract={contract}
+        seasonYear={calendar.season}
+        periodStats={periodStats}
+        userCompStats={userCompStats}
         youthState={youthState}
         onOpenMyPro={() => setActiveTab('MEU_PRO')}
       />
