@@ -11,10 +11,13 @@ export interface LivePitchInput {
   sprintHeld: boolean; // RT / Shift
   closeControlHeld: boolean; // LT / Ctrl
   finesseHeld: boolean; // RB / Q / Botão Direito
+  chipHeld: boolean; // LB / C / Tab (Cavadinha!)
+  chipJustPressed: boolean;
+  chipJustReleased: boolean;
   shootHeld: boolean; // B / Espaço / Botão Esquerdo
   shootJustPressed: boolean;
   shootJustReleased: boolean;
-  passHeld: boolean; // A / E
+  passHeld: boolean; // A / E (também cancela chute em B+A = Fingir Chute!)
   passJustPressed: boolean;
   passJustReleased: boolean;
   throughHeld: boolean; // Y / F
@@ -23,7 +26,6 @@ export interface LivePitchInput {
   lobHeld: boolean; // X / R
   lobOrSlideJustPressed: boolean;
   lobJustReleased: boolean;
-  toggleCameraJustPressed: boolean; // LB / R3 / Tab / C
   resetBallJustPressed: boolean; // Select / Back / Share / V / Backspace
   exitOrFinishJustPressed: boolean; // Start / Options / Menu
 }
@@ -41,7 +43,7 @@ export class PitchInputCollector {
   private prevPass = false;
   private prevThrough = false;
   private prevLob = false;
-  private prevToggleCam = false;
+  private prevChip = false;
   private prevReset = false;
   private prevStart = false;
   private initializedFromPad = false;
@@ -117,7 +119,7 @@ export class PitchInputCollector {
       this.prevPass = gp.south;
       this.prevThrough = gp.north;
       this.prevLob = gp.west;
-      this.prevToggleCam = gp.lb || gp.r3;
+      this.prevChip = gp.lb;
       this.prevReset = gp.back;
       this.prevStart = gp.start;
     }
@@ -141,7 +143,6 @@ export class PitchInputCollector {
         rawX = dpadX;
         rawZ = dpadZ;
       } else {
-        // Deadzone radial limpa (0.18 -> remapeia 0..1 suave p/ filtrar ruído/drift de analógico!)
         const stickMag = Math.hypot(gp.lx, gp.ly);
         const dz = 0.18;
         if (stickMag > dz) {
@@ -158,7 +159,6 @@ export class PitchInputCollector {
       rawZ /= rawLen;
     }
 
-    // Filtro anti-tremida de micro-oscilação de potenciômetro (~26Hz low-pass, resposta instantânea)
     const alpha = Math.min(1, 26 * dt);
     this.smoothMoveX += (rawX - this.smoothMoveX) * alpha;
     this.smoothMoveZ += (rawZ - this.smoothMoveZ) * alpha;
@@ -186,13 +186,12 @@ export class PitchInputCollector {
     const closeControlHeld =
       Boolean(gp?.lt) || this.keys.has('ControlLeft') || this.keys.has('ControlRight');
     const finesseHeld = Boolean(gp?.rb) || this.keys.has('KeyQ') || this.mouseBtns.has(2);
+    const chipNow = Boolean(gp?.lb) || this.keys.has('KeyC') || this.keys.has('Tab');
 
     const shootNow = Boolean(gp?.east) || this.keys.has('Space') || this.mouseBtns.has(0);
     const passNow = Boolean(gp?.south) || this.keys.has('KeyE');
     const throughNow = Boolean(gp?.north) || this.keys.has('KeyF');
     const lobNow = Boolean(gp?.west) || this.keys.has('KeyR');
-    const toggleCamNow =
-      Boolean(gp?.lb || gp?.r3) || this.keys.has('Tab') || this.keys.has('KeyC');
     const resetNow =
       Boolean(gp?.back) || this.keys.has('KeyV') || this.keys.has('Backspace');
     const startNow = Boolean(gp?.start);
@@ -205,6 +204,9 @@ export class PitchInputCollector {
       sprintHeld,
       closeControlHeld,
       finesseHeld,
+      chipHeld: chipNow,
+      chipJustPressed: chipNow && !this.prevChip,
+      chipJustReleased: !chipNow && this.prevChip,
       shootHeld: shootNow,
       shootJustPressed: shootNow && !this.prevShoot,
       shootJustReleased: !shootNow && this.prevShoot,
@@ -217,7 +219,6 @@ export class PitchInputCollector {
       lobHeld: lobNow,
       lobOrSlideJustPressed: lobNow && !this.prevLob,
       lobJustReleased: !lobNow && this.prevLob,
-      toggleCameraJustPressed: toggleCamNow && !this.prevToggleCam,
       resetBallJustPressed: resetNow && !this.prevReset,
       exitOrFinishJustPressed: startNow && !this.prevStart,
     };
@@ -226,7 +227,7 @@ export class PitchInputCollector {
     this.prevPass = passNow;
     this.prevThrough = throughNow;
     this.prevLob = lobNow;
-    this.prevToggleCam = toggleCamNow;
+    this.prevChip = chipNow;
     this.prevReset = resetNow;
     this.prevStart = startNow;
 

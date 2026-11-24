@@ -55,28 +55,40 @@ function createStripedPitchTexture(): THREE.CanvasTexture {
   const z1 = mz(PITCH.HALF_L);
   ctx.strokeRect(x0, z0, x1 - x0, z1 - z0);
 
-  // Linha do meio-campo e círculo central
+  // Linha do meio-campo e círculo central (usando metros reais p/ círculo perfeito sem distorção!)
   const zMid = mz(0);
   ctx.beginPath();
   ctx.moveTo(x0, zMid);
   ctx.lineTo(x1, zMid);
   ctx.stroke();
 
-  const rPx = (7.8 / totalW) * cv.width;
+  const centerR = 7.8;
   ctx.beginPath();
-  ctx.arc(mx(0), zMid, rPx, 0, Math.PI * 2);
+  for (let s = 0; s <= 64; s++) {
+    const ang = (s / 64) * Math.PI * 2;
+    const px = mx(Math.cos(ang) * centerR);
+    const pz = mz(Math.sin(ang) * centerR);
+    if (s === 0) ctx.moveTo(px, pz);
+    else ctx.lineTo(px, pz);
+  }
+  ctx.closePath();
   ctx.stroke();
 
   ctx.beginPath();
   ctx.arc(mx(0), zMid, 6, 0, Math.PI * 2);
   ctx.fill();
 
-  // Grandes áreas, pequenas áreas, marcas de pênalti e meia-luas (Norte e Sul)
+  // Grandes áreas, pequenas áreas, marcas de pênalti e meia-luas exatas fora da área!
+  const penSpotDist = 10.5;
+  const dSpotToBoxLine = PITCH.PENALTY_BOX_D - penSpotDist; // 14.5 - 10.5 = 4.0m
+  const arcRadiusMeters = 7.5;
+  const halfArcAngle = Math.acos(dSpotToBoxLine / arcRadiusMeters);
+
   for (const dir of [-1, 1]) {
     const zGoal = dir * PITCH.HALF_L;
     const zBox = dir * (PITCH.HALF_L - PITCH.PENALTY_BOX_D);
     const zSix = dir * (PITCH.HALF_L - PITCH.SIX_YARD_D);
-    const zPen = dir * (PITCH.HALF_L - 10.5);
+    const zPen = dir * (PITCH.HALF_L - penSpotDist);
 
     const bx0 = mx(-PITCH.PENALTY_BOX_W / 2);
     const bx1 = mx(PITCH.PENALTY_BOX_W / 2);
@@ -90,12 +102,15 @@ function createStripedPitchTexture(): THREE.CanvasTexture {
     ctx.arc(mx(0), mz(zPen), 5.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Meia-lua fora da grande área
+    // Meia-lua cravada na linha da grande área (NUNCA invade dentro da área!)
     ctx.beginPath();
-    if (dir === -1) {
-      ctx.arc(mx(0), mz(zPen), rPx * 0.92, 0.22 * Math.PI, 0.78 * Math.PI);
-    } else {
-      ctx.arc(mx(0), mz(zPen), rPx * 0.92, 1.22 * Math.PI, 1.78 * Math.PI);
+    const steps = 40;
+    for (let s = 0; s <= steps; s++) {
+      const a = -halfArcAngle + (s / steps) * (halfArcAngle * 2);
+      const wx = Math.sin(a) * arcRadiusMeters;
+      const wz = zPen - dir * Math.cos(a) * arcRadiusMeters;
+      if (s === 0) ctx.moveTo(mx(wx), mz(wz));
+      else ctx.lineTo(mx(wx), mz(wz));
     }
     ctx.stroke();
   }

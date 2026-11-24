@@ -25,11 +25,11 @@ export interface BallStepEvents {
 }
 
 export const BALL_AERO = {
-  GRAVITY: -11.4,
-  AIR_DRAG: 0.2,
-  MAGNUS_COEFF: 0.028,
-  GRASS_RESTITUTION: 0.56,
-  GRASS_FRICTION: 2.55,
+  GRAVITY: -16.8, // Peso real de bola oficial (fim da sensação de bola de leite!)
+  AIR_DRAG: 0.24,
+  MAGNUS_COEFF: 0.036, // Curva lateral viva e acentuada estilo FIFA!
+  GRASS_RESTITUTION: 0.48,
+  GRASS_FRICTION: 3.1,
 } as const;
 
 const tmpCross = new THREE.Vector3();

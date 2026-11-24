@@ -26,7 +26,7 @@ import {
   stepPlayerAndBallControl,
 } from '../physics/playerLocomotion';
 import { buildStadium3D } from '../stadium/buildStadium3D';
-import { ArenaHudSnapshot, ArenaSessionProps, CameraLockMode } from '../types';
+import { ArenaHudSnapshot, ArenaSessionProps, KickKind } from '../types';
 import { PitchHudOverlay } from './PitchHudOverlay';
 
 function computeEarnedStars(points: number, mode: ArenaSessionProps['mode']): StarRating {
@@ -69,7 +69,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
   const initialStaminaCap = Math.max(25, Math.min(100, player.stamina));
 
   const [hud, setHud] = useState<ArenaHudSnapshot>({
-    cameraMode: 'BALL_CAM',
     stamina: initialStaminaCap,
     maxStamina: initialStaminaCap,
     powerPct: 0,
@@ -85,9 +84,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       text:
         mode === 'TRYOUT_PRO'
           ? 'SELETIVA PRO — MOSTRE SEU FUTEBOL!'
-          : mode === 'TRAINING_SESSION'
-            ? 'TREINO DE CAMPO — MIRE NA GAVETA!'
-            : 'ARENA LIVRE 3D — BOM JOGO!',
+          : 'ARENA LIVRE 3D — BOM JOGO!',
       color: compTheme.accentPrimary,
     },
   });
@@ -160,7 +157,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
     const inputCollector = new PitchInputCollector();
     inputCollector.attach(host);
 
-    let camMode: CameraLockMode = 'BALL_CAM';
+    // Câmera SEMPRE travada inteligente na bola/gol com liberdade de espiar no RS / Mouse!
     let camYaw = 0;
     let camPitch = 0.24;
     let manualAimOffsetYaw = 0;
@@ -169,21 +166,20 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
     let celebrationTimer = 0;
     let playResetTimer = 0;
-    let bannerTimer = 2.2;
+    let bannerTimer = 2.0;
     let bannerObj: { text: string; color: string } | null = {
       text:
         mode === 'TRYOUT_PRO'
           ? 'SELETIVA PRO — FAÇA GOLS E TABELE!'
-          : mode === 'TRAINING_SESSION'
-            ? 'SESSÃO 100% — TABELINHA E FINALIZAÇÃO!'
-            : 'ARENA LIVRE 3D — BOM JOGO!',
+          : 'ARENA LIVRE 3D — BOM JOGO!',
       color: compTheme.accentPrimary,
     };
     let timeLeft = mode === 'FREE_PLAY' ? 0 : 95;
     let mateAssistArmed = false;
     let userAssistArmed = false;
+    let lastUserShotKind: KickKind | null = null;
 
-    const showBanner = (text: string, color: string, dur = 1.8) => {
+    const showBanner = (text: string, color: string, dur = 1.6) => {
       bannerObj = { text, color };
       bannerTimer = dur;
     };
@@ -215,13 +211,14 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       mateBrain.pos.set(preset.mx, 0, preset.mz);
       mateBrain.vel.set(0, 0, 0);
       mateBrain.receivedFromUser = false;
-      gkBrain.pos.set(0, 0, -PITCH.HALF_L + 0.78);
+      gkBrain.pos.set(0, 0, -PITCH.HALF_L + 0.75);
       gkBrain.vel.set(0, 0, 0);
       gkBrain.diveTimer = 0;
       gkBrain.diveDir = 0;
 
       mateAssistArmed = false;
       userAssistArmed = false;
+      lastUserShotKind = null;
       celebrationTimer = 0;
       playResetTimer = 0;
     };
@@ -250,10 +247,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
       const inp = inputCollector.sample(dt);
 
-      if (inp.toggleCameraJustPressed) {
-        camMode = camMode === 'BALL_CAM' ? 'FREE_CAM' : 'BALL_CAM';
-        manualAimOffsetYaw = 0;
-      }
       if (inp.resetBallJustPressed) {
         respawnPlay(false);
       }
@@ -279,27 +272,22 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         if (bannerTimer <= 0) bannerObj = null;
       }
 
-      // Câmera em 3ª Pessoa
-      if (camMode === 'BALL_CAM') {
-        manualAimOffsetYaw = Math.max(
-          -0.75,
-          Math.min(0.75, manualAimOffsetYaw - inp.lookDeltaX * 0.9),
-        );
-        if (Math.abs(inp.lookDeltaX) < 0.001) {
-          manualAimOffsetYaw *= Math.max(0, 1 - 2.0 * dt);
-        }
-        camPitch = Math.max(0.12, Math.min(0.48, camPitch + inp.lookDeltaY * 0.7));
-
-        const focusTargetX = ball.ownerId === 'USER' ? 0 : ball.pos.x * 0.75;
-        const focusTargetZ = ball.ownerId === 'USER' ? -PITCH.HALF_L : ball.pos.z * 0.8 - 8;
-        const dx = focusTargetX - pState.pos.x;
-        const dz = focusTargetZ - pState.pos.z;
-        const autoYaw = Math.atan2(-dx, -dz) + manualAimOffsetYaw;
-        camYaw += shortestYawDelta(camYaw, autoYaw) * Math.min(1, 7.5 * dt);
-      } else {
-        camYaw -= inp.lookDeltaX;
-        camPitch = Math.max(0.08, Math.min(0.62, camPitch + inp.lookDeltaY));
+      // Câmera sempre focada inteligente na bola / gol com olhadinha livre no RS!
+      manualAimOffsetYaw = Math.max(
+        -0.95,
+        Math.min(0.95, manualAimOffsetYaw - inp.lookDeltaX * 0.95),
+      );
+      if (Math.abs(inp.lookDeltaX) < 0.001) {
+        manualAimOffsetYaw *= Math.max(0, 1 - 2.2 * dt);
       }
+      camPitch = Math.max(0.12, Math.min(0.48, camPitch + inp.lookDeltaY * 0.7));
+
+      const focusTargetX = ball.ownerId === 'USER' ? 0 : ball.pos.x * 0.8;
+      const focusTargetZ = ball.ownerId === 'USER' ? -PITCH.HALF_L : ball.pos.z * 0.85 - 7;
+      const dx = focusTargetX - pState.pos.x;
+      const dz = focusTargetZ - pState.pos.z;
+      const autoYaw = Math.atan2(-dx, -dz) + manualAimOffsetYaw;
+      camYaw += shortestYawDelta(camYaw, autoYaw) * Math.min(1, 7.5 * dt);
 
       if (celebrationTimer > 0) {
         celebrationTimer -= dt;
@@ -310,18 +298,22 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           respawnPlay(true);
         }
       } else {
-        const { kicked, calledForBall, commandedMateShoot } = stepPlayerAndBallControl(
-          pState,
-          activePlayer,
-          ball,
-          inp,
-          camYaw,
-          mateBrain.pos,
-          mateBrain.vel,
-          dt,
-        );
+        const { kicked, calledForBall, commandedMateShoot, triggeredFakeShotDirX } =
+          stepPlayerAndBallControl(
+            pState,
+            activePlayer,
+            ball,
+            inp,
+            camYaw,
+            mateBrain.pos,
+            mateBrain.vel,
+            dt,
+          );
 
-        if (kicked === 'GROUND_PASS' || kicked === 'THROUGH_BALL' || kicked === 'LOB_CROSS') {
+        if (kicked === 'POWER_SHOT' || kicked === 'FINESSE_SHOT' || kicked === 'CHIP_SHOT') {
+          lastUserShotKind = kicked;
+        } else if (kicked) {
+          lastUserShotKind = null;
           userAssistArmed = false;
         }
 
@@ -343,13 +335,15 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
         if (mateStep.shotByMateFromUserPass) {
           userAssistArmed = true;
           mateAssistArmed = false;
+          lastUserShotKind = null;
         }
 
-        const gkDifficulty = mode === 'TRYOUT_PRO' ? 0.48 : 0.6;
-        const { madeSave } = stepGoalkeeperAI(
+        const gkDifficulty = mode === 'TRYOUT_PRO' ? 0.56 : 0.68;
+        const { madeSave, caughtFirmly } = stepGoalkeeperAI(
           gkBrain,
           ball,
           pState.pos,
+          triggeredFakeShotDirX,
           gkDifficulty,
           dt,
           timeSec,
@@ -357,8 +351,12 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
 
         if (madeSave && playResetTimer <= 0) {
           statsRef.current.saves += 1;
-          statsRef.current.points += 15;
-          showBanner('DEFESA DO GOLEIRO!', '#F59E0B', 1.4);
+          statsRef.current.points += 12;
+          showBanner(
+            caughtFirmly ? 'GOLEIRO ENCAIXOU FIRME!' : 'ESPALMOU O GOLEIRO!',
+            '#F59E0B',
+            1.3,
+          );
         }
 
         const ballEvents = stepBallPhysics(ball, dt);
@@ -373,29 +371,34 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           statsRef.current.goals += 1;
 
           const hitTopCorner =
-            Math.abs(ball.pos.x) > PITCH.GOAL_HALF_W - 1.55 &&
-            ball.pos.y > PITCH.GOAL_HEIGHT - 1.15;
+            Math.abs(ball.pos.x) > PITCH.GOAL_HALF_W - 1.5 &&
+            ball.pos.y > PITCH.GOAL_HEIGHT - 1.1;
 
           const scoredByMate = ball.lastTouchBy === 'MATE';
+          const wasChip = !scoredByMate && lastUserShotKind === 'CHIP_SHOT';
           const bonus = hitTopCorner
             ? 145
-            : scoredByMate && userAssistArmed
-              ? 125
-              : mateAssistArmed
-                ? 115
-                : 95;
+            : wasChip
+              ? 135
+              : scoredByMate && userAssistArmed
+                ? 125
+                : mateAssistArmed
+                  ? 115
+                  : 95;
           statsRef.current.points += bonus;
 
           showBanner(
-            hitTopCorner
-              ? `GOLAÇO NA GAVETA! (+${bonus} PTS)`
-              : scoredByMate && userAssistArmed
-                ? `GOL DO APOIO • SUA ASSISTÊNCIA! (+${bonus} PTS)`
-                : mateAssistArmed
-                  ? `GOL DE TABELINHA! (+${bonus} PTS)`
-                  : `GOOOOOL! (+${bonus} PTS)`,
+            wasChip
+              ? `GOLAÇO DE CAVADINHA! (+${bonus} PTS)`
+              : hitTopCorner
+                ? `GOLAÇO NA GAVETA! (+${bonus} PTS)`
+                : scoredByMate && userAssistArmed
+                  ? `GOL DO APOIO • SUA ASSISTÊNCIA! (+${bonus} PTS)`
+                  : mateAssistArmed
+                    ? `GOL DE TABELINHA! (+${bonus} PTS)`
+                    : `GOOOOOL! (+${bonus} PTS)`,
             '#2DBE60',
-            2.1,
+            2.0,
           );
           celebrationTimer = 2.0;
         } else if (ballEvents.wentOutOfBounds && playResetTimer <= 0) {
@@ -476,7 +479,6 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       if (hudSyncAcc >= 0.04) {
         hudSyncAcc = 0;
         setHud({
-          cameraMode: camMode,
           stamina: pState.stamina,
           maxStamina: pState.maxStamina,
           powerPct: pState.hudPower01 * 100,
