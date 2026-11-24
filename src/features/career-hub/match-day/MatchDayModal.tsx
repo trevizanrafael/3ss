@@ -14,6 +14,7 @@ import {
 } from '../../../domains/match-sim/penaltyShootoutEngine';
 import { getClubFixtureOnExactDay } from '../../../domains/season/worldSeasonEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
+import { NavDirection } from '../../../shared/gamepad/spatialNavigator';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
@@ -44,6 +45,22 @@ export const MatchDayModal: React.FC = () => {
     setAwayKit('AWAY');
     setPendingPenMatch(null);
   }, [matchModalOpen]);
+
+  const isPreMatchStage = matchModalOpen && !result && !pendingPenMatch;
+
+  useEffect(() => {
+    if (!isPreMatchStage) return;
+    const order: TacticalMindset[] = ['EQUILIBRADO', 'AGRESSIVO_GOL', 'COLETIVO_SEGURO'];
+    const onDpad = (ev: Event) => {
+      const dir = (ev as CustomEvent<NavDirection>).detail;
+      if (dir === 'LEFT' || dir === 'RIGHT') {
+        const delta = dir === 'LEFT' ? -1 : 1;
+        setMindset((curr) => order[(order.indexOf(curr) + delta + order.length) % order.length]);
+      }
+    };
+    window.addEventListener('prematch-dpad', onDpad);
+    return () => window.removeEventListener('prematch-dpad', onDpad);
+  }, [isPreMatchStage]);
 
   if (!matchModalOpen || !player || !contract) return null;
 
@@ -184,6 +201,7 @@ export const MatchDayModal: React.FC = () => {
   return (
     <div
       data-modal-scope="true"
+      data-prematch-direct-pad={isPreMatchStage ? 'true' : undefined}
       className="fixed inset-0 z-50 w-screen h-screen bg-[#0B0B0D] text-[#F5F5F7] flex flex-col overflow-hidden"
     >
       {/* Cabeçalho Oficial de Transmissão da Competição */}

@@ -3,6 +3,7 @@ import { ClubData } from '../../../data/clubs/types';
 import { TacticalMindset } from '../../../domains/match-sim/matchSimulator';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { ConsoleStepper } from '../../../shared/ui/ConsoleStepper';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { SquadRole } from '../../../shared/types/common';
 import { formatSquadRole } from '../../../shared/utils/formatters';
 
@@ -179,10 +180,25 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
         </div>
       )}
 
-      {/* Seletor de Uniformes dos 2 Times Estilo FIFA */}
+      {/* Seletor de Uniformes dos 2 Times Estilo FIFA (LT troca Casa / RT troca Fora!) */}
       <div className="my-auto py-2">
-        <div className="text-[10px] uppercase tracking-[0.2em] text-[#9498A3] text-center mb-1">
-          SELEÇÃO DE UNIFORMES
+        <button
+          type="button"
+          data-pad-lt="true"
+          data-nav-ignore="true"
+          onClick={() => onChangeHomeKit(cycleKit(homeKit, 1))}
+          className="hidden"
+        />
+        <button
+          type="button"
+          data-pad-rt="true"
+          data-nav-ignore="true"
+          onClick={() => onChangeAwayKit(cycleKit(awayKit, 1))}
+          className="hidden"
+        />
+        <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-[#9498A3] mb-1 px-1">
+          <GamepadBadge action="LT" label="UNIF. CASA" />
+          <GamepadBadge action="RT" label="UNIF. FORA" />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -233,17 +249,22 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           </div>
         </div>
 
-        <ConsoleStepper
-          compact
-          label={`SUA FUNÇÃO (${formatSquadRole(userRole)})`}
-          value={mindset}
-          onChange={onChangeMindset}
-          options={[
-            { value: 'EQUILIBRADO', label: 'POSTURA EQUILIBRADA' },
-            { value: 'AGRESSIVO_GOL', label: 'BUSCAR O GOL / DECIDIR' },
-            { value: 'COLETIVO_SEGURO', label: 'APOIO COLETIVO SEGURO' },
-          ]}
-        />
+        <div>
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-[#9498A3] mb-1">
+            <span>SUA POSTURA ({formatSquadRole(userRole)})</span>
+            <span className="text-[#C8A45D] font-condensed font-bold">D-PAD ◄ ►</span>
+          </div>
+          <ConsoleStepper
+            compact
+            value={mindset}
+            onChange={onChangeMindset}
+            options={[
+              { value: 'EQUILIBRADO', label: 'POSTURA EQUILIBRADA' },
+              { value: 'AGRESSIVO_GOL', label: 'BUSCAR O GOL / DECIDIR' },
+              { value: 'COLETIVO_SEGURO', label: 'APOIO COLETIVO SEGURO' },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

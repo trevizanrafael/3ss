@@ -95,6 +95,13 @@ const EXPLICIT_DIR_ATTR: Record<NavDirection, keyof DOMStringMap> = {
 };
 
 export function moveSpatialFocus(dir: NavDirection): void {
+  const scope = getActiveRootScope();
+  if (scope instanceof HTMLElement && scope.dataset.prematchDirectPad === 'true') {
+    playStepTickSfx();
+    window.dispatchEvent(new CustomEvent<NavDirection>('prematch-dpad', { detail: dir }));
+    return;
+  }
+
   const active = document.activeElement as HTMLElement | null;
 
   // Se estiver focado num ConsoleStepper e apertar Esquerda/Direita, gira o valor direto!

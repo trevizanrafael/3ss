@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ClubData } from '../../../data/clubs/types';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
+import { NavDirection } from '../../../shared/gamepad/spatialNavigator';
 
 interface InteractiveTravelMapProps {
   myClub: ClubData;
@@ -246,15 +247,22 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
 
     window.setTimeout(() => map.invalidateSize(), 80);
 
-    // Suporte ao Analógico Direito (RS) do Controle para mover o mapa ao vivo!
+    // Suporte ao Analógico Direito (RS) para mover e D-Pad ↑/↓ para Zoom no Mapa!
     const onRsMove = (ev: Event) => {
       const { dx, dy } = (ev as CustomEvent<{ dx: number; dy: number }>).detail;
       map.panBy([dx * 12, dy * 12], { animate: false });
     };
+    const onDpadZoom = (ev: Event) => {
+      const dir = (ev as CustomEvent<NavDirection>).detail;
+      if (dir === 'UP') map.zoomIn();
+      else if (dir === 'DOWN') map.zoomOut();
+    };
     window.addEventListener('gamepad-rs-move', onRsMove);
+    window.addEventListener('prematch-dpad', onDpadZoom);
 
     return () => {
       window.removeEventListener('gamepad-rs-move', onRsMove);
+      window.removeEventListener('prematch-dpad', onDpadZoom);
       map.remove();
       mapRef.current = null;
     };
@@ -295,21 +303,8 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             type="button"
-            data-pad-lt="true"
-            data-nav-ignore="true"
-            onClick={() => mapRef.current?.zoomOut()}
-            className="hidden"
-          />
-          <button
-            type="button"
-            data-pad-rt="true"
-            data-nav-ignore="true"
-            onClick={() => mapRef.current?.zoomIn()}
-            className="hidden"
-          />
-          <button
-            type="button"
             data-pad-x="true"
+            data-nav-ignore="true"
             onClick={() => setMapStyle((s) => (s === 'DARK' ? 'SATELLITE' : 'DARK'))}
             className="px-2.5 py-1 bg-[#191B20] hover:bg-[#242730] border border-[#242730] inline-flex items-center gap-1.5 font-condensed uppercase font-bold text-[11px] tracking-wider text-[#C8A45D] cursor-pointer"
           >
@@ -318,6 +313,7 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
           </button>
           <button
             type="button"
+            data-nav-ignore="true"
             onClick={fitMapRoute}
             className="px-2.5 py-1 bg-[#191B20] hover:bg-[#242730] border border-[#242730] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#F5F5F7] cursor-pointer"
           >
@@ -328,13 +324,17 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
 
       <div ref={containerRef} className="flex-1 w-full min-h-[220px] z-0" />
 
-      <div className="px-4 py-2 border-t border-[#242730] bg-[#0E0F12] flex items-center justify-between text-[10px] uppercase tracking-widest text-[#565A65] shrink-0">
+      <div className="px-4 py-2 border-t border-[#242730] bg-[#0E0F12] flex items-center justify-between text-[10px] uppercase tracking-widest text-[#9498A3] shrink-0">
         <div className="flex items-center gap-3">
-          <GamepadBadge action="RS" label="MOVER MAPA" />
-          <GamepadBadge action="LT" label="ZOOM -" />
-          <GamepadBadge action="RT" label="ZOOM +" />
+          <GamepadBadge action="RS" label="MOVER" />
+          <span className="inline-flex items-center gap-1 font-condensed font-bold text-xs text-[#F5F5F7]">
+            <span className="px-1.5 py-0.5 bg-[#0B0B0D] border border-[#C8A45D] text-[#C8A45D] text-[10px]">
+              D-PAD ↑↓
+            </span>
+            <span className="text-[#9498A3]">ZOOM +/-</span>
+          </span>
         </div>
-        <span>{hostClub.stadiumName ?? hostClub.name}</span>
+        <span className="truncate ml-2">{hostClub.stadiumName ?? hostClub.name}</span>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ClubData, FullSquadPlayer } from '../../../data/clubs/types';
 import { loadClubFullSquad } from '../../../data/world/squadLoader';
 import { CareerPlayer } from '../../../domains/player/playerTypes';
+import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { FifaStatBadge, getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { SquadRole } from '../../../shared/types/common';
 import { buildTeamMatchLineup } from './buildMatchLineup';
@@ -40,6 +41,18 @@ export const TacticalLineupPitch: React.FC<TacticalLineupPitchProps> = ({
     };
   }, [myClub.id, opponentClub.id]);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'q' || e.key === 'Q') {
+        setViewingSide((s) => (s === 'MINE' ? 'OPP' : 'MINE'));
+      } else if (e.key === 'e' || e.key === 'E') {
+        setViewingSide((s) => (s === 'MINE' ? 'OPP' : 'MINE'));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const isMine = viewingSide === 'MINE';
   const activeClub = isMine ? myClub : opponentClub;
   const { starters, bench } = buildTeamMatchLineup(
@@ -51,35 +64,53 @@ export const TacticalLineupPitch: React.FC<TacticalLineupPitchProps> = ({
 
   return (
     <div className="console-tile p-4 flex flex-col justify-between h-full min-h-0">
-      {/* Alternador Meu Time vs Adversário */}
-      <div className="flex items-center justify-between pb-2.5 border-b border-[#242730] shrink-0">
-        <div>
+      {/* Alternador Meu Time vs Adversário via LB / RB */}
+      <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#242730] shrink-0">
+        <div className="min-w-0">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#9498A3] block">
             ESCALAÇÃO TÁTICA (4-3-3)
           </span>
-          <span className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7]">
+          <span className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate block">
             {activeClub.name}
           </span>
         </div>
 
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <button
             type="button"
-            onClick={() => setViewingSide('MINE')}
-            className={`px-3 py-1 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
-              isMine ? 'bg-[#F5F5F7] text-[#0B0B0D]' : 'bg-[#0E0F12] text-[#9498A3]'
-            }`}
+            data-nav-ignore="true"
+            onClick={() => setViewingSide((s) => (s === 'MINE' ? 'OPP' : 'MINE'))}
+            className="cursor-pointer"
           >
-            {myClub.shortName} (VOCÊ)
+            <GamepadBadge action="LB" />
           </button>
           <button
             type="button"
+            data-nav-ignore="true"
+            onClick={() => setViewingSide('MINE')}
+            className={`px-2.5 py-1 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
+              isMine ? 'bg-[#F5F5F7] text-[#0B0B0D]' : 'bg-[#0E0F12] text-[#9498A3]'
+            }`}
+          >
+            {myClub.shortName}
+          </button>
+          <button
+            type="button"
+            data-nav-ignore="true"
             onClick={() => setViewingSide('OPP')}
-            className={`px-3 py-1 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
+            className={`px-2.5 py-1 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
               !isMine ? 'bg-[#F5F5F7] text-[#0B0B0D]' : 'bg-[#0E0F12] text-[#9498A3]'
             }`}
           >
             {opponentClub.shortName}
+          </button>
+          <button
+            type="button"
+            data-nav-ignore="true"
+            onClick={() => setViewingSide((s) => (s === 'MINE' ? 'OPP' : 'MINE'))}
+            className="cursor-pointer"
+          >
+            <GamepadBadge action="RB" />
           </button>
         </div>
       </div>
