@@ -4,8 +4,9 @@
 
 ## Status do Projeto
 
-- **Fase atual:** Documentação base concluída — pronto para iniciar **Fase 1 (Protótipo Visual 3D)**
-- **Tecnologia Oficial:** `TypeScript` + `Three.js` + `Rapier3D` + `React` + `Vite` (+ `Tauri` para `.exe` Windows)
+- **Fase atual:** **Fase 1 — Interface & Modelo de Negócio (Base, Carreira, Contratos e Treinos)**
+- **Diretriz de Engenharia:** Arquitetura estritamente modular (pastas por domínio, arquivos pequenos e responsabilidades isoladas — ver [architecture.md](./architecture.md))
+- **Tecnologia Oficial:** `TypeScript` + `React` + `Tailwind` + `Zustand` (Menus/Sistemas) + `Three.js` & `Rapier3D` (Gameplay 3D na etapa seguinte) + `Tauri` (`.exe`)
 - **Modo de jogo:** Singleplayer Offline — Carreira de Jogador (Atleta de linha)
 - **Mecânica-chave ("Three Stars"):** Sistema transversal de **0 a 3 Estrelas** presente na Peneira inicial, avaliação das partidas, aproveitamento de treinos e reputação na carreira.
 
@@ -18,8 +19,9 @@
 
 ## Índice da Documentação
 
-- [gdd-gameplay.md](./gdd-gameplay.md) — Câmera em 3ª pessoa, controles, posições, regras da partida e direção visual
+- [architecture.md](./architecture.md) — **Regras de arquitetura modular**, separação de pastas e limite de tamanho por arquivo
 - [gdd-carreira-contratos-treino.md](./gdd-carreira-contratos-treino.md) — Criação do jogador, Peneira, Base, Contratos, Economia 0–99 e Treinos
 - [database-ligas.md](./database-ligas.md) — Lista oficial de Ligas, 2ªs Divisões, Copas Continentais e estrutura de dados reais
-- [tech-stack.md](./tech-stack.md) — Comparativo técnico (Gráficos, FPS e motores candidatos)
-- [roadmap.md](./roadmap.md) — Fases de desenvolvimento do protótipo visual até o jogo completo
+- [gdd-gameplay.md](./gdd-gameplay.md) — Câmera em 3ª pessoa, controles, posições, regras da partida e direção visual
+- [tech-stack.md](./tech-stack.md) — Stack tecnológica oficial (`React` + `Three.js` + `Rapier3D` + `Tauri`)
+- [roadmap.md](./roadmap.md) — Fases de desenvolvimento (começando por **Interface + Modelo de Negócio da Base/Carreira**)

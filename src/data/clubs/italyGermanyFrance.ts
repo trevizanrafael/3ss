@@ -1,0 +1,141 @@
+import { ClubData } from './types';
+
+export const ITALY_GERMANY_FRANCE_CLUBS: ClubData[] = [
+  // ITÁLIA — SERIE A & SERIE B
+  {
+    id: 'inter_milao', name: 'Inter de Milão', shortName: 'INT', wikiTitle: 'FC_Internazionale_Milano',
+    country: 'ITA', leagueId: 'ITA_1', reputationStars: 3, squadAvgOvr: 85,
+    youthAcademyName: 'Inter Primavera (KONAMI Centre)', youthQuality: 89,
+    primaryColor: '#010E80', secondaryColor: '#111111', pattern: 'stripes',
+    keyPlayers: [
+      { name: 'Lautaro Martínez', pos: 'ATA', ovr: 89 },
+      { name: 'Nicolò Barella', pos: 'MC', ovr: 87 },
+      { name: 'Alessandro Bastoni', pos: 'ZAG', ovr: 87 },
+      { name: 'Hakan Çalhanoğlu', pos: 'VOL', ovr: 86 },
+      { name: 'Federico Dimarco', pos: 'LE', ovr: 85 },
+      { name: 'Marcus Thuram', pos: 'ATA', ovr: 84 },
+    ],
+  },
+  {
+    id: 'ac_milan', name: 'AC Milan', shortName: 'MIL', wikiTitle: 'AC_Milan',
+    country: 'ITA', leagueId: 'ITA_1', reputationStars: 3, squadAvgOvr: 83,
+    youthAcademyName: 'Milan Futuro / Primavera', youthQuality: 87,
+    primaryColor: '#FB090B', secondaryColor: '#111111', pattern: 'stripes',
+    keyPlayers: [{ name: 'Rafael Leão', pos: 'PE', ovr: 86 }, { name: 'Theo Hernández', pos: 'LE', ovr: 86 }, { name: 'Christian Pulisic', pos: 'PD', ovr: 84 }],
+  },
+  {
+    id: 'juventus', name: 'Juventus', shortName: 'JUV', wikiTitle: 'Juventus_FC',
+    country: 'ITA', leagueId: 'ITA_1', reputationStars: 3, squadAvgOvr: 83,
+    youthAcademyName: 'Juventus Next Gen / Primavera', youthQuality: 88,
+    primaryColor: '#FFFFFF', secondaryColor: '#111111', pattern: 'stripes',
+    keyPlayers: [{ name: 'Gleison Bremer', pos: 'ZAG', ovr: 86 }, { name: 'Dušan Vlahović', pos: 'ATA', ovr: 84 }, { name: 'Kenan Yıldız', pos: 'PE', ovr: 79 }],
+  },
+  {
+    id: 'napoli', name: 'Napoli', shortName: 'NAP', wikiTitle: 'SSC_Napoli',
+    country: 'ITA', leagueId: 'ITA_1', reputationStars: 3, squadAvgOvr: 82,
+    youthAcademyName: 'Napoli Primavera', youthQuality: 81,
+    primaryColor: '#12A0D7', secondaryColor: '#FFFFFF', pattern: 'solid',
+    keyPlayers: [{ name: 'Romelu Lukaku', pos: 'ATA', ovr: 83 }, { name: 'Scott McTominay', pos: 'MC', ovr: 82 }],
+  },
+  {
+    id: 'palermo', name: 'Palermo', shortName: 'PAL', wikiTitle: 'Palermo_FC',
+    country: 'ITA', leagueId: 'ITA_2', reputationStars: 1, squadAvgOvr: 72,
+    youthAcademyName: 'Palermo Primavera', youthQuality: 75,
+    primaryColor: '#F499C1', secondaryColor: '#111111', pattern: 'solid',
+    keyPlayers: [{ name: 'Matteo Brunori', pos: 'ATA', ovr: 74 }],
+  },
+  {
+    id: 'sampdoria', name: 'Sampdoria', shortName: 'SAM', wikiTitle: 'UC_Sampdoria',
+    country: 'ITA', leagueId: 'ITA_2', reputationStars: 2, squadAvgOvr: 72,
+    youthAcademyName: 'Bogliasco Primavera', youthQuality: 77,
+    primaryColor: '#00569C', secondaryColor: '#FFFFFF', pattern: 'hoops',
+    keyPlayers: [{ name: 'Massimo Coda', pos: 'ATA', ovr: 74 }],
+  },
+  // ALEMANHA — BUNDESLIGA & 2. BUNDESLIGA
+  {
+    id: 'bayern', name: 'Bayern de Munique', shortName: 'BAY', wikiTitle: 'FC_Bayern_Munich',
+    country: 'GER', leagueId: 'GER_1', reputationStars: 3, squadAvgOvr: 86,
+    youthAcademyName: 'FC Bayern Campus U19', youthQuality: 91,
+    primaryColor: '#DC052D', secondaryColor: '#FFFFFF', pattern: 'solid',
+    keyPlayers: [{ name: 'Harry Kane', pos: 'ATA', ovr: 90 }, { name: 'Jamal Musiala', pos: 'MEI', ovr: 88 }, { name: 'Joshua Kimmich', pos: 'VOL', ovr: 86 }],
+  },
+  {
+    id: 'leverkusen', name: 'Bayer Leverkusen', shortName: 'B04', wikiTitle: 'Bayer_04_Leverkusen',
+    country: 'GER', leagueId: 'GER_1', reputationStars: 3, squadAvgOvr: 84,
+    youthAcademyName: 'Kurtekotten U19', youthQuality: 87,
+    primaryColor: '#E32221', secondaryColor: '#111111', pattern: 'halves',
+    keyPlayers: [{ name: 'Florian Wirtz', pos: 'MEI', ovr: 89 }, { name: 'Granit Xhaka', pos: 'VOL', ovr: 86 }],
+  },
+  {
+    id: 'dortmund', name: 'Borussia Dortmund', shortName: 'BVB', wikiTitle: 'Borussia_Dortmund',
+    country: 'GER', leagueId: 'GER_1', reputationStars: 3, squadAvgOvr: 83,
+    youthAcademyName: 'BVB Nachwuchsleistungszentrum', youthQuality: 90,
+    primaryColor: '#FDE100', secondaryColor: '#111111', pattern: 'solid',
+    keyPlayers: [{ name: 'Serhou Guirassy', pos: 'ATA', ovr: 85 }, { name: 'Julian Brandt', pos: 'MEI', ovr: 84 }],
+  },
+  {
+    id: 'hamburger_sv', name: 'Hamburger SV', shortName: 'HSV', wikiTitle: 'Hamburger_SV',
+    country: 'GER', leagueId: 'GER_2', reputationStars: 2, squadAvgOvr: 73,
+    youthAcademyName: 'HSV Campus U19', youthQuality: 78,
+    primaryColor: '#FFFFFF', secondaryColor: '#0A3A82', pattern: 'solid',
+    keyPlayers: [{ name: 'Robert Glatzel', pos: 'ATA', ovr: 75 }],
+  },
+  {
+    id: 'schalke_04', name: 'Schalke 04', shortName: 'S04', wikiTitle: 'FC_Schalke_04',
+    country: 'GER', leagueId: 'GER_2', reputationStars: 2, squadAvgOvr: 71,
+    youthAcademyName: 'Knappenschmiede U19', youthQuality: 84,
+    primaryColor: '#004D9D', secondaryColor: '#FFFFFF', pattern: 'solid',
+    keyPlayers: [{ name: 'Kenan Karaman', pos: 'SA', ovr: 74 }],
+  },
+  // FRANÇA — LIGUE 1 & LIGUE 2
+  {
+    id: 'psg', name: 'Paris Saint-Germain', shortName: 'PSG', wikiTitle: 'Paris_Saint-Germain_FC',
+    country: 'FRA', leagueId: 'FRA_1', reputationStars: 3, squadAvgOvr: 85,
+    youthAcademyName: 'Campus PSG U19', youthQuality: 91,
+    primaryColor: '#004170', secondaryColor: '#DA291C', pattern: 'stripes',
+    keyPlayers: [{ name: 'Ousmane Dembélé', pos: 'PD', ovr: 86 }, { name: 'Achraf Hakimi', pos: 'LD', ovr: 85 }, { name: 'Vitinha', pos: 'MC', ovr: 85 }],
+  },
+  {
+    id: 'marseille', name: 'Olympique Marseille', shortName: 'OM', wikiTitle: 'Olympique_de_Marseille',
+    country: 'FRA', leagueId: 'FRA_1', reputationStars: 3, squadAvgOvr: 80,
+    youthAcademyName: 'OM La Commanderie U19', youthQuality: 82,
+    primaryColor: '#FFFFFF', secondaryColor: '#2FAEE0', pattern: 'solid',
+    keyPlayers: [{ name: 'Adrien Rabiot', pos: 'MC', ovr: 83 }, { name: 'Pierre-Emile Højbjerg', pos: 'VOL', ovr: 82 }],
+  },
+  {
+    id: 'lyon', name: 'Olympique Lyonnais', shortName: 'OL', wikiTitle: 'Olympique_Lyonnais',
+    country: 'FRA', leagueId: 'FRA_1', reputationStars: 3, squadAvgOvr: 79,
+    youthAcademyName: 'OL Academy Meyzieu', youthQuality: 91,
+    primaryColor: '#FFFFFF', secondaryColor: '#DA291C', pattern: 'diagonal',
+    keyPlayers: [{ name: 'Alexandre Lacazette', pos: 'ATA', ovr: 82 }, { name: 'Rayan Cherki', pos: 'MEI', ovr: 80 }],
+  },
+  {
+    id: 'lorient', name: 'FC Lorient', shortName: 'FCL', wikiTitle: 'FC_Lorient',
+    country: 'FRA', leagueId: 'FRA_2', reputationStars: 1, squadAvgOvr: 72,
+    youthAcademyName: 'Espace FCL U19', youthQuality: 76,
+    primaryColor: '#F36C21', secondaryColor: '#111111', pattern: 'solid',
+    keyPlayers: [{ name: 'Eli Junior Kroupi', pos: 'MEI', ovr: 74 }],
+  },
+  {
+    id: 'paris_fc', name: 'Paris FC', shortName: 'PFC', wikiTitle: 'Paris_FC',
+    country: 'FRA', leagueId: 'FRA_2', reputationStars: 1, squadAvgOvr: 72,
+    youthAcademyName: 'Centre Formation Paris FC', youthQuality: 75,
+    primaryColor: '#0C2340', secondaryColor: '#FFFFFF', pattern: 'solid',
+    keyPlayers: [{ name: 'Maxime Lopez', pos: 'MC', ovr: 75 }],
+  },
+  // EXTRAS UEFA (CHAMPIONS / EUROPA LEAGUE)
+  {
+    id: 'ajax', name: 'AFC Ajax', shortName: 'AJA', wikiTitle: 'AFC_Ajax',
+    country: 'GER', leagueId: 'UEFA_POOL', reputationStars: 3, squadAvgOvr: 78,
+    youthAcademyName: 'De Toekomst U19', youthQuality: 93,
+    primaryColor: '#FFFFFF', secondaryColor: '#D2122E', pattern: 'stripes',
+    keyPlayers: [{ name: 'Brian Brobbey', pos: 'ATA', ovr: 78 }, { name: 'Jorrel Hato', pos: 'ZAG', ovr: 78 }],
+  },
+  {
+    id: 'galatasaray', name: 'Galatasaray', shortName: 'GAL', wikiTitle: 'Galatasaray_S.K._(football)',
+    country: 'ITA', leagueId: 'UEFA_POOL', reputationStars: 2, squadAvgOvr: 80,
+    youthAcademyName: 'Florya Metin Oktay', youthQuality: 78,
+    primaryColor: '#FDB912', secondaryColor: '#A90432', pattern: 'halves',
+    keyPlayers: [{ name: 'Victor Osimhen', pos: 'ATA', ovr: 87 }, { name: 'Mauro Icardi', pos: 'ATA', ovr: 83 }],
+  },
+];

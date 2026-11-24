@@ -1,40 +1,31 @@
 # Roadmap de Desenvolvimento — Three Stars Soccer
 
-## Fase 0 — Concepção & Documentação (Concluída)
+> **Estratégia adotada:** Construir **primeiro toda a Interface e o Modelo de Negócio (Base, Carreira, Contratos, Treinos e Ligas)** com arquitetura ultra-modular em pastas pequenas, validando o loop completo de progressão antes de plugar a Gameplay 3D de campo.
+
+## Fase 0 — Concepção & Arquitetura (Concluída)
 - [x] Inicializar repositório Git e estrutura `docs/`
-- [x] Entrevista de Game Design (Gameplay, Carreira, Contratos, Treinos e Ligas)
-- [x] Definir stack oficial (`Three.js` + `Rapier3D` + `React` + `TypeScript` + `Tauri`)
+- [x] Entrevista de Game Design (Carreira, Base, Contratos, Treinos, Ligas e Gameplay)
+- [x] Definir arquitetura modular estrita ([architecture.md](./architecture.md)) sem arquivos gigantes
 
-## Fase 1 — Protótipo Visual & Câmera 3ª Pessoa ("Prova de Fogo Gráfica")
-- [ ] Estádio 3D leve com gramado listrado, iluminação, traves com rede e arquibancada
-- [ ] Modelo humano 3D suave (não-poligonal/quadrado) com animações de parado, corrida, sprint, passe e chute
-- [ ] Câmera livre em 3ª pessoa (Controle Gamepad + Mouse/Teclado)
-- [ ] Física da bola (chute na direção da mira, curva, quique no gramado, gol)
-- [ ] **Validação:** Testar visual e FPS no PC antes de construir o resto do jogo!
+## Fase 1 — Interface & Modelo de Negócio: Criação -> Peneira -> Base -> Profissional (Em andamento)
+- [ ] Estrutura base do projeto (`Vite` + `React` + `TypeScript` + `Tailwind` + `Zustand`) com pastas isoladas por domínio
+- [ ] Criação do Atleta (16–18 anos, nacionalidade, posição de linha, físico, aparência/camisa e atributos iniciais `0–99`)
+- [ ] Sistema da **Peneira (0 a 3 Estrelas)** gerando propostas reais de **Categorias de Base** do país escolhido (dilema clube gigante vs. clube menor)
+- [ ] **Modelo de Negócio da Base (Sub-20):** bolsa-auxílio, minutos vindo do banco -> titularidade, confiança da comissão técnica e **transição ao Profissional** (promoção direta, empréstimo para ganhar rodagem ou busca via empresário)
+- [ ] **Rotina Semanal & Treino Inteligente:** avanço de calendário com **50% de XP automático** (zero cliques chatos) + opção de fazer o **Treino do Dia (100% XP)**
+- [ ] **Economia Funcional & Contratos:** compra de equipamentos de treino (cama elástica, academia, fisioterapia...), contratação de Empresário (1–3 estrelas), metas e janelas de transferência
+- [ ] **Ligas e Clubes Reais (Base Inicial Escalável):** clubes reais com escudos, 1ª e 2ª divisões, MLS e copas continentais rodando tabelas e Dia de Jogo simulado (com nota de 0 a 3 Estrelas)
 
-## Fase 2 — Partida 11x11 Jogável
-- [ ] Posicionamento tático e IA dos outros 21 jogadores (companheiros + adversários + goleiros)
-- [ ] Pedidos de passe (no pé / enfiada) e marcação
-- [ ] Regras completas: 2 tempos de 2:30 min, intervalo, faltas/laterais/escanteios/impedimento simplificado
-- [ ] Sistema de fôlego, entrada vindo do banco de reservas e substituições
-- [ ] Cálculo em tempo real da nota de **0 a 3 Estrelas** na partida
+## Fase 2 — Expansão Completa do Banco de Dados de Elencos Reais
+- [ ] Scripts/pacotes modulares com elencos completos reais de todos os clubes das ligas mapeadas
+- [ ] Histórico detalhado de temporadas, artilharia, premiações e convocações de Seleção
 
-## Fase 3 — Criação do Atleta, Peneira & Base
-- [ ] Tela de criação (16–18 anos, nacionalidade, posição de linha, aparência básica, acessórios e camisa)
-- [ ] Evento jogável da **Peneira (Teste Inicial)** valendo de 0 a 3 Estrelas
-- [ ] Geração de propostas de **Categorias de Base** coerentes com o país e a nota da Peneira
-- [ ] Temporada curta na Base rumo ao primeiro contrato profissional ou empréstimo
+## Fase 3 — Protótipo 3D de Campo (Estádio + Câmera 3ª Pessoa Livre)
+- [ ] Estádio 3D leve (`Three.js`), gramado listrado, iluminação/sombras e arquibancada
+- [ ] Atleta `.glb` suave em 3ª pessoa (Controle Gamepad + Mouse/Teclado) + física da bola (`Rapier3D`)
+- [ ] Plugar desafios jogáveis 3D na **Peneira** e nos **Treinos de 100%**
 
-## Fase 4 — Loop de Carreira, Treinos & Economia (0–99)
-- [ ] Sistema completo de atributos de **0 a 99** + cálculo de Overall por posição
-- [ ] Calendário semanal com **Treino 50% automático** (sem cliques) e **100% jogável** (minigames rápidos em campo)
-- [ ] Contratos (status Reserva/Titular/Estrela, salário, bônus de metas) e **Empresário**
-- [ ] Loja de estrutura/equipamentos de treino com o dinheiro dos salários
-
-## Fase 5 — Banco de Dados Real & Mundo Completo
-- [ ] Pipeline de dados reais + escudos oficiais:
-  - Brasileirão (A e B) + Argentina (1ª e 2ª) + Libertadores + Sul-Americana
-  - MLS
-  - Inglaterra, Espanha, Itália, Alemanha, França e Portugal (1ª e 2ª divisões) + Champions League + Europa League
-- [ ] Simulação das ligas, tabelas, artilharia, acesso/rebaixamento e janelas de transferência entre temporadas
-- [ ] Polimento de áudio (torcida reagindo no estádio, apito, batida na bola) e geração do `.exe`
+## Fase 4 — Partida 11x11 Completa em 3D & Empacotamento `.exe`
+- [ ] IA dos 21 jogadores em campo, 2 tempos de 2:30 min, substituições em tempo real e nota de 0 a 3 Estrelas ao vivo
+- [ ] Plugar a partida 3D diretamente no `MatchOutcome` do Hub de Carreira
+- [ ] Áudio de estádio e build final `.exe` via `Tauri`
