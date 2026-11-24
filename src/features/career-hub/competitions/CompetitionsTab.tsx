@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getClubById, getNationalTeamByCountry } from '../../../data/clubs';
 import { ContinentalCupId, LeagueId, LEAGUES } from '../../../data/leagues/leagues';
 import {
@@ -13,6 +13,7 @@ import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { ConsoleStepper } from '../../../shared/ui/ConsoleStepper';
 import { CountryFlag } from '../../../shared/ui/CountryFlag';
 import { useCareerStore } from '../../../state/useCareerStore';
+import { useNavigationStore } from '../../../state/useNavigationStore';
 import { ClubSquadInspector } from './ClubSquadInspector';
 import { CompetitionStatsView } from './CompetitionStatsView';
 import { ContinentalBracketView } from './ContinentalBracketView';
@@ -71,6 +72,51 @@ export const CompetitionsTab: React.FC = () => {
   );
 
   const qualifiers = worldSeason.international?.qualifiers ?? [];
+  const { requestedCompId, clearRequestedComp } = useNavigationStore();
+
+  useEffect(() => {
+    if (!requestedCompId) return;
+    setTopSubTab('STANDINGS');
+
+    if (requestedCompId === 'LIBERTADORES' || requestedCompId === 'SUL_AMERICANA') {
+      setMode('CONMEBOL_CUPS');
+      setCupId(requestedCompId);
+      if (contract) setSelectedClubId(contract.clubId);
+    } else if (requestedCompId === 'CHAMPIONS_LEAGUE' || requestedCompId === 'EUROPA_LEAGUE') {
+      setMode('UEFA_CUPS');
+      setCupId(requestedCompId);
+      if (contract) setSelectedClubId(contract.clubId);
+    } else if (requestedCompId === 'WC_QUALIFIERS' || requestedCompId.startsWith('WCQ_')) {
+      setMode('SELECOES_ELIM');
+      const myGrp =
+        qualifiers.find((q) => q.standings.some((r) => r.clubId === userNatTeam.id)) ??
+        qualifiers.find((q) => `WCQ_${q.confederation}` === requestedCompId);
+      if (myGrp) setWcqGroupId(myGrp.id);
+      setSelectedClubId(userNatTeam.id);
+    } else if (
+      requestedCompId === 'WORLD_CUP' ||
+      requestedCompId === 'NATIONS_LEAGUE' ||
+      requestedCompId === 'COPA_AMERICA' ||
+      requestedCompId === 'EURO_CUP'
+    ) {
+      setMode('SELECOES_COPAS');
+      setIntlCupId(requestedCompId);
+      setSelectedClubId(userNatTeam.id);
+    } else if (requestedCompId in LEAGUES) {
+      const lg = requestedCompId as LeagueId;
+      const targetMode: CompMode =
+        lg === 'USA_1'
+          ? 'MLS'
+          : ['BRA_1', 'BRA_2', 'ARG_1', 'ARG_2'].includes(lg)
+            ? 'SUL_LIGAS'
+            : 'EURO_LIGAS';
+      setMode(targetMode);
+      setLeagueId(lg);
+      if (contract) setSelectedClubId(contract.clubId);
+    }
+
+    clearRequestedComp();
+  }, [requestedCompId, clearRequestedComp, contract, qualifiers, userNatTeam.id]);
   const activeQualGroup =
     qualifiers.find((q) => q.id === wcqGroupId) ?? qualifiers[0];
 
