@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "Más Monumental",
+    "lat": -34.5453,
+    "lng": -58.4498
   },
   {
     "id": "boca_juniors_5",
@@ -73,7 +77,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "La Bombonera",
+    "lat": -34.6356,
+    "lng": -58.3648
   },
   {
     "id": "estudiantes_de_la_plata_8",
@@ -111,7 +119,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "La Plata",
+    "stadiumName": "UNO Jorge Luis Hirschi",
+    "lat": -34.9119,
+    "lng": -57.939
   },
   {
     "id": "racing_club_15",
@@ -149,7 +161,11 @@
         "pos": "LD",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "El Cilindro",
+    "lat": -34.6675,
+    "lng": -58.3686
   },
   {
     "id": "rosario_central_17",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Rosário",
+    "stadiumName": "Gigante de Arroyito",
+    "lat": -32.914,
+    "lng": -60.6746
   },
   {
     "id": "talleres_cordoba_19",
@@ -225,7 +245,11 @@
         "pos": "VOL",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Córdoba",
+    "stadiumName": "Mario Alberto Kempes",
+    "lat": -31.369,
+    "lng": -64.2462
   },
   {
     "id": "velez_sarsfield_21",
@@ -263,7 +287,11 @@
         "pos": "ATA",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "José Amalfitani",
+    "lat": -34.6354,
+    "lng": -58.5207
   },
   {
     "id": "argentinos_juniors_3",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "Diego Armando Maradona",
+    "lat": -34.6061,
+    "lng": -58.4726
   },
   {
     "id": "belgrano_cordoba_4",
@@ -339,7 +371,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Córdoba",
+    "stadiumName": "Julio César Villagra",
+    "lat": -31.4035,
+    "lng": -64.2062
   },
   {
     "id": "central_cordoba_santiago_del_estero_11989",
@@ -377,7 +413,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Central Córdoba (Santiago del Estero)",
+    "stadiumName": "Estádio Central Córdoba (Santiago del Estero)",
+    "lat": -35.26,
+    "lng": -58.38
   },
   {
     "id": "independiente_11",
@@ -415,7 +455,11 @@
         "pos": "LD",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "Libertadores de América",
+    "lat": -34.6703,
+    "lng": -58.371
   },
   {
     "id": "lanus_12",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Lanús",
+    "stadiumName": "La Fortaleza",
+    "lat": -34.7176,
+    "lng": -58.3838
   },
   {
     "id": "huracan_10",
@@ -491,7 +539,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "Tomás Adolfo Ducó",
+    "lat": -34.6435,
+    "lng": -58.3965
   },
   {
     "id": "newell_s_old_boys_14",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Rosário",
+    "stadiumName": "Marcelo Bielsa",
+    "lat": -32.9559,
+    "lng": -60.6615
   },
   {
     "id": "atletico_tucuman_9785",
@@ -567,7 +623,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Atlético Tucumán",
+    "stadiumName": "Estádio Atlético Tucumán",
+    "lat": -33.94,
+    "lng": -57.06
   },
   {
     "id": "defensa_y_justicia_8950",
@@ -605,7 +665,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Defensa y Justicia",
+    "stadiumName": "Estádio Defensa y Justicia",
+    "lat": -36.58,
+    "lng": -60.58
   },
   {
     "id": "estudiantes_de_rio_cuarto_19685",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "La Plata",
+    "stadiumName": "UNO Jorge Luis Hirschi",
+    "lat": -34.9119,
+    "lng": -57.939
   },
   {
     "id": "gimnasia_mendoza_11972",
@@ -681,7 +749,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "La Plata",
+    "stadiumName": "Juan Carmelo Zerillo",
+    "lat": -34.911,
+    "lng": -57.9324
   },
   {
     "id": "san_lorenzo_18",
@@ -719,7 +791,11 @@
         "pos": "ZAG",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "Nuevo Gasómetro",
+    "lat": -34.6521,
+    "lng": -58.4401
   },
   {
     "id": "banfield_235",
@@ -757,7 +833,11 @@
         "pos": "MC",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Banfield",
+    "stadiumName": "Florencio Sola",
+    "lat": -34.7509,
+    "lng": -58.3875
   },
   {
     "id": "barracas_central_10060",
@@ -795,7 +875,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Barracas Central",
+    "stadiumName": "Estádio Barracas Central",
+    "lat": -32.84,
+    "lng": -57.5
   },
   {
     "id": "gimnasia_la_plata_9",
@@ -833,7 +917,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "La Plata",
+    "stadiumName": "Juan Carmelo Zerillo",
+    "lat": -34.911,
+    "lng": -57.9324
   },
   {
     "id": "independiente_rivadavia_9744",
@@ -871,7 +959,11 @@
         "pos": "LD",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "Libertadores de América",
+    "lat": -34.6703,
+    "lng": -58.371
   },
   {
     "id": "instituto_cordoba_2975",
@@ -909,7 +1001,11 @@
         "pos": "VOL",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Córdoba",
+    "stadiumName": "Monumental Alta Córdoba",
+    "lat": -31.3853,
+    "lng": -64.183
   },
   {
     "id": "platense_7764",
@@ -947,7 +1043,11 @@
         "pos": "ME",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Platense",
+    "stadiumName": "Estádio Platense",
+    "lat": -33.28,
+    "lng": -56.18
   },
   {
     "id": "tigre_7767",
@@ -985,7 +1085,11 @@
         "pos": "VOL",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Tigre",
+    "stadiumName": "Estádio Tigre",
+    "lat": -34.426,
+    "lng": -58.5796
   },
   {
     "id": "aldosivi_9739",
@@ -1023,7 +1127,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Aldosivi",
+    "stadiumName": "Estádio Aldosivi",
+    "lat": -32.62,
+    "lng": -56.18
   },
   {
     "id": "deportivo_riestra_17702",
@@ -1061,7 +1169,11 @@
         "pos": "ATA",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Riestra y San Cristóbal",
+    "stadiumName": "Estádio Deportivo Riestra",
+    "lat": 43.4493,
+    "lng": -6.6818
   },
   {
     "id": "sarmiento_junin_10158",
@@ -1099,7 +1211,11 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Sarmiento (Junín)",
+    "stadiumName": "Estádio Sarmiento (Junín)",
+    "lat": -32.84,
+    "lng": -58.82
   },
   {
     "id": "union_santa_fe_20",
@@ -1137,6 +1253,10 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Santa Fe",
+    "stadiumName": "15 de Abril",
+    "lat": -31.6319,
+    "lng": -60.7159
   }
 ]

@@ -35,7 +35,11 @@
         "pos": "ZAG",
         "ovr": 87
       }
-    ]
+    ],
+    "city": "Munique",
+    "stadiumName": "Allianz Arena",
+    "lat": 48.2188,
+    "lng": 11.6247
   },
   {
     "id": "borussia_dortmund_124",
@@ -73,7 +77,11 @@
         "pos": "VOL",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Dortmund",
+    "stadiumName": "Signal Iduna Park",
+    "lat": 51.4926,
+    "lng": 7.4519
   },
   {
     "id": "bayer_leverkusen_131",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 83
       }
-    ]
+    ],
+    "city": "Leverkusen",
+    "stadiumName": "BayArena",
+    "lat": 51.0383,
+    "lng": 7.0022
   },
   {
     "id": "eintracht_frankfurt_125",
@@ -149,7 +161,11 @@
         "pos": "ZAG",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Eintracht Frankfurt",
+    "stadiumName": "Estádio Eintracht Frankfurt",
+    "lat": 52.26,
+    "lng": 10.67
   },
   {
     "id": "rb_leipzig_11420",
@@ -187,7 +203,11 @@
         "pos": "LD",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "RB Leipzig",
+    "stadiumName": "Estádio RB Leipzig",
+    "lat": 53.36,
+    "lng": 10.67
   },
   {
     "id": "vfb_stuttgart_134",
@@ -225,7 +245,11 @@
         "pos": "ATA",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Estugarda",
+    "stadiumName": "Estádio VfB Stuttgart",
+    "lat": 48.7823,
+    "lng": 9.177
   },
   {
     "id": "fc_cologne_122",
@@ -263,7 +287,11 @@
         "pos": "MC",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Cologne",
+    "stadiumName": "Estádio FC Cologne",
+    "lat": 45.5786,
+    "lng": 9.9418
   },
   {
     "id": "borussia_monchengladbach_268",
@@ -301,7 +329,11 @@
         "pos": "ME",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Mönchengladbach",
+    "stadiumName": "Estádio Borussia Mönchengladbach",
+    "lat": 51.1854,
+    "lng": 6.4417
   },
   {
     "id": "mainz_2950",
@@ -339,7 +371,11 @@
         "pos": "MEI",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Mogúncia",
+    "stadiumName": "Estádio Mainz",
+    "lat": 49.9819,
+    "lng": 8.2801
   },
   {
     "id": "sc_freiburg_126",
@@ -377,7 +413,11 @@
         "pos": "LE",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Freiburg im Breisgau",
+    "stadiumName": "Estádio SC Freiburg",
+    "lat": 47.9959,
+    "lng": 7.8522
   },
   {
     "id": "werder_bremen_137",
@@ -415,7 +455,11 @@
         "pos": "LD",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Werder Bremen",
+    "stadiumName": "Estádio Werder Bremen",
+    "lat": 51.16,
+    "lng": 8.47
   },
   {
     "id": "1_fc_union_berlin_598",
@@ -453,7 +497,11 @@
         "pos": "LE",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Santa Fe",
+    "stadiumName": "15 de Abril",
+    "lat": -31.6319,
+    "lng": -60.7159
   },
   {
     "id": "fc_augsburg_3841",
@@ -491,7 +539,11 @@
         "pos": "VOL",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Augsburgo",
+    "stadiumName": "Estádio FC Augsburg",
+    "lat": 48.3715,
+    "lng": 10.8985
   },
   {
     "id": "tsg_hoffenheim_7911",
@@ -529,7 +581,11 @@
         "pos": "MC",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Hoffenheim",
+    "stadiumName": "Estádio TSG Hoffenheim",
+    "lat": 49.272,
+    "lng": 8.841
   },
   {
     "id": "hamburg_sv_127",
@@ -567,7 +623,11 @@
         "pos": "PE",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Hamburgo",
+    "stadiumName": "Estádio Hamburg SV",
+    "lat": 53.5507,
+    "lng": 9.993
   },
   {
     "id": "schalke_04_133",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Gelsenkirchen",
+    "stadiumName": "Veltins-Arena",
+    "lat": 51.5546,
+    "lng": 7.0675
   },
   {
     "id": "sc_paderborn_07_3307",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Paderborn 07",
+    "stadiumName": "Estádio SC Paderborn 07",
+    "lat": 48.96,
+    "lng": 8.25
   },
   {
     "id": "sv_elversberg_10388",
@@ -681,6 +749,10 @@
         "pos": "VOL",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Elversberg",
+    "stadiumName": "Estádio SV Elversberg",
+    "lat": 49.3144,
+    "lng": 7.1284
   }
 ]

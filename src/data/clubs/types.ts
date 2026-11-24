@@ -24,6 +24,7 @@ export interface ClubData {
   id: string;
   name: string;
   shortName: string;
+  wikiTitle?: string;
   country: CountryCode;
   leagueId: LeagueId;
   reputationStars: StarRating;
@@ -33,7 +34,11 @@ export interface ClubData {
   primaryColor: string;
   secondaryColor: string;
   pattern: 'stripes' | 'hoops' | 'halves' | 'diagonal' | 'solid';
-  crestUrl: string;
-  squadSize: number;
+  crestUrl?: string;
+  squadSize?: number;
+  city?: string;
+  stadiumName?: string;
+  lat?: number;
+  lng?: number;
   keyPlayers: RealSquadStar[];
 }

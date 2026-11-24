@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Montevidéu",
+    "stadiumName": "Gran Parque Central",
+    "lat": -34.8844,
+    "lng": -56.1587
   },
   {
     "id": "penarol_2683",
@@ -73,7 +77,11 @@
         "pos": "ZAG",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Montevidéu",
+    "stadiumName": "Campeón del Siglo",
+    "lat": -34.7969,
+    "lng": -56.0673
   },
   {
     "id": "independiente_del_valle_17086",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "Libertadores de América",
+    "lat": -34.6703,
+    "lng": -58.371
   },
   {
     "id": "2_de_mayo_6097",
@@ -149,7 +161,11 @@
         "pos": "ATA",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Dos de Mayo",
+    "stadiumName": "Estádio 2 de Mayo",
+    "lat": -27.02,
+    "lng": -54.6846
   },
   {
     "id": "always_ready_19425",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Always Ready",
+    "stadiumName": "Estádio Always Ready",
+    "lat": -36.14,
+    "lng": -59.92
   },
   {
     "id": "atletico_junior_4815",
@@ -225,7 +245,11 @@
         "pos": "ATA",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Atlético Junior",
+    "stadiumName": "Estádio Atlético Junior",
+    "lat": -35.7,
+    "lng": -60.58
   },
   {
     "id": "barcelona_sc_2686",
@@ -263,7 +287,11 @@
         "pos": "ZAG",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Guayaquil",
+    "stadiumName": "Monumental Banco Pichincha",
+    "lat": -2.1859,
+    "lng": -79.9249
   },
   {
     "id": "cerro_porteno_2671",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Assunção",
+    "stadiumName": "La Nueva Olla",
+    "lat": -25.2999,
+    "lng": -57.6373
   },
   {
     "id": "cusco_fc_11995",
@@ -339,7 +371,11 @@
         "pos": "MC",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Cusco",
+    "stadiumName": "Estádio Cusco FC",
+    "lat": -13.5319,
+    "lng": -71.967
   },
   {
     "id": "bolivar_2681",
@@ -377,7 +413,11 @@
         "pos": "ZAG",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "La Paz",
+    "stadiumName": "Hernando Siles",
+    "lat": -16.4995,
+    "lng": -68.1228
   },
   {
     "id": "deportes_tolima_5489",
@@ -415,7 +455,11 @@
         "pos": "ATA",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Deportes Tolima",
+    "stadiumName": "Estádio Deportes Tolima",
+    "lat": -33.94,
+    "lng": -60.36
   },
   {
     "id": "coquimbo_unido_8186",
@@ -453,7 +497,11 @@
         "pos": "MC",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Coquimbo Unido",
+    "stadiumName": "Estádio Coquimbo Unido",
+    "lat": -35.7,
+    "lng": -59.26
   },
   {
     "id": "carabobo_6037",
@@ -491,7 +539,11 @@
         "pos": "MC",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Carabobo",
+    "stadiumName": "Estádio Carabobo",
+    "lat": 6.0983,
+    "lng": -69.3109
   },
   {
     "id": "guarani_7385",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Guaraní",
+    "stadiumName": "Estádio Guaraní",
+    "lat": -27.5232,
+    "lng": -55.1608
   },
   {
     "id": "independiente_medellin_2690",
@@ -567,7 +623,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "Libertadores de América",
+    "lat": -34.6703,
+    "lng": -58.371
   },
   {
     "id": "huachipato_4134",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Huachipato",
+    "stadiumName": "Estádio Huachipato",
+    "lat": -33.06,
+    "lng": -59.48
   },
   {
     "id": "independiente_santa_fe_5488",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "Libertadores de América",
+    "lat": -34.6703,
+    "lng": -58.371
   },
   {
     "id": "deportivo_la_guaira_17090",
@@ -681,7 +749,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "La Guaira",
+    "stadiumName": "Estádio Deportivo La Guaira",
+    "lat": 10.6016,
+    "lng": -66.9329
   },
   {
     "id": "deportivo_tachira_4818",
@@ -719,7 +791,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Táchira",
+    "stadiumName": "Estádio Deportivo Táchira",
+    "lat": 8.1057,
+    "lng": -72.7919
   },
   {
     "id": "juventud_8416",
@@ -757,7 +833,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Juventud",
+    "stadiumName": "Estádio Juventud",
+    "lat": 15.3,
+    "lng": -86.5833
   },
   {
     "id": "liga_de_quito_4816",
@@ -795,7 +875,11 @@
         "pos": "MC",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Liga de Quito",
+    "stadiumName": "Estádio Liga de Quito",
+    "lat": -33.94,
+    "lng": -59.04
   },
   {
     "id": "libertad_2670",
@@ -833,7 +917,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Assunção",
+    "stadiumName": "La Huerta",
+    "lat": -25.2768,
+    "lng": -57.6057
   },
   {
     "id": "nacional_potosi_10311",
@@ -871,7 +959,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Montevidéu",
+    "stadiumName": "Gran Parque Central",
+    "lat": -34.8844,
+    "lng": -56.1587
   },
   {
     "id": "o_higgins_6072",
@@ -909,7 +1001,11 @@
         "pos": "MC",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "O’Higgins",
+    "stadiumName": "Estádio O'Higgins",
+    "lat": -34.5855,
+    "lng": -60.6999
   },
   {
     "id": "liverpool_5492",
@@ -947,7 +1043,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Liverpool",
+    "stadiumName": "Anfield",
+    "lat": 53.4308,
+    "lng": -2.9608
   },
   {
     "id": "sporting_cristal_2673",
@@ -985,7 +1085,11 @@
         "pos": "ZAG",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Recife",
+    "stadiumName": "Ilha do Retiro",
+    "lat": -8.0629,
+    "lng": -34.9029
   },
   {
     "id": "ucv_fc_10094",
@@ -1023,7 +1127,11 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "UCV",
+    "stadiumName": "Estádio UCV FC",
+    "lat": -33.94,
+    "lng": -57.72
   },
   {
     "id": "universidad_catolica_885",
@@ -1061,6 +1169,10 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Santiago",
+    "stadiumName": "San Carlos de Apoquindo",
+    "lat": -33.3958,
+    "lng": -70.5008
   }
 ]

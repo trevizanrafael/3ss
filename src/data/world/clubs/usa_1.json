@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Miami",
+    "stadiumName": "Chase Stadium",
+    "lat": 26.1931,
+    "lng": -80.1611
   },
   {
     "id": "fc_cincinnati_18267",
@@ -73,7 +77,11 @@
         "pos": "VOL",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Cincinnati",
+    "stadiumName": "Estádio FC Cincinnati",
+    "lat": 39.1271,
+    "lng": -84.5144
   },
   {
     "id": "la_galaxy_187",
@@ -111,7 +119,11 @@
         "pos": "MD",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Los Angeles",
+    "stadiumName": "Dignity Health Sports Park",
+    "lat": 33.8644,
+    "lng": -118.2611
   },
   {
     "id": "seattle_sounders_fc_9726",
@@ -149,7 +161,11 @@
         "pos": "VOL",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Seattle",
+    "stadiumName": "Lumen Field",
+    "lat": 47.5952,
+    "lng": -122.3316
   },
   {
     "id": "vancouver_whitecaps_9727",
@@ -187,7 +203,11 @@
         "pos": "VOL",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Vancouver Whitecaps",
+    "stadiumName": "Estádio Vancouver Whitecaps",
+    "lat": 39.38,
+    "lng": -100.55
   },
   {
     "id": "atlanta_united_fc_18418",
@@ -225,7 +245,11 @@
         "pos": "VOL",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Atlanta",
+    "stadiumName": "Mercedes-Benz Stadium",
+    "lat": 33.7553,
+    "lng": -84.4006
   },
   {
     "id": "charlotte_fc_21300",
@@ -263,7 +287,11 @@
         "pos": "VOL",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Charlotte",
+    "stadiumName": "Estádio Charlotte FC",
+    "lat": 35.2271,
+    "lng": -80.8431
   },
   {
     "id": "chicago_fire_fc_182",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Chicago Fire",
+    "stadiumName": "Estádio Chicago Fire FC",
+    "lat": 41.36,
+    "lng": -100.33
   },
   {
     "id": "d_c_united_193",
@@ -339,7 +371,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "D.C",
+    "stadiumName": "Estádio D.C. United",
+    "lat": 39.6,
+    "lng": -97.25
   },
   {
     "id": "minnesota_united_fc_17362",
@@ -377,7 +413,11 @@
         "pos": "MD",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Minnesota",
+    "stadiumName": "Estádio Minnesota United FC",
+    "lat": 31.3118,
+    "lng": -83.9102
   },
   {
     "id": "new_england_revolution_189",
@@ -415,7 +455,11 @@
         "pos": "ATA",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "New England Revolution",
+    "stadiumName": "Estádio New England Revolution",
+    "lat": 40.48,
+    "lng": -97.25
   },
   {
     "id": "portland_timbers_9723",
@@ -453,7 +497,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Portland Timbers",
+    "stadiumName": "Estádio Portland Timbers",
+    "lat": 40.48,
+    "lng": -97.25
   },
   {
     "id": "san_diego_fc_22529",
@@ -491,7 +539,11 @@
         "pos": "ZAG",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "San Diego",
+    "stadiumName": "Estádio San Diego FC",
+    "lat": 32.7157,
+    "lng": -117.1647
   },
   {
     "id": "austin_fc_20906",
@@ -529,7 +581,11 @@
         "pos": "PD",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Austin",
+    "stadiumName": "Estádio Austin FC",
+    "lat": 30.2672,
+    "lng": -97.7431
   },
   {
     "id": "colorado_rapids_184",
@@ -567,7 +623,11 @@
         "pos": "LD",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Colorado Rapids",
+    "stadiumName": "Estádio Colorado Rapids",
+    "lat": 40.7,
+    "lng": -98.35
   },
   {
     "id": "columbus_crew_183",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Columbus",
+    "stadiumName": "Lower.com Field",
+    "lat": 39.9685,
+    "lng": -83.0171
   },
   {
     "id": "lafc_18966",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Los Angeles",
+    "stadiumName": "BMO Stadium",
+    "lat": 34.0128,
+    "lng": -118.2845
   },
   {
     "id": "nashville_sc_18986",
@@ -681,7 +749,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Nashville",
+    "stadiumName": "Estádio Nashville SC",
+    "lat": 36.1659,
+    "lng": -86.7844
   },
   {
     "id": "new_york_city_fc_17606",
@@ -719,7 +791,11 @@
         "pos": "MD",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Nova York",
+    "stadiumName": "Yankee Stadium",
+    "lat": 40.8296,
+    "lng": -73.9262
   },
   {
     "id": "orlando_city_sc_12011",
@@ -757,7 +833,11 @@
         "pos": "MD",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Orlando",
+    "stadiumName": "Estádio Orlando City SC",
+    "lat": 28.5383,
+    "lng": -81.3792
   },
   {
     "id": "philadelphia_union_10739",
@@ -795,7 +875,11 @@
         "pos": "ATA",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Santa Fe",
+    "stadiumName": "15 de Abril",
+    "lat": -31.6319,
+    "lng": -60.7159
   },
   {
     "id": "real_salt_lake_4771",
@@ -833,7 +917,11 @@
         "pos": "LD",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Salt Lake City",
+    "stadiumName": "Estádio Real Salt Lake",
+    "lat": 40.7608,
+    "lng": -111.8911
   },
   {
     "id": "san_jose_earthquakes_191",
@@ -871,7 +959,11 @@
         "pos": "LE",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "San Jose Earthquakes",
+    "stadiumName": "Estádio San Jose Earthquakes",
+    "lat": 38.5,
+    "lng": -100.11
   },
   {
     "id": "sporting_kansas_city_186",
@@ -909,7 +1001,11 @@
         "pos": "VOL",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Recife",
+    "stadiumName": "Ilha do Retiro",
+    "lat": -8.0629,
+    "lng": -34.9029
   },
   {
     "id": "houston_dynamo_fc_6077",
@@ -947,7 +1043,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Houston Dynamo",
+    "stadiumName": "Estádio Houston Dynamo FC",
+    "lat": 39.6,
+    "lng": -98.57
   },
   {
     "id": "st_louis_city_sc_21812",
@@ -985,7 +1085,11 @@
         "pos": "ME",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Saint Louis",
+    "stadiumName": "Estádio St. Louis CITY SC",
+    "lat": 38.6273,
+    "lng": -90.1979
   },
   {
     "id": "toronto_fc_7318",
@@ -1023,7 +1127,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Toronto",
+    "stadiumName": "Estádio Toronto FC",
+    "lat": 40.4642,
+    "lng": -80.6009
   },
   {
     "id": "fc_dallas_185",
@@ -1061,7 +1169,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Dallas",
+    "stadiumName": "Estádio FC Dallas",
+    "lat": 32.7831,
+    "lng": -96.8067
   },
   {
     "id": "cf_montreal_9720",
@@ -1099,7 +1211,11 @@
         "pos": "MC",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Montreal",
+    "stadiumName": "Estádio CF Montréal",
+    "lat": 46.428,
+    "lng": -90.246
   },
   {
     "id": "red_bull_new_york_190",
@@ -1137,6 +1253,10 @@
         "pos": "ZAG",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Red Bull New York",
+    "stadiumName": "Estádio Red Bull New York",
+    "lat": 38.72,
+    "lng": -100.77
   }
 ]

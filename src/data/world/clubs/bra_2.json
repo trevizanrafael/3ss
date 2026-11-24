@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Fortaleza",
+    "stadiumName": "Arena Castelão",
+    "lat": -3.8073,
+    "lng": -38.5225
   },
   {
     "id": "cuiaba_17313",
@@ -73,7 +77,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Cuiabá",
+    "stadiumName": "Arena Pantanal",
+    "lat": -15.604,
+    "lng": -56.1216
   },
   {
     "id": "juventude_6270",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Caxias do Sul",
+    "stadiumName": "Alfredo Jaconi",
+    "lat": -29.1628,
+    "lng": -51.1772
   },
   {
     "id": "ceara_9969",
@@ -149,7 +161,11 @@
         "pos": "MC",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Fortaleza",
+    "stadiumName": "Arena Castelão",
+    "lat": -3.8073,
+    "lng": -38.5225
   },
   {
     "id": "sport_7635",
@@ -187,7 +203,11 @@
         "pos": "MC",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Recife",
+    "stadiumName": "Ilha do Retiro",
+    "lat": -8.0629,
+    "lng": -34.9029
   },
   {
     "id": "criciuma_9971",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Criciúma",
+    "stadiumName": "Heriberto Hülse",
+    "lat": -28.6841,
+    "lng": -49.3676
   },
   {
     "id": "america_mineiro_6154",
@@ -263,7 +287,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Belo Horizonte",
+    "stadiumName": "Independência",
+    "lat": -19.8902,
+    "lng": -43.9179
   },
   {
     "id": "avai_9966",
@@ -301,7 +329,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Florianópolis",
+    "stadiumName": "Ressacada",
+    "lat": -27.6665,
+    "lng": -48.5317
   },
   {
     "id": "goias_3395",
@@ -339,7 +371,11 @@
         "pos": "ZAG",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Goiânia",
+    "stadiumName": "Serrinha",
+    "lat": -16.7115,
+    "lng": -49.2611
   },
   {
     "id": "athletic_20851",
@@ -377,7 +413,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Athletic Dome",
+    "stadiumName": "Estádio Athletic",
+    "lat": 34.1203,
+    "lng": -109.2848
   },
   {
     "id": "atletico_goianiense_10357",
@@ -415,7 +455,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Goiânia",
+    "stadiumName": "Antônio Accioly",
+    "lat": -16.6713,
+    "lng": -49.2845
   },
   {
     "id": "botafogo_sp_10281",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Rio de Janeiro",
+    "stadiumName": "Estádio Nilton Santos",
+    "lat": -22.8933,
+    "lng": -43.2923
   },
   {
     "id": "novorizontino_18127",
@@ -491,7 +539,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Novo Horizonte",
+    "stadiumName": "Jorge Ismael de Biasi",
+    "lat": -21.468,
+    "lng": -49.233
   },
   {
     "id": "ponte_preta_3459",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Ponte Preta",
+    "stadiumName": "Estádio Ponte Preta",
+    "lat": -27.6539,
+    "lng": -52.4881
   },
   {
     "id": "crb_9970",
@@ -567,7 +623,11 @@
         "pos": "MC",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Maceió",
+    "stadiumName": "Rei Pelé",
+    "lat": -9.6708,
+    "lng": -35.7595
   },
   {
     "id": "operario_pr_18187",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Ponta Grossa",
+    "stadiumName": "Germano Krüger",
+    "lat": -25.1118,
+    "lng": -50.1558
   },
   {
     "id": "sao_bernardo_11268",
@@ -643,7 +707,11 @@
         "pos": "ATA",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "São Bernardo do Campo",
+    "stadiumName": "Estádio São Bernardo",
+    "lat": -23.6939,
+    "lng": -46.565
   },
   {
     "id": "vila_nova_9973",
@@ -681,7 +749,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Goiânia",
+    "stadiumName": "OBA",
+    "lat": -16.6634,
+    "lng": -49.2392
   },
   {
     "id": "londrina_17333",
@@ -719,7 +791,11 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Londrina",
+    "stadiumName": "Estádio Londrina",
+    "lat": -23.3103,
+    "lng": -51.1628
   },
   {
     "id": "nautico_7633",
@@ -757,6 +833,10 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Náutico",
+    "stadiumName": "Estádio Náutico",
+    "lat": 23.0949,
+    "lng": -82.4594
   }
 ]

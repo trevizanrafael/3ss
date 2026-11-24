@@ -35,7 +35,11 @@
         "pos": "VOL",
         "ovr": 86
       }
-    ]
+    ],
+    "city": "Milão",
+    "stadiumName": "San Siro (Giuseppe Meazza)",
+    "lat": 45.4781,
+    "lng": 9.124
   },
   {
     "id": "napoli_114",
@@ -73,7 +77,11 @@
         "pos": "LD",
         "ovr": 83
       }
-    ]
+    ],
+    "city": "Nápoles",
+    "stadiumName": "Diego Armando Maradona",
+    "lat": 40.828,
+    "lng": 14.1931
   },
   {
     "id": "ac_milan_103",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 83
       }
-    ]
+    ],
+    "city": "Milão",
+    "stadiumName": "San Siro",
+    "lat": 45.4781,
+    "lng": 9.124
   },
   {
     "id": "juventus_111",
@@ -149,7 +161,11 @@
         "pos": "ATA",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Turim",
+    "stadiumName": "Allianz Stadium",
+    "lat": 45.1096,
+    "lng": 7.6413
   },
   {
     "id": "as_roma_104",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Roma",
+    "stadiumName": "Stadio Olimpico",
+    "lat": 41.9341,
+    "lng": 12.4547
   },
   {
     "id": "atalanta_105",
@@ -225,7 +245,11 @@
         "pos": "MC",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "Bérgamo",
+    "stadiumName": "Gewiss Stadium",
+    "lat": 45.7092,
+    "lng": 9.6808
   },
   {
     "id": "lazio_112",
@@ -263,7 +287,11 @@
         "pos": "ATA",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Roma",
+    "stadiumName": "Stadio Olimpico",
+    "lat": 41.9341,
+    "lng": 12.4547
   },
   {
     "id": "fiorentina_109",
@@ -301,7 +329,11 @@
         "pos": "ATA",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Florença",
+    "stadiumName": "Artemio Franchi",
+    "lat": 43.7808,
+    "lng": 11.2823
   },
   {
     "id": "bologna_107",
@@ -339,7 +371,11 @@
         "pos": "ATA",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Bolonha",
+    "stadiumName": "Estádio Bologna",
+    "lat": 44.4938,
+    "lng": 11.3387
   },
   {
     "id": "como_2572",
@@ -377,7 +413,11 @@
         "pos": "MEI",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Como",
+    "stadiumName": "Estádio Como",
+    "lat": 45.8082,
+    "lng": 9.0832
   },
   {
     "id": "torino_239",
@@ -415,7 +455,11 @@
         "pos": "ATA",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Turim",
+    "stadiumName": "Olimpico Grande Torino",
+    "lat": 45.0418,
+    "lng": 7.6501
   },
   {
     "id": "cagliari_2925",
@@ -453,7 +497,11 @@
         "pos": "MEI",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Cagliari",
+    "stadiumName": "Estádio Cagliari",
+    "lat": 39.2305,
+    "lng": 9.1192
   },
   {
     "id": "sassuolo_3997",
@@ -491,7 +539,11 @@
         "pos": "MC",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Sassuolo",
+    "stadiumName": "Estádio Sassuolo",
+    "lat": 44.5432,
+    "lng": 10.7848
   },
   {
     "id": "genoa_3263",
@@ -529,7 +581,11 @@
         "pos": "ATA",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Gênova",
+    "stadiumName": "Luigi Ferraris",
+    "lat": 44.4165,
+    "lng": 8.9525
   },
   {
     "id": "lecce_113",
@@ -567,7 +623,11 @@
         "pos": "VOL",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Lecce",
+    "stadiumName": "Estádio Lecce",
+    "lat": 40.3548,
+    "lng": 18.1724
   },
   {
     "id": "parma_115",
@@ -605,7 +665,11 @@
         "pos": "ATA",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Parma",
+    "stadiumName": "Estádio Parma",
+    "lat": 44.7993,
+    "lng": 10.3262
   },
   {
     "id": "udinese_118",
@@ -643,7 +707,11 @@
         "pos": "VOL",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Udinese",
+    "stadiumName": "Estádio Udinese",
+    "lat": 43.99,
+    "lng": 12.57
   },
   {
     "id": "monza_4007",
@@ -681,7 +749,11 @@
         "pos": "LD",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Monza",
+    "stadiumName": "Estádio Monza",
+    "lat": 45.58,
+    "lng": 9.2725
   },
   {
     "id": "venezia_17530",
@@ -719,7 +791,11 @@
         "pos": "ATA",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Venezia",
+    "stadiumName": "Estádio Venezia",
+    "lat": 44.4233,
+    "lng": 11.1737
   },
   {
     "id": "frosinone_4057",
@@ -757,6 +833,10 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Frosinone",
+    "stadiumName": "Estádio Frosinone",
+    "lat": 41.6398,
+    "lng": 13.3411
   }
 ]

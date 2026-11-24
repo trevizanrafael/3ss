@@ -35,7 +35,11 @@
         "pos": "LE",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Wolfsburg",
+    "stadiumName": "Estádio VfL Wolfsburg",
+    "lat": 52.4236,
+    "lng": 10.776
   },
   {
     "id": "1_fc_heidenheim_1846_6418",
@@ -73,7 +77,11 @@
         "pos": "ME",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Heidenheim 1846",
+    "stadiumName": "Estádio 1. FC Heidenheim 1846",
+    "lat": 51.82,
+    "lng": 9.13
   },
   {
     "id": "st_pauli_270",
@@ -111,7 +119,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Hamburgo",
+    "stadiumName": "Millerntor-Stadion",
+    "lat": 53.5546,
+    "lng": 9.9678
   },
   {
     "id": "vfl_bochum_121",
@@ -149,7 +161,11 @@
         "pos": "LE",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Bochum",
+    "stadiumName": "Estádio VfL Bochum",
+    "lat": 51.4817,
+    "lng": 7.2165
   },
   {
     "id": "hertha_berlin_129",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Berlim",
+    "stadiumName": "Olympiastadion",
+    "lat": 52.5147,
+    "lng": 13.2395
   },
   {
     "id": "sv_darmstadt_98_3812",
@@ -225,7 +245,11 @@
         "pos": "VOL",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Darmstadt",
+    "stadiumName": "Estádio SV Darmstadt 98",
+    "lat": 49.8717,
+    "lng": 8.6503
   },
   {
     "id": "1_fc_magdeburg_10382",
@@ -263,7 +287,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Magdeburgo",
+    "stadiumName": "Estádio 1. FC Magdeburg",
+    "lat": 52.1313,
+    "lng": 11.6319
   },
   {
     "id": "hannover_96_2428",
@@ -301,7 +329,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Hanôver",
+    "stadiumName": "Estádio Hannover 96",
+    "lat": 52.3705,
+    "lng": 9.7332
   },
   {
     "id": "holstein_kiel_7884",
@@ -339,7 +371,11 @@
         "pos": "LE",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Holstein Kiel",
+    "stadiumName": "Estádio Holstein Kiel",
+    "lat": 53.36,
+    "lng": 10.67
   },
   {
     "id": "kaiserslautern_130",
@@ -377,7 +413,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Kaiserslautern",
+    "stadiumName": "Estádio Kaiserslautern",
+    "lat": 49.443,
+    "lng": 7.7716
   },
   {
     "id": "karlsruher_sc_4471",
@@ -415,7 +455,11 @@
         "pos": "LD",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Karlsruher",
+    "stadiumName": "Estádio Karlsruher SC",
+    "lat": 49.4,
+    "lng": 10.89
   },
   {
     "id": "1_fc_nurnberg_269",
@@ -453,7 +497,11 @@
         "pos": "VOL",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Nuremberga",
+    "stadiumName": "Estádio 1. FC Nürnberg",
+    "lat": 49.4542,
+    "lng": 11.0775
   },
   {
     "id": "spvgg_greuther_furth_3070",
@@ -491,7 +539,11 @@
         "pos": "MEI",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "SpVgg Greuther Fürth",
+    "stadiumName": "Estádio SpVgg Greuther Fürth",
+    "lat": 49.84,
+    "lng": 11.55
   },
   {
     "id": "tsv_eintracht_braunschweig_3067",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "TSV Eintracht Braunschweig",
+    "stadiumName": "Estádio TSV Eintracht Braunschweig",
+    "lat": 53.36,
+    "lng": 12.65
   },
   {
     "id": "arminia_bielefeld_2506",
@@ -567,7 +623,11 @@
         "pos": "VOL",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Arminia Bielefeld",
+    "stadiumName": "Estádio Arminia Bielefeld",
+    "lat": 53.14,
+    "lng": 12.65
   },
   {
     "id": "dynamo_dresden_7017",
@@ -605,7 +665,11 @@
         "pos": "PE",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Dynamo Dresden",
+    "stadiumName": "Estádio Dynamo Dresden",
+    "lat": 49.18,
+    "lng": 8.91
   },
   {
     "id": "energie_cottbus_123",
@@ -643,7 +707,11 @@
         "pos": "LE",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Energie Cottbus",
+    "stadiumName": "Estádio Energie Cottbus",
+    "lat": 53.36,
+    "lng": 10.67
   },
   {
     "id": "vfl_osnabruck_7013",
@@ -681,6 +749,10 @@
         "pos": "MD",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Osnabrück",
+    "stadiumName": "Estádio VfL Osnabruck",
+    "lat": 52.2741,
+    "lng": 8.0506
   }
 ]

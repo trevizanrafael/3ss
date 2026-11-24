@@ -35,7 +35,11 @@
         "pos": "MC",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Lisboa",
+    "stadiumName": "Estádio da Luz",
+    "lat": 38.7527,
+    "lng": -9.1847
   },
   {
     "id": "sporting_cp_2250",
@@ -73,7 +77,11 @@
         "pos": "ZAG",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "Recife",
+    "stadiumName": "Ilha do Retiro",
+    "lat": -8.0629,
+    "lng": -34.9029
   },
   {
     "id": "fc_porto_437",
@@ -111,7 +119,11 @@
         "pos": "ATA",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Porto",
+    "stadiumName": "Estádio do Dragão",
+    "lat": 41.1618,
+    "lng": -8.5839
   },
   {
     "id": "braga_2994",
@@ -149,7 +161,11 @@
         "pos": "MC",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Braga",
+    "stadiumName": "Estádio Municipal de Braga",
+    "lat": 41.5624,
+    "lng": -8.4302
   },
   {
     "id": "academico_de_viseu_21607",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Académico de Viseu",
+    "stadiumName": "Estádio Académico de Viseu",
+    "lat": 39.97,
+    "lng": -10.78
   },
   {
     "id": "c_d_nacional_3472",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Montevidéu",
+    "stadiumName": "Gran Parque Central",
+    "lat": -34.8844,
+    "lng": -56.1587
   },
   {
     "id": "fc_famalicao_12698",
@@ -263,7 +287,11 @@
         "pos": "ATA",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Famalicão",
+    "stadiumName": "Estádio FC Famalicao",
+    "lat": 39.5364,
+    "lng": -9.0831
   },
   {
     "id": "estoril_12216",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Estoril",
+    "stadiumName": "Estádio Estoril",
+    "lat": 38.7057,
+    "lng": -9.3977
   },
   {
     "id": "maritimo_552",
@@ -339,7 +371,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Funchal (Madeira)",
+    "stadiumName": "Estádio do Marítimo",
+    "lat": 32.6606,
+    "lng": -16.8927
   },
   {
     "id": "casa_pia_21581",
@@ -377,7 +413,11 @@
         "pos": "VOL",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Casa Piana",
+    "stadiumName": "Estádio Casa Pia",
+    "lat": 38.9833,
+    "lng": 16.7
   },
   {
     "id": "rio_ave_3822",
@@ -415,7 +455,11 @@
         "pos": "LE",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Rio Ave",
+    "stadiumName": "Estádio Rio Ave",
+    "lat": 0.2657,
+    "lng": 6.4995
   },
   {
     "id": "santa_clara_12215",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Santa Clara",
+    "stadiumName": "Estádio Santa Clara",
+    "lat": 22.4071,
+    "lng": -79.9658
   },
   {
     "id": "vitoria_de_guimaraes_5309",
@@ -491,7 +539,11 @@
         "pos": "MEI",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Guimarães",
+    "stadiumName": "D. Afonso Henriques",
+    "lat": 41.4458,
+    "lng": -8.3008
   },
   {
     "id": "arouca_15784",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Arouca",
+    "stadiumName": "Estádio Arouca",
+    "lat": 40.9306,
+    "lng": -8.2449
   },
   {
     "id": "gil_vicente_3699",
@@ -567,7 +623,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Gil Vicente",
+    "stadiumName": "Estádio Gil Vicente",
+    "lat": 38.65,
+    "lng": -11.0
   },
   {
     "id": "moreirense_3696",
@@ -605,7 +665,11 @@
         "pos": "ME",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Moreirense",
+    "stadiumName": "Estádio Moreirense",
+    "lat": 38.87,
+    "lng": -9.02
   },
   {
     "id": "alverca_21613",
@@ -643,7 +707,11 @@
         "pos": "LE",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Alverca",
+    "stadiumName": "Estádio Alverca",
+    "lat": 40.7009,
+    "lng": -7.2167
   },
   {
     "id": "estrela_21610",
@@ -681,6 +749,10 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Estrela",
+    "stadiumName": "Estádio Estrela",
+    "lat": 38.2688,
+    "lng": -7.389
   }
 ]

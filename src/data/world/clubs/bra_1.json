@@ -35,7 +35,11 @@
         "pos": "MC",
         "ovr": 83
       }
-    ]
+    ],
+    "city": "Rio de Janeiro",
+    "stadiumName": "Maracanã",
+    "lat": -22.9121,
+    "lng": -43.2302
   },
   {
     "id": "palmeiras_2029",
@@ -73,7 +77,11 @@
         "pos": "MC",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "São Paulo",
+    "stadiumName": "Allianz Parque",
+    "lat": -23.5275,
+    "lng": -46.6784
   },
   {
     "id": "fluminense_3445",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "Rio de Janeiro",
+    "stadiumName": "Maracanã",
+    "lat": -22.9121,
+    "lng": -43.2302
   },
   {
     "id": "internacional_1936",
@@ -149,7 +161,11 @@
         "pos": "MC",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Porto Alegre",
+    "stadiumName": "Beira-Rio",
+    "lat": -30.0656,
+    "lng": -51.2358
   },
   {
     "id": "botafogo_6086",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "Rio de Janeiro",
+    "stadiumName": "Estádio Nilton Santos",
+    "lat": -22.8933,
+    "lng": -43.2923
   },
   {
     "id": "bahia_9967",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Salvador",
+    "stadiumName": "Arena Fonte Nova",
+    "lat": -12.9788,
+    "lng": -38.5044
   },
   {
     "id": "red_bull_bragantino_6079",
@@ -263,7 +287,11 @@
         "pos": "ZAG",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Bragança Paulista",
+    "stadiumName": "Nabi Abi Chedid",
+    "lat": -22.9655,
+    "lng": -46.5369
   },
   {
     "id": "atletico_mg_7632",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Belo Horizonte",
+    "stadiumName": "Arena MRV",
+    "lat": -19.9301,
+    "lng": -44.0148
   },
   {
     "id": "cruzeiro_2022",
@@ -339,7 +371,11 @@
         "pos": "ZAG",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Belo Horizonte",
+    "stadiumName": "Mineirão",
+    "lat": -19.8659,
+    "lng": -43.971
   },
   {
     "id": "sao_paulo_2026",
@@ -377,7 +413,11 @@
         "pos": "MC",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "São Paulo",
+    "stadiumName": "MorumBIS",
+    "lat": -23.6001,
+    "lng": -46.7201
   },
   {
     "id": "corinthians_874",
@@ -415,7 +455,11 @@
         "pos": "MC",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "São Paulo",
+    "stadiumName": "Neo Química Arena",
+    "lat": -23.5453,
+    "lng": -46.4742
   },
   {
     "id": "gremio_6273",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Porto Alegre",
+    "stadiumName": "Arena do Grêmio",
+    "lat": -29.974,
+    "lng": -51.1949
   },
   {
     "id": "vasco_da_gama_3454",
@@ -491,7 +539,11 @@
         "pos": "ZAG",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Rio de Janeiro",
+    "stadiumName": "São Januário",
+    "lat": -22.8909,
+    "lng": -43.2281
   },
   {
     "id": "santos_2674",
@@ -529,7 +581,11 @@
         "pos": "MC",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Santos",
+    "stadiumName": "Vila Belmiro",
+    "lat": -23.9511,
+    "lng": -46.3389
   },
   {
     "id": "chapecoense_9318",
@@ -567,7 +623,11 @@
         "pos": "MC",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Chapecó",
+    "stadiumName": "Arena Condá",
+    "lat": -27.104,
+    "lng": -52.607
   },
   {
     "id": "athletico_pr_3458",
@@ -605,7 +665,11 @@
         "pos": "MC",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Curitiba",
+    "stadiumName": "Ligga Arena",
+    "lat": -25.4483,
+    "lng": -49.2769
   },
   {
     "id": "vitoria_3457",
@@ -643,7 +707,11 @@
         "pos": "MC",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Guimarães",
+    "stadiumName": "D. Afonso Henriques",
+    "lat": 41.4458,
+    "lng": -8.3008
   },
   {
     "id": "mirassol_9169",
@@ -681,7 +749,11 @@
         "pos": "ATA",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Mirassol",
+    "stadiumName": "Campos Maia",
+    "lat": -20.8195,
+    "lng": -49.5065
   },
   {
     "id": "coritiba_3456",
@@ -719,7 +791,11 @@
         "pos": "MC",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Curitiba",
+    "stadiumName": "Couto Pereira",
+    "lat": -25.4211,
+    "lng": -49.2595
   },
   {
     "id": "remo_4936",
@@ -757,6 +833,10 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Belém",
+    "stadiumName": "Baenão",
+    "lat": -1.4461,
+    "lng": -48.4611
   }
 ]

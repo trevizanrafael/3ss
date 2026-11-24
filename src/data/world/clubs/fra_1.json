@@ -35,7 +35,11 @@
         "pos": "PE",
         "ovr": 87
       }
-    ]
+    ],
+    "city": "Paris",
+    "stadiumName": "Parc des Princes",
+    "lat": 48.8414,
+    "lng": 2.253
   },
   {
     "id": "marseille_176",
@@ -73,7 +77,11 @@
         "pos": "ATA",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "Marselha",
+    "stadiumName": "Orange Vélodrome",
+    "lat": 43.2698,
+    "lng": 5.3959
   },
   {
     "id": "as_monaco_174",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Mônaco",
+    "stadiumName": "Stade Louis II",
+    "lat": 43.7276,
+    "lng": 7.4156
   },
   {
     "id": "lille_166",
@@ -149,7 +161,11 @@
         "pos": "MEI",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Lille",
+    "stadiumName": "Estádio Lille",
+    "lat": 50.6339,
+    "lng": 3.0551
   },
   {
     "id": "lyon_167",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Lyon",
+    "stadiumName": "Groupama Stadium",
+    "lat": 45.7653,
+    "lng": 4.982
   },
   {
     "id": "nice_2502",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Nice",
+    "stadiumName": "Estádio Nice",
+    "lat": 43.7031,
+    "lng": 7.2661
   },
   {
     "id": "stade_rennais_169",
@@ -263,7 +287,11 @@
         "pos": "MC",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Stade Rennais",
+    "stadiumName": "Estádio Stade Rennais",
+    "lat": 47.48,
+    "lng": 0.64
   },
   {
     "id": "lens_175",
@@ -301,7 +329,11 @@
         "pos": "ZAG",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Lens",
+    "stadiumName": "Estádio Lens",
+    "lat": 50.433,
+    "lng": 2.8279
   },
   {
     "id": "paris_fc_6851",
@@ -339,7 +371,11 @@
         "pos": "MC",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Paris",
+    "stadiumName": "Stade Charléty",
+    "lat": 48.8186,
+    "lng": 2.3466
   },
   {
     "id": "strasbourg_180",
@@ -377,7 +413,11 @@
         "pos": "LD",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Estrasburgo",
+    "stadiumName": "Estádio Strasbourg",
+    "lat": 48.5839,
+    "lng": 7.7455
   },
   {
     "id": "brest_6997",
@@ -415,7 +455,11 @@
         "pos": "PD",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Brest",
+    "stadiumName": "Estádio Brest",
+    "lat": 48.3903,
+    "lng": -4.4863
   },
   {
     "id": "toulouse_179",
@@ -453,7 +497,11 @@
         "pos": "VOL",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Toulouse",
+    "stadiumName": "Estádio Toulouse",
+    "lat": 43.6043,
+    "lng": 1.4437
   },
   {
     "id": "aj_auxerre_172",
@@ -491,7 +539,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "AJ Auxerre",
+    "stadiumName": "Estádio AJ Auxerre",
+    "lat": 46.38,
+    "lng": 4.38
   },
   {
     "id": "angers_7868",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Angers",
+    "stadiumName": "Estádio Angers",
+    "lat": 47.4716,
+    "lng": -0.552
   },
   {
     "id": "le_havre_ac_3236",
@@ -567,7 +623,11 @@
         "pos": "ZAG",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Le Havre",
+    "stadiumName": "Estádio Le Havre AC",
+    "lat": 49.4935,
+    "lng": 0.1079
   },
   {
     "id": "lorient_273",
@@ -605,7 +665,11 @@
         "pos": "LE",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Lorient",
+    "stadiumName": "Estádio Lorient",
+    "lat": 47.7482,
+    "lng": -3.3718
   },
   {
     "id": "troyes_170",
@@ -643,7 +707,11 @@
         "pos": "LE",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Troyes",
+    "stadiumName": "Estádio Troyes",
+    "lat": 48.3007,
+    "lng": 4.0852
   },
   {
     "id": "le_mans_2697",
@@ -681,6 +749,10 @@
         "pos": "ATA",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Le Mans",
+    "stadiumName": "Estádio Le Mans",
+    "lat": 48.0021,
+    "lng": 0.2025
   }
 ]

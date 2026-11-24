@@ -35,7 +35,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Acassuso",
+    "stadiumName": "Estádio Acassuso",
+    "lat": -34.4771,
+    "lng": -58.5018
   },
   {
     "id": "almirante_brown_9740",
@@ -73,7 +77,11 @@
         "pos": "MC",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Almirante Brown",
+    "stadiumName": "Estádio Almirante Brown",
+    "lat": -34.798,
+    "lng": -58.3844
   },
   {
     "id": "all_boys_9786",
@@ -111,7 +119,11 @@
         "pos": "MC",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "All Boys",
+    "stadiumName": "Estádio All Boys",
+    "lat": -33.5,
+    "lng": -56.18
   },
   {
     "id": "almagro_2",
@@ -149,7 +161,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Almagro",
+    "stadiumName": "Estádio Almagro",
+    "lat": 38.8894,
+    "lng": -3.7113
   },
   {
     "id": "colon_santa_fe_7",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Santa Fe",
+    "stadiumName": "Brigadier Estanislao López",
+    "lat": -31.6631,
+    "lng": -60.7235
   },
   {
     "id": "agropecuario_13913",
@@ -225,7 +245,11 @@
         "pos": "MC",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Agropecuario el Pionero Chapaco",
+    "stadiumName": "Estádio Agropecuario",
+    "lat": -16.9457,
+    "lng": -63.9786
   },
   {
     "id": "defensores_de_belgrano_10151",
@@ -263,7 +287,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Córdoba",
+    "stadiumName": "Julio César Villagra",
+    "lat": -31.4035,
+    "lng": -64.2062
   },
   {
     "id": "deportivo_maipu_11978",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Maipú",
+    "stadiumName": "Estádio Deportivo Maipú",
+    "lat": -36.863,
+    "lng": -57.8831
   },
   {
     "id": "estudiantes_buenos_aires_17352",
@@ -339,7 +371,11 @@
         "pos": "MC",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "La Plata",
+    "stadiumName": "UNO Jorge Luis Hirschi",
+    "lat": -34.9119,
+    "lng": -57.939
   },
   {
     "id": "gimnasia_y_esgrima_jujuy_5263",
@@ -377,7 +413,11 @@
         "pos": "ATA",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "La Plata",
+    "stadiumName": "Juan Carmelo Zerillo",
+    "lat": -34.911,
+    "lng": -57.9324
   },
   {
     "id": "atletico_rafaela_9747",
@@ -415,7 +455,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Rafaela",
+    "stadiumName": "Estádio Atletico Rafaela",
+    "lat": -31.2528,
+    "lng": -61.4908
   },
   {
     "id": "atlanta_10146",
@@ -453,7 +497,11 @@
         "pos": "MC",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Atlanta",
+    "stadiumName": "Estádio Atlanta",
+    "lat": 33.749,
+    "lng": -84.388
   },
   {
     "id": "chacarita_juniors_6",
@@ -491,7 +539,11 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "San Martín",
+    "stadiumName": "Estadio de Chacarita",
+    "lat": -34.5681,
+    "lng": -58.5284
   },
   {
     "id": "chaco_for_ever_11963",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Chaco For Ever",
+    "stadiumName": "Estádio Chaco For Ever",
+    "lat": -34.6,
+    "lng": -59.04
   },
   {
     "id": "colegiales_10149",
@@ -567,7 +623,11 @@
         "pos": "MC",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Colegiales",
+    "stadiumName": "Estádio Colegiales",
+    "lat": -34.5737,
+    "lng": -58.4492
   },
   {
     "id": "deportivo_madryn_18260",
@@ -605,7 +665,11 @@
         "pos": "MC",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Puerto Madryn",
+    "stadiumName": "Estádio Deportivo Madryn",
+    "lat": -42.7685,
+    "lng": -65.0383
   },
   {
     "id": "ferro_carril_oeste_9743",
@@ -643,7 +707,11 @@
         "pos": "MC",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Buenos Aires",
+    "stadiumName": "Arquitecto Etcheverri",
+    "lat": -34.6186,
+    "lng": -58.4475
   },
   {
     "id": "ciudad_de_bolivar_21799",
@@ -681,7 +749,11 @@
         "pos": "ZAG",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "La Paz",
+    "stadiumName": "Hernando Siles",
+    "lat": -16.4995,
+    "lng": -68.1228
   },
   {
     "id": "central_norte_11993",
@@ -719,7 +791,11 @@
         "pos": "ZAG",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Central Norte",
+    "stadiumName": "Estádio Central Norte",
+    "lat": -25.6108,
+    "lng": -60.9343
   },
   {
     "id": "deportivo_moron_10154",
@@ -757,6 +833,10 @@
         "pos": "ZAG",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Morón",
+    "stadiumName": "Estádio Deportivo Morón",
+    "lat": -34.6512,
+    "lng": -58.6221
   }
 ]

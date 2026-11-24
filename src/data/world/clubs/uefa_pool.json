@@ -35,7 +35,11 @@
         "pos": "MD",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Istambul",
+    "stadiumName": "RAMS Park",
+    "lat": 41.1034,
+    "lng": 28.991
   },
   {
     "id": "fenerbahce_436",
@@ -73,7 +77,11 @@
         "pos": "MC",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Istambul",
+    "stadiumName": "Şükrü Saracoğlu",
+    "lat": 40.9876,
+    "lng": 29.0369
   },
   {
     "id": "psv_eindhoven_148",
@@ -111,7 +119,11 @@
         "pos": "LD",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Eindhoven",
+    "stadiumName": "Philips Stadion",
+    "lat": 51.4416,
+    "lng": 5.4675
   },
   {
     "id": "bodo_glimt_2980",
@@ -149,7 +161,11 @@
         "pos": "MC",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Bodo/Glimt",
+    "stadiumName": "Estádio Bodo/Glimt",
+    "lat": 52.92,
+    "lng": 9.35
   },
   {
     "id": "besiktas_1895",
@@ -187,7 +203,11 @@
         "pos": "MD",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Istambul",
+    "stadiumName": "Tüpraş Stadyumu",
+    "lat": 41.0392,
+    "lng": 28.9944
   },
   {
     "id": "celtic_256",
@@ -225,7 +245,11 @@
         "pos": "LD",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Glasgow",
+    "stadiumName": "Celtic Park",
+    "lat": 55.8497,
+    "lng": -4.2055
   },
   {
     "id": "aek_athens_887",
@@ -263,7 +287,11 @@
         "pos": "MC",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "AEK Athens",
+    "stadiumName": "Estádio AEK Athens",
+    "lat": 49.62,
+    "lng": 12.21
   },
   {
     "id": "feyenoord_rotterdam_142",
@@ -301,7 +329,11 @@
         "pos": "ATA",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Roterdã",
+    "stadiumName": "De Kuip",
+    "lat": 51.8939,
+    "lng": 4.5231
   },
   {
     "id": "sabah_fk_21922",
@@ -339,7 +371,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Sabah FK",
+    "stadiumName": "Estádio Sabah FK",
+    "lat": 51.38,
+    "lng": 12.43
   },
   {
     "id": "club_brugge_570",
@@ -377,7 +413,11 @@
         "pos": "ZAG",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Brügge",
+    "stadiumName": "Estádio Club Brugge",
+    "lat": 54.1758,
+    "lng": 10.0691
   },
   {
     "id": "slavia_prague_494",
@@ -415,7 +455,11 @@
         "pos": "ZAG",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Slavia Prague",
+    "stadiumName": "Estádio Slavia Prague",
+    "lat": 52.92,
+    "lng": 8.69
   },
   {
     "id": "slovan_bratislava_521",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Slovan Bratislava",
+    "stadiumName": "Estádio Slovan Bratislava",
+    "lat": 50.72,
+    "lng": 8.47
   },
   {
     "id": "az_alkmaar_140",
@@ -491,7 +539,11 @@
         "pos": "LD",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "AZ Alkmaar",
+    "stadiumName": "Estádio AZ Alkmaar",
+    "lat": 50.28,
+    "lng": 11.55
   },
   {
     "id": "shakhtar_donetsk_493",
@@ -529,7 +581,11 @@
         "pos": "MD",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Shakhtar Donetsk",
+    "stadiumName": "Estádio Shakhtar Donetsk",
+    "lat": 51.38,
+    "lng": 9.79
   },
   {
     "id": "anderlecht_441",
@@ -567,7 +623,11 @@
         "pos": "PE",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Anderlecht",
+    "stadiumName": "Estádio Anderlecht",
+    "lat": 50.8362,
+    "lng": 4.3145
   },
   {
     "id": "dinamo_zagreb_597",
@@ -605,7 +665,11 @@
         "pos": "LD",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Dinamo Zagreb",
+    "stadiumName": "Estádio Dinamo Zagreb",
+    "lat": 50.06,
+    "lng": 8.25
   },
   {
     "id": "ferencvaros_622",
@@ -643,7 +707,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Ferencváros",
+    "stadiumName": "Estádio Ferencvaros",
+    "lat": 47.4775,
+    "lng": 19.0908
   },
   {
     "id": "ararat_armenia_20024",
@@ -681,7 +749,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Ararat-Armenia",
+    "stadiumName": "Estádio Ararat-Armenia",
+    "lat": 48.96,
+    "lng": 9.57
   },
   {
     "id": "nec_nijmegen_147",
@@ -719,7 +791,11 @@
         "pos": "VOL",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "NEC Nijmegen",
+    "stadiumName": "Estádio NEC Nijmegen",
+    "lat": 51.16,
+    "lng": 9.13
   },
   {
     "id": "lech_poznan_2990",
@@ -757,7 +833,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Lech Poznan",
+    "stadiumName": "Estádio Lech Poznan",
+    "lat": 50.28,
+    "lng": 8.25
   },
   {
     "id": "levski_sofia_490",
@@ -795,7 +875,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Levski Sofia",
+    "stadiumName": "Estádio Levski Sofia",
+    "lat": 53.14,
+    "lng": 10.01
   },
   {
     "id": "lillestrom_987",
@@ -833,7 +917,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Lillestrøm",
+    "stadiumName": "Estádio Lillestrom",
+    "lat": 59.956,
+    "lng": 11.0492
   },
   {
     "id": "lask_linz_4411",
@@ -871,7 +959,11 @@
         "pos": "MD",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "LASK Linz",
+    "stadiumName": "Estádio LASK Linz",
+    "lat": 49.84,
+    "lng": 10.89
   },
   {
     "id": "viking_fk_510",
@@ -909,7 +1001,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Viking FK",
+    "stadiumName": "Estádio Viking FK",
+    "lat": 48.96,
+    "lng": 8.91
   },
   {
     "id": "jagiellonia_bialystok_11505",
@@ -947,7 +1043,11 @@
         "pos": "VOL",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Jagiellonia Bialystok",
+    "stadiumName": "Estádio Jagiellonia Bialystok",
+    "lat": 50.94,
+    "lng": 10.45
   },
   {
     "id": "hapoel_be_er_13083",
@@ -985,7 +1085,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Hapoel Be'er",
+    "stadiumName": "Estádio Hapoel Be'er",
+    "lat": 51.6,
+    "lng": 11.77
   },
   {
     "id": "ofi_crete_1010",
@@ -1023,7 +1127,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "OFI Crete",
+    "stadiumName": "Estádio OFI Crete",
+    "lat": 52.26,
+    "lng": 10.01
   },
   {
     "id": "nk_celje_3362",
@@ -1061,6 +1169,10 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "NK Celje",
+    "stadiumName": "Estádio NK Celje",
+    "lat": 52.26,
+    "lng": 11.33
   }
 ]

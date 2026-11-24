@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Belém",
+    "stadiumName": "Baenão",
+    "lat": -1.4461,
+    "lng": -48.4611
   },
   {
     "id": "hellas_verona_119",
@@ -73,7 +77,11 @@
         "pos": "ZAG",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Hellas Verona",
+    "stadiumName": "Estádio Hellas Verona",
+    "lat": 44.21,
+    "lng": 9.27
   },
   {
     "id": "palermo_2923",
@@ -111,7 +119,11 @@
         "pos": "ATA",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Palermo",
+    "stadiumName": "Estádio Palermo",
+    "lat": 38.1166,
+    "lng": 13.3636
   },
   {
     "id": "pisa_3956",
@@ -149,7 +161,11 @@
         "pos": "ATA",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Pisa",
+    "stadiumName": "Estádio Pisa",
+    "lat": 43.7085,
+    "lng": 10.4036
   },
   {
     "id": "arezzo_3345",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Arezzo",
+    "stadiumName": "Estádio Arezzo",
+    "lat": 43.4628,
+    "lng": 11.8807
   },
   {
     "id": "ascoli_3346",
@@ -225,7 +245,11 @@
         "pos": "MC",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Ascoli Piceno",
+    "stadiumName": "Estádio Ascoli",
+    "lat": 42.8535,
+    "lng": 13.5739
   },
   {
     "id": "benevento_4059",
@@ -263,7 +287,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Benevento",
+    "stadiumName": "Estádio Benevento",
+    "lat": 41.1307,
+    "lng": 14.7782
   },
   {
     "id": "sampdoria_2734",
@@ -301,7 +329,11 @@
         "pos": "LE",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Gênova",
+    "stadiumName": "Luigi Ferraris",
+    "lat": 44.4165,
+    "lng": 8.9525
   },
   {
     "id": "catanzaro_3257",
@@ -339,7 +371,11 @@
         "pos": "LE",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Catanzaro",
+    "stadiumName": "Estádio Catanzaro",
+    "lat": 38.8825,
+    "lng": 16.6009
   },
   {
     "id": "modena_2573",
@@ -377,7 +413,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Modena",
+    "stadiumName": "Estádio Modena",
+    "lat": 44.6478,
+    "lng": 10.9254
   },
   {
     "id": "cesena_3337",
@@ -415,7 +455,11 @@
         "pos": "VOL",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Cesena",
+    "stadiumName": "Estádio Cesena",
+    "lat": 44.1391,
+    "lng": 12.2431
   },
   {
     "id": "empoli_2574",
@@ -453,7 +497,11 @@
         "pos": "ME",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Empoli",
+    "stadiumName": "Estádio Empoli",
+    "lat": 43.718,
+    "lng": 10.9476
   },
   {
     "id": "carrarese_3988",
@@ -491,7 +539,11 @@
         "pos": "ATA",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Carrarese",
+    "stadiumName": "Estádio Carrarese",
+    "lat": 43.11,
+    "lng": 11.91
   },
   {
     "id": "juve_stabia_3975",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Juve Stabia",
+    "stadiumName": "Estádio Juve Stabia",
+    "lat": 42.89,
+    "lng": 9.05
   },
   {
     "id": "mantova_3991",
@@ -567,7 +623,11 @@
         "pos": "MD",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Mantovana",
+    "stadiumName": "Estádio Mantova",
+    "lat": 44.7321,
+    "lng": 8.6227
   },
   {
     "id": "padova_3952",
@@ -605,7 +665,11 @@
         "pos": "MD",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Padova",
+    "stadiumName": "Estádio Padova",
+    "lat": 44.3822,
+    "lng": 11.1426
   },
   {
     "id": "sudtirol_11139",
@@ -643,7 +707,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Sudtirol",
+    "stadiumName": "Estádio Sudtirol",
+    "lat": 45.53,
+    "lng": 10.81
   },
   {
     "id": "us_avellino_4055",
@@ -681,7 +749,11 @@
         "pos": "ATA",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "US Avellino",
+    "stadiumName": "Estádio US Avellino",
+    "lat": 45.09,
+    "lng": 9.49
   },
   {
     "id": "vicenza_120",
@@ -719,7 +791,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Vicenza",
+    "stadiumName": "Estádio Vicenza",
+    "lat": 45.5467,
+    "lng": 11.5475
   },
   {
     "id": "virtus_entella_11137",
@@ -757,6 +833,10 @@
         "pos": "MC",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Virtus Entella",
+    "stadiumName": "Estádio Virtus Entella",
+    "lat": 41.57,
+    "lng": 12.35
   }
 ]

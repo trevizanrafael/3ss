@@ -35,7 +35,11 @@
         "pos": "MC",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Girona",
+    "stadiumName": "Estádio Girona",
+    "lat": 41.9831,
+    "lng": 2.8249
   },
   {
     "id": "mallorca_84",
@@ -73,7 +77,11 @@
         "pos": "LE",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Maiorca",
+    "stadiumName": "Estádio Mallorca",
+    "lat": 39.6078,
+    "lng": 3.012
   },
   {
     "id": "real_oviedo_92",
@@ -111,7 +119,11 @@
         "pos": "ME",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Oviedo",
+    "stadiumName": "Estádio Real Oviedo",
+    "lat": 43.3603,
+    "lng": -5.8448
   },
   {
     "id": "almeria_6832",
@@ -149,7 +161,11 @@
         "pos": "LE",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Almeria",
+    "stadiumName": "Estádio Almería",
+    "lat": 36.8381,
+    "lng": -2.4597
   },
   {
     "id": "cd_sabadell_11487",
@@ -187,7 +203,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Sabadell",
+    "stadiumName": "Estádio CD Sabadell",
+    "lat": 41.5433,
+    "lng": 2.1094
   },
   {
     "id": "las_palmas_98",
@@ -225,7 +245,11 @@
         "pos": "ME",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Las Palmas",
+    "stadiumName": "Estádio Las Palmas",
+    "lat": 28.1018,
+    "lng": -15.4157
   },
   {
     "id": "leganes_17534",
@@ -263,7 +287,11 @@
         "pos": "LD",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Leganés",
+    "stadiumName": "Estádio Leganés",
+    "lat": 40.3272,
+    "lng": -3.7635
   },
   {
     "id": "cadiz_3842",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Cádiz",
+    "stadiumName": "Estádio Cádiz",
+    "lat": 36.5267,
+    "lng": -6.2891
   },
   {
     "id": "real_valladolid_95",
@@ -339,7 +371,11 @@
         "pos": "ME",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Valladolid",
+    "stadiumName": "Estádio Real Valladolid",
+    "lat": 41.6554,
+    "lng": -4.7235
   },
   {
     "id": "sporting_gijon_3788",
@@ -377,7 +413,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Recife",
+    "stadiumName": "Ilha do Retiro",
+    "lat": -8.0629,
+    "lng": -34.9029
   },
   {
     "id": "albacete_2737",
@@ -415,7 +455,11 @@
         "pos": "LE",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Albacete",
+    "stadiumName": "Estádio Albacete",
+    "lat": 38.9942,
+    "lng": -1.8564
   },
   {
     "id": "burgos_12597",
@@ -453,7 +497,11 @@
         "pos": "MEI",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Burgos",
+    "stadiumName": "Estádio Burgos",
+    "lat": 42.3411,
+    "lng": -3.7018
   },
   {
     "id": "eibar_3752",
@@ -491,7 +539,11 @@
         "pos": "ATA",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Eibar",
+    "stadiumName": "Estádio Eibar",
+    "lat": 43.1849,
+    "lng": -2.4716
   },
   {
     "id": "eldense_7320",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Eldense",
+    "stadiumName": "Estádio Eldense",
+    "lat": 39.54,
+    "lng": -5.9
   },
   {
     "id": "granada_3747",
@@ -567,7 +623,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Granada",
+    "stadiumName": "Estádio Granada",
+    "lat": 37.1882,
+    "lng": -3.6067
   },
   {
     "id": "cordoba_8447",
@@ -605,7 +665,11 @@
         "pos": "MC",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Córdova",
+    "stadiumName": "Estádio Córdoba",
+    "lat": 37.8916,
+    "lng": -4.7728
   },
   {
     "id": "castellon_4438",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Castellón de la Plana",
+    "stadiumName": "Estádio Castellón",
+    "lat": 39.9857,
+    "lng": -0.0493
   },
   {
     "id": "ceuta_5404",
@@ -681,7 +749,11 @@
         "pos": "VOL",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Ceuta",
+    "stadiumName": "Estádio Ceuta",
+    "lat": 35.8892,
+    "lng": -5.3204
   },
   {
     "id": "fc_andorra_20179",
@@ -719,7 +791,11 @@
         "pos": "ME",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Andorra",
+    "stadiumName": "Estádio FC Andorra",
+    "lat": 40.9766,
+    "lng": -0.4472
   },
   {
     "id": "rc_celta_fortuna_131858",
@@ -757,7 +833,11 @@
         "pos": "ZAG",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Vigo",
+    "stadiumName": "Balaídos",
+    "lat": 42.2118,
+    "lng": -8.7397
   },
   {
     "id": "tenerife_245",
@@ -795,7 +875,11 @@
         "pos": "ZAG",
         "ovr": 65
       }
-    ]
+    ],
+    "city": "Tenerife",
+    "stadiumName": "Estádio Tenerife",
+    "lat": 28.3298,
+    "lng": -16.5097
   },
   {
     "id": "real_sociedad_ii_20983",
@@ -833,6 +917,10 @@
         "pos": "ZAG",
         "ovr": 64
       }
-    ]
+    ],
+    "city": "San Sebastián",
+    "stadiumName": "Reale Arena",
+    "lat": 43.3014,
+    "lng": -1.9736
   }
 ]

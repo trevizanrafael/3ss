@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 88
       }
-    ]
+    ],
+    "city": "Liverpool",
+    "stadiumName": "Anfield",
+    "lat": 53.4308,
+    "lng": -2.9608
   },
   {
     "id": "arsenal_359",
@@ -73,7 +77,11 @@
         "pos": "MC",
         "ovr": 87
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Emirates Stadium",
+    "lat": 51.5549,
+    "lng": -0.1084
   },
   {
     "id": "manchester_city_382",
@@ -111,7 +119,11 @@
         "pos": "ZAG",
         "ovr": 86
       }
-    ]
+    ],
+    "city": "Manchester",
+    "stadiumName": "Etihad Stadium",
+    "lat": 53.4831,
+    "lng": -2.2004
   },
   {
     "id": "aston_villa_362",
@@ -149,7 +161,11 @@
         "pos": "MEI",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Birmingham",
+    "stadiumName": "Villa Park",
+    "lat": 52.5091,
+    "lng": -1.8848
   },
   {
     "id": "chelsea_363",
@@ -187,7 +203,11 @@
         "pos": "LE",
         "ovr": 84
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Stamford Bridge",
+    "lat": 51.4817,
+    "lng": -0.191
   },
   {
     "id": "newcastle_united_361",
@@ -225,7 +245,11 @@
         "pos": "MC",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Newcastle",
+    "stadiumName": "St. James Park",
+    "lat": 54.9756,
+    "lng": -1.6217
   },
   {
     "id": "tottenham_hotspur_367",
@@ -263,7 +287,11 @@
         "pos": "VOL",
         "ovr": 83
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Tottenham Hotspur Stadium",
+    "lat": 51.6042,
+    "lng": -0.0662
   },
   {
     "id": "manchester_united_360",
@@ -301,7 +329,11 @@
         "pos": "ZAG",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Manchester",
+    "stadiumName": "Old Trafford",
+    "lat": 53.4631,
+    "lng": -2.2913
   },
   {
     "id": "nottingham_forest_393",
@@ -339,7 +371,11 @@
         "pos": "ATA",
         "ovr": 82
       }
-    ]
+    ],
+    "city": "Nottingham Forest",
+    "stadiumName": "Estádio Nottingham Forest",
+    "lat": 37.3354,
+    "lng": -79.2581
   },
   {
     "id": "crystal_palace_384",
@@ -377,7 +413,11 @@
         "pos": "MD",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Selhurst Park",
+    "lat": 51.3983,
+    "lng": -0.0855
   },
   {
     "id": "afc_bournemouth_349",
@@ -415,7 +455,11 @@
         "pos": "VOL",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "AFC Bournemouth",
+    "stadiumName": "Estádio AFC Bournemouth",
+    "lat": 52.36,
+    "lng": -0.89
   },
   {
     "id": "brighton_hove_albion_331",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Brighton & Hove",
+    "stadiumName": "Estádio Brighton & Hove Albion",
+    "lat": 52.36,
+    "lng": -3.53
   },
   {
     "id": "everton_368",
@@ -491,7 +539,11 @@
         "pos": "ME",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Liverpool",
+    "stadiumName": "Everton Stadium",
+    "lat": 53.4389,
+    "lng": -2.9664
   },
   {
     "id": "fulham_370",
@@ -529,7 +581,11 @@
         "pos": "VOL",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Craven Cottage",
+    "lat": 51.4749,
+    "lng": -0.2217
   },
   {
     "id": "brentford_337",
@@ -567,7 +623,11 @@
         "pos": "ME",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Gtech Community Stadium",
+    "lat": 51.4908,
+    "lng": -0.2887
   },
   {
     "id": "sunderland_366",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Sunderland",
+    "stadiumName": "Estádio Sunderland",
+    "lat": 54.9046,
+    "lng": -1.3822
   },
   {
     "id": "leeds_united_357",
@@ -643,7 +707,11 @@
         "pos": "VOL",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Leeds",
+    "stadiumName": "Estádio Leeds United",
+    "lat": 53.7965,
+    "lng": -1.5478
   },
   {
     "id": "ipswich_town_373",
@@ -681,7 +749,11 @@
         "pos": "VOL",
         "ovr": 75
       }
-    ]
+    ],
+    "city": "Ipswich",
+    "stadiumName": "Estádio Ipswich Town",
+    "lat": 52.0592,
+    "lng": 1.1555
   },
   {
     "id": "coventry_city_388",
@@ -719,7 +791,11 @@
         "pos": "ATA",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Coventry",
+    "stadiumName": "Estádio Coventry City",
+    "lat": 52.4066,
+    "lng": -1.5122
   },
   {
     "id": "hull_city_306",
@@ -757,6 +833,10 @@
         "pos": "MD",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Kingston upon Hull",
+    "stadiumName": "Estádio Hull City",
+    "lat": 53.7446,
+    "lng": -0.3352
   }
 ]

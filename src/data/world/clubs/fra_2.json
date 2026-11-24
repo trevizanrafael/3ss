@@ -35,7 +35,11 @@
         "pos": "MEI",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Nantes",
+    "stadiumName": "Estádio Nantes",
+    "lat": 47.2172,
+    "lng": -1.5534
   },
   {
     "id": "stade_de_reims_3243",
@@ -73,7 +77,11 @@
         "pos": "ME",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Stade de Reims",
+    "stadiumName": "Estádio Stade de Reims",
+    "lat": 48.8,
+    "lng": 4.6
   },
   {
     "id": "dijon_fco_3170",
@@ -111,7 +119,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Dijon FCO",
+    "stadiumName": "Estádio Dijon FCO",
+    "lat": 48.58,
+    "lng": 1.96
   },
   {
     "id": "montpellier_274",
@@ -149,7 +161,11 @@
         "pos": "LE",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Montpellier",
+    "stadiumName": "Estádio Montpellier",
+    "lat": 43.6109,
+    "lng": 3.8763
   },
   {
     "id": "saint_etienne_178",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Saint-Étienne",
+    "stadiumName": "Estádio Saint-Étienne",
+    "lat": 45.4339,
+    "lng": 4.39
   },
   {
     "id": "metz_177",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Metz",
+    "stadiumName": "Estádio Metz",
+    "lat": 49.1191,
+    "lng": 6.1727
   },
   {
     "id": "guingamp_171",
@@ -263,7 +287,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Guingamp",
+    "stadiumName": "Estádio Guingamp",
+    "lat": 48.5626,
+    "lng": -3.1529
   },
   {
     "id": "dunkerque_7732",
@@ -301,7 +329,11 @@
         "pos": "LD",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Dunkerque-Les Moëres",
+    "stadiumName": "Estádio Dunkerque",
+    "lat": 51.041,
+    "lng": 2.55
   },
   {
     "id": "grenoble_6994",
@@ -339,7 +371,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Grenoble",
+    "stadiumName": "Estádio Grenoble",
+    "lat": 45.1787,
+    "lng": 5.7148
   },
   {
     "id": "pau_10678",
@@ -377,7 +413,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Pau",
+    "stadiumName": "Estádio Pau",
+    "lat": 43.3112,
+    "lng": -0.3558
   },
   {
     "id": "red_star_fc_93_11884",
@@ -415,7 +455,11 @@
         "pos": "ME",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Red Star  93",
+    "stadiumName": "Estádio Red Star FC 93",
+    "lat": 45.94,
+    "lng": 3.06
   },
   {
     "id": "stade_laval_3266",
@@ -453,7 +497,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Stade Laval",
+    "stadiumName": "Estádio Stade Laval",
+    "lat": 45.94,
+    "lng": 4.38
   },
   {
     "id": "annecy_18066",
@@ -491,7 +539,11 @@
         "pos": "LE",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Annecy",
+    "stadiumName": "Estádio Annecy",
+    "lat": 45.9088,
+    "lng": 6.1257
   },
   {
     "id": "clermont_foot_3171",
@@ -529,7 +581,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Clermont Foot",
+    "stadiumName": "Estádio Clermont Foot",
+    "lat": 44.62,
+    "lng": 2.84
   },
   {
     "id": "sochaux_272",
@@ -567,7 +623,11 @@
         "pos": "ZAG",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Sochaux",
+    "stadiumName": "Estádio Sochaux",
+    "lat": 47.5081,
+    "lng": 6.8275
   },
   {
     "id": "rodez_aveyron_7719",
@@ -605,7 +665,11 @@
         "pos": "MD",
         "ovr": 65
       }
-    ]
+    ],
+    "city": "Rodez Aveyron",
+    "stadiumName": "Estádio Rodez Aveyron",
+    "lat": 45.28,
+    "lng": 3.5
   },
   {
     "id": "as_nancy_lorraine_3267",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 65
       }
-    ]
+    ],
+    "city": "Nancy Lorraine",
+    "stadiumName": "Estádio AS Nancy Lorraine",
+    "lat": 45.28,
+    "lng": 1.52
   },
   {
     "id": "boulogne_7869",
@@ -681,6 +749,10 @@
         "pos": "ZAG",
         "ovr": 63
       }
-    ]
+    ],
+    "city": "Boulogne",
+    "stadiumName": "Estádio Boulogne",
+    "lat": 46.7935,
+    "lng": -1.3194
   }
 ]

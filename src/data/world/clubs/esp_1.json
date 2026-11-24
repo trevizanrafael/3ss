@@ -35,7 +35,11 @@
         "pos": "PE",
         "ovr": 89
       }
-    ]
+    ],
+    "city": "Madri",
+    "stadiumName": "Santiago Bernabéu",
+    "lat": 40.4531,
+    "lng": -3.6883
   },
   {
     "id": "barcelona_83",
@@ -73,7 +77,11 @@
         "pos": "ATA",
         "ovr": 88
       }
-    ]
+    ],
+    "city": "Barcelona",
+    "stadiumName": "Spotify Camp Nou",
+    "lat": 41.3809,
+    "lng": 2.1228
   },
   {
     "id": "atletico_madrid_1068",
@@ -111,7 +119,11 @@
         "pos": "ME",
         "ovr": 84
       }
-    ]
+    ],
+    "city": "Madri",
+    "stadiumName": "Riyadh Air Metropolitano",
+    "lat": 40.4362,
+    "lng": -3.5995
   },
   {
     "id": "athletic_club_93",
@@ -149,7 +161,11 @@
         "pos": "MD",
         "ovr": 83
       }
-    ]
+    ],
+    "city": "Bilbau",
+    "stadiumName": "San Mamés",
+    "lat": 43.2641,
+    "lng": -2.9494
   },
   {
     "id": "celta_vigo_85",
@@ -187,7 +203,11 @@
         "pos": "ZAG",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Vigo",
+    "stadiumName": "Balaídos",
+    "lat": 42.2118,
+    "lng": -8.7397
   },
   {
     "id": "real_betis_244",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 80
       }
-    ]
+    ],
+    "city": "Sevilha",
+    "stadiumName": "Benito Villamarín",
+    "lat": 37.3564,
+    "lng": -5.9818
   },
   {
     "id": "real_sociedad_89",
@@ -263,7 +287,11 @@
         "pos": "MC",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "San Sebastián",
+    "stadiumName": "Reale Arena",
+    "lat": 43.3014,
+    "lng": -1.9736
   },
   {
     "id": "villarreal_102",
@@ -301,7 +329,11 @@
         "pos": "ATA",
         "ovr": 81
       }
-    ]
+    ],
+    "city": "Villarreal",
+    "stadiumName": "Estádio Villarreal",
+    "lat": 38.7257,
+    "lng": -7.2153
   },
   {
     "id": "osasuna_97",
@@ -339,7 +371,11 @@
         "pos": "MD",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Pamplona",
+    "stadiumName": "El Sadar",
+    "lat": 42.7967,
+    "lng": -1.6371
   },
   {
     "id": "rayo_vallecano_101",
@@ -377,7 +413,11 @@
         "pos": "MD",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Madri",
+    "stadiumName": "Vallecas",
+    "lat": 40.3919,
+    "lng": -3.6589
   },
   {
     "id": "getafe_2922",
@@ -415,7 +455,11 @@
         "pos": "ATA",
         "ovr": 77
       }
-    ]
+    ],
+    "city": "Getafe",
+    "stadiumName": "Estádio Getafe",
+    "lat": 40.3057,
+    "lng": -3.733
   },
   {
     "id": "valencia_94",
@@ -453,7 +497,11 @@
         "pos": "ME",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Valência",
+    "stadiumName": "Estádio Valencia",
+    "lat": 39.4739,
+    "lng": -0.3797
   },
   {
     "id": "espanyol_88",
@@ -491,7 +539,11 @@
         "pos": "ATA",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Barcelona",
+    "stadiumName": "RCDE Stadium",
+    "lat": 41.3479,
+    "lng": 2.0757
   },
   {
     "id": "sevilla_243",
@@ -529,7 +581,11 @@
         "pos": "MC",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Sevilha",
+    "stadiumName": "Ramón Sánchez-Pizjuán",
+    "lat": 37.3841,
+    "lng": -5.9707
   },
   {
     "id": "alaves_96",
@@ -567,7 +623,11 @@
         "pos": "LD",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Alaveski",
+    "stadiumName": "Estádio Alavés",
+    "lat": 58.6333,
+    "lng": 26.3333
   },
   {
     "id": "elche_3751",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Elx",
+    "stadiumName": "Estádio Elche",
+    "lat": 38.2622,
+    "lng": -0.7011
   },
   {
     "id": "levante_1538",
@@ -643,7 +707,11 @@
         "pos": "MC",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Levante Ferrovia",
+    "stadiumName": "Estádio Levante",
+    "lat": 45.3442,
+    "lng": 11.8071
   },
   {
     "id": "racing_santander_87",
@@ -681,7 +749,11 @@
         "pos": "VOL",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Avellaneda",
+    "stadiumName": "El Cilindro",
+    "lat": -34.6675,
+    "lng": -58.3686
   },
   {
     "id": "malaga_99",
@@ -719,7 +791,11 @@
         "pos": "MD",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Málaga",
+    "stadiumName": "Estádio Málaga",
+    "lat": 36.7202,
+    "lng": -4.4203
   },
   {
     "id": "deportivo_90",
@@ -757,6 +833,10 @@
         "pos": "ATA",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Deportivo",
+    "stadiumName": "Estádio Deportivo",
+    "lat": 27.1317,
+    "lng": -109.8304
   }
 ]

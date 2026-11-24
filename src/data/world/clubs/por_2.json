@@ -35,7 +35,11 @@
         "pos": "ZAG",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "GD Chaves",
+    "stadiumName": "Estádio GD Chaves",
+    "lat": 37.77,
+    "lng": -7.7
   },
   {
     "id": "portimonense_3719",
@@ -73,7 +77,11 @@
         "pos": "MC",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Portimonense",
+    "stadiumName": "Estádio Portimonense",
+    "lat": 38.65,
+    "lng": -11.0
   },
   {
     "id": "torreense_21615",
@@ -111,7 +119,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Torreense",
+    "stadiumName": "Estádio Torreense",
+    "lat": 39.75,
+    "lng": -10.78
   },
   {
     "id": "pacos_de_ferreira_3713",
@@ -149,7 +161,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Paços de Ferreira",
+    "stadiumName": "Estádio Paços de Ferreira",
+    "lat": 41.2766,
+    "lng": -8.3762
   },
   {
     "id": "tondela_12706",
@@ -187,7 +203,11 @@
         "pos": "MC",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Tondela",
+    "stadiumName": "Estádio Tondela",
+    "lat": 40.5168,
+    "lng": -8.0809
   },
   {
     "id": "vizela_20995",
@@ -225,7 +245,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Vizela",
+    "stadiumName": "Estádio Vizela",
+    "lat": 41.391,
+    "lng": -8.2639
   },
   {
     "id": "uniao_leiria_2724",
@@ -263,7 +287,11 @@
         "pos": "ATA",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Uniao Leiria",
+    "stadiumName": "Estádio Uniao Leiria",
+    "lat": 40.41,
+    "lng": -8.14
   },
   {
     "id": "felgueiras_1932_21625",
@@ -301,7 +329,11 @@
         "pos": "ZAG",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Felgueiras 1932",
+    "stadiumName": "Estádio Felgueiras 1932",
+    "lat": 40.85,
+    "lng": -7.92
   },
   {
     "id": "feirense_3717",
@@ -339,7 +371,11 @@
         "pos": "MC",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Feirense",
+    "stadiumName": "Estádio Feirense",
+    "lat": 41.95,
+    "lng": -7.26
   },
   {
     "id": "os_belenenses_21596",
@@ -377,7 +413,11 @@
         "pos": "ATA",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Os Belenenses",
+    "stadiumName": "Estádio Os Belenenses",
+    "lat": 41.29,
+    "lng": -7.26
   },
   {
     "id": "academica_de_coimbra_3698",
@@ -415,7 +455,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Académica de Coimbra",
+    "stadiumName": "Estádio Académica de Coimbra",
+    "lat": 39.75,
+    "lng": -6.82
   },
   {
     "id": "beira_mar_1423",
@@ -453,7 +497,11 @@
         "pos": "ATA",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Beira-Mar",
+    "stadiumName": "Estádio Beira Mar",
+    "lat": 39.0167,
+    "lng": -28.0167
   },
   {
     "id": "fc_penafiel_3695",
@@ -491,7 +539,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Penafiel",
+    "stadiumName": "Estádio FC Penafiel",
+    "lat": 41.2084,
+    "lng": -8.2828
   },
   {
     "id": "mafra_21622",
@@ -529,7 +581,11 @@
         "pos": "ATA",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Mafra",
+    "stadiumName": "Estádio Mafra",
+    "lat": 38.9379,
+    "lng": -9.3276
   },
   {
     "id": "oliveirense_21628",
@@ -567,7 +623,11 @@
         "pos": "MC",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Oliveirense",
+    "stadiumName": "Estádio Oliveirense",
+    "lat": 39.75,
+    "lng": -8.8
   },
   {
     "id": "varzim_21611",
@@ -605,7 +665,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Varzim",
+    "stadiumName": "Estádio Varzim",
+    "lat": 38.21,
+    "lng": -7.04
   },
   {
     "id": "avs_22064",
@@ -643,7 +707,11 @@
         "pos": "ZAG",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Avsa",
+    "stadiumName": "Estádio AVS",
+    "lat": 46.2026,
+    "lng": 13.576
   },
   {
     "id": "leixoes_2543",
@@ -681,6 +749,10 @@
         "pos": "MC",
         "ovr": 67
       }
-    ]
+    ],
+    "city": "Leixoes",
+    "stadiumName": "Estádio Leixoes",
+    "lat": 40.19,
+    "lng": -10.12
   }
 ]

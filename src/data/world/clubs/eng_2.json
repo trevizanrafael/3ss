@@ -35,7 +35,11 @@
         "pos": "ATA",
         "ovr": 79
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "London Stadium",
+    "lat": 51.5387,
+    "lng": -0.0166
   },
   {
     "id": "wolverhampton_wanderers_380",
@@ -73,7 +77,11 @@
         "pos": "VOL",
         "ovr": 78
       }
-    ]
+    ],
+    "city": "Wolverhampton",
+    "stadiumName": "Molineux",
+    "lat": 52.5902,
+    "lng": -2.1304
   },
   {
     "id": "burnley_379",
@@ -111,7 +119,11 @@
         "pos": "VOL",
         "ovr": 76
       }
-    ]
+    ],
+    "city": "Burnley",
+    "stadiumName": "Estádio Burnley",
+    "lat": 53.8,
+    "lng": -2.2333
   },
   {
     "id": "sheffield_united_398",
@@ -149,7 +161,11 @@
         "pos": "ZAG",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Sheffield",
+    "stadiumName": "Estádio Sheffield United",
+    "lat": 53.383,
+    "lng": -1.4659
   },
   {
     "id": "birmingham_city_392",
@@ -187,7 +203,11 @@
         "pos": "MEI",
         "ovr": 74
       }
-    ]
+    ],
+    "city": "Birmingham",
+    "stadiumName": "Estádio Birmingham City",
+    "lat": 52.4814,
+    "lng": -1.8998
   },
   {
     "id": "southampton_376",
@@ -225,7 +245,11 @@
         "pos": "MC",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Southampton",
+    "stadiumName": "Estádio Southampton",
+    "lat": 50.904,
+    "lng": -1.4043
   },
   {
     "id": "bristol_city_333",
@@ -263,7 +287,11 @@
         "pos": "MD",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Bristol",
+    "stadiumName": "Estádio Bristol City",
+    "lat": 51.4552,
+    "lng": -2.5966
   },
   {
     "id": "middlesbrough_369",
@@ -301,7 +329,11 @@
         "pos": "MC",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Middlesbrough",
+    "stadiumName": "Estádio Middlesbrough",
+    "lat": 54.5762,
+    "lng": -1.2348
   },
   {
     "id": "norwich_city_381",
@@ -339,7 +371,11 @@
         "pos": "PD",
         "ovr": 73
       }
-    ]
+    ],
+    "city": "Norwich",
+    "stadiumName": "Estádio Norwich City",
+    "lat": 52.6278,
+    "lng": 1.2983
   },
   {
     "id": "queens_park_rangers_334",
@@ -377,7 +413,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "Loftus Road",
+    "lat": 51.5093,
+    "lng": -0.2321
   },
   {
     "id": "swansea_city_318",
@@ -415,7 +455,11 @@
         "pos": "VOL",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Swansea",
+    "stadiumName": "Estádio Swansea City",
+    "lat": 51.6208,
+    "lng": -3.9432
   },
   {
     "id": "west_bromwich_albion_383",
@@ -453,7 +497,11 @@
         "pos": "ZAG",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "West Bromwich",
+    "stadiumName": "Estádio West Bromwich Albion",
+    "lat": 52.5187,
+    "lng": -1.9945
   },
   {
     "id": "wrexham_352",
@@ -491,7 +539,11 @@
         "pos": "LE",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Wrexham",
+    "stadiumName": "Estádio Wrexham",
+    "lat": 53.0466,
+    "lng": -2.9913
   },
   {
     "id": "derby_county_374",
@@ -529,7 +581,11 @@
         "pos": "VOL",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Derby County",
+    "stadiumName": "Estádio Derby County",
+    "lat": 51.04,
+    "lng": -1.11
   },
   {
     "id": "millwall_391",
@@ -567,7 +623,11 @@
         "pos": "VOL",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Londres",
+    "stadiumName": "The Den",
+    "lat": 51.4859,
+    "lng": -0.0509
   },
   {
     "id": "portsmouth_385",
@@ -605,7 +665,11 @@
         "pos": "MEI",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Portsmouth",
+    "stadiumName": "Estádio Portsmouth",
+    "lat": 50.799,
+    "lng": -1.0913
   },
   {
     "id": "stoke_city_336",
@@ -643,7 +707,11 @@
         "pos": "MD",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Stoke-on-Trent",
+    "stadiumName": "Estádio Stoke City",
+    "lat": 53.0042,
+    "lng": -2.1854
   },
   {
     "id": "watford_395",
@@ -681,7 +749,11 @@
         "pos": "MC",
         "ovr": 72
       }
-    ]
+    ],
+    "city": "Watford",
+    "stadiumName": "Estádio Watford",
+    "lat": 51.6553,
+    "lng": -0.396
   },
   {
     "id": "blackburn_rovers_365",
@@ -719,7 +791,11 @@
         "pos": "LE",
         "ovr": 70
       }
-    ]
+    ],
+    "city": "Blackburn",
+    "stadiumName": "Estádio Blackburn Rovers",
+    "lat": 53.75,
+    "lng": -2.4833
   },
   {
     "id": "cardiff_city_347",
@@ -757,7 +833,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Cardiff",
+    "stadiumName": "Estádio Cardiff City",
+    "lat": 51.48,
+    "lng": -3.18
   },
   {
     "id": "preston_north_end_394",
@@ -795,7 +875,11 @@
         "pos": "ZAG",
         "ovr": 71
       }
-    ]
+    ],
+    "city": "Preston North End",
+    "stadiumName": "Estádio Preston North End",
+    "lat": 53.02,
+    "lng": -2.87
   },
   {
     "id": "charlton_athletic_372",
@@ -833,7 +917,11 @@
         "pos": "LD",
         "ovr": 69
       }
-    ]
+    ],
+    "city": "Charlton",
+    "stadiumName": "Estádio Charlton Athletic",
+    "lat": 51.5992,
+    "lng": -2.0564
   },
   {
     "id": "bolton_wanderers_358",
@@ -871,7 +959,11 @@
         "pos": "LD",
         "ovr": 68
       }
-    ]
+    ],
+    "city": "Bolton",
+    "stadiumName": "Estádio Bolton Wanderers",
+    "lat": 53.5833,
+    "lng": -2.4333
   },
   {
     "id": "lincoln_city_314",
@@ -909,6 +1001,10 @@
         "pos": "LD",
         "ovr": 66
       }
-    ]
+    ],
+    "city": "Lincoln",
+    "stadiumName": "Estádio Lincoln City",
+    "lat": 53.2268,
+    "lng": -0.5379
   }
 ]
