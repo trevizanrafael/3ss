@@ -1,287 +1,325 @@
 import * as THREE from 'three';
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { getNationalTeamByCountry } from '../../data/clubs';
 import { CareerPlayer } from '../../domains/player/playerTypes';
 import {
-  createTintedSkinTexture,
-  createUvJerseyTexture,
+  createArcadeFaceTexture,
+  createArcadeJerseyBackTexture,
+  createArcadeJerseyFrontTexture,
+  createThreeStripesTexture,
 } from './kitTextureGenerator';
+import { buildBlockyHairMesh, makeBeveledBox } from './voxelHairBuilder';
 
-interface CachedAssets {
-  athleteGltf: GLTF;
-  idleClip: THREE.AnimationClip | null;
+export interface AnimatedRigHandles {
+  character: THREE.Group;
+  headPivot: THREE.Group;
+  leftArmPivot: THREE.Group;
+  rightArmPivot: THREE.Group;
+  leftForearmPivot: THREE.Group;
+  rightForearmPivot: THREE.Group;
+  leftLegPivot: THREE.Group;
+  rightLegPivot: THREE.Group;
 }
 
-let assetPromise: Promise<CachedAssets> | null = null;
-
-export function preloadHumanAthleteAssets(): Promise<CachedAssets> {
-  if (!assetPromise) {
-    const loader = new GLTFLoader();
-    assetPromise = Promise.all([
-      loader.loadAsync('/models/pro_athlete.glb'),
-      loader.loadAsync('/models/pro_idle.glb').catch(() => null),
-    ]).then(([athleteGltf, idleGltf]) => {
-      let idleClip: THREE.AnimationClip | null = null;
-      if (idleGltf && idleGltf.animations[0]) {
-        const raw = idleGltf.animations[0];
-        // Mantém apenas rotações quaternion para os pés ficarem cravados no gramado sem pulo de escala!
-        const safeTracks = raw.tracks.filter((t) => t.name.endsWith('.quaternion'));
-        idleClip = new THREE.AnimationClip('ProStandingIdle', raw.duration, safeTracks);
-      }
-      return { athleteGltf, idleClip };
-    });
-  }
-  return assetPromise;
+function mat(color: string, roughness = 0.5, metalness = 0.04): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({ color, roughness, metalness });
 }
 
-function applyBodyKitShader(
-  mat: THREE.MeshStandardMaterial,
-  sockTopY: number,
-  kitPrimaryHex: string,
-  kitSecondaryHex: string,
-  sleeveStyle: CareerPlayer['appearance']['sleeveStyle'],
-  accessory: CareerPlayer['appearance']['accessory'],
-): void {
-  const cSock = new THREE.Color(kitPrimaryHex);
-  const cStripe = new THREE.Color(kitSecondaryHex);
-  const cThermal = new THREE.Color('#101217');
-  const cWhite = new THREE.Color('#F5F5F7');
-
-  const sleeveMode = sleeveStyle === 'LONGA' ? 1 : sleeveStyle === 'TERMICA' ? 2 : 0;
-  const hasWrist = accessory === 'MUNHEQUEIRA' ? 1 : 0;
-  const hasGloves = accessory === 'LUVAS' ? 1 : 0;
-  const hasAnkle = accessory === 'TORNOZELEIRA' ? 1 : 0;
-
-  mat.customProgramCacheKey = () =>
-    `pro_body_${sockTopY}_${sleeveMode}_${hasWrist}_${hasGloves}_${hasAnkle}`;
-
-  mat.onBeforeCompile = (shader) => {
-    shader.uniforms.uSockTop = { value: sockTopY };
-    shader.uniforms.uSockCol = { value: cSock };
-    shader.uniforms.uStripeCol = { value: cStripe };
-    shader.uniforms.uThermalCol = { value: cThermal };
-    shader.uniforms.uWhiteCol = { value: cWhite };
-    shader.uniforms.uSleeveMode = { value: sleeveMode };
-    shader.uniforms.uHasWrist = { value: hasWrist };
-    shader.uniforms.uHasGloves = { value: hasGloves };
-    shader.uniforms.uHasAnkle = { value: hasAnkle };
-
-    shader.vertexShader = shader.vertexShader
-      .replace(
-        '#include <common>',
-        '#include <common>\nvarying vec3 vRestPos;',
-      )
-      .replace(
-        '#include <begin_vertex>',
-        '#include <begin_vertex>\nvRestPos = position;',
-      );
-
-    shader.fragmentShader = shader.fragmentShader
-      .replace(
-        '#include <common>',
-        `#include <common>
-        varying vec3 vRestPos;
-        uniform float uSockTop;
-        uniform vec3 uSockCol;
-        uniform vec3 uStripeCol;
-        uniform vec3 uThermalCol;
-        uniform vec3 uWhiteCol;
-        uniform int uSleeveMode;
-        uniform int uHasWrist;
-        uniform int uHasGloves;
-        uniform int uHasAnkle;`,
-      )
-      .replace(
-        '#include <map_fragment>',
-        `#include <map_fragment>
-        // Meião de Futebol esculpido direto na panturrilha humana real
-        if (vRestPos.y < uSockTop) {
-          float stripeBand = step(uSockTop - 0.032, vRestPos.y);
-          vec3 sCol = mix(uSockCol, uStripeCol, stripeBand);
-          if (uHasAnkle == 1 && vRestPos.y < 0.21) {
-            sCol = uWhiteCol;
-          }
-          diffuseColor.rgb = sCol;
-        }
-        // Mangas Longas / Térmica / Munhequeira / Luvas nos braços esculpidos (T-pose rest x)
-        float absX = abs(vRestPos.x);
-        if (vRestPos.y > 1.15 && absX > 0.27) {
-          if (uSleeveMode == 1 && absX < 0.455) {
-            diffuseColor.rgb = uSockCol;
-          } else if (uSleeveMode == 2 && absX < 0.455) {
-            diffuseColor.rgb = uThermalCol;
-          }
-          if (uHasWrist == 1 && absX >= 0.435 && absX <= 0.468) {
-            diffuseColor.rgb = uWhiteCol;
-          }
-          if (uHasGloves == 1 && absX > 0.468) {
-            diffuseColor.rgb = uThermalCol;
-          }
-        }`,
-      );
-  };
-}
-
-export async function buildRealisticHumanFootballer3D(player: CareerPlayer): Promise<{
+export function buildBlockyArcadeFootballer3D(player: CareerPlayer): {
   root: THREE.Group;
-  mixer: THREE.AnimationMixer | null;
+  rig: AnimatedRigHandles;
   dispose: () => void;
-}> {
-  const { athleteGltf, idleClip } = await preloadHumanAthleteAssets();
+} {
   const root = new THREE.Group();
-  const disposableTextures: THREE.Texture[] = [];
-  const disposableMaterials: THREE.Material[] = [];
+  const texturesToDispose: THREE.Texture[] = [];
 
-  // Pedestal escuro elegante de vestiário/campo
-  const pedestal = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.54, 0.58, 0.04, 48),
-    new THREE.MeshStandardMaterial({ color: '#0F1116', roughness: 0.45, metalness: 0.25 }),
+  const natTeam = getNationalTeamByCountry(player.nationality);
+  const kitPrimary = natTeam.primaryColor || '#F5F5F7';
+  const kitSecondary = natTeam.secondaryColor || '#111827';
+  const accentStripe =
+    kitSecondary.toUpperCase() === kitPrimary.toUpperCase() ? '#111827' : kitSecondary;
+
+  // Calção oficial de futebol (branco com branco estilo Real Madrid OU cor secundária oficial!)
+  const shortsColor = kitSecondary || '#111827';
+
+  const { appearance } = player;
+  const skinMat = mat(appearance.skinTone, 0.52, 0.02);
+  const kitMat = mat(kitPrimary, 0.48, 0.04);
+  const shortsMat = mat(shortsColor, 0.5, 0.04);
+  const stripeMat = mat(accentStripe, 0.45, 0.05);
+  const whiteMat = mat('#F8FAFC', 0.45, 0.04);
+  const darkThermalMat = mat('#12141A', 0.48, 0.06);
+  const bootUpperMat = mat(appearance.bootColor || '#C8A45D', 0.34, 0.16);
+  const bootSoleMat = mat('#E2E8F0', 0.38, 0.12);
+
+  // ==================== PEDESTAL DE GRAMADO + BOLA CLÁSSICA ====================
+  const basePlate = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.62, 0.66, 0.05, 48),
+    mat('#101218', 0.4, 0.25),
   );
-  pedestal.position.y = -0.02;
-  root.add(pedestal);
+  basePlate.position.y = -0.025;
+  root.add(basePlate);
 
   const turf = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.50, 0.50, 0.012, 48),
-    new THREE.MeshStandardMaterial({ color: '#143522', roughness: 0.88 }),
+    new THREE.CylinderGeometry(0.58, 0.58, 0.02, 48),
+    mat('#236E38', 0.82, 0.02),
   );
-  turf.position.y = 0.004;
+  turf.position.y = 0.008;
   root.add(turf);
 
+  // Linha branca de cal de campo no pedestal
+  const chalkLine = new THREE.Mesh(makeBeveledBox(0.88, 0.006, 0.032, 0.002, 1), whiteMat);
+  chalkLine.position.set(0, 0.019, 0.22);
+  chalkLine.rotation.y = -0.18;
+  root.add(chalkLine);
+
   const ring = new THREE.Mesh(
-    new THREE.RingGeometry(0.485, 0.505, 56),
+    new THREE.RingGeometry(0.565, 0.585, 56),
     new THREE.MeshBasicMaterial({ color: '#C8A45D', side: THREE.DoubleSide }),
   );
   ring.rotation.x = -Math.PI / 2;
-  ring.position.y = 0.011;
+  ring.position.y = 0.02;
   root.add(ring);
 
-  // Clona o humano esculpido preservando todo o esqueleto (SkinnedMesh)
-  const avatarClone = cloneSkeleton(athleteGltf.scene) as THREE.Group;
+  // ==================== PERSONAGEM BLOCKY ARCADE ESCALADO ====================
+  const character = new THREE.Group();
   const hScale = player.heightCm / 178;
-  const wScale = 0.92 + ((player.weightKg - 60) / 32) * 0.16;
-  avatarClone.scale.set(wScale, hScale, wScale);
-  root.add(avatarClone);
+  const wScale = 0.92 + ((player.weightKg - 60) / 32) * 0.18;
+  character.scale.set(wScale, hScale, wScale);
+  root.add(character);
 
-  const natTeam = getNationalTeamByCountry(player.nationality);
-  const kitPrimary = natTeam.primaryColor || '#16181D';
-  const kitSecondary = natTeam.secondaryColor || '#C8A45D';
-  const shortsHex =
-    kitSecondary.toUpperCase() === kitPrimary.toUpperCase() ? '#111318' : kitSecondary;
-
-  const { appearance } = player;
-  const sockTopY =
-    appearance.sockHeight === 'ALTO' ? 0.51 : appearance.sockHeight === 'BAIXO' ? 0.30 : 0.41;
-
-  const jerseyTex = createUvJerseyTexture(
-    natTeam.shortName,
-    player.shirtName,
-    player.shirtNumber,
-    kitPrimary,
-    kitSecondary,
+  // Texturas de Rosto, Camisa (Frente/Costas) e 3 Listras de Ombro/Calção
+  const faceTex = createArcadeFaceTexture(player);
+  const frontJerseyTex = createArcadeJerseyFrontTexture(player, natTeam);
+  const backJerseyTex = createArcadeJerseyBackTexture(player, natTeam);
+  const sleeveStripesTex = createThreeStripesTexture(kitPrimary, accentStripe);
+  const shortsStripesTex = createThreeStripesTexture(shortsColor, accentStripe);
+  texturesToDispose.push(
+    faceTex,
+    frontJerseyTex,
+    backJerseyTex,
+    sleeveStripesTex,
+    shortsStripesTex,
   );
-  disposableTextures.push(jerseyTex);
 
-  avatarClone.traverse((node) => {
-    if (!(node instanceof THREE.Mesh)) return;
-    const orig = node.material as THREE.MeshStandardMaterial;
-    const matName = orig?.name ?? '';
+  const frontJerseyMat = new THREE.MeshStandardMaterial({ map: frontJerseyTex, roughness: 0.48 });
+  const backJerseyMat = new THREE.MeshStandardMaterial({ map: backJerseyTex, roughness: 0.48 });
+  const sleeveStripeMat = new THREE.MeshStandardMaterial({ map: sleeveStripesTex, roughness: 0.48 });
+  const shortsStripeMat = new THREE.MeshStandardMaterial({ map: shortsStripesTex, roughness: 0.5 });
+  const faceFrontMat = new THREE.MeshStandardMaterial({ map: faceTex, roughness: 0.52 });
 
-    if (node.name === 'Wolf3D_Outfit_Top' || matName === 'Wolf3D_Outfit_Top') {
-      const m = new THREE.MeshStandardMaterial({
-        map: jerseyTex,
-        normalMap: orig.normalMap,
-        roughnessMap: orig.roughnessMap,
-        roughness: 0.72,
-        metalness: 0.04,
-      });
-      node.material = m;
-      disposableMaterials.push(m);
-    } else if (node.name === 'Wolf3D_Outfit_Bottom' || matName === 'Wolf3D_Outfit_Bottom') {
-      const m = new THREE.MeshStandardMaterial({
-        color: shortsHex,
-        normalMap: orig.normalMap,
-        roughnessMap: orig.roughnessMap,
-        roughness: 0.75,
-        metalness: 0.04,
-      });
-      node.material = m;
-      disposableMaterials.push(m);
-    } else if (node.name === 'Wolf3D_Outfit_Footwear' || matName === 'Wolf3D_Outfit_Footwear') {
-      const m = new THREE.MeshStandardMaterial({
-        color: appearance.bootColor || '#C8A45D',
-        normalMap: orig.normalMap,
-        roughnessMap: orig.roughnessMap,
-        roughness: 0.38,
-        metalness: 0.18,
-      });
-      node.material = m;
-      disposableMaterials.push(m);
-    } else if (node.name === 'Wolf3D_Hair' || matName === 'Wolf3D_Hair') {
-      node.visible = appearance.hairStyle !== 'RASPADO';
-      const m = new THREE.MeshStandardMaterial({
-        color: appearance.hairColor || '#111827',
-        normalMap: orig.normalMap,
-        roughness: 0.76,
-        metalness: 0.05,
-      });
-      node.material = m;
-      disposableMaterials.push(m);
-    } else if (matName === 'Wolf3D_Skin' || node.name === 'Wolf3D_Head') {
-      const m = orig.clone();
-      if (orig.map?.image) {
-        const skinTex = createTintedSkinTexture(
-          orig.map.image as CanvasImageSource,
-          appearance.skinTone,
-        );
-        m.map = skinTex;
-        disposableTextures.push(skinTex);
-      }
-      node.material = m;
-      disposableMaterials.push(m);
-    } else if (matName === 'Wolf3D_Body' || node.name === 'Wolf3D_Body') {
-      const m = orig.clone();
-      if (orig.map?.image) {
-        const bodySkinTex = createTintedSkinTexture(
-          orig.map.image as CanvasImageSource,
-          appearance.skinTone,
-        );
-        m.map = bodySkinTex;
-        disposableTextures.push(bodySkinTex);
-      }
-      applyBodyKitShader(
-        m,
-        sockTopY,
-        kitPrimary,
-        shortsHex,
-        appearance.sleeveStyle,
-        appearance.accessory,
-      );
-      node.material = m;
-      disposableMaterials.push(m);
+  // ==================== PERNAS ARTICULADAS, CALÇÃO LARGO, MEIÃO LISTRADO E CHUTEIRA ====================
+  const legPivots: THREE.Group[] = [];
+  const sockMode = appearance.sockHeight ?? 'PADRAO';
+  const sockH = sockMode === 'ALTO' ? 0.27 : sockMode === 'BAIXO' ? 0.15 : 0.21;
+
+  // Cós do Calção Esportivo
+  const waistShorts = new THREE.Mesh(makeBeveledBox(0.39, 0.11, 0.23, 0.014, 3), shortsMat);
+  waistShorts.position.set(0, 0.66, 0);
+  character.add(waistShorts);
+
+  for (const side of [-1, 1]) {
+    const hipPivot = new THREE.Group();
+    hipPivot.position.set(side * 0.105, 0.63, 0);
+    hipPivot.rotation.z = side * 0.025;
+    character.add(hipPivot);
+    legPivots.push(hipPivot);
+
+    // Perna larga do Calção de Futebol com 3 listras na face lateral externa!
+    const shortLegMats = [
+      side === 1 ? shortsStripeMat : shortsMat, // +X
+      side === -1 ? shortsStripeMat : shortsMat, // -X
+      shortsMat,
+      shortsMat,
+      shortsMat,
+      shortsMat,
+    ];
+    const shortLeg = new THREE.Mesh(makeBeveledBox(0.182, 0.21, 0.225, 0.014, 3), shortLegMats);
+    shortLeg.position.set(0, -0.095, 0);
+    hipPivot.add(shortLeg);
+
+    // Canela chanfrada em pele (estilo quadrado limpo da referência!)
+    const shin = new THREE.Mesh(makeBeveledBox(0.124, 0.35, 0.128, 0.012, 3), skinMat);
+    shin.position.set(0, -0.34, 0);
+    hipPivot.add(shin);
+
+    // Meião em relevo + Punho dobrado com 2 listras em alto-relevo igualzinho à foto!
+    const sockMainMat = kitPrimary.toUpperCase() === '#FFFFFF' ? whiteMat : kitMat;
+    const sockBody = new THREE.Mesh(makeBeveledBox(0.138, sockH, 0.142, 0.012, 3), sockMainMat);
+    sockBody.position.set(0, -0.53 + sockH / 2, 0);
+    hipPivot.add(sockBody);
+
+    const cuffY = -0.53 + sockH - 0.024;
+    const cuffBase = new THREE.Mesh(makeBeveledBox(0.148, 0.056, 0.152, 0.01, 2), whiteMat);
+    cuffBase.position.set(0, cuffY, 0);
+    hipPivot.add(cuffBase);
+
+    for (const dy of [-0.013, 0.011]) {
+      const stripeRing = new THREE.Mesh(makeBeveledBox(0.151, 0.011, 0.155, 0.003, 1), stripeMat);
+      stripeRing.position.set(0, cuffY + dy, 0);
+      hipPivot.add(stripeRing);
     }
-  });
 
-  let mixer: THREE.AnimationMixer | null = null;
-  if (idleClip) {
-    mixer = new THREE.AnimationMixer(avatarClone);
-    const action = mixer.clipAction(idleClip);
-    action.play();
+    if (appearance.accessory === 'TORNOZELEIRA') {
+      const ankleTape = new THREE.Mesh(makeBeveledBox(0.144, 0.045, 0.148, 0.008, 2), whiteMat);
+      ankleTape.position.set(0, -0.49, 0);
+      hipPivot.add(ankleTape);
+    }
+
+    // Chuteira Blocky Bicolor (corpo colorido + biqueira levemente destacada + sola clara!)
+    const bootGroup = new THREE.Group();
+    bootGroup.position.set(0, -0.575, 0.032);
+    hipPivot.add(bootGroup);
+
+    const bootUpper = new THREE.Mesh(makeBeveledBox(0.148, 0.078, 0.238, 0.016, 3), bootUpperMat);
+    bootUpper.position.y = 0.018;
+    bootGroup.add(bootUpper);
+
+    const sole = new THREE.Mesh(makeBeveledBox(0.152, 0.026, 0.244, 0.006, 2), bootSoleMat);
+    sole.position.y = -0.026;
+    bootGroup.add(sole);
   }
+
+  // ==================== TRONCO / CAMISA OFICIAL ====================
+  const torsoMats = [
+    kitMat, // +X
+    kitMat, // -X
+    kitMat, // +Y
+    kitMat, // -Y
+    frontJerseyMat, // +Z Frente
+    backJerseyMat, // -Z Costas
+  ];
+  const torsoH = appearance.shirtTuck === 'SOLTA' ? 0.49 : 0.44;
+  const torsoY = appearance.shirtTuck === 'SOLTA' ? 0.93 : 0.95;
+  const torso = new THREE.Mesh(makeBeveledBox(0.41, torsoH, 0.235, 0.018, 3), torsoMats);
+  torso.position.set(0, torsoY, 0);
+  character.add(torso);
+
+  // Pescoço
+  const neck = new THREE.Mesh(makeBeveledBox(0.14, 0.075, 0.13, 0.01, 2), skinMat);
+  neck.position.set(0, 1.20, 0);
+  character.add(neck);
+
+  // ==================== BRAÇOS ARTICULADOS (OMBRO + MANGA C/ 3 LISTRAS + COTOVELO + MÃO C/ POLEGAR) ====================
+  const armPivots: THREE.Group[] = [];
+  const forearmPivots: THREE.Group[] = [];
+
+  for (const side of [-1, 1]) {
+    const shPivot = new THREE.Group();
+    shPivot.position.set(side * 0.235, 1.12, 0);
+    shPivot.rotation.z = side * 0.26;
+    shPivot.rotation.x = -0.08;
+    character.add(shPivot);
+    armPivots.push(shPivot);
+
+    // Manga com as 3 listras na face superior/externa igual à camisa branca da referência!
+    const sleeveMats = [
+      side === 1 ? sleeveStripeMat : kitMat,
+      side === -1 ? sleeveStripeMat : kitMat,
+      sleeveStripeMat,
+      kitMat,
+      kitMat,
+      kitMat,
+    ];
+    const sleeve = new THREE.Mesh(makeBeveledBox(0.138, 0.21, 0.142, 0.014, 3), sleeveMats);
+    sleeve.position.set(side * 0.035, -0.075, 0);
+    shPivot.add(sleeve);
+
+    // Barra da manga curta
+    const sleeveCuff = new THREE.Mesh(makeBeveledBox(0.142, 0.024, 0.146, 0.006, 2), stripeMat);
+    sleeveCuff.position.set(side * 0.035, -0.175, 0);
+    shPivot.add(sleeveCuff);
+
+    // Cotovelo + Antebraço
+    const elbowPivot = new THREE.Group();
+    elbowPivot.position.set(side * 0.035, -0.185, 0);
+    elbowPivot.rotation.x = -0.24;
+    shPivot.add(elbowPivot);
+    forearmPivots.push(elbowPivot);
+
+    const forearmMat =
+      appearance.sleeveStyle === 'LONGA'
+        ? kitMat
+        : appearance.sleeveStyle === 'TERMICA'
+          ? darkThermalMat
+          : skinMat;
+
+    const forearm = new THREE.Mesh(makeBeveledBox(0.106, 0.21, 0.108, 0.012, 3), forearmMat);
+    forearm.position.set(0, -0.10, 0);
+    elbowPivot.add(forearm);
+
+    if (appearance.accessory === 'MUNHEQUEIRA') {
+      const wrist = new THREE.Mesh(makeBeveledBox(0.116, 0.044, 0.118, 0.008, 2), whiteMat);
+      wrist.position.set(0, -0.185, 0);
+      elbowPivot.add(wrist);
+    }
+
+    // Mão Blocky + Polegar separado igual à referência!
+    const handMat = appearance.accessory === 'LUVAS' ? darkThermalMat : skinMat;
+    const palm = new THREE.Mesh(makeBeveledBox(0.104, 0.105, 0.088, 0.014, 2), handMat);
+    palm.position.set(0, -0.255, 0.005);
+    elbowPivot.add(palm);
+
+    const thumb = new THREE.Mesh(makeBeveledBox(0.038, 0.056, 0.038, 0.008, 2), handMat);
+    thumb.position.set(side * -0.052, -0.238, 0.038);
+    thumb.rotation.z = side * 0.35;
+    elbowPivot.add(thumb);
+  }
+
+  // ==================== CABEÇA CHANFRADA + ORELHAS + ROSTO + 10 CABELOS ====================
+  const headPivot = new THREE.Group();
+  headPivot.position.set(0, 1.39, 0.01);
+  character.add(headPivot);
+
+  const headMats = [
+    skinMat, // +X
+    skinMat, // -X
+    skinMat, // +Y
+    skinMat, // -Y
+    faceFrontMat, // +Z Rosto Expressivo!
+    skinMat, // -Z
+  ];
+  const headCube = new THREE.Mesh(makeBeveledBox(0.34, 0.34, 0.30, 0.022, 3), headMats);
+  headPivot.add(headCube);
+
+  // Orelhas chanfradas fofas nas laterais iguais à referência!
+  for (const side of [-1, 1]) {
+    const ear = new THREE.Mesh(makeBeveledBox(0.046, 0.088, 0.058, 0.012, 2), skinMat);
+    ear.position.set(side * 0.182, -0.01, -0.01);
+    headPivot.add(ear);
+  }
+
+  const hairGroup = buildBlockyHairMesh(
+    appearance.hairStyle,
+    appearance.hairColor,
+    appearance.accessory === 'FAIXA_CABECA',
+    accentStripe,
+  );
+  headPivot.add(hairGroup);
 
   return {
     root,
-    mixer,
+    rig: {
+      character,
+      headPivot,
+      leftArmPivot: armPivots[0],
+      rightArmPivot: armPivots[1],
+      leftForearmPivot: forearmPivots[0],
+      rightForearmPivot: forearmPivots[1],
+      leftLegPivot: legPivots[0],
+      rightLegPivot: legPivots[1],
+    },
     dispose: () => {
-      mixer?.stopAllAction();
-      disposableTextures.forEach((t) => t.dispose());
-      disposableMaterials.forEach((m) => m.dispose());
-      pedestal.geometry.dispose();
-      (pedestal.material as THREE.Material).dispose();
-      turf.geometry.dispose();
-      (turf.material as THREE.Material).dispose();
-      ring.geometry.dispose();
-      (ring.material as THREE.Material).dispose();
+      texturesToDispose.forEach((t) => t.dispose());
+      root.traverse((obj) => {
+        if (obj instanceof THREE.Mesh) {
+          obj.geometry.dispose();
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((m) => m.dispose());
+          } else {
+            obj.material.dispose();
+          }
+        }
+      });
     },
   };
 }

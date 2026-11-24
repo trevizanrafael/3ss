@@ -7,11 +7,33 @@ import {
   StarRating,
 } from '../../shared/types/common';
 
+export type HairStyleCode =
+  | 'DEGRADE'
+  | 'ARREPIADO'
+  | 'CURTO'
+  | 'TOPETE'
+  | 'TRANCA'
+  | 'AFRO'
+  | 'MOICANO'
+  | 'COQUE'
+  | 'LONGO'
+  | 'RASPADO';
+
+export type FacialHairCode =
+  | 'LIMPO'
+  | 'BIGODE'
+  | 'CAVANHAQUE'
+  | 'BARBA_BAIXA'
+  | 'BARBA_CHEIA';
+
+export type FaceExpressionCode = 'CONFIANTE' | 'FOCADO' | 'ALEGRE' | 'MARRENTO';
+
 export interface PlayerAppearance {
   skinTone: string;
-  hairStyle: 'CURTO' | 'DEGRADE' | 'TOPETE' | 'TRANCA' | 'AFRO' | 'LONGO' | 'RASPADO';
+  hairStyle: HairStyleCode;
   hairColor: string;
-  facialHair?: 'LIMPO' | 'CAVANHAQUE' | 'BARBA_BAIXA' | 'BARBA_CHEIA';
+  facialHair?: FacialHairCode;
+  expression?: FaceExpressionCode;
   eyeColor: string;
   shirtTuck: 'SOLTA' | 'DENTRO_CALCAO';
   sleeveStyle: 'CURTA' | 'LONGA' | 'TERMICA';

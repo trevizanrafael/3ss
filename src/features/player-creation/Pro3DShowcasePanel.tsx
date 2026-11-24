@@ -6,8 +6,8 @@ import { CareerPlayer } from '../../domains/player/playerTypes';
 import { computeFifaMacroStats } from '../../domains/training/trainingDrillsCatalog';
 import { GamepadBadge } from '../../shared/gamepad/GamepadBadge';
 import {
-  buildRealisticHumanFootballer3D,
-  preloadHumanAthleteAssets,
+  AnimatedRigHandles,
+  buildBlockyArcadeFootballer3D,
 } from '../../shared/three/player3DBuilder';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
 import { CountryFlag } from '../../shared/ui/CountryFlag';
@@ -24,15 +24,16 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   previewPlayer,
   cameraPreset,
 }) => {
-  // Container exclusivo e vazio apenas para o <canvas> do Three.js (nunca mistura filhos do React!)
   const canvasHostRef = useRef<HTMLDivElement | null>(null);
-  const manualYawRef = useRef(0);
-  const targetYawRef = useRef(-0.18);
+  const manualYawRef = useRef(-0.22);
+  const targetYawRef = useRef(-0.22);
   const heightCmRef = useRef(previewPlayer.heightCm);
   heightCmRef.current = previewPlayer.heightCm;
 
   const [zoomFaceOverride, setZoomFaceOverride] = useState<boolean | null>(null);
-  const [modelReady, setModelReady] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
+  const celebrateRef = useRef(false);
+  celebrateRef.current = celebrating;
 
   const activePreset: ShowcaseCameraPreset =
     zoomFaceOverride === true
@@ -47,23 +48,19 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   presetRef.current = activePreset;
 
   useEffect(() => {
-    preloadHumanAthleteAssets();
-  }, []);
-
-  useEffect(() => {
     setZoomFaceOverride(null);
     if (cameraPreset === 'FULL_BACK') {
       targetYawRef.current = Math.PI;
     } else if (cameraPreset === 'HEAD_CLOSEUP') {
-      targetYawRef.current = 0.08;
+      targetYawRef.current = 0.1;
     } else {
-      targetYawRef.current = -0.18;
+      targetYawRef.current = -0.22;
     }
   }, [cameraPreset]);
 
   const sceneBundleRef = useRef<{
     actorHolder: THREE.Group;
-    mixer: THREE.AnimationMixer | null;
+    rig: AnimatedRigHandles | null;
     disposeActor?: () => void;
   } | null>(null);
 
@@ -73,27 +70,28 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 30);
-    camera.position.set(0, 1.05, 3.45);
+    camera.position.set(0, 1.0, 3.3);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = 1.12;
     host.appendChild(renderer.domElement);
 
-    scene.add(new THREE.HemisphereLight('#F8FAFC', '#1E2430', 1.25));
-    const keyLight = new THREE.DirectionalLight('#FFFBF2', 1.65);
-    keyLight.position.set(2.2, 3.2, 3.5);
-    scene.add(keyLight);
+    // Iluminação vibrante de noite de estádio igual à arte de referência!
+    scene.add(new THREE.HemisphereLight('#FFFFFF', '#1E293B', 1.35));
+    const stadiumKey = new THREE.DirectionalLight('#FFFBEB', 1.85);
+    stadiumKey.position.set(2.4, 3.8, 3.4);
+    scene.add(stadiumKey);
 
-    const rimLight = new THREE.DirectionalLight('#93C5FD', 0.85);
-    rimLight.position.set(-2.5, 2.4, -2.5);
-    scene.add(rimLight);
+    const coolRim = new THREE.DirectionalLight('#60A5FA', 1.15);
+    coolRim.position.set(-2.8, 2.6, -2.4);
+    scene.add(coolRim);
 
     const actorHolder = new THREE.Group();
     scene.add(actorHolder);
-    sceneBundleRef.current = { actorHolder, mixer: null };
+    sceneBundleRef.current = { actorHolder, rig: null };
 
     const syncSize = () => {
       const w = Math.max(200, host.clientWidth);
@@ -134,27 +132,58 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
     window.addEventListener('gamepad-rs-move', onRsMove);
 
     let rafId = 0;
-    let prevTimeMs = performance.now();
-    const lookCurrent = new THREE.Vector3(0, 0.95, 0);
+    const lookCurrent = new THREE.Vector3(0, 0.85, 0);
 
     const animate = (nowMs: number) => {
-      const dt = Math.min(0.05, Math.max(0, (nowMs - prevTimeMs) / 1000));
-      prevTimeMs = nowMs;
-      sceneBundleRef.current?.mixer?.update(dt);
+      const t = nowMs * 0.001;
+      const rig = sceneBundleRef.current?.rig;
+
+      if (rig) {
+        if (celebrateRef.current) {
+          // Pose icônica de comemoração de gol de braços abertos igual à referência!
+          const pulse = Math.sin(t * 4.5) * 0.04;
+          rig.character.position.y = Math.abs(Math.sin(t * 4.5)) * 0.035;
+          rig.headPivot.rotation.z = -0.08;
+          rig.headPivot.rotation.x = -0.1 + pulse * 0.5;
+          rig.leftArmPivot.rotation.z = -1.22 - pulse;
+          rig.rightArmPivot.rotation.z = 1.22 + pulse;
+          rig.leftArmPivot.rotation.x = -0.15;
+          rig.rightArmPivot.rotation.x = -0.15;
+          rig.leftForearmPivot.rotation.x = -0.12;
+          rig.rightForearmPivot.rotation.x = -0.12;
+          rig.leftLegPivot.rotation.x = 0.08;
+          rig.rightLegPivot.rotation.x = -0.26;
+        } else {
+          // Respiração atlética natural em pé
+          const breath = Math.sin(t * 2.4);
+          rig.character.position.y = breath * 0.008;
+          rig.headPivot.rotation.y = Math.sin(t * 1.1) * 0.06;
+          rig.headPivot.rotation.z = 0;
+          rig.headPivot.rotation.x = breath * 0.02;
+          rig.leftArmPivot.rotation.z = -0.24 - breath * 0.02;
+          rig.rightArmPivot.rotation.z = 0.24 + breath * 0.02;
+          rig.leftArmPivot.rotation.x = -0.08;
+          rig.rightArmPivot.rotation.x = -0.08;
+          rig.leftForearmPivot.rotation.x = -0.26;
+          rig.rightForearmPivot.rotation.x = -0.26;
+          rig.leftLegPivot.rotation.x = 0;
+          rig.rightLegPivot.rotation.x = 0;
+        }
+      }
 
       const p = presetRef.current;
       const hRatio = heightCmRef.current / 178;
       const desiredCamPos =
         p === 'HEAD_CLOSEUP'
-          ? new THREE.Vector3(0, 1.66 * hRatio, 0.95)
-          : new THREE.Vector3(0, 1.02, 3.35);
+          ? new THREE.Vector3(0, 1.44 * hRatio, 1.28)
+          : new THREE.Vector3(0, 0.94, 3.05);
       const desiredLook =
         p === 'HEAD_CLOSEUP'
-          ? new THREE.Vector3(0, 1.64 * hRatio, 0)
-          : new THREE.Vector3(0, 0.92, 0);
+          ? new THREE.Vector3(0, 1.41 * hRatio, 0)
+          : new THREE.Vector3(0, 0.84, 0);
 
-      camera.position.lerp(desiredCamPos, 0.09);
-      lookCurrent.lerp(desiredLook, 0.09);
+      camera.position.lerp(desiredCamPos, 0.1);
+      lookCurrent.lerp(desiredLook, 0.1);
       camera.lookAt(lookCurrent);
 
       manualYawRef.current += (targetYawRef.current - manualYawRef.current) * 0.12;
@@ -182,31 +211,15 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    buildRealisticHumanFootballer3D(previewPlayer)
-      .then((built) => {
-        if (cancelled) {
-          built.dispose();
-          return;
-        }
-        const bundle = sceneBundleRef.current;
-        if (!bundle) {
-          built.dispose();
-          return;
-        }
-        bundle.disposeActor?.();
-        bundle.actorHolder.clear();
-        bundle.actorHolder.add(built.root);
-        bundle.mixer = built.mixer;
-        bundle.disposeActor = built.dispose;
-        setModelReady(true);
-      })
-      .catch((err) => {
-        console.error('Erro ao montar modelo 3D:', err);
-      });
-    return () => {
-      cancelled = true;
-    };
+    const bundle = sceneBundleRef.current;
+    if (!bundle) return;
+    bundle.disposeActor?.();
+    bundle.actorHolder.clear();
+
+    const built = buildBlockyArcadeFootballer3D(previewPlayer);
+    bundle.actorHolder.add(built.root);
+    bundle.rig = built.rig;
+    bundle.disposeActor = built.dispose;
   }, [previewPlayer]);
 
   const country = COUNTRIES[previewPlayer.nationality] ?? COUNTRIES.BRA;
@@ -218,7 +231,7 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
   return (
     <div className="console-tile border-t-[3px] border-t-[#C8A45D] flex flex-col justify-between h-full relative overflow-hidden">
       <div
-        className="pointer-events-none absolute inset-0 opacity-20"
+        className="pointer-events-none absolute inset-0 opacity-22"
         style={{
           background: `radial-gradient(circle at 50% 42%, ${natTeam.primaryColor}88, transparent 68%)`,
         }}
@@ -257,26 +270,32 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
         </div>
       </div>
 
-      {/* Wrapper separado: canvasHostRef fica 100% isolado dos overlays do React */}
       <div className="flex-1 relative min-h-0">
         <div
           ref={canvasHostRef}
           className="absolute inset-0 cursor-grab active:cursor-grabbing"
         />
 
-        {!modelReady && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center font-condensed uppercase tracking-widest text-sm text-[#9498A3] z-10">
-            CARREGANDO ATLETA 3D...
-          </div>
-        )}
-
         <div className="absolute bottom-3 inset-x-4 flex items-center justify-between pointer-events-none z-10">
           <span className="text-[10px] uppercase tracking-widest text-[#9498A3] bg-[#0B0B0D]/80 px-2.5 py-1 border border-[#242730] inline-flex items-center gap-1.5">
             <GamepadBadge action="RS" />
-            <span>GIRAR 360°</span>
+            <span>GIRAR</span>
           </span>
 
           <div className="flex gap-1.5 pointer-events-auto">
+            <button
+              type="button"
+              data-nav-ignore="true"
+              onClick={() => setCelebrating((c) => !c)}
+              className={`px-2.5 py-1 border font-condensed uppercase font-bold text-[11px] tracking-wider cursor-pointer ${
+                celebrating
+                  ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
+                  : 'bg-[#0B0B0D]/90 text-[#F5F5F7] border-[#242730] hover:border-[#C8A45D]'
+              }`}
+            >
+              {celebrating ? 'EM PÉ' : 'COMEMORAR'}
+            </button>
+
             <button
               type="button"
               data-nav-ignore="true"
@@ -288,6 +307,7 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
             >
               FRENTE / COSTAS
             </button>
+
             <button
               type="button"
               data-nav-ignore="true"
@@ -299,7 +319,7 @@ export const Pro3DShowcasePanel: React.FC<Pro3DShowcasePanelProps> = ({
               }
               className="px-2.5 py-1 bg-[#0B0B0D]/90 border border-[#242730] hover:border-[#C8A45D] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#C8A45D] cursor-pointer"
             >
-              {activePreset === 'HEAD_CLOSEUP' ? 'VER CORPO' : 'ZOOM ROSTO'}
+              {activePreset === 'HEAD_CLOSEUP' ? 'CORPO' : 'ROSTO'}
             </button>
           </div>
         </div>
