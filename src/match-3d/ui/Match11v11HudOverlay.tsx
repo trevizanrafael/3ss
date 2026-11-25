@@ -50,6 +50,7 @@ export interface Match11v11HudSnapshot {
   pauseTab: 'MAIN' | 'SETTINGS';
   pauseMenuIndex: number;
   isReplayActive: boolean;
+  replayPass: 1 | 2;
   replayAngle: ReplayCameraAngle;
   replayScorerText: string;
   stamina: number;
@@ -152,7 +153,8 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
             <span className="w-2.5 h-2.5 bg-[#EF4444] inline-block animate-pulse" />
             <div>
               <div className="text-[10px] font-condensed uppercase tracking-[0.24em] text-[#C8A45D] font-bold">
-                REPLAY • {REPLAY_ANGLE_LABELS[hud.replayAngle]}
+                REPLAY {hud.replayPass}/2 • {REPLAY_ANGLE_LABELS[hud.replayAngle]}
+                {hud.replayPass === 2 ? ' (CÂMERA LENTA)' : ''}
               </div>
               <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] leading-none mt-0.5">
                 {hud.replayScorerText || `${homeClub.shortName} ${hud.homeGoals} : ${hud.awayGoals} ${rivalClub.shortName}`}

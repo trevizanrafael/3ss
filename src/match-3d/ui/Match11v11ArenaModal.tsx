@@ -77,6 +77,8 @@ type ActiveReplayPlayback = {
   frames: ReplayFrameSnapshot[];
   shotOrigin: THREE.Vector3;
   goalZ: number;
+  secondPassStartCursor: number;
+  passNumber: 1 | 2;
   cursor: number;
   scorerText: string;
   fromPauseMenu: boolean;
@@ -145,6 +147,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     pauseTab: 'MAIN',
     pauseMenuIndex: 0,
     isReplayActive: false,
+    replayPass: 1,
     replayAngle: 'BEHIND_WIDE',
     replayScorerText: '',
     stamina: initialCap,
@@ -405,6 +408,10 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     const smoothCamLook = new THREE.Vector3(0, 0.7, 0);
 
     let celebrationTimer = 0;
+    let celebrationElapsed = 0;
+    let celebSpecialKind: 'NONE' | 'SLIDE' | 'JUMP' = 'NONE';
+    let celebSpecialTimer = 0;
+    let postGoalRecordFramesLeft = 0;
     let pendingGoalScorerBanner = '';
     let pendingKickoffTeam: 'HOME' | 'AWAY' = 'AWAY';
     let activeReplay: ActiveReplayPlayback | null = null;
@@ -524,9 +531,15 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
       homeCoord.smoothBallPos.set(0, 0, 0);
       awayCoord.smoothBallPos.set(0, 0, 0);
+      homeCoord.consecutivePasses = 0;
+      awayCoord.consecutivePasses = 0;
       userQueuedCall = null;
       userQueuedCallTimer = 0;
       celebrationTimer = 0;
+      celebrationElapsed = 0;
+      celebSpecialKind = 'NONE';
+      celebSpecialTimer = 0;
+      postGoalRecordFramesLeft = 0;
     };
 
     const prepareSetPieceFromOut = (exitPos: THREE.Vector3) => {
@@ -897,10 +910,13 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       launchInstantReplay: () => {
         const clip = replayRecorder.extractClip(false);
         if (clip.frames.length > 10) {
+          replayAngle = 'BEHIND_WIDE';
           activeReplay = {
             frames: clip.frames,
             shotOrigin: clip.shotOrigin,
             goalZ: clip.goalZ,
+            secondPassStartCursor: 0,
+            passNumber: 1,
             cursor: 0,
             scorerText: 'REPLAY INSTANTÂNEO DA PARTIDA',
             fromPauseMenu: true,
@@ -986,7 +1002,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
       const inp = inputCollector.sample(dt);
 
-      // 1. MODO REPLAY (Y troca ângulo; A/B/Espaço pula!)
+      // 1. MODO REPLAY DUPLO EM DOIS ÂNGULOS (Passagem 1 Ampla de Costas -> Passagem 2 Câmera Lenta Atrás do Gol!)
       if (activeReplay) {
         if (inp.throughJustPressed || inp.resetBallJustPressed) {
           controlsRef.current.cycleReplayAngle();
@@ -998,7 +1014,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           carrierRing.visible = false;
           passTargetRing.visible = false;
 
-          activeReplay.cursor += dt * 50.0;
+          const playbackFps = activeReplay.passNumber === 2 ? 39.0 : 52.0;
+          activeReplay.cursor += dt * playbackFps;
           const idx = Math.min(
             activeReplay.frames.length - 1,
             Math.floor(activeReplay.cursor),
@@ -1026,8 +1043,15 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
             false,
           );
 
-          if (activeReplay.cursor >= activeReplay.frames.length + 14) {
-            controlsRef.current.skipReplay();
+          if (activeReplay.cursor >= activeReplay.frames.length + 12) {
+            if (!activeReplay.fromPauseMenu && activeReplay.passNumber === 1) {
+              // Inicia automaticamente a 2ª Passagem em novo ângulo (Atrás do Gol em Câmera Lenta)!
+              activeReplay.passNumber = 2;
+              activeReplay.cursor = activeReplay.secondPassStartCursor;
+              replayAngle = 'BEHIND_GOAL';
+            } else {
+              controlsRef.current.skipReplay();
+            }
           }
         }
 
@@ -1038,6 +1062,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           setHud((prev) => ({
             ...prev,
             isReplayActive: Boolean(activeReplay),
+            replayPass: activeReplay?.passNumber ?? 1,
             replayAngle,
             replayScorerText: activeReplay?.scorerText ?? '',
           }));
@@ -1316,9 +1341,93 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
       if (celebrationTimer > 0) {
         celebrationTimer -= dt;
-        pState.vel.multiplyScalar(0.92);
-        pState.pos.addScaledVector(pState.vel, dt);
+        celebrationElapsed += dt;
         stepBallPhysics(ball, dt);
+
+        if (ball.enteredGoalSide === 'NORTH') {
+          // COMEMORAÇÃO JOGÁVEL: Você corre livre pelo gramado/torcida e pode soltar Joelhada (X) ou Salto (Y)!
+          if (celebSpecialTimer > 0) {
+            celebSpecialTimer = Math.max(0, celebSpecialTimer - dt);
+            if (celebSpecialKind === 'SLIDE') {
+              pState.vel.multiplyScalar(Math.max(0, 1 - 1.8 * dt));
+            } else {
+              pState.vel.multiplyScalar(Math.max(0, 1 - 4.0 * dt));
+            }
+            if (celebSpecialTimer <= 0) celebSpecialKind = 'NONE';
+          } else {
+            const wishLen = Math.min(1, rawWishLen);
+            const cSpd = wishLen * 9.8;
+            const cDirX = wishLen > 0.05 ? rawWishX / rawWishLen : 0;
+            const cDirZ = wishLen > 0.05 ? rawWishZ / rawWishLen : 0;
+            pState.vel.x += (cDirX * cSpd - pState.vel.x) * Math.min(1, 12 * dt);
+            pState.vel.z += (cDirZ * cSpd - pState.vel.z) * Math.min(1, 12 * dt);
+
+            if (Math.hypot(pState.vel.x, pState.vel.z) > 0.3) {
+              pState.facingYaw = Math.atan2(pState.vel.x, pState.vel.z);
+            }
+
+            if (inp.lobOrSlideJustPressed) {
+              celebSpecialKind = 'SLIDE';
+              celebSpecialTimer = 1.05;
+              const boostYaw = pState.facingYaw;
+              pState.vel.set(Math.sin(boostYaw) * 10.2, 0, Math.cos(boostYaw) * 10.2);
+              playBallKickSfx(0.32);
+            } else if (inp.throughJustPressed) {
+              celebSpecialKind = 'JUMP';
+              celebSpecialTimer = 0.92;
+              playBallKickSfx(0.35);
+            }
+          }
+
+          pState.pos.addScaledVector(pState.vel, dt);
+          pState.pos.x = Math.max(-PITCH.HALF_W - 3.0, Math.min(PITCH.HALF_W + 3.0, pState.pos.x));
+          pState.pos.z = Math.max(-PITCH.HALF_L - 3.5, Math.min(PITCH.HALF_L + 2.0, pState.pos.z));
+
+          // Os 4 companheiros mais próximos correm até você comemorando juntos!
+          const celebrators = [...homeAgents]
+            .sort(
+              (a, b) =>
+                Math.hypot(a.pos.x - pState.pos.x, a.pos.z - pState.pos.z) -
+                Math.hypot(b.pos.x - pState.pos.x, b.pos.z - pState.pos.z),
+            )
+            .slice(0, 4);
+
+          homeAgents.forEach((ag, idx) => {
+            if (celebrators.includes(ag)) {
+              const offsetAng = idx * 1.4;
+              const tx = pState.pos.x + Math.cos(offsetAng) * 2.4;
+              const tz = pState.pos.z + Math.sin(offsetAng) * 2.4;
+              const dx = tx - ag.pos.x;
+              const dz = tz - ag.pos.z;
+              const d = Math.hypot(dx, dz);
+              const sp = d > 1.2 ? 8.2 : 0;
+              ag.vel.x = d > 0.2 ? (dx / d) * sp : 0;
+              ag.vel.z = d > 0.2 ? (dz / d) * sp : 0;
+              ag.pos.addScaledVector(ag.vel, dt);
+              if (sp > 0.3) ag.facingYaw = Math.atan2(ag.vel.x, ag.vel.z);
+              ag.actor.root.position.copy(ag.pos);
+              ag.actor.root.rotation.y = ag.facingYaw;
+              animatePitchActor(ag.actor, 'CELEBRATE', sp, 0, false, dt, timeSec);
+            } else {
+              ag.vel.multiplyScalar(0.9);
+              ag.actor.root.position.copy(ag.pos);
+              animatePitchActor(ag.actor, 'IDLE', 0, 0, false, dt, timeSec);
+            }
+          });
+
+          // Apertar A após 0.65s encerra a comemoração na hora e abre o Replay Duplo!
+          if (celebrationElapsed > 0.65 && inp.passJustPressed) {
+            celebrationTimer = 0;
+          }
+        } else {
+          // Gol do adversário: breve reação antes do replay
+          pState.vel.multiplyScalar(0.9);
+          pState.pos.addScaledVector(pState.vel, dt);
+          if (celebrationElapsed > 0.5 && inp.passJustPressed) {
+            celebrationTimer = 0;
+          }
+        }
+
         if (celebrationTimer <= 0) {
           const clip = replayRecorder.extractClip(true);
           if (clip.frames.length > 24) {
@@ -1327,6 +1436,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
               frames: clip.frames,
               shotOrigin: clip.shotOrigin,
               goalZ: clip.goalZ,
+              secondPassStartCursor: clip.secondPassStartCursor,
+              passNumber: 1,
               cursor: 0,
               scorerText: pendingGoalScorerBanner,
               fromPauseMenu: false,
@@ -1554,8 +1665,16 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
             assistId ? ` (ASSIST: ${actorNameMap.get(assistId)})` : ''
           }`;
           pendingKickoffTeam = 'AWAY';
-          showTicker(`⚽ GOL! ${scorerLabel}`, '#2DBE60', 1.5);
-          celebrationTimer = 1.4;
+          celebrationElapsed = 0;
+          celebSpecialKind = 'NONE';
+          celebSpecialTimer = 0;
+          postGoalRecordFramesLeft = 42; // Congela fita de replay 0.7s após a bola estufar a rede!
+          showTicker(
+            `⚽ GOL! ${scorerLabel} • CORRA P/ COMEMORAR ([X] JOELHADA • [Y] SALTO • [A] REPLAY)`,
+            '#2DBE60',
+            4.1,
+          );
+          celebrationTimer = 4.1;
         } else if (ballEvents.scoredSouthGoal) {
           playWhistleSfx(true);
           awayGoals += 1;
@@ -1563,8 +1682,10 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           const scorerLabel = actorNameMap.get(scorerId) ?? rivalClub.shortName;
           pendingGoalScorerBanner = `GOL DO ${rivalClub.shortName} • ${scorerLabel}`;
           pendingKickoffTeam = 'HOME';
-          showTicker(`GOL DO ${rivalClub.shortName} • ${scorerLabel}`, '#EF4444', 1.5);
-          celebrationTimer = 1.4;
+          celebrationElapsed = 0;
+          postGoalRecordFramesLeft = 42;
+          showTicker(`GOL DO ${rivalClub.shortName} • ${scorerLabel}`, '#EF4444', 1.8);
+          celebrationTimer = 1.7;
         } else if (ballEvents.wentOutOfBounds) {
           prepareSetPieceFromOut(ball.pos.clone());
         }
@@ -1601,9 +1722,18 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       const fakeShotProgress =
         pState.fakeShotAnimTimer > 0 ? 1 - pState.fakeShotAnimTimer / 0.34 : 0;
 
+      const celebJumpProgress =
+        celebSpecialKind === 'JUMP' && celebSpecialTimer > 0
+          ? 1 - celebSpecialTimer / 0.92
+          : 0;
+
       const userPose: PitchPoseState =
         celebrationTimer > 0 && ball.enteredGoalSide === 'NORTH'
-          ? 'CELEBRATE'
+          ? celebSpecialKind === 'SLIDE'
+            ? 'CELEBRATE_SLIDE'
+            : celebSpecialKind === 'JUMP'
+              ? 'CELEBRATE_JUMP'
+              : 'CELEBRATE'
           : pState.slideTimer > 0
             ? 'SLIDE'
             : pState.fakeShotAnimTimer > 0
@@ -1617,11 +1747,13 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
                     : 'IDLE';
 
       const animParam =
-        userPose === 'FAKE_SHOT'
-          ? fakeShotProgress
-          : pState.windupTimer > 0
-            ? pState.lockedPower01
-            : pState.powerCharge01;
+        userPose === 'CELEBRATE_JUMP'
+          ? celebJumpProgress
+          : userPose === 'FAKE_SHOT'
+            ? fakeShotProgress
+            : pState.windupTimer > 0
+              ? pState.lockedPower01
+              : pState.powerCharge01;
 
       const finesseChargeLeftFoot =
         ball.pos.x < -0.9
@@ -1651,7 +1783,15 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         timeSec,
       );
 
-      if (!activeSetPiece && (half === 1 || half === 2)) {
+      const shouldRecordReplayNow =
+        !activeSetPiece &&
+        (half === 1 || half === 2) &&
+        (celebrationTimer <= 0 || postGoalRecordFramesLeft > 0);
+      if (celebrationTimer > 0 && postGoalRecordFramesLeft > 0) {
+        postGoalRecordFramesLeft -= 1;
+      }
+
+      if (shouldRecordReplayNow) {
         liveActorStatesBuffer[0].x = pState.pos.x;
         liveActorStatesBuffer[0].z = pState.pos.z;
         liveActorStatesBuffer[0].yaw = pState.facingYaw;
@@ -1727,10 +1867,15 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       const targetLook = new THREE.Vector3();
 
       if (cameraPreset === 'BROADCAST_TV') {
-        const focusZ = Math.max(-PITCH.HALF_L + 13, Math.min(PITCH.HALF_L - 13, ball.pos.z * 0.8));
-        const depthOffset = ball.pos.x * 0.16;
+        // Na comemoração de gol do seu time, a câmera TV acompanha a corrida do seu boneco!
+        const camAnchorZ =
+          celebrationTimer > 0 && ball.enteredGoalSide === 'NORTH' ? pState.pos.z : ball.pos.z;
+        const camAnchorX =
+          celebrationTimer > 0 && ball.enteredGoalSide === 'NORTH' ? pState.pos.x : ball.pos.x;
+        const focusZ = Math.max(-PITCH.HALF_L + 11, Math.min(PITCH.HALF_L - 11, camAnchorZ * 0.82));
+        const depthOffset = camAnchorX * 0.16;
         targetCamPos.set(41.5 + depthOffset, 22.8, focusZ);
-        targetLook.set(ball.pos.x * 0.28, 0.7, focusZ);
+        targetLook.set(camAnchorX * 0.32, 0.7, focusZ);
       } else if (cameraPreset === 'PRO_TACTICAL') {
         const camForwardX = -Math.sin(camYaw);
         const camForwardZ = -Math.cos(camYaw);
@@ -1834,6 +1979,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           pauseTab,
           pauseMenuIndex,
           isReplayActive: false,
+          replayPass: 1,
           replayAngle,
           replayScorerText: '',
           stamina: pState.stamina,

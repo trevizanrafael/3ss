@@ -98,6 +98,7 @@ export class GoalReplayRecorder {
     frames: ReplayFrameSnapshot[];
     shotOrigin: THREE.Vector3;
     goalZ: number;
+    secondPassStartCursor: number;
   } {
     const frames: ReplayFrameSnapshot[] = [];
     const start = (this.writeIdx - this.count + this.capacity) % this.capacity;
@@ -110,11 +111,11 @@ export class GoalReplayRecorder {
 
     if (!forGoal) {
       const origin = (frames[Math.floor(frames.length * 0.35)]?.ballPos ?? new THREE.Vector3()).clone();
-      return { frames, shotOrigin: origin, goalZ };
+      return { frames, shotOrigin: origin, goalZ, secondPassStartCursor: 0 };
     }
 
     let shotFrameIdx = Math.max(0, frames.length - 105);
-    for (let i = frames.length - 25; i >= Math.max(1, frames.length - 220); i--) {
+    for (let i = frames.length - 20; i >= Math.max(1, frames.length - 230); i--) {
       const prev = frames[i - 1];
       const curr = frames[i];
       if (prev.ballOwnerId !== null && curr.ballOwnerId === null) {
@@ -129,9 +130,11 @@ export class GoalReplayRecorder {
 
     const clipStartIdx = Math.max(0, shotFrameIdx - 84);
     const trimmed = frames.slice(clipStartIdx);
+    const localShotIdx = shotFrameIdx - clipStartIdx;
+    const secondPassStartCursor = Math.max(0, localShotIdx - 32);
     const shotOrigin = (frames[shotFrameIdx]?.ballPos ?? new THREE.Vector3(0, 0, goalZ * 0.5)).clone();
 
-    return { frames: trimmed, shotOrigin, goalZ };
+    return { frames: trimmed, shotOrigin, goalZ, secondPassStartCursor };
   }
 }
 
@@ -172,8 +175,14 @@ export function applyReplayFrameAndCamera(
 
   if (angle === 'BEHIND_GOAL') {
     const zSign = goalZ < 0 ? -1 : 1;
-    camera.position.set(frame.ballPos.x * 0.35, 5.2, goalZ + zSign * 9.5);
-    camera.lookAt(frame.ballPos.x * 0.65, 1.4, frame.ballPos.z * 0.7 + goalZ * 0.3);
+    // Câmera diagonal aberta atrás da rede estilo transmissão UEFA Champions League!
+    const sideSign = shotOrigin.x >= 0 ? -1 : 1;
+    camera.position.set(sideSign * 7.8, 5.4, goalZ + zSign * 11.2);
+    camera.lookAt(
+      frame.ballPos.x * 0.55,
+      Math.max(1.1, Math.min(2.4, frame.ballPos.y * 0.7 + 0.6)),
+      frame.ballPos.z * 0.58 + goalZ * 0.42,
+    );
     return;
   }
 

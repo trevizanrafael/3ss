@@ -48,6 +48,8 @@ export interface TeamTacticalCoordinatorState {
   depthRunnerId: string | null;
   depthRunTarget: THREE.Vector3;
   depthRunTimer: number;
+  /** Conta quantos passes seguidos o time trocou sem finalizar (evita cozinhar a bola infinitamente!) */
+  consecutivePasses: number;
   directives: Map<string, AssignedAgentDirective>;
 }
 
@@ -75,6 +77,7 @@ export function createTeamTacticalCoordinator(
     depthRunnerId: null,
     depthRunTarget: new THREE.Vector3(),
     depthRunTimer: 0,
+    consecutivePasses: 0,
     directives: new Map(),
   };
 }
@@ -214,6 +217,7 @@ export function stepTeamTacticalCoordinator(
     coord.lastPossessionHoldTimer = 1.1;
   } else if (directOpp) {
     coord.lastPossessionHoldTimer = 0;
+    coord.consecutivePasses = 0;
   } else if (ball.lastTouchTeam === coord.teamSide) {
     coord.lastPossessionHoldTimer = Math.max(coord.lastPossessionHoldTimer, 0.55);
   } else {
@@ -332,11 +336,11 @@ export function stepTeamTacticalCoordinator(
       let bestSpotScore = -999;
 
       const offsets: [number, number][] = [
+        [0, coord.attackDir * 6.5],
+        [-6.0, coord.attackDir * 7.0],
+        [6.0, coord.attackDir * 7.0],
+        [idx % 2 === 0 ? -8.0 : 8.0, coord.attackDir * 2.5],
         [0, 0],
-        [-5.5, coord.attackDir * 4.5],
-        [5.5, coord.attackDir * 4.5],
-        [idx % 2 === 0 ? -7.0 : 7.0, -coord.attackDir * 4.0],
-        [0, coord.attackDir * 7.5],
       ];
 
       for (const [ox, oz] of offsets) {

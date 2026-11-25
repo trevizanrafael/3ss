@@ -590,22 +590,39 @@ export function stepOutfieldAgentsTeam(
       }
 
       const distZToGoal = Math.abs(goalZ - ag.pos.z);
-      const hasTrueOpenBreakaway = dangerInFrontDist > 8.5 && nearestOppDist > 4.6;
-      const feelingDanger = dangerInFrontDist < 7.8 || nearestOppDist < 4.2;
+      const inFinalThird = distZToGoal < 37.0;
+      const mustGoVertical =
+        ag.teamSide === 'AWAY' && (inFinalThird || coord.consecutivePasses >= 4);
+
+      // No terço final (ou após 4 passes seguidos do adversário), o time tem CORAGEM DE ATACAR:
+      // NÃO recua só porque viu um marcador a 7m — parte pra cima em direção à área e chuta!
+      const dangerThresholdFront = mustGoVertical ? 3.5 : 7.8;
+      const dangerThresholdClose = mustGoVertical ? 2.4 : 4.2;
+
+      const hasTrueOpenBreakaway =
+        dangerInFrontDist > (mustGoVertical ? 4.4 : 8.5) &&
+        nearestOppDist > (mustGoVertical ? 2.8 : 4.6);
+      const feelingDanger =
+        dangerInFrontDist < dangerThresholdFront || nearestOppDist < dangerThresholdClose;
 
       let evadeX = 0;
       let evadeZ = 0;
-      if (nearestOppDist < 5.2 && nearestOppDist > 0.1) {
-        const awayScale = ((5.2 - nearestOppDist) / 5.2) * 8.0;
+      if (nearestOppDist < 4.8 && nearestOppDist > 0.1) {
+        const awayScale = ((4.8 - nearestOppDist) / 4.8) * 7.2;
         evadeX = ((ag.pos.x - nearestOppX) / nearestOppDist) * awayScale;
-        evadeZ = ((ag.pos.z - nearestOppZ) / nearestOppDist) * awayScale * 0.45;
+        // No terço final, desvia PRO LADO buscando ângulo de chute, NUNCA andando pra trás!
+        evadeZ = mustGoVertical
+          ? 0
+          : ((ag.pos.z - nearestOppZ) / nearestOppDist) * awayScale * 0.4;
       }
 
       const dribDirX = goalDirX * 14.0 + evadeX;
-      const dribDirZ = distZToGoal < 3.5 ? 0 : goalDirZ * 16.0 + evadeZ;
+      const dribDirZ = distZToGoal < 3.5 ? 0 : goalDirZ * 16.5 + evadeZ;
       const dribLen = Math.max(0.01, Math.hypot(dribDirX, dribDirZ));
       const dribSpd =
-        (hasTrueOpenBreakaway ? ag.maxSprintSpeed * 0.92 : ag.baseJogSpeed * 1.02) *
+        (hasTrueOpenBreakaway || mustGoVertical
+          ? ag.maxSprintSpeed * 0.93
+          : ag.baseJogSpeed * 1.02) *
         (0.86 + (ag.profile.attributes.dribbling / 99) * 0.08);
 
       ag.vel.x += ((dribDirX / dribLen) * dribSpd - ag.vel.x) * Math.min(1, 11 * dt);
@@ -626,8 +643,8 @@ export function stepOutfieldAgentsTeam(
       );
       ball.vel.copy(ag.vel);
 
-      // 2C. Utility AI: Chuta sem hesitar na cara do gol; toca pro lado/apoio assim que vê marcador à frente!
-      const underHeavyPressure = nearestOppDist < 3.4;
+      // 2C. Utility AI: Chuta de dentro e da entrada da área; no terço final busca passe PRA FRENTE (nunca fica cozinhando atrás!)
+      const underHeavyPressure = nearestOppDist < 2.8;
       if (ag.decisionTimer <= 0 && (ag.carryTime >= ag.minHoldTime || feelingDanger)) {
         ag.decisionTimer = 0.11;
 
@@ -637,25 +654,28 @@ export function stepOutfieldAgentsTeam(
           ...opponentSnapshots.map((o) => (o.pos.z * coord.attackDir) / PITCH.HALF_L),
         );
 
-        // 1) Finalização Letal (Ambos os times chutam quando chegam em zona de gol!)
-        if (distToGoal < 23.5 && Math.abs(ag.pos.x) < 16.5) {
-          // Só considera bloqueado se houver um zagueiro literalmente na cara do chute (< 3.2m)!
+        // 1) Finalização Agressiva (Até 28.5m do gol: chutes de entrada da área e infiltrações!)
+        const maxShootRange = ag.teamSide === 'AWAY' && coord.consecutivePasses >= 4 ? 29.5 : 26.5;
+        if (distToGoal < maxShootRange && Math.abs(ag.pos.x) < 18.0) {
           let immediateBlock = false;
           for (const opp of opponentSnapshots) {
             const ox = opp.pos.x - ag.pos.x;
             const oz = opp.pos.z - ag.pos.z;
             const d = Math.hypot(ox, oz);
-            if (d < 3.2 && (ox * goalDirX + oz * goalDirZ) / Math.max(0.1, d) > 0.78) {
+            if (d < 2.6 && (ox * goalDirX + oz * goalDirZ) / Math.max(0.1, d) > 0.82) {
               immediateBlock = true;
               break;
             }
           }
 
           const shouldShootNow =
-            distToGoal < 15.5 || (!immediateBlock && (distToGoal < 19.5 || feelingDanger));
+            distToGoal < 17.5 ||
+            (!immediateBlock &&
+              (distToGoal < 23.0 || feelingDanger || coord.consecutivePasses >= 4));
 
           if (shouldShootNow) {
             executeAgentShot(ag, ball, oppGkPos);
+            coord.consecutivePasses = 0;
             events.shotTakenBy = ag.id;
             ag.actor.root.position.copy(ag.pos);
             ag.actor.root.rotation.y = ag.facingYaw;
@@ -664,7 +684,7 @@ export function stepOutfieldAgentsTeam(
           }
         }
 
-        // 2) Passe Inteligente Rasteiro no Pé / Tabela / Recuo sob Pressão!
+        // 2) Passe Inteligente: no terço final (ou com >= 4 passes), PROÍBE ficar recuando pros zagueiros e arrisca passes verticais!
         let bestTarget: {
           id: string;
           isUser: boolean;
@@ -674,7 +694,7 @@ export function stepOutfieldAgentsTeam(
           utility: number;
         } | null = null;
 
-        const onAttackingWing = Math.abs(ag.pos.x) > 15.0 && distZToGoal < 21.0;
+        const onAttackingWing = Math.abs(ag.pos.x) > 13.5 && distZToGoal < 26.0;
 
         for (const mate of allTeammateSnapshots) {
           if (mate.id === ag.id) continue;
@@ -689,8 +709,8 @@ export function stepOutfieldAgentsTeam(
 
           const progGain = (mate.pos.z - ag.pos.z) * coord.attackDir;
 
-          // Só evita recuar se estiver livre sem ninguém na frente; se houver marcador à frente, PODE tocar pro lado/trás!
-          if (!feelingDanger && distZToGoal < 28.0 && progGain < -3.0) {
+          // BLOQUEIA passe pra trás quando já está no ataque ou quando o time já trocou >= 4 passes!
+          if ((inFinalThird || mustGoVertical) && progGain < -1.5 && nearestOppDist > 1.9) {
             continue;
           }
 
@@ -716,14 +736,25 @@ export function stepOutfieldAgentsTeam(
             opponentSnapshots,
           );
 
-          if (laneSafe >= 0.36 && mateNearestOpp > 2.2) {
-            const progScore = Math.max(-0.14, Math.min(0.45, progGain / 24));
-            const voronoiScore = Math.min(0.35, mateNearestOpp / 22);
+          // No terço final o rival aceita arriscar passes verticais mais apertados (o que gera ataques reais E chances de você interceptar!)
+          const minRequiredLaneSafe =
+            mustGoVertical && progGain > 2.5 ? 0.2 : 0.36;
+          const minMateSpace = mustGoVertical && progGain > 2.5 ? 1.3 : 2.2;
+
+          if (laneSafe >= minRequiredLaneSafe && mateNearestOpp > minMateSpace) {
+            const progScore =
+              progGain >= 0
+                ? Math.min(0.62, (progGain / 20) * (mustGoVertical ? 1.45 : 1.0))
+                : Math.max(-0.48, progGain / 14);
+            const voronoiScore = Math.min(0.32, mateNearestOpp / 22);
             const userStarBonus = mate.isUser && mateNearestOpp > 2.8 ? 0.24 : 0;
-            const safetyOutletBonus = feelingDanger && mateNearestOpp > 4.5 ? 0.22 : 0;
+            const safetyOutletBonus =
+              !inFinalThird && !mustGoVertical && feelingDanger && mateNearestOpp > 4.5
+                ? 0.18
+                : 0;
 
             const uPass =
-              laneSafe * 0.42 + progScore + voronoiScore + userStarBonus + safetyOutletBonus;
+              laneSafe * 0.38 + progScore + voronoiScore + userStarBonus + safetyOutletBonus;
 
             if (!bestTarget || uPass > bestTarget.utility) {
               bestTarget = {
@@ -737,21 +768,22 @@ export function stepOutfieldAgentsTeam(
             }
           }
 
-          // Bola Enfiada Rasteira
+          // Bola Enfiada Rasteira Agressiva rumo à área!
           const isRunner =
             mate.id === coord.depthRunnerId ||
             mate.slot.line === 'FWD' ||
+            (mustGoVertical && mate.slot.line === 'MID') ||
             (mate.isUser && mate.vel.z * coord.attackDir > 1.5);
 
-          if (isRunner && progGain > 1.5 && mateProg <= oppOffsideProg + 0.005 && dMate < 40) {
-            const leadMeters = 6.8;
+          if (isRunner && progGain > 1.0 && mateProg <= oppOffsideProg + 0.008 && dMate < 42) {
+            const leadMeters = 7.2;
             const thrTx = Math.max(
               -PITCH.HALF_W + 3.2,
               Math.min(PITCH.HALF_W - 3.2, mate.pos.x + mate.vel.x * 0.45),
             );
             const thrTz = Math.max(
-              -PITCH.HALF_L + 6.0,
-              Math.min(PITCH.HALF_L - 6.0, mate.pos.z + coord.attackDir * leadMeters),
+              -PITCH.HALF_L + 5.5,
+              Math.min(PITCH.HALF_L - 5.5, mate.pos.z + coord.attackDir * leadMeters),
             );
 
             const thrSafe = evaluatePassLaneSafety01(
@@ -770,10 +802,11 @@ export function stepOutfieldAgentsTeam(
               );
             }
 
-            if (thrSafe >= 0.44 && spaceAhead > 4.0) {
+            const minThrSafe = mustGoVertical ? 0.24 : 0.42;
+            if (thrSafe >= minThrSafe && spaceAhead > 2.8) {
               const uThr =
-                thrSafe * 0.45 +
-                0.38 +
+                thrSafe * 0.42 +
+                (mustGoVertical ? 0.56 : 0.38) +
                 Math.min(0.26, spaceAhead / 22) +
                 (mate.isUser ? 0.22 : 0);
 
@@ -790,12 +823,12 @@ export function stepOutfieldAgentsTeam(
             }
           }
 
-          // Cruzamento da linha de fundo
-          const mateNearBox = Math.abs(goalZ - mate.pos.z) < 18.5 && Math.abs(mate.pos.x) < 13.0;
+          // Cruzamento perigoso para dentro da área!
+          const mateNearBox = Math.abs(goalZ - mate.pos.z) < 21.0 && Math.abs(mate.pos.x) < 14.0;
           if (onAttackingWing && mateNearBox) {
             const crossTx = mate.pos.x + mate.vel.x * 0.35;
             const crossTz = goalZ - coord.attackDir * (8.5 + Math.random() * 3.5);
-            const uCross = 0.76 + (mate.isUser ? 0.18 : 0) + Math.min(0.15, mateNearestOpp / 20);
+            const uCross = 0.84 + (mate.isUser ? 0.18 : 0) + Math.min(0.15, mateNearestOpp / 20);
             if (!bestTarget || uCross > bestTarget.utility) {
               bestTarget = {
                 id: mate.id,
@@ -809,14 +842,15 @@ export function stepOutfieldAgentsTeam(
           }
         }
 
-        // 3) Se há marcador à frente (`feelingDanger`), `dribbleUtility` cai pra 0.22 -> TOCA A BOLA ANTES DE PERDER!
-        // Só segura e arranca sozinho se realmente estiver com pista livre (`hasTrueOpenBreakaway`)!
+        // 3) No terço final, se não há passe vertical forte (> 0.62), SEGUE DRIBLANDO PRA DENTRO DA ÁREA P/ CHUTAR!
         const ownGoalDist = Math.abs(-goalZ - ag.pos.z);
         const dribbleUtility = hasTrueOpenBreakaway
-          ? 0.78 + Math.min(0.15, (dangerInFrontDist - 8.5) / 25)
-          : feelingDanger
-            ? 0.22
-            : 0.46 - ag.carryTime * 0.12;
+          ? 0.78 + Math.min(0.15, (dangerInFrontDist - 5.0) / 25)
+          : mustGoVertical && !underHeavyPressure
+            ? 0.6
+            : feelingDanger
+              ? 0.22
+              : 0.46 - ag.carryTime * 0.12;
 
         if (bestTarget && bestTarget.utility > dribbleUtility) {
           executeAgentPass(
@@ -827,6 +861,7 @@ export function stepOutfieldAgentsTeam(
             bestTarget.loftMode,
             bestTarget.isUser,
           );
+          coord.consecutivePasses += 1;
           coord.lockedPassReceiverId = bestTarget.id;
           coord.lockedPassTimer = 2.1;
           events.passedToId = bestTarget.id;

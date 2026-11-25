@@ -14,6 +14,8 @@ export type PitchPoseState =
   | 'FAKE_SHOT'
   | 'SLIDE'
   | 'CELEBRATE'
+  | 'CELEBRATE_SLIDE'
+  | 'CELEBRATE_JUMP'
   | 'GK_READY'
   | 'GK_JUMP_HIGH'
   | 'GK_SPREAD_LOW'
@@ -63,6 +65,23 @@ export function animatePitchActor(
   ch.rotation.set(0, 0, 0);
 
   if (pose === 'CELEBRATE') {
+    if (speedMetersPerSec > 0.35) {
+      // Correndo livre pelo campo de braços abertos ("Aviãozinho" / chamando a torcida!)
+      const freq = 7.2 + Math.min(7.5, speedMetersPerSec * 0.9);
+      actor.walkPhase = (actor.walkPhase + dt * freq) % (Math.PI * 2);
+      const cyc = actor.walkPhase;
+      const amp = Math.min(0.92, 0.28 + speedMetersPerSec * 0.07);
+      ch.position.y = Math.abs(Math.sin(cyc)) * 0.07;
+      ch.rotation.x = 0.08;
+      rig.headPivot.rotation.set(-0.14, Math.sin(timeSec * 5) * 0.16, 0);
+      rig.leftArmPivot.rotation.set(-0.15, 0, -1.42 - Math.sin(timeSec * 8) * 0.12);
+      rig.rightArmPivot.rotation.set(-0.15, 0, 1.42 + Math.sin(timeSec * 8) * 0.12);
+      rig.leftForearmPivot.rotation.x = -0.12;
+      rig.rightForearmPivot.rotation.x = -0.12;
+      rig.leftLegPivot.rotation.set(Math.sin(cyc) * amp, 0, -0.02);
+      rig.rightLegPivot.rotation.set(-Math.sin(cyc) * amp, 0, 0.02);
+      return;
+    }
     const bounce = Math.abs(Math.sin(timeSec * 6.5));
     ch.position.y = bounce * 0.12;
     rig.headPivot.rotation.set(-0.14, Math.sin(timeSec * 4) * 0.18, 0);
@@ -72,6 +91,41 @@ export function animatePitchActor(
     rig.rightForearmPivot.rotation.x = -0.15;
     rig.leftLegPivot.rotation.set(Math.sin(timeSec * 6.5) * 0.35, 0, 0);
     rig.rightLegPivot.rotation.set(-Math.sin(timeSec * 6.5) * 0.35, 0, 0);
+    return;
+  }
+
+  if (pose === 'CELEBRATE_SLIDE') {
+    // Joelhada deslizante clássica no gramado com tronco inclinado pra trás e braços abertos!
+    ch.position.y = -0.28;
+    ch.rotation.x = -0.34;
+    rig.headPivot.rotation.set(-0.24, 0, 0);
+    rig.leftArmPivot.rotation.set(-0.35, 0, -1.32);
+    rig.rightArmPivot.rotation.set(-0.35, 0, 1.32);
+    rig.leftForearmPivot.rotation.x = -0.35;
+    rig.rightForearmPivot.rotation.x = -0.35;
+    rig.leftLegPivot.rotation.set(1.22, 0, -0.12);
+    rig.rightLegPivot.rotation.set(1.22, 0, 0.12);
+    return;
+  }
+
+  if (pose === 'CELEBRATE_JUMP') {
+    // Salto comemorativo alto com soco/braços puxados na aterrissagem (charge01 = progresso 0..1)!
+    const p = Math.max(0, Math.min(1, charge01));
+    const arc = Math.sin(p * Math.PI);
+    ch.position.y = arc * 0.78;
+    ch.rotation.y = p < 0.65 ? (p / 0.65) * Math.PI : Math.PI;
+    rig.headPivot.rotation.set(-0.18, 0, 0);
+    if (p < 0.62) {
+      rig.leftArmPivot.rotation.set(-2.5, 0, -0.25);
+      rig.rightArmPivot.rotation.set(-2.5, 0, 0.25);
+      rig.leftLegPivot.rotation.set(-0.35, 0, -0.1);
+      rig.rightLegPivot.rotation.set(0.25, 0, 0.1);
+    } else {
+      rig.leftArmPivot.rotation.set(0.38, 0, -0.88);
+      rig.rightArmPivot.rotation.set(0.38, 0, 0.88);
+      rig.leftLegPivot.rotation.set(0, 0, -0.22);
+      rig.rightLegPivot.rotation.set(0, 0, 0.22);
+    }
     return;
   }
 
