@@ -6,6 +6,8 @@ import {
 } from '../actors/pitchActorRig';
 import { PITCH } from '../physics/pitchConstants';
 
+export type ReplayCameraAngle = 'BEHIND_WIDE' | 'TV_BROADCAST' | 'BEHIND_GOAL';
+
 export interface ReplayActorSnapshot {
   x: number;
   z: number;
@@ -32,7 +34,7 @@ export class GoalReplayRecorder {
   private writeIdx = 0;
   private count = 0;
 
-  constructor(actorCount: number, capacityFrames = 285) {
+  constructor(actorCount: number, capacityFrames = 300) {
     this.capacity = capacityFrames;
     this.ring = Array.from({ length: capacityFrames }, () => ({
       ballPos: new THREE.Vector3(),
@@ -92,10 +94,7 @@ export class GoalReplayRecorder {
     if (this.count < this.capacity) this.count += 1;
   }
 
-  /**
-   * Extrai uma fita ordenada cronologicamente dos últimos ~4.5s para reproduzir o Replay do Gol!
-   */
-  extractClip(): {
+  extractClip(forGoal = true): {
     frames: ReplayFrameSnapshot[];
     shotOrigin: THREE.Vector3;
     goalZ: number;
@@ -106,13 +105,16 @@ export class GoalReplayRecorder {
       frames.push(this.ring[(start + i) % this.capacity]);
     }
 
-    // Descobre se o gol foi no Norte (-HALF_L) ou no Sul (+HALF_L)
     const lastBall = frames[frames.length - 1]?.ballPos;
     const goalZ = lastBall && lastBall.z > 0 ? PITCH.HALF_L : -PITCH.HALF_L;
 
-    // Procura de trás pra frente o instante exato da batida pro gol (última saída do pé ou pico de velocidade)
-    let shotFrameIdx = Math.max(0, frames.length - 95);
-    for (let i = frames.length - 25; i >= Math.max(1, frames.length - 210); i--) {
+    if (!forGoal) {
+      const origin = (frames[Math.floor(frames.length * 0.35)]?.ballPos ?? new THREE.Vector3()).clone();
+      return { frames, shotOrigin: origin, goalZ };
+    }
+
+    let shotFrameIdx = Math.max(0, frames.length - 105);
+    for (let i = frames.length - 25; i >= Math.max(1, frames.length - 220); i--) {
       const prev = frames[i - 1];
       const curr = frames[i];
       if (prev.ballOwnerId !== null && curr.ballOwnerId === null) {
@@ -125,8 +127,7 @@ export class GoalReplayRecorder {
       }
     }
 
-    // Começa o clipe ~1.3s (78 frames) antes da finalização para mostrar a jogada e a batida!
-    const clipStartIdx = Math.max(0, shotFrameIdx - 78);
+    const clipStartIdx = Math.max(0, shotFrameIdx - 84);
     const trimmed = frames.slice(clipStartIdx);
     const shotOrigin = (frames[shotFrameIdx]?.ballPos ?? new THREE.Vector3(0, 0, goalZ * 0.5)).clone();
 
@@ -135,13 +136,15 @@ export class GoalReplayRecorder {
 }
 
 /**
- * Aplica um frame gravado em todos os 22 atores + bola + câmera de costas para a finalização!
+ * Câmera Ampla de Replay (Zoom Out generoso estilo transmissão FIFA, mostrando o lance inteiro,
+ * zagueiros, goleiro saltando e a curva completa da bola até a rede!)
  */
 export function applyReplayFrameAndCamera(
   frame: ReplayFrameSnapshot,
   progress01: number,
   shotOrigin: THREE.Vector3,
   goalZ: number,
+  angle: ReplayCameraAngle,
   actors: PitchActorInstance[],
   ballMesh: THREE.Mesh,
   camera: THREE.PerspectiveCamera,
@@ -160,32 +163,45 @@ export function applyReplayFrameAndCamera(
     animatePitchActor(a, st.pose, st.speed, st.animParam, st.useLeftFoot, dt, timeSec);
   }
 
-  // Câmera dramática DE COSTAS PARA O CHUTE acompanhando a curva até estufar a rede!
+  if (angle === 'TV_BROADCAST') {
+    const focusZ = Math.max(-PITCH.HALF_L + 12, Math.min(PITCH.HALF_L - 12, frame.ballPos.z * 0.82));
+    camera.position.set(38.5, 20.5, focusZ);
+    camera.lookAt(frame.ballPos.x * 0.35, 1.0, frame.ballPos.z * 0.88);
+    return;
+  }
+
+  if (angle === 'BEHIND_GOAL') {
+    const zSign = goalZ < 0 ? -1 : 1;
+    camera.position.set(frame.ballPos.x * 0.35, 5.2, goalZ + zSign * 9.5);
+    camera.lookAt(frame.ballPos.x * 0.65, 1.4, frame.ballPos.z * 0.7 + goalZ * 0.3);
+    return;
+  }
+
+  // BEHIND_WIDE: Bem afastada (~16.5m atrás e ~5.8m de altura) p/ enxergar todo o desenho do lance!
   const toGoalX = 0 - shotOrigin.x;
   const toGoalZ = goalZ - shotOrigin.z;
-  const distToGoal = Math.max(6, Math.hypot(toGoalX, toGoalZ));
+  const distToGoal = Math.max(8, Math.hypot(toGoalX, toGoalZ));
   const dirX = toGoalX / distToGoal;
   const dirZ = toGoalZ / distToGoal;
 
-  // Leve deslocamento lateral p/ nunca tampar a bola com as costas do batedor
-  const perpX = -dirZ * (shotOrigin.x >= 0 ? 1.15 : -1.15);
-  const perpZ = dirX * (shotOrigin.x >= 0 ? 1.15 : -1.15);
+  const perpX = -dirZ * (shotOrigin.x >= 0 ? 2.6 : -2.6);
+  const perpZ = dirX * (shotOrigin.x >= 0 ? 2.6 : -2.6);
 
-  const dollyAdvance = progress01 * Math.min(6.5, distToGoal * 0.25);
+  const dollyAdvance = progress01 * Math.min(4.5, distToGoal * 0.16);
   const camX = Math.max(
-    -PITCH.HALF_W - 6,
-    Math.min(PITCH.HALF_W + 6, shotOrigin.x - dirX * (8.2 - dollyAdvance) + perpX),
+    -PITCH.HALF_W - 7,
+    Math.min(PITCH.HALF_W + 7, shotOrigin.x - dirX * (16.5 - dollyAdvance) + perpX),
   );
   const camZ = Math.max(
-    -PITCH.HALF_L - 6,
-    Math.min(PITCH.HALF_L + 6, shotOrigin.z - dirZ * (8.2 - dollyAdvance) + perpZ),
+    -PITCH.HALF_L - 7,
+    Math.min(PITCH.HALF_L + 7, shotOrigin.z - dirZ * (16.5 - dollyAdvance) + perpZ),
   );
-  const camY = 2.65 + progress01 * 0.45;
+  const camY = 5.8 - progress01 * 0.6;
 
   camera.position.set(camX, camY, camZ);
   camera.lookAt(
-    frame.ballPos.x * 0.78,
-    Math.max(0.95, Math.min(2.6, frame.ballPos.y * 0.85 + 0.55)),
-    frame.ballPos.z * 0.72 + goalZ * 0.28,
+    frame.ballPos.x * 0.68,
+    Math.max(1.0, Math.min(2.5, frame.ballPos.y * 0.65 + 0.7)),
+    frame.ballPos.z * 0.65 + goalZ * 0.35,
   );
 }

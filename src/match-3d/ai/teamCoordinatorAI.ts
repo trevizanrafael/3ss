@@ -487,27 +487,27 @@ export function stepTeamTacticalCoordinator(
 
     coord.firstDefenderId = bestPresserId;
     if (bestPresserId) {
-      // Ponto de Combate Agressivo: fecha exatamente a linha de progressão entre a bola e o gol (0.55m à frente do pé da bola!)
+      // Ponto de Contenção Realista (Jockey): fica ~1.95m à frente do portador fechando o gol (sem grudar nas costas!)
       const ownGoalZ = -coord.attackDir * PITCH.HALF_L;
-      const predX = threatPos.x + threatVel.x * 0.26;
-      const predZ = threatPos.z + threatVel.z * 0.26;
+      const predX = threatPos.x + threatVel.x * 0.18;
+      const predZ = threatPos.z + threatVel.z * 0.18;
       const toOwnGoalX = 0 - predX;
       const toOwnGoalZ = ownGoalZ - predZ;
       const toGoalLen = Math.max(1, Math.hypot(toOwnGoalX, toOwnGoalZ));
-      const tackleOffset = 0.52;
+      const containOffset = forceTeamPressHeld ? 0.85 : 1.95;
 
       coord.directives.set(bestPresserId, {
         duty: 'FIRST_DEFENDER',
         targetPos: new THREE.Vector3(
-          predX + (toOwnGoalX / toGoalLen) * tackleOffset,
+          predX + (toOwnGoalX / toGoalLen) * containOffset,
           0,
-          predZ + (toOwnGoalZ / toGoalLen) * tackleOffset,
+          predZ + (toOwnGoalZ / toGoalLen) * containOffset,
         ),
-        urgency01: 1.0,
+        urgency01: 0.92,
       });
     }
 
-    // Escolhe `SECOND_DEFENDER`: no terço defensivo (< 32m do gol) ou com RB segurado, fecha junto na diagonal pra trancar a passagem!
+    // Escolhe `SECOND_DEFENDER`: fecha a linha de passe a ~5.5m na diagonal (só dobra em cima da bola se VOCÊ segurar RB!)
     let bestCoverId: string | null = null;
     let bestCoverCost = Infinity;
     for (const tm of teammates) {
@@ -524,13 +524,13 @@ export function stepTeamTacticalCoordinator(
     coord.secondDefenderId = bestCoverId;
     if (bestCoverId) {
       const anc = baseAnchors.get(bestCoverId)!;
-      if (forceTeamPressHeld || distThreatFromOwnGoal < 30.0) {
-        const insideX = threatPos.x * 0.82;
-        const coverGoalZ = threatPos.z - coord.attackDir * (forceTeamPressHeld ? 1.1 : 2.6);
+      if (forceTeamPressHeld) {
+        const insideX = threatPos.x * 0.88;
+        const coverGoalZ = threatPos.z - coord.attackDir * 1.25;
         coord.directives.set(bestCoverId, {
           duty: 'SECOND_DEFENDER',
           targetPos: new THREE.Vector3(insideX, 0, coverGoalZ),
-          urgency01: 0.96,
+          urgency01: 0.95,
         });
       } else {
         const dangerousReceiver = opponents

@@ -210,21 +210,21 @@ export function stepPlayerAndBallControl(
   const wishMag = Math.min(1, tmpWish.length());
   if (wishMag > 0.01) tmpWish.normalize();
 
-  const baseJogSpeed = 5.6 + (attrs.agility / 99) * 1.45;
-  const maxSprintSpeed = 7.8 + (attrs.sprintSpeed / 99) * 3.15;
+  const baseJogSpeed = 6.2 + (attrs.agility / 99) * 1.4;
+  const maxSprintSpeed = 8.75 + (attrs.sprintSpeed / 99) * 2.55;
   const canSprint = input.sprintHeld && pState.stamina > 5 && pState.slideTimer <= 0;
 
-  const fatigueCapFactor = 0.86 + (pState.maxStamina / 100) * 0.14;
+  const fatigueCapFactor = 0.88 + (pState.maxStamina / 100) * 0.12;
   let targetSpeed =
     wishMag *
     (canSprint
       ? maxSprintSpeed * fatigueCapFactor
       : input.closeControlHeld
-        ? baseJogSpeed * 0.72
+        ? baseJogSpeed * 0.76
         : baseJogSpeed);
 
   if (ball.ownerId === 'USER' && pState.fakeShotAnimTimer <= 0) {
-    const dribbleEfficiency = 0.81 + (attrs.dribbling / 99) * 0.09;
+    const dribbleEfficiency = 0.9 + (attrs.dribbling / 99) * 0.07;
     targetSpeed *= dribbleEfficiency;
   }
 
@@ -318,6 +318,21 @@ export function stepPlayerAndBallControl(
     ball.lastTouchBy = 'USER';
     ball.lastTouchTeam = 'HOME';
     ball.spin.set(0, 0, 0);
+  } else if (
+    // DESARME AUTOMÁTICO POR CONTATO DIRETO: se você fechar o corpo em cima da bola do adversário, você rouba!
+    ball.ownerId !== null &&
+    ball.ownerId.startsWith('AWAY_') &&
+    ball.ownerId !== 'AWAY_GK' &&
+    ball.touchCooldown <= 0 &&
+    distToBall < 1.32 + (attrs.tackling / 99) * 0.35 &&
+    ball.pos.y < 1.5
+  ) {
+    ball.ownerId = 'USER';
+    ball.lastTouchBy = 'USER';
+    ball.lastTouchTeam = 'HOME';
+    ball.touchCooldown = 0.38;
+    ball.spin.set(0, 0, 0);
+    playBallKickSfx(0.45);
   }
 
   if (ball.ownerId === 'USER') {
@@ -562,14 +577,13 @@ export function stepPlayerAndBallControl(
       playBallKickSfx(0.42 + power * 0.35);
     } else if (intent === 'THROUGH') {
       pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
-      const leadDepth = 5.5 + power * 8.5;
-      const idealTx = Math.max(
-        -PITCH.HALF_W + 3.5,
-        Math.min(PITCH.HALF_W - 3.5, teammatePos.x * 0.68 + teammateVel.x * 0.35),
-      );
+      const leadDepth = 6.2 + power * 9.5;
+      // Mantém o corredor real do companheiro (sem puxar pontas pro meio da zaga!)
+      const rawTx = teammatePos.x + teammateVel.x * 0.52 + (wishMag > 0.25 ? baseAim.x * 2.2 : 0);
+      const idealTx = Math.max(-PITCH.HALF_W + 2.8, Math.min(PITCH.HALF_W - 2.8, rawTx));
       const idealTz = Math.max(
-        -PITCH.HALF_L + 5.2,
-        Math.min(PITCH.HALF_L - 8, Math.min(teammatePos.z, ball.pos.z + 2) - leadDepth),
+        -PITCH.HALF_L + 5.0,
+        Math.min(PITCH.HALF_L - 6, teammatePos.z - leadDepth),
       );
 
       throughBallTarget = new THREE.Vector3(idealTx, 0, idealTz);
@@ -579,15 +593,10 @@ export function stepPlayerAndBallControl(
       const dirX = dx / passDist;
       const dirZ = dz / passDist;
 
-      const mateDist = Math.hypot(idealTx - teammatePos.x, idealTz - teammatePos.z);
-      const tArrival = Math.max(0.55, Math.min(2.1, mateDist / 8.8));
-      const solvedSpd = Math.min(
-        26.5,
-        Math.max(12.5, passDist / tArrival + 0.5 * BALL_AERO.GRASS_FRICTION * tArrival),
-      );
-
-      ball.vel.set(dirX * solvedSpd, 0.22, dirZ * solvedSpd);
-      ball.spin.set(3.2, 0, 0);
+      const solvedSpd = Math.min(29.5, Math.max(19.0, 17.5 + power * 11.5));
+      ball.pos.y = PITCH.BALL_RADIUS;
+      ball.vel.set(dirX * solvedSpd, 0, dirZ * solvedSpd);
+      ball.spin.set(0, 0, 0);
       pState.facingYaw = Math.atan2(dirX, dirZ);
       kicked = 'THROUGH_BALL';
       playBallKickSfx(0.5 + power * 0.35);
@@ -668,7 +677,12 @@ export function stepPlayerAndBallControl(
     }
 
     if (pState.chargeIntent !== null) {
-      const chargeSpeed = pState.chargeIntent === 'SHOT' ? 1.55 : 1.75;
+      const chargeSpeed =
+        pState.chargeIntent === 'SHOT'
+          ? 1.65
+          : pState.chargeIntent === 'CROSS'
+            ? 1.85
+            : 2.45;
       pState.powerCharge01 = Math.min(1, pState.powerCharge01 + dt * chargeSpeed);
       if (pState.chargeIntent === 'SHOT') {
         if (input.finesseHeld) pState.chargingFinesse = true;

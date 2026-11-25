@@ -46,6 +46,7 @@ import {
   applyReplayFrameAndCamera,
   GoalReplayRecorder,
   ReplayActorSnapshot,
+  ReplayCameraAngle,
   ReplayFrameSnapshot,
 } from '../replay/goalReplaySystem';
 import { buildStadium3D } from '../stadium/buildStadium3D';
@@ -53,6 +54,7 @@ import {
   Match11v11HudOverlay,
   Match11v11HudSnapshot,
   MatchCameraPreset,
+  RadarDisplayMode,
   RadarDotSnapshot,
 } from './Match11v11HudOverlay';
 
@@ -77,10 +79,13 @@ type ActiveReplayPlayback = {
   goalZ: number;
   cursor: number;
   scorerText: string;
+  fromPauseMenu: boolean;
   nextKickoffTeam: 'HOME' | 'AWAY';
 };
 
 const CAMERA_CYCLE: MatchCameraPreset[] = ['BROADCAST_TV', 'PRO_TACTICAL', 'PRO_CLOSE'];
+const RADAR_CYCLE: RadarDisplayMode[] = ['AUTO_FADE', 'ALWAYS_VISIBLE', 'HIDDEN'];
+const REPLAY_ANGLE_CYCLE: ReplayCameraAngle[] = ['BEHIND_WIDE', 'TV_BROADCAST', 'BEHIND_GOAL'];
 
 function shortestYawDelta(from: number, to: number): number {
   let d = ((to - from + Math.PI) % (Math.PI * 2)) - Math.PI;
@@ -137,33 +142,59 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     inStoppageTime: false,
     half: 1,
     paused: false,
+    pauseTab: 'MAIN',
     pauseMenuIndex: 0,
     isReplayActive: false,
+    replayAngle: 'BEHIND_WIDE',
     replayScorerText: '',
     stamina: initialCap,
     maxStamina: initialCap,
     powerPct: 0,
     cameraPreset: 'BROADCAST_TV',
-    bannerFeedback: {
-      text: derby.derbyName,
-      subtext: `${derby.homeClub.name.toUpperCase()} × ${derby.rivalClub.name.toUpperCase()}`,
-      color: compTheme.accentPrimary,
-    },
+    radarMode: 'AUTO_FADE',
+    homeFormationLabel: homeFormation.id,
+    awayFormationLabel: awayFormation.id,
+    scorebugTicker: null,
     ballX: 0,
     ballZ: 0,
+    userX: 0,
     radarDots: [],
+    stats: {
+      homePossessionPct: 50,
+      awayPossessionPct: 50,
+      homeShots: 0,
+      awayShots: 0,
+      homePasses: 0,
+      awayPasses: 0,
+      homeTackles: 0,
+      awayTackles: 0,
+      homeSaves: 0,
+      awaySaves: 0,
+      homeCorners: 0,
+      awayCorners: 0,
+      userPasses: 0,
+      userTackles: 0,
+    },
   });
 
   const controlsRef = useRef<{
     resume: () => void;
     togglePause: () => void;
+    openSettingsTab: (tab: 'MAIN' | 'SETTINGS') => void;
+    launchInstantReplay: () => void;
+    cycleReplayAngle: () => void;
     cycleCamera: () => void;
+    cycleRadarMode: () => void;
     skipReplay: () => void;
     restartMatch: () => void;
   }>({
     resume: () => {},
     togglePause: () => {},
+    openSettingsTab: () => {},
+    launchInstantReplay: () => {},
+    cycleReplayAngle: () => {},
     cycleCamera: () => {},
+    cycleRadarMode: () => {},
     skipReplay: () => {},
     restartMatch: () => {},
   });
@@ -212,7 +243,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     const stadium = buildStadium3D(homeClub, compTheme, rivalClub, derby.derbyName);
     scene.add(stadium.root);
 
-    // 1. Cria os 22 Atletas Reais em Campo
     const userSlotIdx = findBestSlotIndexForPosition(homeFormation, activePlayer.position);
     const userSlotSpec = homeFormation.outfieldSlots[userSlotIdx];
     const userActor = createPitchFootballerActor(activePlayer, homeClub);
@@ -265,7 +295,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     });
     scene.add(awayGk.actor.root);
 
-    // Ordem fixa dos 22 atores para o gravador de Replay 60 FPS!
     const allOrderedActors: PitchActorInstance[] = [
       userActor,
       homeGk.actor,
@@ -273,7 +302,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       ...homeAgents.map((a) => a.actor),
       ...awayAgents.map((a) => a.actor),
     ];
-    const replayRecorder = new GoalReplayRecorder(allOrderedActors.length, 285);
+    const replayRecorder = new GoalReplayRecorder(allOrderedActors.length, 300);
     const liveActorStatesBuffer: ReplayActorSnapshot[] = allOrderedActors.map(() => ({
       x: 0,
       z: 0,
@@ -284,7 +313,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       useLeftFoot: false,
     }));
 
-    // 2. Indicadores Visuais 3D na Grama
     const ringGeo = new THREE.RingGeometry(0.54, 0.72, 36);
     const userRingMat = new THREE.MeshBasicMaterial({
       color: '#FACC15',
@@ -322,7 +350,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     passTargetRing.visible = false;
     scene.add(passTargetRing);
 
-    // 3. Coordenadores Táticos + Estado da Partida
     const homeCoord = createTeamTacticalCoordinator('HOME', -1, homeFormation);
     const awayCoord = createTeamTacticalCoordinator('AWAY', 1, awayFormation);
 
@@ -346,12 +373,31 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     let half: 1 | 2 | 'HT' | 'FT' = 1;
     let stoppageMinutes = 1 + Math.floor(Math.random() * 3);
     let halfTimeBreakTimer = 0;
+    let fullTimeCoastTimer = 0;
+
+    // Estatísticas Ao Vivo estilo FIFA
+    let homePossTime = 1.0;
+    let awayPossTime = 1.0;
+    let homeShots = 0;
+    let awayShots = 0;
+    let homePasses = 0;
+    let awayPasses = 0;
+    let homeTackles = 0;
+    let awayTackles = 0;
+    let homeSaves = 0;
+    let awaySaves = 0;
+    let homeCorners = 0;
+    let awayCorners = 0;
+    let userPasses = 0;
+    let userTackles = 0;
 
     let paused = false;
+    let pauseTab: 'MAIN' | 'SETTINGS' = 'MAIN';
     let pauseMenuIndex = 0;
 
-    // Câmera padrão: TV LATERAL (a favorita do usuário!)
     let cameraPreset: MatchCameraPreset = 'BROADCAST_TV';
+    let radarMode: RadarDisplayMode = 'AUTO_FADE';
+    let replayAngle: ReplayCameraAngle = 'BEHIND_WIDE';
     let camYaw = Math.PI / 2;
     let camPitch = 0.28;
     let manualAimOffsetYaw = 0;
@@ -364,22 +410,36 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     let activeReplay: ActiveReplayPlayback | null = null;
     let activeSetPiece: ActiveSetPiece | null = null;
 
-    let bannerTimer = 2.4;
-    let bannerObj: { text: string; subtext?: string; color: string } | null = {
-      text: derby.derbyName,
-      subtext: `${homeClub.name.toUpperCase()} × ${rivalClub.name.toUpperCase()}`,
-      color: compTheme.accentPrimary,
-    };
+    let tickerTimer = 0;
+    let tickerObj: { text: string; color: string } | null = null;
 
     let userQueuedCall: 'PASS' | 'THROUGH' | 'CROSS' | null = null;
     let userQueuedCallTimer = 0;
     let lastHomePasserId: string | null = null;
     let penultimateHomeTouchId: string | null = null;
     let prevBallLastTouch: string | null = null;
+    let prevBallOwnerTeam: 'HOME' | 'AWAY' | null = 'HOME';
 
-    const showBanner = (text: string, color: string, dur = 1.8, subtext?: string) => {
-      bannerObj = { text, subtext, color };
-      bannerTimer = dur;
+    const showTicker = (text: string, color: string, dur = 1.6) => {
+      tickerObj = { text, color };
+      tickerTimer = dur;
+    };
+
+    const restoreLiveActorTransforms = () => {
+      userActor.root.position.copy(pState.pos);
+      userActor.root.rotation.y = pState.facingYaw;
+      homeGk.actor.root.position.copy(homeGk.pos);
+      awayGk.actor.root.position.copy(awayGk.pos);
+      homeAgents.forEach((a) => {
+        a.actor.root.position.copy(a.pos);
+        a.actor.root.rotation.y = a.facingYaw;
+      });
+      awayAgents.forEach((a) => {
+        a.actor.root.position.copy(a.pos);
+        a.actor.root.rotation.y = a.facingYaw;
+      });
+      stadium.ballMesh.position.copy(ball.pos);
+      stadium.ballMesh.quaternion.copy(ball.quat);
     };
 
     const setupKickoff = (kickingTeam: 'HOME' | 'AWAY') => {
@@ -415,6 +475,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         ag.vel.set(0, 0, 0);
         ag.facingYaw = Math.PI;
         ag.carryTime = 0;
+        ag.engageTimer = 0;
       }
 
       let assignedAwayKicker = false;
@@ -428,6 +489,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         ag.vel.set(0, 0, 0);
         ag.facingYaw = 0;
         ag.carryTime = 0;
+        ag.engageTimer = 0;
       }
 
       homeGk.pos.set(0, 0, PITCH.HALF_L - 0.85);
@@ -467,10 +529,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       celebrationTimer = 0;
     };
 
-    /**
-     * Prepara Bola Parada REAL (Escanteio, Tiro de Meta e Lateral) com jogo parado,
-     * posicionamento na área e cobrador fixo atrás da bola (NUNCA sai andando pra trás!)
-     */
     const prepareSetPieceFromOut = (exitPos: THREE.Vector3) => {
       const receivingTeam: 'HOME' | 'AWAY' = ball.lastTouchTeam === 'HOME' ? 'AWAY' : 'HOME';
       ball.enteredGoalSide = null;
@@ -480,17 +538,14 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       ball.touchCooldown = 0.3;
       playWhistleSfx(false);
 
-      // 1. Saiu pela linha de fundo Norte (-Z, gol do Rival)
       if (exitPos.z < -PITCH.HALF_L + 0.3) {
         if (ball.lastTouchTeam === 'HOME') {
-          // TIRO DE META VISITANTE: afasta atacantes da casa p/ fora da grande área!
           const sideSign = exitPos.x >= 0 ? 1 : -1;
           const spot = new THREE.Vector3(sideSign * 5.2, PITCH.BALL_RADIUS, -PITCH.HALF_L + 5.4);
           ball.pos.copy(spot);
           awayGk.pos.set(spot.x, 0, spot.z - 1.3);
           awayGk.vel.set(0, 0, 0);
 
-          // Regra oficial: ninguém do time adversário dentro da grande área no tiro de meta!
           if (pState.pos.z < -PITCH.HALF_L + 19.5) {
             pState.pos.z = -PITCH.HALF_L + 20.5;
             pState.vel.set(0, 0, 0);
@@ -501,26 +556,18 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
               a.vel.set(0, 0, 0);
             }
           });
-          // Zagueiros e laterais do rival abrem nas laterais da área p/ receber ou subir pro meio!
           awayAgents.forEach((a, idx) => {
             if (a.slot.line === 'DEF') {
-              const spreadX = (idx - 1.5) * 14.5;
-              a.pos.set(spreadX, 0, -PITCH.HALF_L + 13.5);
+              a.pos.set((idx - 1.5) * 14.5, 0, -PITCH.HALF_L + 13.5);
               a.vel.set(0, 0, 0);
             }
           });
 
-          activeSetPiece = {
-            kind: 'GOAL_KICK',
-            team: 'AWAY',
-            takerId: 'AWAY_GK',
-            spot,
-            timer: 0.95,
-          };
-          showBanner('TIRO DE META', '#9498A3', 1.1, rivalClub.shortName);
+          activeSetPiece = { kind: 'GOAL_KICK', team: 'AWAY', takerId: 'AWAY_GK', spot, timer: 0.9 };
+          showTicker(`TIRO DE META • ${rivalClub.shortName}`, '#9498A3', 1.2);
           return;
         } else {
-          // ESCANTEIO A FAVOR DO TIME DO USUÁRIO!
+          homeCorners += 1;
           const cornerX = exitPos.x >= 0 ? PITCH.HALF_W - 0.55 : -PITCH.HALF_W + 0.55;
           const cornerZ = -PITCH.HALF_L + 0.55;
           const spot = new THREE.Vector3(cornerX, PITCH.BALL_RADIUS, cornerZ);
@@ -539,12 +586,10 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           taker.vel.set(0, 0, 0);
           taker.facingYaw = Math.atan2(0 - taker.pos.x, -PITCH.HALF_L + 10.5 - taker.pos.z);
 
-          // Posiciona seu jogador na marca do pênalti pronto pra cabecear/chutar (ou pedir curto!)
           pState.pos.set(-Math.sign(cornerX) * 1.8, 0, -PITCH.HALF_L + 11.2);
           pState.vel.set(0, 0, 0);
           pState.facingYaw = Math.atan2(cornerX - pState.pos.x, cornerZ - pState.pos.z);
 
-          // Posiciona 5 jogadores da casa na área + rebote e 7 defensores marcando!
           const boxSpots: [number, number][] = [
             [Math.sign(cornerX) * 4.2, -PITCH.HALF_L + 7.5],
             [0.5, -PITCH.HALF_L + 9.2],
@@ -576,22 +621,14 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           });
           awayGk.pos.set(Math.sign(cornerX) * 0.6, 0, -PITCH.HALF_L + 0.9);
 
-          activeSetPiece = {
-            kind: 'CORNER',
-            team: 'HOME',
-            takerId: taker.id,
-            spot,
-            timer: 1.15,
-          };
-          showBanner('ESCANTEIO A FAVOR!', compTheme.accentPrimary, 1.3, homeClub.shortName);
+          activeSetPiece = { kind: 'CORNER', team: 'HOME', takerId: taker.id, spot, timer: 1.1 };
+          showTicker(`ESCANTEIO • ${homeClub.shortName}`, compTheme.accentPrimary, 1.3);
           return;
         }
       }
 
-      // 2. Saiu pela linha de fundo Sul (+Z, gol da Casa)
       if (exitPos.z > PITCH.HALF_L - 0.3) {
         if (ball.lastTouchTeam === 'AWAY') {
-          // TIRO DE META DA CASA!
           const sideSign = exitPos.x >= 0 ? 1 : -1;
           const spot = new THREE.Vector3(sideSign * 5.2, PITCH.BALL_RADIUS, PITCH.HALF_L - 5.4);
           ball.pos.copy(spot);
@@ -611,17 +648,11 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
             }
           });
 
-          activeSetPiece = {
-            kind: 'GOAL_KICK',
-            team: 'HOME',
-            takerId: 'HOME_GK',
-            spot,
-            timer: 0.95,
-          };
-          showBanner('TIRO DE META', '#2DBE60', 1.1, homeClub.shortName);
+          activeSetPiece = { kind: 'GOAL_KICK', team: 'HOME', takerId: 'HOME_GK', spot, timer: 0.9 };
+          showTicker(`TIRO DE META • ${homeClub.shortName}`, '#2DBE60', 1.2);
           return;
         } else {
-          // ESCANTEIO RIVAL!
+          awayCorners += 1;
           const cornerX = exitPos.x >= 0 ? PITCH.HALF_W - 0.55 : -PITCH.HALF_W + 0.55;
           const cornerZ = PITCH.HALF_L - 0.55;
           const spot = new THREE.Vector3(cornerX, PITCH.BALL_RADIUS, cornerZ);
@@ -668,19 +699,12 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           });
           homeGk.pos.set(Math.sign(cornerX) * 0.6, 0, PITCH.HALF_L - 0.9);
 
-          activeSetPiece = {
-            kind: 'CORNER',
-            team: 'AWAY',
-            takerId: taker.id,
-            spot,
-            timer: 1.15,
-          };
-          showBanner('ESCANTEIO RIVAL!', '#EF4444', 1.3, rivalClub.shortName);
+          activeSetPiece = { kind: 'CORNER', team: 'AWAY', takerId: taker.id, spot, timer: 1.1 };
+          showTicker(`ESCANTEIO • ${rivalClub.shortName}`, '#EF4444', 1.3);
           return;
         }
       }
 
-      // 3. COBRANÇA DE LATERAL!
       const sideX = exitPos.x >= 0 ? PITCH.HALF_W - 0.25 : -PITCH.HALF_W + 0.25;
       const clampedZ = Math.max(-PITCH.HALF_L + 6, Math.min(PITCH.HALF_L - 6, exitPos.z));
       const spot = new THREE.Vector3(sideX, 1.55, clampedZ);
@@ -698,7 +722,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       thrower.vel.set(0, 0, 0);
       thrower.facingYaw = Math.atan2(-Math.sign(sideX), 0);
 
-      // Afasta marcadores a 5m do cobrador de lateral
       oppPool.forEach((o) => {
         const d = Math.hypot(o.pos.x - sideX, o.pos.z - clampedZ);
         if (d < 5.0) {
@@ -707,23 +730,14 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         }
       });
 
-      activeSetPiece = {
-        kind: 'THROW_IN',
-        team: receivingTeam,
-        takerId: thrower.id,
-        spot,
-        timer: 0.72,
-      };
-      showBanner(
+      activeSetPiece = { kind: 'THROW_IN', team: receivingTeam, takerId: thrower.id, spot, timer: 0.68 };
+      showTicker(
         `LATERAL • ${receivingTeam === 'HOME' ? homeClub.shortName : rivalClub.shortName}`,
         '#9498A3',
         1.0,
       );
     };
 
-    /**
-     * Dispara a batida real de Escanteio, Tiro de Meta ou Lateral ao fim da preparação!
-     */
     const executeSetPieceDelivery = (
       sp: ActiveSetPiece,
       homeSnapshots: TacticalParticipantSnapshot[],
@@ -741,20 +755,18 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           (sp.team === 'HOME' ? homeAgents : awayAgents).find((a) => a.id === sp.takerId) ??
           homeAgents[0];
 
-        // Se escanteio a favor e o usuário pediu passe curto no pé (< 18m), toca rasteiro firme!
         const distToUser = Math.hypot(pState.pos.x - sp.spot.x, pState.pos.z - sp.spot.z);
         if (sp.team === 'HOME' && userQueuedCall === 'PASS' && distToUser < 19.0) {
           const dx = pState.pos.x - sp.spot.x;
           const dz = pState.pos.z - sp.spot.z;
           const d = Math.max(1, Math.hypot(dx, dz));
           ball.pos.set(sp.spot.x - Math.sign(sp.spot.x) * 0.4, PITCH.BALL_RADIUS, sp.spot.z + 0.4);
-          ball.vel.set((dx / d) * 21.5, 0, (dz / d) * 21.5);
+          ball.vel.set((dx / d) * 22.0, 0, (dz / d) * 22.0);
           ball.spin.set(0, 0, 0);
           homeCoord.lockedPassReceiverId = 'USER';
           homeCoord.lockedPassTimer = 2.0;
           userQueuedCall = null;
         } else {
-          // Cruzamento fechado de escanteio na marca do pênalti / pequena área!
           const targetX =
             sp.team === 'HOME' && Math.abs(pState.pos.x) < 11 && pState.pos.z < -PITCH.HALF_L + 17
               ? pState.pos.x
@@ -792,7 +804,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         const opps = sp.team === 'HOME' ? awaySnapshots : homeSnapshots;
         const atkDir = sp.team === 'HOME' ? -1 : 1;
 
-        // Procura defensor/volante 100% livre de sombra de interceptação; se não houver, bate longo ao meio!
         let safeShort: TacticalParticipantSnapshot | null = null;
         for (const m of mates) {
           const d = Math.hypot(m.pos.x - sp.spot.x, m.pos.z - sp.spot.z);
@@ -809,13 +820,12 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           const dz = safeShort.pos.z - sp.spot.z;
           const d = Math.max(1, Math.hypot(dx, dz));
           ball.pos.y = PITCH.BALL_RADIUS;
-          ball.vel.set((dx / d) * 23.5, 0, (dz / d) * 23.5);
+          ball.vel.set((dx / d) * 24.0, 0, (dz / d) * 24.0);
           ball.spin.set(0, 0, 0);
           const coord = sp.team === 'HOME' ? homeCoord : awayCoord;
           coord.lockedPassReceiverId = safeShort.id;
           coord.lockedPassTimer = 2.0;
         } else {
-          // Balão oficial de Tiro de Meta até o círculo central!
           const targetX = (Math.random() - 0.5) * 18;
           const targetZ = sp.spot.z + atkDir * 44;
           const dx = targetX - sp.spot.x;
@@ -826,7 +836,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         }
         playBallKickSfx(0.76);
       } else {
-        // THROW_IN: passe limpo p/ o companheiro mais livre (ou direto pro usuário se pediu!)
         const mates = sp.team === 'HOME' ? homeSnapshots : awaySnapshots;
         const opps = sp.team === 'HOME' ? awaySnapshots : homeSnapshots;
         const thrower =
@@ -840,7 +849,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           const d = Math.hypot(m.pos.x - sp.spot.x, m.pos.z - sp.spot.z);
           if (d < 3.5 || d > 28) continue;
           const safe = evaluatePassLaneSafety01(sp.spot.x, sp.spot.z, m.pos.x, m.pos.z, 21, opps);
-          const score = safe * 10 - d * 0.15 + (m.isUser ? 2.8 : 0);
+          const score = safe * 10 - d * 0.15 + (m.isUser ? 3.2 : 0);
           if (score > bestScore) {
             bestScore = score;
             target = m;
@@ -852,8 +861,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         const dx = tx - sp.spot.x;
         const dz = tz - sp.spot.z;
         const dist = Math.max(2, Math.hypot(dx, dz));
-        ball.pos.set(sp.spot.x - Math.sign(sp.spot.x) * 0.5, 1.35, sp.spot.z);
-        ball.vel.set((dx / dist) * (13.5 + dist * 0.35), 2.2, (dz / dist) * (13.5 + dist * 0.35));
+        ball.pos.set(sp.spot.x - Math.sign(sp.spot.x) * 0.5, PITCH.BALL_RADIUS, sp.spot.z);
+        ball.vel.set((dx / dist) * (18.5 + dist * 0.35), 0, (dz / dist) * (18.5 + dist * 0.35));
         ball.spin.set(0, 0, 0);
         if (target) {
           const coord = sp.team === 'HOME' ? homeCoord : awayCoord;
@@ -872,44 +881,86 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     controlsRef.current = {
       resume: () => {
         paused = false;
+        pauseTab = 'MAIN';
       },
       togglePause: () => {
         if (half !== 'FT') {
           paused = !paused;
+          pauseTab = 'MAIN';
           pauseMenuIndex = 0;
         }
+      },
+      openSettingsTab: (tab) => {
+        pauseTab = tab;
+        pauseMenuIndex = 0;
+      },
+      launchInstantReplay: () => {
+        const clip = replayRecorder.extractClip(false);
+        if (clip.frames.length > 10) {
+          activeReplay = {
+            frames: clip.frames,
+            shotOrigin: clip.shotOrigin,
+            goalZ: clip.goalZ,
+            cursor: 0,
+            scorerText: 'REPLAY INSTANTÂNEO DA PARTIDA',
+            fromPauseMenu: true,
+            nextKickoffTeam: 'HOME',
+          };
+        }
+      },
+      cycleReplayAngle: () => {
+        const idx = (REPLAY_ANGLE_CYCLE.indexOf(replayAngle) + 1) % REPLAY_ANGLE_CYCLE.length;
+        replayAngle = REPLAY_ANGLE_CYCLE[idx];
       },
       cycleCamera: () => {
         const nextIdx = (CAMERA_CYCLE.indexOf(cameraPreset) + 1) % CAMERA_CYCLE.length;
         cameraPreset = CAMERA_CYCLE[nextIdx];
       },
+      cycleRadarMode: () => {
+        const nextIdx = (RADAR_CYCLE.indexOf(radarMode) + 1) % RADAR_CYCLE.length;
+        radarMode = RADAR_CYCLE[nextIdx];
+      },
       skipReplay: () => {
-        if (activeReplay) {
-          const nextTeam = activeReplay.nextKickoffTeam;
-          activeReplay = null;
+        if (!activeReplay) return;
+        const wasFromPause = activeReplay.fromPauseMenu;
+        const nextTeam = activeReplay.nextKickoffTeam;
+        activeReplay = null;
+        if (wasFromPause) {
+          restoreLiveActorTransforms();
+        } else {
           setupKickoff(nextTeam);
           playWhistleSfx(false);
         }
       },
       restartMatch: () => {
         paused = false;
+        pauseTab = 'MAIN';
         pauseMenuIndex = 0;
         homeGoals = 0;
         awayGoals = 0;
         userGoals = 0;
         userAssists = 0;
+        homePossTime = 1;
+        awayPossTime = 1;
+        homeShots = 0;
+        awayShots = 0;
+        homePasses = 0;
+        awayPasses = 0;
+        homeTackles = 0;
+        awayTackles = 0;
+        homeSaves = 0;
+        awaySaves = 0;
+        homeCorners = 0;
+        awayCorners = 0;
+        userPasses = 0;
+        userTackles = 0;
         matchClockSeconds = 0;
         half = 1;
+        fullTimeCoastTimer = 0;
         stoppageMinutes = 1 + Math.floor(Math.random() * 3);
         pState.stamina = pState.maxStamina;
         playWhistleSfx(false);
         setupKickoff('HOME');
-        showBanner(
-          derby.derbyName,
-          compTheme.accentPrimary,
-          1.8,
-          `${homeClub.shortName} × ${rivalClub.shortName}`,
-        );
       },
     };
 
@@ -935,8 +986,11 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
       const inp = inputCollector.sample(dt);
 
-      // 1. MODO REPLAY DE GOL (A ou B ou Espaço pula na hora!)
+      // 1. MODO REPLAY (Y troca ângulo; A/B/Espaço pula!)
       if (activeReplay) {
+        if (inp.throughJustPressed || inp.resetBallJustPressed) {
+          controlsRef.current.cycleReplayAngle();
+        }
         if (inp.passJustPressed || inp.shootJustPressed || inp.exitOrFinishJustPressed) {
           controlsRef.current.skipReplay();
         } else {
@@ -944,7 +998,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           carrierRing.visible = false;
           passTargetRing.visible = false;
 
-          activeReplay.cursor += dt * 50.0; // ~0.83x câmera lenta cinematográfica
+          activeReplay.cursor += dt * 50.0;
           const idx = Math.min(
             activeReplay.frames.length - 1,
             Math.floor(activeReplay.cursor),
@@ -957,6 +1011,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
             prog01,
             activeReplay.shotOrigin,
             activeReplay.goalZ,
+            replayAngle,
             allOrderedActors,
             stadium.ballMesh,
             camera,
@@ -967,11 +1022,11 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
             timeSec,
             frame.netRipple,
             frame.netHitPoint,
-            prog01 > 0.72,
+            !activeReplay.fromPauseMenu && prog01 > 0.72,
             false,
           );
 
-          if (activeReplay.cursor >= activeReplay.frames.length + 12) {
+          if (activeReplay.cursor >= activeReplay.frames.length + 14) {
             controlsRef.current.skipReplay();
           }
         }
@@ -983,6 +1038,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           setHud((prev) => ({
             ...prev,
             isReplayActive: Boolean(activeReplay),
+            replayAngle,
             replayScorerText: activeReplay?.scorerText ?? '',
           }));
         }
@@ -992,53 +1048,87 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
       userRing.visible = true;
 
-      // 2. NAVEGAÇÃO DE PAUSA / FIM DE JOGO PELO CONTROLE (Start/Esc abre, D-Pad navega, A confirma, B volta!)
+      // 2. MENU TELA CHEIA ESTILO FIFA (Start/Esc abre, D-Pad navega, A confirma, B volta!)
       if (inp.exitOrFinishJustPressed) {
         if (half === 'FT') {
           callbacksRef.current.onExit();
           return;
         }
         paused = !paused;
+        pauseTab = 'MAIN';
         pauseMenuIndex = 0;
       }
 
       if (paused || half === 'FT') {
-        const optionCount = half === 'FT' ? 2 : 4;
+        const optionCount =
+          pauseTab === 'SETTINGS' ? 3 : half === 'FT' ? 4 : 5;
+
         if (inp.menuUpJustPressed) {
           pauseMenuIndex = (pauseMenuIndex - 1 + optionCount) % optionCount;
         } else if (inp.menuDownJustPressed) {
           pauseMenuIndex = (pauseMenuIndex + 1) % optionCount;
         } else if (inp.passJustPressed) {
-          if (half === 'FT') {
+          if (pauseTab === 'SETTINGS') {
+            if (pauseMenuIndex === 0) controlsRef.current.cycleCamera();
+            else if (pauseMenuIndex === 1) controlsRef.current.cycleRadarMode();
+            else controlsRef.current.openSettingsTab('MAIN');
+          } else if (half === 'FT') {
             if (pauseMenuIndex === 0) controlsRef.current.restartMatch();
+            else if (pauseMenuIndex === 1) controlsRef.current.launchInstantReplay();
+            else if (pauseMenuIndex === 2) controlsRef.current.openSettingsTab('SETTINGS');
             else {
               callbacksRef.current.onExit();
               return;
             }
           } else {
             if (pauseMenuIndex === 0) paused = false;
-            else if (pauseMenuIndex === 1) controlsRef.current.cycleCamera();
-            else if (pauseMenuIndex === 2) controlsRef.current.restartMatch();
+            else if (pauseMenuIndex === 1) controlsRef.current.launchInstantReplay();
+            else if (pauseMenuIndex === 2) controlsRef.current.openSettingsTab('SETTINGS');
+            else if (pauseMenuIndex === 3) controlsRef.current.restartMatch();
             else {
               callbacksRef.current.onExit();
               return;
             }
           }
-        } else if (inp.shootJustPressed && paused && half !== 'FT') {
-          paused = false;
+        } else if (inp.shootJustPressed) {
+          if (pauseTab === 'SETTINGS') {
+            controlsRef.current.openSettingsTab('MAIN');
+          } else if (paused && half !== 'FT') {
+            paused = false;
+          }
         }
 
         renderer.render(scene, camera);
         hudSyncAcc += dt;
         if (hudSyncAcc >= 0.04) {
           hudSyncAcc = 0;
+          const totalPoss = Math.max(1, homePossTime + awayPossTime);
+          const homePct = Math.round((homePossTime / totalPoss) * 100);
           setHud((prev) => ({
             ...prev,
             half,
             paused,
+            pauseTab,
             pauseMenuIndex,
             cameraPreset,
+            radarMode,
             isReplayActive: false,
+            stats: {
+              homePossessionPct: homePct,
+              awayPossessionPct: 100 - homePct,
+              homeShots,
+              awayShots,
+              homePasses,
+              awayPasses,
+              homeTackles,
+              awayTackles,
+              homeSaves,
+              awaySaves,
+              homeCorners,
+              awayCorners,
+              userPasses,
+              userTackles,
+            },
           }));
         }
         rafId = requestAnimationFrame(tick);
@@ -1049,12 +1139,32 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         controlsRef.current.cycleCamera();
       }
 
-      if (bannerTimer > 0) {
-        bannerTimer -= dt;
-        if (bannerTimer <= 0) bannerObj = null;
+      if (tickerTimer > 0) {
+        tickerTimer -= dt;
+        if (tickerTimer <= 0) tickerObj = null;
       }
 
-      // Histórico de toques para Assistências
+      // Contabiliza Posse de Bola e Desarmes ao Vivo!
+      const currOwnerTeam: 'HOME' | 'AWAY' | null =
+        ball.ownerId === 'USER' || (ball.ownerId && ball.ownerId.startsWith('HOME_'))
+          ? 'HOME'
+          : ball.ownerId && ball.ownerId.startsWith('AWAY_')
+            ? 'AWAY'
+            : null;
+
+      if (currOwnerTeam === 'HOME') homePossTime += dt;
+      else if (currOwnerTeam === 'AWAY') awayPossTime += dt;
+
+      if (currOwnerTeam && prevBallOwnerTeam && currOwnerTeam !== prevBallOwnerTeam) {
+        if (currOwnerTeam === 'HOME' && ball.ownerId !== 'HOME_GK') {
+          homeTackles += 1;
+          if (ball.ownerId === 'USER') userTackles += 1;
+        } else if (currOwnerTeam === 'AWAY' && ball.ownerId !== 'AWAY_GK') {
+          awayTackles += 1;
+        }
+      }
+      if (currOwnerTeam) prevBallOwnerTeam = currOwnerTeam;
+
       if (ball.lastTouchBy && ball.lastTouchBy !== prevBallLastTouch) {
         if (ball.lastTouchTeam === 'HOME') {
           penultimateHomeTouchId = lastHomePasserId;
@@ -1066,8 +1176,17 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         prevBallLastTouch = ball.lastTouchBy;
       }
 
-      // 3. CRONÔMETRO + ACRÉSCIMOS + APITO INTELIGENTE (Só encerra quando a bola sai da zona de perigo!)
-      if (half === 'HT') {
+      // 3. CRONÔMETRO + ACRÉSCIMOS NATURAIS (Só apita quando a bola está calma na faixa central ou parada!)
+      if (fullTimeCoastTimer > 0) {
+        fullTimeCoastTimer -= dt;
+        pState.vel.multiplyScalar(0.9);
+        stepBallPhysics(ball, dt);
+        if (fullTimeCoastTimer <= 0) {
+          half = 'FT';
+          pauseTab = 'MAIN';
+          pauseMenuIndex = 0;
+        }
+      } else if (half === 'HT') {
         halfTimeBreakTimer -= dt;
         pState.vel.multiplyScalar(0.9);
         if (halfTimeBreakTimer <= 0) {
@@ -1077,51 +1196,35 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           pState.stamina = Math.min(pState.maxStamina, pState.stamina + 20);
           playWhistleSfx(false);
           setupKickoff('AWAY');
-          showBanner(
-            'INÍCIO DO 2º TEMPO!',
-            '#C8A45D',
-            2.0,
-            `${homeClub.shortName} ${homeGoals} : ${awayGoals} ${rivalClub.shortName}`,
-          );
+          showTicker('2º TEMPO EM ANDAMENTO', '#C8A45D', 1.5);
         }
       } else if ((half === 1 || half === 2) && celebrationTimer <= 0) {
         matchClockSeconds += dt * 12.0;
         const regLimitSec = (half === 1 ? 45 : 90) * 60;
         const targetEndSec = regLimitSec + stoppageMinutes * 60;
-        const hardMaxSec = targetEndSec + 3.5 * 60;
+        const hardMaxSec = targetEndSec + 4.0 * 60;
 
         if (matchClockSeconds >= targetEndSec) {
-          const ballInDangerZone = Math.abs(ball.pos.z) > PITCH.HALF_L - 23.0;
-          const shotFlying = ball.ownerId === null && Math.hypot(ball.vel.x, ball.vel.z) > 15.5;
-          const safeToBlowWhistle =
-            (!ballInDangerZone && !shotFlying) ||
-            activeSetPiece?.kind === 'GOAL_KICK' ||
-            activeSetPiece?.kind === 'THROW_IN' ||
-            matchClockSeconds >= hardMaxSec;
+          const inCalmMidfield =
+            Math.abs(ball.pos.z) < 17.5 && Math.hypot(ball.vel.x, ball.vel.z) < 12.0;
+          const deadBallSafe =
+            activeSetPiece?.kind === 'GOAL_KICK' || activeSetPiece?.kind === 'THROW_IN';
 
-          if (safeToBlowWhistle) {
+          if (inCalmMidfield || deadBallSafe || matchClockSeconds >= hardMaxSec) {
+            activeSetPiece = null;
+            playWhistleSfx(true);
             if (half === 1) {
               half = 'HT';
-              halfTimeBreakTimer = 2.4;
-              activeSetPiece = null;
-              playWhistleSfx(true);
-              showBanner(
-                'FIM DO 1º TEMPO',
-                '#C8A45D',
-                2.4,
-                `INTERVALO • ${homeClub.shortName} ${homeGoals} : ${awayGoals} ${rivalClub.shortName}`,
-              );
+              halfTimeBreakTimer = 1.6;
+              showTicker('FIM DO 1º TEMPO', '#C8A45D', 1.6);
             } else {
-              half = 'FT';
-              pauseMenuIndex = 0;
-              activeSetPiece = null;
-              playWhistleSfx(true);
+              fullTimeCoastTimer = 1.3;
+              showTicker('APITO FINAL!', '#C8A45D', 1.3);
             }
           }
         }
       }
 
-      // Orientação da Câmera
       if (cameraPreset === 'BROADCAST_TV') {
         camYaw = Math.PI / 2;
       } else {
@@ -1148,8 +1251,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         camYaw += shortestYawDelta(camYaw, autoYaw) * Math.min(1, 6.8 * dt);
       }
 
-      // Snapshots táticos
-      const userMaxSpd = 7.8 + (activePlayer.attributes.sprintSpeed / 99) * 3.15;
+      const userMaxSpd = 8.75 + (activePlayer.attributes.sprintSpeed / 99) * 2.55;
       const homeSnapshots: TacticalParticipantSnapshot[] = [
         {
           id: 'USER',
@@ -1177,7 +1279,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         maxSprintSpeed: a.maxSprintSpeed,
       }));
 
-      // Alvo de passe semi-assistido do usuário
       const fwdX = -Math.sin(camYaw);
       const fwdZ = -Math.cos(camYaw);
       const rightX = Math.cos(camYaw);
@@ -1219,15 +1320,16 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         pState.pos.addScaledVector(pState.vel, dt);
         stepBallPhysics(ball, dt);
         if (celebrationTimer <= 0) {
-          // Dispara o Replay Oficial em Câmera de Costas antes da saída no meio-campo!
-          const clip = replayRecorder.extractClip();
+          const clip = replayRecorder.extractClip(true);
           if (clip.frames.length > 24) {
+            replayAngle = 'BEHIND_WIDE';
             activeReplay = {
               frames: clip.frames,
               shotOrigin: clip.shotOrigin,
               goalZ: clip.goalZ,
               cursor: 0,
               scorerText: pendingGoalScorerBanner,
+              fromPauseMenu: false,
               nextKickoffTeam: pendingKickoffTeam,
             };
           } else {
@@ -1236,7 +1338,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           }
         }
       } else if (activeSetPiece) {
-        // Permite ao usuário se movimentar livremente na área durante a preparação do escanteio/lateral!
         stepPlayerAndBallControl(
           pState,
           activePlayer,
@@ -1255,7 +1356,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           activeSetPiece.timer = Math.min(activeSetPiece.timer, 0.05);
         }
 
-        // Mantém os atletas posicionados para a cobrança (cobrador parado mirando!)
         homeAgents.forEach((a) => {
           a.actor.root.position.copy(a.pos);
           a.actor.root.rotation.y = a.facingYaw;
@@ -1289,7 +1389,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         if (activeSetPiece.timer <= 0) {
           executeSetPieceDelivery(activeSetPiece, homeSnapshots, awaySnapshots);
         }
-      } else if (half === 1 || half === 2) {
+      } else if ((half === 1 || half === 2) && fullTimeCoastTimer <= 0) {
         const refMatePos = selectedMate ? selectedMate.pos : new THREE.Vector3(0, 0, -25);
         const refMateVel = selectedMate ? selectedMate.vel : new THREE.Vector3(0, 0, 0);
 
@@ -1305,14 +1405,15 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           dt,
         );
 
-        if (
-          selectedMate &&
-          (userStep.kicked === 'GROUND_PASS' ||
-            userStep.kicked === 'THROUGH_BALL' ||
-            userStep.kicked === 'LOB_CROSS')
-        ) {
-          homeCoord.lockedPassReceiverId = selectedMate.id;
-          homeCoord.lockedPassTimer = 2.2;
+        if (userStep.kicked === 'POWER_SHOT' || userStep.kicked === 'FINESSE_SHOT' || userStep.kicked === 'CHIP_SHOT') {
+          homeShots += 1;
+        } else if (userStep.kicked === 'GROUND_PASS' || userStep.kicked === 'THROUGH_BALL' || userStep.kicked === 'LOB_CROSS') {
+          homePasses += 1;
+          userPasses += 1;
+          if (selectedMate) {
+            homeCoord.lockedPassReceiverId = selectedMate.id;
+            homeCoord.lockedPassTimer = 2.2;
+          }
         }
 
         if (userStep.calledForBall !== null) {
@@ -1345,7 +1446,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           dt,
         );
 
-        stepOutfieldAgentsTeam(
+        const homeStepEvents = stepOutfieldAgentsTeam(
           homeAgents,
           homeCoord,
           ball,
@@ -1360,6 +1461,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           dt,
           timeSec,
         );
+        if (homeStepEvents.passedToId) homePasses += 1;
+        if (homeStepEvents.shotTakenBy) homeShots += 1;
 
         if (ball.lastTouchBy !== null && ball.lastTouchBy !== 'USER' && userQueuedCall !== null) {
           if (homeCoord.lockedPassReceiverId === 'USER' && ball.ownerId === null) {
@@ -1368,7 +1471,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           }
         }
 
-        stepOutfieldAgentsTeam(
+        const awayStepEvents = stepOutfieldAgentsTeam(
           awayAgents,
           awayCoord,
           ball,
@@ -1383,8 +1486,9 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           dt,
           timeSec,
         );
+        if (awayStepEvents.passedToId) awayPasses += 1;
+        if (awayStepEvents.shotTakenBy) awayShots += 1;
 
-        // Reposição inteligente dos goleiros quando encaixam chute com bola rolando (verifica linha limpa!)
         const pickSafeGkOutlet = (
           gkPos: THREE.Vector3,
           mates: TacticalParticipantSnapshot[],
@@ -1413,13 +1517,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           dt,
           timeSec,
         );
-        if (awaySave.madeSave) {
-          showBanner(
-            awaySave.caughtFirmly ? 'DEFESA FIRME DO GOLEIRO!' : 'ESPALMOU O GOLEIRO!',
-            '#F59E0B',
-            1.1,
-          );
-        }
+        if (awaySave.madeSave) awaySaves += 1;
 
         const homeSave = stepGoalkeeperAI(
           homeGk,
@@ -1430,19 +1528,13 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           dt,
           timeSec,
         );
-        if (homeSave.madeSave) {
-          showBanner(
-            homeSave.caughtFirmly ? 'GRANDE DEFESA!' : 'SALVOU NOSSO GOLEIRO!',
-            '#10B981',
-            1.1,
-          );
-        }
+        if (homeSave.madeSave) homeSaves += 1;
 
         const ballEvents = stepBallPhysics(ball, dt);
 
         if (ballEvents.hitPost) {
           playPostClangSfx();
-          showBanner('NA TRAVE!', '#FACC15', 1.2);
+          showTicker('NA TRAVE!', '#FACC15', 1.1);
         }
 
         if (ballEvents.scoredNorthGoal) {
@@ -1458,14 +1550,12 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           if (scorerId === 'USER') userGoals += 1;
           if (assistId === 'USER') userAssists += 1;
 
-          const assistSub = assistId
-            ? `ASSISTÊNCIA: ${actorNameMap.get(assistId) ?? ''}`
-            : `${homeClub.shortName} ${homeGoals} : ${awayGoals} ${rivalClub.shortName}`;
-
-          pendingGoalScorerBanner = `GOL DO ${homeClub.shortName} • ${scorerLabel}`;
+          pendingGoalScorerBanner = `GOL DO ${homeClub.shortName} • ${scorerLabel}${
+            assistId ? ` (ASSIST: ${actorNameMap.get(assistId)})` : ''
+          }`;
           pendingKickoffTeam = 'AWAY';
-          showBanner(`GOOOOOL DO ${homeClub.shortName}! • ${scorerLabel}`, '#2DBE60', 2.0, assistSub);
-          celebrationTimer = 1.45;
+          showTicker(`⚽ GOL! ${scorerLabel}`, '#2DBE60', 1.5);
+          celebrationTimer = 1.4;
         } else if (ballEvents.scoredSouthGoal) {
           playWhistleSfx(true);
           awayGoals += 1;
@@ -1473,19 +1563,13 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           const scorerLabel = actorNameMap.get(scorerId) ?? rivalClub.shortName;
           pendingGoalScorerBanner = `GOL DO ${rivalClub.shortName} • ${scorerLabel}`;
           pendingKickoffTeam = 'HOME';
-          showBanner(
-            `GOL DO ${rivalClub.shortName} • ${scorerLabel}`,
-            '#EF4444',
-            2.0,
-            `${homeClub.shortName} ${homeGoals} : ${awayGoals} ${rivalClub.shortName}`,
-          );
-          celebrationTimer = 1.45;
+          showTicker(`GOL DO ${rivalClub.shortName} • ${scorerLabel}`, '#EF4444', 1.5);
+          celebrationTimer = 1.4;
         } else if (ballEvents.wentOutOfBounds) {
           prepareSetPieceFromOut(ball.pos.clone());
         }
       }
 
-      // 4. Atualiza Malhas 3D e Animação do Usuário + Grava Frame no Buffer de Replay!
       stadium.ballMesh.position.copy(ball.pos);
       stadium.ballMesh.quaternion.copy(ball.quat);
 
@@ -1567,7 +1651,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         timeSec,
       );
 
-      // Alimenta buffer circular de Replay (60 FPS, zero alocação!)
       if (!activeSetPiece && (half === 1 || half === 2)) {
         liveActorStatesBuffer[0].x = pState.pos.x;
         liveActorStatesBuffer[0].z = pState.pos.z;
@@ -1640,7 +1723,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         false,
       );
 
-      // 5. Câmeras (TV Lateral estilo EA FC Tele Broadcast como padrão!)
       const targetCamPos = new THREE.Vector3();
       const targetLook = new THREE.Vector3();
 
@@ -1688,7 +1770,6 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
       renderer.render(scene, camera);
 
-      // 6. Sincroniza HUD (25 Hz)
       hudSyncAcc += dt;
       if (hudSyncAcc >= 0.04) {
         hudSyncAcc = 0;
@@ -1736,6 +1817,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         const regCapMin = half === 1 || half === 'HT' ? 45 : 90;
         const rawMin = Math.floor(matchClockSeconds / 60);
         const inStoppage = (half === 1 && rawMin >= 45) || (half === 2 && rawMin >= 90);
+        const totalPoss = Math.max(1, homePossTime + awayPossTime);
+        const homePct = Math.round((homePossTime / totalPoss) * 100);
 
         setHud({
           homeGoals,
@@ -1748,17 +1831,39 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           inStoppageTime: inStoppage,
           half,
           paused,
+          pauseTab,
           pauseMenuIndex,
           isReplayActive: false,
+          replayAngle,
           replayScorerText: '',
           stamina: pState.stamina,
           maxStamina: pState.maxStamina,
           powerPct: pState.hudPower01 * 100,
           cameraPreset,
-          bannerFeedback: bannerObj,
+          radarMode,
+          homeFormationLabel: homeFormation.id,
+          awayFormationLabel: awayFormation.id,
+          scorebugTicker: tickerObj,
           ballX: ball.pos.x,
           ballZ: ball.pos.z,
+          userX: pState.pos.x,
           radarDots,
+          stats: {
+            homePossessionPct: homePct,
+            awayPossessionPct: 100 - homePct,
+            homeShots,
+            awayShots,
+            homePasses,
+            awayPasses,
+            homeTackles,
+            awayTackles,
+            homeSaves,
+            awaySaves,
+            homeCorners,
+            awayCorners,
+            userPasses,
+            userTackles,
+          },
         });
       }
 
@@ -1821,7 +1926,11 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         hud={hud}
         onResume={() => controlsRef.current.resume()}
         onTogglePause={() => controlsRef.current.togglePause()}
+        onOpenSettingsTab={(tab) => controlsRef.current.openSettingsTab(tab)}
+        onLaunchInstantReplay={() => controlsRef.current.launchInstantReplay()}
+        onCycleReplayAngle={() => controlsRef.current.cycleReplayAngle()}
         onCycleCamera={() => controlsRef.current.cycleCamera()}
+        onCycleRadarMode={() => controlsRef.current.cycleRadarMode()}
         onSkipReplay={() => controlsRef.current.skipReplay()}
         onRestartMatch={() => controlsRef.current.restartMatch()}
         onExit={onExit}
