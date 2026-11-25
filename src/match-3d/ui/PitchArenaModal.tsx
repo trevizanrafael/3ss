@@ -225,6 +225,7 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       gkBrain.diveTimer = 0;
       gkBrain.diveDir = 0;
       gkBrain.inSpreadStance = false;
+      gkBrain.spreadCommitTimer = 0;
       gkBrain.trackingShotActive = false;
       gkBrain.shotReactionTimer = 0;
       gkBrain.recentSaveTimer = 0;

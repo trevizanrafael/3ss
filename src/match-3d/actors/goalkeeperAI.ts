@@ -21,7 +21,8 @@ export interface GoalkeeperBrain {
   smotherCooldown: number;
   fakeShotFreezeTimer: number;
   inSpreadStance: boolean;
-  /** Tempo humano de reação (impede virar o Neuer pegando 100% no mano a mano de perto!) */
+  spreadCommitTimer: number;
+  /** Tempo humano de reação (impede virar o Neuer pegando 100% no mano a mano e impede adivinhar curva antes da hora!) */
   shotReactionTimer: number;
   trackingShotActive: boolean;
   shotOriginDist: number;
@@ -106,6 +107,7 @@ export function createGoalkeeperAI(opponentClub: ClubData): GoalkeeperBrain {
     smotherCooldown: 0,
     fakeShotFreezeTimer: 0,
     inSpreadStance: false,
+    spreadCommitTimer: 0,
     shotReactionTimer: 0,
     trackingShotActive: false,
     shotOriginDist: 16,
@@ -128,6 +130,10 @@ export function stepGoalkeeperAI(
   gk.smotherCooldown = Math.max(0, gk.smotherCooldown - dt);
   gk.fakeShotFreezeTimer = Math.max(0, gk.fakeShotFreezeTimer - dt);
   gk.recentSaveTimer = Math.max(0, gk.recentSaveTimer - dt);
+  gk.spreadCommitTimer = Math.max(0, gk.spreadCommitTimer - dt);
+  if (gk.spreadCommitTimer <= 0) {
+    gk.inSpreadStance = false;
+  }
 
   if (triggeredFakeShotDirX !== null && ball.pos.z < -27.5 && gk.fakeShotFreezeTimer <= 0) {
     gk.fakeShotFreezeTimer = 0.38;
@@ -167,8 +173,9 @@ export function stepGoalkeeperAI(
   if (isIncomingShot && !gk.trackingShotActive) {
     gk.trackingShotActive = true;
     gk.shotOriginDist = Math.hypot(ball.pos.x, -PITCH.HALF_L - ball.pos.z);
-    // De perto (< 13m = mano a mano!) o goleiro leva ~0.18s pra reagir; de longe (> 18m) ele vê a bola sair do pé rápido!
-    gk.shotReactionTimer = gk.shotOriginDist < 13.5 ? 0.185 : gk.shotOriginDist < 19 ? 0.1 : 0.03;
+    // Reação humana real também fora da área (~0.21s) p/ NÃO adivinhar e correr pro canto antes da bola curvar!
+    gk.shotReactionTimer =
+      gk.shotOriginDist < 13.5 ? 0.19 : gk.shotOriginDist < 27.5 ? 0.21 : 0.12;
   } else if (!isIncomingShot) {
     gk.trackingShotActive = false;
     gk.shotReactionTimer = 0;
@@ -210,12 +217,13 @@ export function stepGoalkeeperAI(
     if (attackerIn1v1Close && (ball.pos.z < -35.8 || attackerAdvancing)) {
       maxMoveSpd = 5.2 + skillDifficulty01 * 0.9;
       targetX = ball.pos.x * 0.78;
-      // Sai até ~6.5m da linha p/ fechar e ajoelhar, permitindo a cavadinha ou batida tirando dele!
       targetZ = Math.max(-PITCH.HALF_L + 2.2, Math.min(-PITCH.HALF_L + 6.8, ball.pos.z - 1.35));
-      gk.inSpreadStance = distToBallHoriz < 5.6;
+      if (distToBallHoriz < 6.0) {
+        gk.inSpreadStance = true;
+        // Mantém ajoelhado por 0.6s mesmo após a bola sair do pé p/ permitir a Cavadinha (LB+B) encobrir!
+        gk.spreadCommitTimer = 0.6;
+      }
     } else {
-      gk.inSpreadStance = false;
-      // Quando a bola está longe (z > -24), fica em baseGoalZ (-41.28) bem guardado debaixo da trave!
       const maxStepOut = ball.pos.z < -25 ? (attackerAdvancing ? 3.1 : 1.9) : 0.75;
       const stepOutDist =
         ball.pos.z < -25
@@ -228,38 +236,46 @@ export function stepGoalkeeperAI(
         -PITCH.GOAL_HALF_W + 0.85,
         Math.min(PITCH.GOAL_HALF_W - 0.85, dirX * (stepOutDist + 1.85)),
       );
-      targetZ = Math.max(baseGoalZ, -PITCH.HALF_L + dirZ * stepOutDist);
+      targetZ = gk.inSpreadStance ? gk.pos.z : Math.max(baseGoalZ, -PITCH.HALF_L + dirZ * stepOutDist);
     }
 
-    // 3. Leitura de Chutes:
-    // - DE LONGE (shotOriginDist >= 16m): recua p/ linha, lê 95% da curva e busca chapadinha/cavadinha de longe sem tomar frango!
-    // - DE PERTO (shotOriginDist < 13.5m): respeita o tempo humano de reação (shotReactionTimer) e alcance humano!
-    if (isIncomingShot && gk.shotReactionTimer <= 0) {
-      const isLongShot = gk.shotOriginDist >= 16.5;
-      if (isLongShot) {
+    // 3. Leitura Realista de Curva (NÃO pula adiantado adivinhando a chapada de fora da área!):
+    // - No começo do voo, lê apenas a tangente inicial (~18% da curva: é enganado pelo arco abrindo por fora!)
+    // - Só quando a bola já está chegando perto (< 0.30s) ele percebe a curva fechando na gaveta e salta!
+    // - Mas se for do meio da rua (> 29m), o voo é tão longo que dá tempo dele corrigir e pegar!
+    if (isIncomingShot && gk.shotReactionTimer <= 0 && !gk.inSpreadStance) {
+      const isVeryFarMidfield = gk.shotOriginDist >= 29.0;
+      const isOutsideBoxRange = gk.shotOriginDist >= 14.5;
+      if (isOutsideBoxRange) {
         targetZ = baseGoalZ;
-        maxMoveSpd = 5.9 + skillDifficulty01 * 1.1;
+        maxMoveSpd = isVeryFarMidfield ? 5.8 : 4.5 + skillDifficulty01 * 0.75;
       }
 
-      const interceptZ = isLongShot ? baseGoalZ : gk.pos.z;
+      const interceptZ = isOutsideBoxRange ? baseGoalZ : gk.pos.z;
       const tHit = (interceptZ - ball.pos.z) / ball.vel.z;
       if (tHit > 0 && tHit < 1.55) {
         const yAtGk =
           ball.pos.y + ball.vel.y * tHit + 0.5 * BALL_AERO.GRAVITY * tHit * tHit;
-        const curveRead = isLongShot ? 0.96 : 0.65;
+        // Longe no começo do voo (tHit > 0.34s), enxerga só a saída da bola; perto (< 0.34s), vê a curva virar!
+        const curveRead = isVeryFarMidfield
+          ? 0.92
+          : tHit > 0.34
+            ? 0.18
+            : 0.72;
         const magnusAx = ball.spin.y * ball.vel.z * BALL_AERO.MAGNUS_COEFF * 0.82;
         const predX = ball.pos.x + ball.vel.x * tHit + 0.5 * magnusAx * tHit * tHit * curveRead;
 
         if (Math.abs(predX) < PITCH.GOAL_HALF_W + 1.1) {
-          targetX = Math.max(-PITCH.GOAL_HALF_W + 0.25, Math.min(PITCH.GOAL_HALF_W - 0.25, predX));
+          targetX = Math.max(-PITCH.GOAL_HALF_W + 0.35, Math.min(PITCH.GOAL_HALF_W - 0.35, predX));
           const deltaX = predX - gk.pos.x;
-          const diveTriggerTime = isLongShot ? 0.56 : 0.36;
-          if (!gk.inSpreadStance && Math.abs(deltaX) > 0.95 && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.1) {
+          // Só salta quando a bola realmente está chegando perto (tHit < 0.30s), nunca 1 segundo antes!
+          const diveTriggerTime = isVeryFarMidfield ? 0.44 : 0.29;
+          if (Math.abs(deltaX) > 0.95 && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.1) {
             gk.diveDir = deltaX < 0 ? -1 : 1;
             gk.diveTimer = 0.44;
-            const diveSpd = isLongShot
-              ? 6.4 + skillDifficulty01 * 1.8
-              : 4.9 + skillDifficulty01 * 1.3;
+            const diveSpd = isVeryFarMidfield
+              ? 6.2 + skillDifficulty01 * 1.5
+              : 5.1 + skillDifficulty01 * 1.25;
             gk.vel.set(gk.diveDir * diveSpd, 0, 0);
           }
         }
@@ -307,25 +323,24 @@ export function stepGoalkeeperAI(
     ball.touchCooldown <= 0.19 &&
     ball.pos.z > -PITCH.HALF_L - 0.1
   ) {
-    const isLongShot = gk.shotOriginDist >= 16.5;
+    const isVeryFar = gk.shotOriginDist >= 28.5;
     const reachX = gk.inSpreadStance
       ? 1.06
       : gk.diveTimer > 0
-        ? isLongShot
-          ? 1.48
-          : 1.16
-        : isLongShot
+        ? isVeryFar
+          ? 1.45
+          : 1.2
+        : isVeryFar
           ? 0.98
-          : 0.76;
+          : 0.8;
     const reachZ = 0.85;
-    // Em GK_SPREAD_LOW no 1x1 fica em 1.25m (contra 3.05m do travessão = janela perfeita p/ Cavadinha LB+B!)
     const reachY = gk.inSpreadStance
-      ? 1.25
-      : isLongShot
+      ? 1.32
+      : isVeryFar
         ? 2.98
         : gk.diveTimer > 0
-          ? 2.55
-          : 2.35;
+          ? 2.62
+          : 2.45;
 
     const dx = Math.abs(ball.pos.x - gk.pos.x);
     const dz = Math.abs(ball.pos.z - gk.pos.z);
@@ -342,7 +357,7 @@ export function stepGoalkeeperAI(
       let catchChance = 0;
       if (gk.recentSaveTimer > 0) {
         catchChance = 0.92;
-      } else if (isLongShot && shotSpeed < 26.5) {
+      } else if (isVeryFar && shotSpeed < 27.0) {
         catchChance = 0.78;
       } else if (shotSpeed < 20.0 && gk.diveTimer <= 0 && !gk.inSpreadStance) {
         catchChance = 0.8;
