@@ -175,7 +175,7 @@ export const MyProTab: React.FC = () => {
                 : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
             }`}
           >
-            02 TROFÉUS ({trophyCabinet.length})
+            02 TROFÉUS ({trophyCabinet.filter((t) => t.code !== 'POTM').length})
           </button>
 
           <button

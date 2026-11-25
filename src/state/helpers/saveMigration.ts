@@ -1,6 +1,7 @@
 import { COUNTRIES, isLeagueCountryCode } from '../../data/countries/countries';
 import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
 import { evaluateEndOfSeasonAwards } from '../../domains/awards/evaluateSeasonAwards';
+import { resolveSeasonCompetitionsForDisplay } from '../../domains/career-stats/seasonCampaignBuilder';
 import {
   createInitialInternationalState,
   simulateInternationalDay,
@@ -127,8 +128,21 @@ export function migratePersistedCareerState(
       nationalGoals: 0,
       nationalAssists: 0,
       trophyTitles: (merged.trophyCabinet ?? [])
-        .filter((t) => t.season === h.season)
+        .filter((t) => t.season === h.season && t.code !== 'POTM')
         .map((t) => t.title),
+    }));
+  }
+
+  if (merged.careerSeasonLogs?.length && merged.player) {
+    const nat = merged.player.nationality;
+    merged.careerSeasonLogs = merged.careerSeasonLogs.map((log) => ({
+      ...log,
+      competitions: resolveSeasonCompetitionsForDisplay(log, nat),
+      trophyTitles: (log.trophyTitles ?? []).filter(
+        (title) =>
+          !title.toUpperCase().includes('MELHOR DO MÊS') &&
+          !title.toUpperCase().includes('JOGADOR DO MÊS'),
+      ),
     }));
   }
 

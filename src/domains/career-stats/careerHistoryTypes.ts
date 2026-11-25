@@ -13,17 +13,32 @@ export interface ClubSeasonStint {
   leagueFinishPosition?: number;
 }
 
+export interface SeasonCompetitionCampaignEntry {
+  competitionId: AnyCompetitionId;
+  competitionLabel?: string;
+  teamId: string;
+  stageType: 'LEAGUE' | 'KNOCKOUT' | 'QUALIFIERS' | 'FRIENDLY';
+  outcomeLabel: string;
+  isChampion?: boolean;
+  isRunnerUp?: boolean;
+  matches: number;
+  goals: number;
+  assists: number;
+  threeStarMatches: number;
+}
+
 export interface PlayerSeasonCareerLog {
   seasonNumber: number; // 1, 2, 3...
   seasonYear: number; // 2026, 2027...
   age: number;
   ovrEnd: number;
   stints: ClubSeasonStint[];
+  competitions?: SeasonCompetitionCampaignEntry[];
   nationalTeamId: string;
   nationalMatches: number;
   nationalGoals: number;
   nationalAssists: number;
-  trophyTitles: string[]; // Títulos coletivos e individuais ganhos naquele ano
+  trophyTitles: string[]; // Títulos coletivos e individuais de fim de ano ganhos naquele ano
 }
 
 export interface UserCompetitionStatLine {

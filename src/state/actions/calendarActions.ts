@@ -3,6 +3,7 @@ import { COUNTRIES } from '../../data/countries/countries';
 import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
 import { evaluateMonthlyPotm } from '../../domains/awards/evaluateMonthlyPotm';
 import { evaluateEndOfSeasonAwards } from '../../domains/awards/evaluateSeasonAwards';
+import { buildSeasonCompetitionCampaigns } from '../../domains/career-stats/seasonCampaignBuilder';
 import { generateWindowTransferOffers } from '../../domains/contracts/contractEngine';
 import { getOwnedEquipmentBonuses } from '../../domains/economy/economyActions';
 import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
@@ -125,10 +126,6 @@ export function computeNextDayState(
         nextPlayer = {
           ...nextPlayer,
           reputationStars: Math.min(3, Math.max(1, nextPlayer.reputationStars)) as StarRating,
-          careerTotals: {
-            ...nextPlayer.careerTotals,
-            trophies: nextPlayer.careerTotals.trophies + 1,
-          },
         };
         nextFeed = [
           {
@@ -314,8 +311,17 @@ export function computeNextDayState(
       });
 
       const seasonTrophies = nextCabinet
-        .filter((t) => t.season === finishedSeasonYear)
+        .filter((t) => t.season === finishedSeasonYear && t.code !== 'POTM')
         .map((t) => t.title);
+
+      const archivedCompetitions = buildSeasonCompetitionCampaigns(
+        nextWorld,
+        stintsWithFinish,
+        nextUserCompStats,
+        nextPlayer.nationality,
+        true,
+        TOTAL_SEASON_WEEKS,
+      );
 
       nextSeasonLogs = [
         ...nextSeasonLogs,
@@ -325,6 +331,7 @@ export function computeNextDayState(
           age: nextPlayer.age,
           ovrEnd: nextPlayer.overall,
           stints: stintsWithFinish,
+          competitions: archivedCompetitions,
           nationalTeamId: `nt_${nextPlayer.nationality.toLowerCase()}`,
           nationalMatches: nextPeriod.internationalMatches,
           nationalGoals: nextPeriod.internationalGoals,

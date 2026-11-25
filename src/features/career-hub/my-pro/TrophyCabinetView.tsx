@@ -11,7 +11,7 @@ interface CounterCardSpec {
   gold?: boolean;
 }
 
-type TrophyFilter = 'ALL' | 'COLLECTIVE' | 'GALA' | 'POTM';
+type TrophyFilter = 'ALL' | 'COLLECTIVE' | 'GALA';
 
 const SUMMARY_COUNTERS: CounterCardSpec[] = [
   { label: 'BOLA DE OURO', codes: ['BALLON_DOR'], gold: true },
@@ -37,9 +37,6 @@ function getBadgeStyle(code: AwardCode): { tag: string; color: string } {
   if (code === 'COLLECTIVE_TROPHY') {
     return { tag: 'TAÇA COLETIVA', color: '#2DBE60' };
   }
-  if (code === 'POTM') {
-    return { tag: 'DESTAQUE DO MÊS', color: '#9498A3' };
-  }
   return { tag: 'DESTAQUE NACIONAL', color: '#F5F5F7' };
 }
 
@@ -57,18 +54,21 @@ export const TrophyCabinetView: React.FC = () => {
   const countByCodes = (codes: AwardCode[]) =>
     trophyCabinet.filter((t) => codes.includes(t.code)).length;
 
+  // Jogador do Mês (POTM) é contabilizado no marcador superior, mas não aparece na lista de troféus!
+  const listedTrophies = useMemo(
+    () => trophyCabinet.filter((t) => t.code !== 'POTM'),
+    [trophyCabinet],
+  );
+
   const filteredTrophies = useMemo(() => {
     if (filter === 'COLLECTIVE') {
-      return trophyCabinet.filter((t) => t.code === 'COLLECTIVE_TROPHY');
-    }
-    if (filter === 'POTM') {
-      return trophyCabinet.filter((t) => t.code === 'POTM');
+      return listedTrophies.filter((t) => t.code === 'COLLECTIVE_TROPHY');
     }
     if (filter === 'GALA') {
-      return trophyCabinet.filter((t) => t.code !== 'COLLECTIVE_TROPHY' && t.code !== 'POTM');
+      return listedTrophies.filter((t) => t.code !== 'COLLECTIVE_TROPHY');
     }
-    return trophyCabinet;
-  }, [trophyCabinet, filter]);
+    return listedTrophies;
+  }, [listedTrophies, filter]);
 
   // Agrupa troféus por ano/temporada (do mais recente ao mais antigo)
   const groupedBySeason = useMemo(() => {
@@ -83,7 +83,7 @@ export const TrophyCabinetView: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col gap-4 min-h-0">
-      {/* 8 Contadores Superiores das Grandes Honrarias */}
+      {/* 8 Contadores Superiores das Grandes Honrarias (incluindo a contagem total de Jogador do Mês) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 shrink-0">
         {SUMMARY_COUNTERS.map((spec) => {
           const count = countByCodes(spec.codes);
@@ -123,16 +123,14 @@ export const TrophyCabinetView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           {(
             [
-              ['ALL', `TODOS (${trophyCabinet.length})`],
+              ['ALL', `TODOS (${listedTrophies.length})`],
               ['COLLECTIVE', `TAÇAS COLETIVAS (${countByCodes(['COLLECTIVE_TROPHY'])})`],
               [
                 'GALA',
-                `PRÊMIOS DE FIM DE ANO (${
-                  trophyCabinet.filter((t) => t.code !== 'COLLECTIVE_TROPHY' && t.code !== 'POTM')
-                    .length
+                `PRÊMIOS INDIVIDUAIS (${
+                  listedTrophies.filter((t) => t.code !== 'COLLECTIVE_TROPHY').length
                 })`,
               ],
-              ['POTM', `JOGADOR DO MÊS (${countByCodes(['POTM'])})`],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -176,7 +174,7 @@ export const TrophyCabinetView: React.FC = () => {
         )}
       </div>
 
-      {/* Galeria Separada Ano a Ano (Temporada por Temporada) */}
+      {/* Galeria Separada Ano a Ano (Temporada por Temporada, sem poluição mensal de POTM) */}
       <div
         data-rs-scroll="true"
         className="flex-1 console-tile p-5 overflow-y-auto space-y-6 min-h-0"
@@ -245,11 +243,6 @@ export const TrophyCabinetView: React.FC = () => {
                             >
                               {badge.tag}
                             </span>
-                            {entry.week && (
-                              <span className="text-[10px] uppercase tracking-widest text-[#565A65]">
-                                • SEMANA {entry.week}
-                              </span>
-                            )}
                           </div>
                           <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] leading-tight mt-1 truncate">
                             {entry.title}

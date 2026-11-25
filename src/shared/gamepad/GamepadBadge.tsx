@@ -60,7 +60,7 @@ export const GamepadBadge: React.FC<GamepadBadgeProps> = ({
     <span className="inline-flex items-center gap-1.5 select-none">
       <span
         style={{ borderColor: g.color, color: g.color }}
-        className="inline-flex items-center justify-center min-w-[22px] h-[20px] px-1.5 bg-[#0B0B0D] border font-condensed font-extrabold text-[11px] leading-none tracking-wider"
+        className="inline-flex items-center justify-center min-w-[1.375rem] h-[1.25rem] px-1.5 bg-[#0B0B0D] border font-condensed font-extrabold text-[11px] leading-none tracking-wider"
       >
         {g.text}
       </span>

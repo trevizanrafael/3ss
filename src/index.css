@@ -27,6 +27,11 @@
     box-sizing: border-box;
   }
 
+  html {
+    /* Escala nativa equivalente a 80% de zoom em 100% do navegador */
+    font-size: 80%;
+  }
+
   html,
   body,
   #root {
@@ -41,6 +46,19 @@
     font-variant-numeric: tabular-nums;
     user-select: none;
   }
+}
+
+/* Mantém hierarquia tipográfica proporcional nos micro-rótulos na escala nativa de 80% */
+.text-\[9px\] {
+  font-size: 0.5625rem;
+}
+
+.text-\[10px\] {
+  font-size: 0.625rem;
+}
+
+.text-\[11px\] {
+  font-size: 0.6875rem;
 }
 
 .font-condensed {

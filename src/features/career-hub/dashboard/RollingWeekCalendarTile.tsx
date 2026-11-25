@@ -15,6 +15,7 @@ import { getRollingWeekWindow } from '../../../shared/utils/calendarDates';
 import { CareerState } from '../../../state/careerTypes';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { useNavigationStore } from '../../../state/useNavigationStore';
+import { MatchDayTileThemeArt } from './MatchDayTileThemeArt';
 
 type StepCurve = 'SINGLE' | 'ACCEL' | 'CRUISE' | 'BRAKE';
 
@@ -270,9 +271,9 @@ export const RollingWeekCalendarTile: React.FC = () => {
         </div>
 
         {/* Fita Contínua de 8 Dias com HOJE travado na 2ª posição */}
-        <div className="relative my-auto py-3">
+        <div className="relative my-auto pt-6 pb-2">
           <div
-            className="pointer-events-none absolute top-1 bottom-1 z-20 border-2 shadow-[0_0_24px_rgba(0,0,0,0.75)]"
+            className="pointer-events-none absolute top-6 bottom-2 z-20 border-2 shadow-[0_0_24px_rgba(0,0,0,0.75)]"
             style={{
               left: '14.2857%',
               width: '14.2857%',
@@ -280,7 +281,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
             }}
           >
             <div
-              className="font-condensed font-extrabold text-[10px] uppercase tracking-[0.2em] text-center py-0.5"
+              className="absolute -top-5 inset-x-[-2px] font-condensed font-extrabold text-[10px] uppercase tracking-[0.2em] text-center py-0.5"
               style={{
                 backgroundColor: compTheme.accentPrimary,
                 color: compTheme.textOnAccent,
@@ -302,6 +303,76 @@ export const RollingWeekCalendarTile: React.FC = () => {
                 const relPos = cell.offset - slideFrac;
                 const focusWeight = Math.max(0, 1 - Math.abs(relPos));
                 const pastDim = relPos < 0 ? Math.max(0.38, 1 + relPos * 0.58) : 1;
+                const fx = cell.fixture;
+
+                if (fx) {
+                  const fxTheme = getCompetitionTheme(fx.competitionId);
+                  const oppClub = getClubById(fx.opponentId);
+                  const venueMicro = fx.neutralVenue
+                    ? 'SEDE'
+                    : fx.isHome
+                      ? 'CASA'
+                      : 'FORA';
+
+                  return (
+                    <div
+                      key={cell.offset}
+                      style={{
+                        width: '12.5%',
+                        opacity: pastDim,
+                      }}
+                      className="h-40 relative overflow-hidden border-r border-[#242730] flex flex-col justify-between p-2 shrink-0"
+                    >
+                      {/* Quadradinho Inteiro Tematizado na Identidade de Transmissão da Competição */}
+                      <MatchDayTileThemeArt competitionId={fx.competitionId} />
+
+                      {/* Topo: Logo Oficial da Competição (inclusive Liga Nacional!) à esquerda + Data compacta no canto superior direito */}
+                      <div className="relative z-10 flex items-start justify-between gap-1 w-full">
+                        <CompetitionBadge
+                          competitionId={fx.competitionId}
+                          size="sm"
+                          showName={false}
+                        />
+                        <div className="text-right leading-none bg-[#07090E]/65 px-1.5 py-0.5 border border-white/10">
+                          <span
+                            className="font-condensed uppercase font-extrabold text-[9px] tracking-[0.14em] block"
+                            style={{ color: fxTheme.accentPrimary }}
+                          >
+                            {cell.weekday3}
+                          </span>
+                          <span className="font-condensed font-extrabold text-sm text-[#F5F5F7] leading-none block mt-0.5 tabular-nums">
+                            {cell.dayNumber}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Centro: Escudo Maior do Adversário em Destaque */}
+                      <div className="relative z-10 my-auto flex items-center justify-center py-0.5">
+                        <div
+                          className="p-1 relative flex items-center justify-center"
+                          style={{
+                            filter: `drop-shadow(0 6px 12px rgba(0,0,0,0.68))`,
+                          }}
+                        >
+                          <ClubCrest clubId={fx.opponentId} size="lg" />
+                        </div>
+                      </div>
+
+                      {/* Base: Mando + Sigla do Adversário no Tema do Campeonato */}
+                      <div
+                        className="relative z-10 w-full px-1.5 py-0.5 bg-[#080A10]/82 border-l-2 flex items-center justify-between gap-1"
+                        style={{ borderLeftColor: fxTheme.accentPrimary }}
+                      >
+                        <span className="font-condensed uppercase font-bold text-[9px] tracking-widest text-[#D4D7E0]">
+                          {venueMicro}
+                        </span>
+                        <span className="font-condensed uppercase font-extrabold text-xs tracking-wider text-[#F5F5F7] truncate">
+                          {oppClub.shortName}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
 
                 return (
                   <div
@@ -314,7 +385,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
                           ? `rgba(32, 36, 46, ${0.35 + focusWeight * 0.65})`
                           : '#101216',
                     }}
-                    className="h-36 px-2 pt-6 pb-3 border-r border-[#242730] flex flex-col items-center justify-between shrink-0"
+                    className="h-40 px-2 pt-5 pb-3 border-r border-[#242730] flex flex-col items-center justify-between shrink-0"
                   >
                     <div className="text-center">
                       <div
@@ -332,18 +403,7 @@ export const RollingWeekCalendarTile: React.FC = () => {
                     </div>
 
                     <div className="h-9 flex items-center justify-center">
-                      {cell.fixture ? (
-                        <div className="flex items-center gap-1">
-                          <ClubCrest clubId={cell.fixture.opponentId} size="sm" />
-                          {(cell.fixture.isContinental || cell.fixture.isNationalTeam) && (
-                            <CompetitionBadge
-                              competitionId={cell.fixture.competitionId}
-                              size="sm"
-                              showName={false}
-                            />
-                          )}
-                        </div>
-                      ) : cell.isTrainingDay ? (
+                      {cell.isTrainingDay ? (
                         <span
                           className={`px-2 py-0.5 font-condensed uppercase font-extrabold text-[10px] tracking-widest ${
                             focusWeight > 0.5 && stopForTraining

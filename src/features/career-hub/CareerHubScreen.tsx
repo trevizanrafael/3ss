@@ -85,7 +85,7 @@ export const CareerHubScreen: React.FC = () => {
 
       <main
         key={activeTab}
-        className="console-tab-stage flex-1 max-w-[1460px] w-full mx-auto px-6 md:px-10 py-4 min-h-0 relative z-10"
+        className="console-tab-stage flex-1 max-w-[92rem] w-full mx-auto px-6 md:px-10 py-5 min-h-0 relative z-10"
       >
         {activeTab === 'CENTRAL' && <DashboardTab />}
         {activeTab === 'MEU_PRO' && <MyProTab />}
