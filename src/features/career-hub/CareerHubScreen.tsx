@@ -123,16 +123,15 @@ export const CareerHubScreen: React.FC = () => {
             <>
               <GamepadBadge action="LT" label="SEÇÃO" />
               <GamepadBadge action="RT" />
-              <GamepadBadge action="ALT_Y" label="SONDAR" />
             </>
           )}
 
           {activeTab === 'TEMPORADA' && (
             <>
-              <GamepadBadge action="LT" label="TORNEIO" />
+              <GamepadBadge action="LT" label="TORNEIO / MÊS" />
               <GamepadBadge action="RT" />
-              <GamepadBadge action="ALT_X" label="ESTATÍSTICAS" />
-              <GamepadBadge action="ALT_Y" label="GRUPOS / MATA-MATA" />
+              <GamepadBadge action="ALT_X" label="TABELA / STATS" />
+              <GamepadBadge action="ALT_Y" label="CALENDÁRIO MENSAL" />
               <GamepadBadge action="RS" label="ROLAR" />
             </>
           )}

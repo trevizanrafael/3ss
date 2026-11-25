@@ -4,7 +4,15 @@ import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
 import { evaluateMonthlyPotm } from '../../domains/awards/evaluateMonthlyPotm';
 import { evaluateEndOfSeasonAwards } from '../../domains/awards/evaluateSeasonAwards';
 import { buildSeasonCompetitionCampaigns } from '../../domains/career-stats/seasonCampaignBuilder';
-import { generateWindowTransferOffers } from '../../domains/contracts/contractEngine';
+import {
+  createSeasonContractGoal,
+  generateWindowTransferOffers,
+} from '../../domains/contracts/contractEngine';
+import {
+  computePlayerMarketValue,
+  evaluateManagerMetaStanding,
+  isTransferWindowOpen,
+} from '../../domains/contracts/transferWindowAndValue';
 import { getOwnedEquipmentBonuses } from '../../domains/economy/economyActions';
 import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
 import { findNationalTeamFixtureOnDay } from '../../domains/international/internationalCalendar';
@@ -16,8 +24,8 @@ import {
   TOTAL_SEASON_WEEKS,
 } from '../../domains/season/worldSeasonEngine';
 import { applyFiveSlotsTraining } from '../../domains/training/trainingEngine';
-import { StarRating } from '../../shared/types/common';
-import { formatMoney, formatSquadRole } from '../../shared/utils/formatters';
+import { SquadRole, StarRating } from '../../shared/types/common';
+import { formatCompactMoney, formatMoney, formatSquadRole } from '../../shared/utils/formatters';
 import { clamp } from '../../shared/utils/math';
 import { CareerState } from '../careerTypes';
 import { makeEvent } from '../helpers/feedHelper';
@@ -108,7 +116,7 @@ export function computeNextDayState(
     nextDay = 1;
     nextWeek += 1;
 
-    // Prêmio de MELHOR JOGADOR DO MÊS a cada 4 semanas da temporada de clubes (Semanas 4..36)
+    // 1. Prêmio de MELHOR JOGADOR DO MÊS a cada 4 semanas da temporada de clubes (Semanas 4..36)
     if (calendar.week % 4 === 0 && calendar.week <= 36) {
       const potm = evaluateMonthlyPotm(
         nextPlayer,
@@ -163,21 +171,22 @@ export function computeNextDayState(
       };
     }
 
+    // 2. Salário Mensal
     if (nextWeek % 4 === 1 && nextWeek <= 40) {
-      nextBalance += contract.monthlySalary;
+      nextBalance += nextContract.monthlySalary;
       nextFeed = [
         makeEvent(
           calendar.week,
           'Salário Mensal Depositado',
-          `Recebido ${formatMoney(contract.monthlySalary)} do ${club.name}.`,
+          `Recebido ${formatMoney(nextContract.monthlySalary)} do ${club.name}.`,
           'CONTRACT',
         ),
         ...nextFeed,
       ];
     }
 
-    // Boletim de CONVOCAÇÃO OFICIAL quando a nova semana tem jogo da Seleção e você atingiu o mérito!
-    const nextCallUp = evaluateNationalCallUp(nextPlayer, contract.stage, nextPeriod);
+    // 3. Boletim de CONVOCAÇÃO OFICIAL quando a nova semana tem jogo da Seleção
+    const nextCallUp = evaluateNationalCallUp(nextPlayer, nextContract.stage, nextPeriod);
     if (nextCallUp.calledUp && nextWorld.international && nextWeek <= 42) {
       const hasNtGameThisWeek =
         Boolean(findNationalTeamFixtureOnDay(nextWorld.international, nextCallUp.nationalTeamId, nextWeek, 3)) ||
@@ -200,30 +209,139 @@ export function computeNextDayState(
       }
     }
 
-    if (nextWeek === 20 && contract.stage !== 'YOUTH') {
-      nextMarket = generateWindowTransferOffers(
-        nextPlayer,
-        contract,
-        state.agentId,
-        nextPrestige,
-      );
+    // 4. AVALIAÇÃO DO TREINADOR BASEADA EM META (Estilo FIFA 18 — E-mails do Manager antes das Janelas!)
+    if (nextWeek === 14 || nextWeek === 19 || nextWeek === 34) {
+      const standing = evaluateManagerMetaStanding(nextContract, nextWeek);
+      if (
+        standing.tier === 'BELOW_META' &&
+        nextContract.stage === 'PRO' &&
+        nextContract.transferStatus !== 'LOAN_LISTED'
+      ) {
+        nextContract = {
+          ...nextContract,
+          transferStatus: 'LOAN_LISTED',
+          lastManagerNoticeWeek: nextWeek,
+        };
+        nextFeed = [
+          {
+            ...makeEvent(
+              nextWeek,
+              `📩 Treinador do ${club.shortName}: Abaixo da Meta — Lista de Empréstimo`,
+              `Você está com ${nextContract.seasonGoal.current}/${nextContract.seasonGoal.target} na meta. Coloquei seu nome para Empréstimo na próxima janela para ganhar rodagem.`,
+              'CONTRACT',
+            ),
+            clubId: club.id,
+          },
+          ...nextFeed,
+        ];
+      } else if (standing.tier === 'WARNING' && nextWeek === 14) {
+        nextFeed = [
+          {
+            ...makeEvent(
+              nextWeek,
+              `📩 Treinador do ${club.shortName}: Cobrança de Meta`,
+              `Precisamos de reação (${nextContract.seasonGoal.current}/${nextContract.seasonGoal.target}) até a janela de janeiro para você não ser emprestado.`,
+              'CONTRACT',
+            ),
+            clubId: club.id,
+          },
+          ...nextFeed,
+        ];
+      } else if (
+        standing.tier === 'EXCEEDING' &&
+        nextContract.lastManagerNoticeWeek !== nextWeek
+      ) {
+        nextContract = {
+          ...nextContract,
+          lastManagerNoticeWeek: nextWeek,
+        };
+        nextFeed = [
+          {
+            ...makeEvent(
+              nextWeek,
+              `📩 Treinador & Olheiros: Muito Acima da Meta!`,
+              `Fase espetacular no ${club.shortName}! Clubes maiores monitoram você e devem enviar propostas quando a janela abrir.`,
+              'CONTRACT',
+            ),
+            clubId: club.id,
+          },
+          ...nextFeed,
+        ];
+      }
+    }
+
+    // 5. CICLO ESTRITO DAS JANELAS DE TRANSFERÊNCIA (Semanas 1..8, 20..23 e 39..43)
+    const wasWindowOpen = isTransferWindowOpen(calendar.week);
+    const nowWindowOpen = nextWeek <= TOTAL_SEASON_WEEKS && isTransferWindowOpen(nextWeek);
+    const activeClubLg = findClubLeagueIdInWorld(nextWorld, nextContract.clubId);
+
+    // Fechamento da Janela (Semana 8 -> 9, ou Semana 23 -> 24): expira todas as propostas externas!
+    if (wasWindowOpen && !nowWindowOpen && nextWeek <= TOTAL_SEASON_WEEKS) {
+      const hadExternal = nextMarket.some((o) => o.offerType !== 'RENEWAL');
+      nextMarket = [];
       nextFeed = [
         makeEvent(
-          20,
-          'Janela de Meio de Temporada Aberta',
-          'Confira propostas em ESCRITÓRIO.',
+          nextWeek,
+          '🔒 Janela de Transferências Encerrada',
+          hadExternal
+            ? 'O prazo de inscrições fechou e as propostas em aberto expiraram.'
+            : 'Transferências e empréstimos bloqueados até a próxima janela.',
           'CONTRACT',
         ),
         ...nextFeed,
       ];
     }
 
-    // Semana 43 (logo após as Finais de Copa do Mundo / Copa América / Eurocopa na Semana 42!): GALA DA BOLA DE OURO + JANELA ANUAL!
+    // Abertura de Janela (Semana 20 Janeiro ou Semana 39 Fim de Temporada) OU segunda leva dentro da janela aberta!
+    const isWindowOpeningWeek = nextWeek === 20 || nextWeek === 39;
+    const isMidWindowRefreshWeek =
+      nowWindowOpen &&
+      nextMarket.length === 0 &&
+      (nextWeek === 4 || nextWeek === 22 || nextWeek === 41);
+
+    if (isWindowOpeningWeek || isMidWindowRefreshWeek) {
+      const offers = generateWindowTransferOffers(
+        nextPlayer,
+        nextContract,
+        state.agentId,
+        nextPrestige,
+        nextWeek,
+        activeClubLg,
+      );
+      nextMarket = offers;
+      if (isWindowOpeningWeek) {
+        nextFeed = [
+          makeEvent(
+            nextWeek,
+            nextWeek === 20
+              ? '🟦 Janela de Transferências de Janeiro Aberta!'
+              : '🟦 Janela de Fim de Temporada Aberta!',
+            offers.length > 0
+              ? `${offers.length} proposta(s) oficial(is) chegaram ao seu Escritório!`
+              : 'Janela aberta (barra azul nos dias). Peça transferência/empréstimo ou bata sua meta para atrair clubes.',
+            'CONTRACT',
+          ),
+          ...nextFeed,
+        ];
+      } else if (offers.length > 0) {
+        nextFeed = [
+          makeEvent(
+            nextWeek,
+            `📩 Novas Propostas na Janela (${offers.length})`,
+            'Clubes enviaram ofertas oficiais ao seu Escritório durante a janela aberta.',
+            'CONTRACT',
+          ),
+          ...nextFeed,
+        ];
+      }
+    }
+
+    // 6. Semana 43 (logo após as Finais de Copa do Mundo / Copa América / Eurocopa): GALA DA BOLA DE OURO!
     if (nextWeek === TOTAL_SEASON_WEEKS) {
       const { gala, newTrophies } = evaluateEndOfSeasonAwards(
         nextPlayer,
-        contract.clubId,
-        contract.stage,
+        nextContract.clubId,
+        nextContract.stage,
         nextPeriod,
         nextWorld,
         nextUserCompStats,
@@ -256,7 +374,7 @@ export function computeNextDayState(
               newTrophies.map((t) => t.title).join(' • '),
               'AWARD',
             ),
-            clubId: contract.clubId,
+            clubId: nextContract.clubId,
           },
           ...nextFeed,
         ];
@@ -276,31 +394,46 @@ export function computeNextDayState(
         ];
       }
 
-      nextMarket = generateWindowTransferOffers(
+      // Atualiza propostas na última semana da janela após o impacto da Gala!
+      const galaOffers = generateWindowTransferOffers(
         nextPlayer,
-        contract,
+        nextContract,
         state.agentId,
         nextPrestige,
+        nextWeek,
+        activeClubLg,
       );
+      if (galaOffers.length > 0) {
+        nextMarket = galaOffers;
+      }
     }
 
+    // 7. VIRADA DE TEMPORADA (Rollover -> Semana 1 da Nova Temporada, onde a Janela segue aberta nos 2 primeiros meses!)
     if (nextWeek > TOTAL_SEASON_WEEKS) {
-      // Arquiva o registro completo da temporada encerrada antes do rollover!
       const finishedSeasonYear = calendar.season;
+      const finishClubLg = findClubLeagueIdInWorld(nextWorld, nextContract.clubId);
+      const endOfSeasonMarketValue = computePlayerMarketValue(
+        nextPlayer,
+        finishClubLg,
+        nextContract.seasonGoal,
+        TOTAL_SEASON_WEEKS,
+        nextPrestige,
+      );
+
       const stintsWithFinish = (
         nextStints.length > 0
           ? nextStints
           : [
-            {
-              clubId: contract.clubId,
-              leagueId: findClubLeagueIdInWorld(nextWorld, contract.clubId),
-              stage: contract.stage,
-              matches: Math.max(0, nextPeriod.seasonMatches - nextPeriod.internationalMatches),
-              goals: Math.max(0, nextPeriod.seasonGoals - nextPeriod.internationalGoals),
-              assists: Math.max(0, nextPeriod.seasonAssists - nextPeriod.internationalAssists),
-              threeStarMatches: 0,
-            },
-          ]
+              {
+                clubId: nextContract.clubId,
+                leagueId: finishClubLg,
+                stage: nextContract.stage,
+                matches: Math.max(0, nextPeriod.seasonMatches - nextPeriod.internationalMatches),
+                goals: Math.max(0, nextPeriod.seasonGoals - nextPeriod.internationalGoals),
+                assists: Math.max(0, nextPeriod.seasonAssists - nextPeriod.internationalAssists),
+                threeStarMatches: 0,
+              },
+            ]
       ).map((st) => {
         const lgRows = nextWorld.leagues[st.leagueId]?.standings ?? [];
         const posIdx = lgRows.findIndex((r) => r.clubId === st.clubId);
@@ -330,6 +463,7 @@ export function computeNextDayState(
           seasonYear: finishedSeasonYear,
           age: nextPlayer.age,
           ovrEnd: nextPlayer.overall,
+          marketValueEnd: endOfSeasonMarketValue,
           stints: stintsWithFinish,
           competitions: archivedCompetitions,
           nationalTeamId: `nt_${nextPlayer.nationality.toLowerCase()}`,
@@ -340,30 +474,53 @@ export function computeNextDayState(
         },
       ];
 
+      const hadCompletedLoanMeta = nextContract.seasonGoal.completed;
+      const wasOnLoan = Boolean(nextContract.stage === 'LOAN' && nextContract.parentClubId);
+      const activeClubForNextYear = wasOnLoan ? nextContract.parentClubId! : nextContract.clubId;
+
       nextWeek = 1;
       nextSeason += 1;
       nextPlayer = { ...nextPlayer, age: nextPlayer.age + 1 };
-      nextContract = {
-        ...nextContract,
-        seasonsRemaining: Math.max(1, nextContract.seasonsRemaining - 1),
-        seasonGoal: {
-          ...nextContract.seasonGoal,
-          current: 0,
-          completed: false,
-        },
-      };
+
       nextWorld = rolloverSeasonWithPromotionAndQualification(
         nextWorld,
-        contract.clubId,
+        activeClubForNextYear,
         nextPeriod.seasonGoals,
         nextPeriod.seasonAssists,
       );
+
+      const nextClubObj = getClubById(activeClubForNextYear);
+      const returnedRole: SquadRole = wasOnLoan
+        ? nextPlayer.overall >= nextClubObj.squadAvgOvr - 1 || hadCompletedLoanMeta
+          ? 'TITULAR'
+          : 'RESERVA'
+        : nextContract.role;
+
+      nextContract = {
+        clubId: activeClubForNextYear,
+        parentClubId: undefined,
+        stage: 'PRO',
+        role: returnedRole,
+        monthlySalary: nextContract.monthlySalary,
+        seasonsRemaining: Math.max(1, nextContract.seasonsRemaining - 1),
+        goalBonusPerContribution: nextContract.goalBonusPerContribution,
+        seasonGoal: createSeasonContractGoal(
+          nextPlayer,
+          'PRO',
+          nextContract.monthlySalary,
+          returnedRole,
+        ),
+        transferStatus: wasOnLoan ? 'UNLISTED' : nextContract.transferStatus ?? 'UNLISTED',
+        lastManagerNoticeWeek: 0,
+      };
+
       nextPeriod = { ...INITIAL_PERIOD_STATS };
+      const newClubLg = findClubLeagueIdInWorld(nextWorld, activeClubForNextYear);
       nextStints = [
         {
-          clubId: contract.clubId,
-          leagueId: findClubLeagueIdInWorld(nextWorld, contract.clubId),
-          stage: contract.stage,
+          clubId: activeClubForNextYear,
+          leagueId: newClubLg,
+          stage: 'PRO',
           matches: 0,
           goals: 0,
           assists: 0,
@@ -372,11 +529,37 @@ export function computeNextDayState(
       ];
       nextUserCompStats = {};
       nextPrestige = Math.max(0, nextPrestige - 2);
+
+      // Na Semana 1 a Janela de Início de Temporada (2 primeiros meses) está ABERTA!
+      nextMarket = generateWindowTransferOffers(
+        nextPlayer,
+        nextContract,
+        state.agentId,
+        nextPrestige,
+        1,
+        newClubLg,
+      );
+
+      if (wasOnLoan) {
+        nextFeed = [
+          {
+            ...makeEvent(
+              1,
+              `📩 Retorno de Empréstimo ao ${nextClubObj.name}!`,
+              `Seu empréstimo terminou e você se reapresentou como ${formatSquadRole(returnedRole)}. Valor de mercado: ${formatCompactMoney(endOfSeasonMarketValue)}.`,
+              'CONTRACT',
+            ),
+            clubId: nextClubObj.id,
+          },
+          ...nextFeed,
+        ];
+      }
+
       nextFeed = [
         makeEvent(
           1,
-          `Nova Temporada ${nextSeason}! (${nextPlayer.age} anos)`,
-          'Acessos, rebaixamentos, grupos continentais e calendário FIFA atualizados!',
+          `Nova Temporada ${nextSeason}! (${nextPlayer.age} anos) • Janela Aberta`,
+          `Valor de Mercado: ${formatCompactMoney(endOfSeasonMarketValue)} • Janela aberta nas Semanas 1 a 8!`,
           'INFO',
         ),
         ...nextFeed,

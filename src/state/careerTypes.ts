@@ -77,6 +77,9 @@ export interface CareerState {
   acceptYouthTransition: (proposal: YouthTransitionProposal) => void;
   acceptMarketProposal: (offer: TransferMarketOffer) => void;
   requestLoanOrOffersFromAgent: () => void;
+  requestTransferFromManager: () => { ok: boolean; message: string };
+  requestLoanFromManager: () => { ok: boolean; message: string };
+  withdrawTransferOrLoanRequest: () => { ok: boolean; message: string };
   buyEquipmentItem: (equipmentId: string) => { ok: boolean; message: string };
   hireAgentById: (agentId: string) => { ok: boolean; message: string };
   setGalaModalOpen: (open: boolean) => void;

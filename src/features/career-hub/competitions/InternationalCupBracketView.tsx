@@ -12,7 +12,6 @@ import {
   resolveWorldCupMatchVenue,
 } from '../../../domains/international/worldCupHostVenues';
 import { FixtureMatch } from '../../../domains/season/seasonTypes';
-import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { CountryFlag } from '../../../shared/ui/CountryFlag';
@@ -273,15 +272,6 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
         </div>
 
         <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            data-pad-y="true"
-            data-nav-ignore="true"
-            onClick={() => setSubView((v) => (v === 'GROUPS' ? 'KNOCKOUT' : 'GROUPS'))}
-            className="mr-1 cursor-pointer"
-          >
-            <GamepadBadge action="ALT_Y" />
-          </button>
           {(
             [
               ['GROUPS', 'FASE DE GRUPOS'],

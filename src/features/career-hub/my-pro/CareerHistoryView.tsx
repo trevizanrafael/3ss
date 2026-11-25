@@ -6,10 +6,15 @@ import {
   buildSeasonCompetitionCampaigns,
   resolveSeasonCompetitionsForDisplay,
 } from '../../../domains/career-stats/seasonCampaignBuilder';
+import {
+  computeHistoricalMarketValue,
+  computePlayerMarketValue,
+} from '../../../domains/contracts/transferWindowAndValue';
 import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 import { FifaStatBadge } from '../../../shared/ui/FifaStatBadge';
+import { formatCompactMoney } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
 
 function isMonthlyAwardTitle(title: string): boolean {
@@ -28,11 +33,19 @@ export const CareerHistoryView: React.FC = () => {
     careerSeasonLogs,
     userCompStats,
     trophyCabinet,
+    awardPrestigeBoost,
   } = useCareerStore();
 
   if (!player || !contract) return null;
 
   const activeClubLg = findClubLeagueIdInWorld(worldSeason, contract.clubId);
+  const currentMarketValue = computePlayerMarketValue(
+    player,
+    activeClubLg,
+    contract.seasonGoal,
+    calendar.week,
+    awardPrestigeBoost,
+  );
   const liveStints = (
     currentSeasonStints.length > 0
       ? currentSeasonStints
@@ -70,6 +83,7 @@ export const CareerHistoryView: React.FC = () => {
     seasonYear: calendar.season,
     age: player.age,
     ovrEnd: player.overall,
+    marketValueEnd: currentMarketValue,
     stints: liveStints,
     competitions: liveCompetitions,
     nationalTeamId: `nt_${player.nationality.toLowerCase()}`,
@@ -128,7 +142,7 @@ export const CareerHistoryView: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-5 text-center">
+        <div className="grid grid-cols-3 sm:grid-cols-7 gap-4 text-center">
           {[
             ['JOGOS', totalMatches, '#F5F5F7'],
             ['GOLS', totalGoals, '#2DBE60'],
@@ -136,6 +150,7 @@ export const CareerHistoryView: React.FC = () => {
             ['G + A', totalGA, '#C8A45D'],
             ['SELEÇÃO', `${natCaps}J / ${natGoals}G`, '#F5F5F7'],
             ['TROFÉUS', majorTrophiesCount, '#C8A45D'],
+            ['VALOR ATUAL', formatCompactMoney(currentMarketValue), '#2DBE60'],
           ].map(([label, val, col]) => (
             <div key={label as string}>
               <div
@@ -215,7 +230,21 @@ export const CareerHistoryView: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
+                  <span className="px-2.5 py-0.5 bg-[#0E1512] border border-[#2DBE60]/45 font-condensed uppercase font-bold text-xs tracking-wider text-[#9498A3]">
+                    {season.isCurrent ? 'VALOR ATUAL:' : 'VALOR FIM DA TEMP:'}{' '}
+                    <strong className="text-[#2DBE60] text-sm tabular-nums">
+                      {formatCompactMoney(
+                        season.marketValueEnd ??
+                          computeHistoricalMarketValue(
+                            season.ovrEnd,
+                            season.age,
+                            player.position,
+                            season.stints[season.stints.length - 1]?.leagueId ?? 'BRA_1',
+                          ),
+                      )}
+                    </strong>
+                  </span>
                   <span className="text-xs uppercase tracking-wider text-[#9498A3]">
                     TOTAL NO ANO:{' '}
                     <strong className="font-condensed text-base text-[#F5F5F7]">

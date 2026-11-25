@@ -8,6 +8,22 @@ export function formatMoney(amount: number): string {
   }).format(amount);
 }
 
+export function formatCompactMoney(amount: number): string {
+  const abs = Math.abs(amount);
+  const sign = amount < 0 ? '-' : '';
+  if (abs >= 1_000_000_000) {
+    return `${sign}R$ ${(abs / 1_000_000_000).toFixed(2).replace('.', ',')} bi`;
+  }
+  if (abs >= 1_000_000) {
+    const decimals = abs >= 100_000_000 ? 0 : 1;
+    return `${sign}R$ ${(abs / 1_000_000).toFixed(decimals).replace('.', ',')}M`;
+  }
+  if (abs >= 1_000) {
+    return `${sign}R$ ${Math.round(abs / 1_000)} mil`;
+  }
+  return formatMoney(amount);
+}
+
 export function formatSquadRole(role: SquadRole): string {
   const labels: Record<SquadRole, string> = {
     BASE_RESERVA: 'Reserva da Base',

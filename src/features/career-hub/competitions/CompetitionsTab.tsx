@@ -20,6 +20,7 @@ import { CompetitionStatsView } from './CompetitionStatsView';
 import { ContinentalBracketView } from './ContinentalBracketView';
 import { InternationalCupBracketView } from './InternationalCupBracketView';
 import { InternationalQualifiersView } from './InternationalQualifiersView';
+import { MonthlyCalendarView } from './MonthlyCalendarView';
 import { SeasonHistoryView } from './SeasonHistoryView';
 
 type CompMode =
@@ -62,6 +63,7 @@ export const CompetitionsTab: React.FC = () => {
         ? 'SUL_LIGAS'
         : 'EURO_LIGAS';
 
+  const [viewScope, setViewScope] = useState<'COMPETITIONS' | 'CALENDAR'>('COMPETITIONS');
   const [mode, setMode] = useState<CompMode>(initialMode);
   const [topSubTab, setTopSubTab] = useState<'STANDINGS' | 'STATS'>('STANDINGS');
   const [leagueId, setLeagueId] = useState<LeagueId>(playerLeagueId);
@@ -78,6 +80,7 @@ export const CompetitionsTab: React.FC = () => {
 
   useEffect(() => {
     if (!requestedCompId) return;
+    setViewScope('COMPETITIONS');
     setTopSubTab('STANDINGS');
 
     if (requestedCompId === 'LIBERTADORES' || requestedCompId === 'SUL_AMERICANA') {
@@ -202,39 +205,54 @@ export const CompetitionsTab: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col gap-5 min-h-0">
-      <button type="button" data-pad-lt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(-1)} />
-      <button type="button" data-pad-rt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(1)} />
-      {mode !== 'HISTORICO' && (
-        <button
-          type="button"
-          data-pad-x="true"
-          data-nav-ignore="true"
-          className="hidden"
-          onClick={() => setTopSubTab((prev) => (prev === 'STANDINGS' ? 'STATS' : 'STANDINGS'))}
-        />
-      )}
+      {/* Botão Y alterna entre Competições da Temporada e o Calendário Mensal Completo! */}
+      <button
+        type="button"
+        data-pad-y="true"
+        data-nav-ignore="true"
+        className="hidden"
+        onClick={() =>
+          setViewScope((prev) => (prev === 'COMPETITIONS' ? 'CALENDAR' : 'COMPETITIONS'))
+        }
+      />
 
-      <div className="grid lg:grid-cols-12 gap-3 shrink-0 items-center">
-        <div className="lg:col-span-5">
-          <ConsoleStepper
-            autoFocus
-            compact
-            value={mode}
-            onChange={handleModeChange}
-            options={[
-              { value: 'SELECOES_ELIM', label: 'SELEÇÕES • ELIMINATÓRIAS DA COPA (FIFA)' },
-              { value: 'SELECOES_COPAS', label: 'SELEÇÕES • COPA DO MUNDO, NATIONS & COPA AMÉRICA' },
-              { value: 'SUL_LIGAS', label: 'AMÉRICA DO SUL • LIGAS (1ª E 2ª DIV)' },
-              { value: 'EURO_LIGAS', label: 'EUROPA • 6 LIGAS (1ª E 2ª DIV)' },
-              { value: 'MLS', label: 'MLS • ESTADOS UNIDOS & CANADÁ' },
-              { value: 'CONMEBOL_CUPS', label: 'LIBERTADORES & SUL-AMERICANA' },
-              { value: 'UEFA_CUPS', label: 'CHAMPIONS LEAGUE & EUROPA LEAGUE' },
-              { value: 'HISTORICO', label: 'HISTÓRICO DE CAMPEÕES' },
-            ]}
-          />
-        </div>
+      {viewScope === 'CALENDAR' ? (
+        <MonthlyCalendarView onBackToCompetitions={() => setViewScope('COMPETITIONS')} />
+      ) : (
+        <>
+          <button type="button" data-pad-lt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(-1)} />
+          <button type="button" data-pad-rt="true" data-nav-ignore="true" className="hidden" onClick={() => cycleSubCompetition(1)} />
+          {mode !== 'HISTORICO' && (
+            <button
+              type="button"
+              data-pad-x="true"
+              data-nav-ignore="true"
+              className="hidden"
+              onClick={() => setTopSubTab((prev) => (prev === 'STANDINGS' ? 'STATS' : 'STANDINGS'))}
+            />
+          )}
 
-        <div className="lg:col-span-4">
+          <div className="grid lg:grid-cols-12 gap-3 shrink-0 items-center">
+            <div className="lg:col-span-4">
+              <ConsoleStepper
+                autoFocus
+                compact
+                value={mode}
+                onChange={handleModeChange}
+                options={[
+                  { value: 'SELECOES_ELIM', label: 'SELEÇÕES • ELIMINATÓRIAS DA COPA (FIFA)' },
+                  { value: 'SELECOES_COPAS', label: 'SELEÇÕES • COPA DO MUNDO, NATIONS & COPA AMÉRICA' },
+                  { value: 'SUL_LIGAS', label: 'AMÉRICA DO SUL • LIGAS (1ª E 2ª DIV)' },
+                  { value: 'EURO_LIGAS', label: 'EUROPA • 6 LIGAS (1ª E 2ª DIV)' },
+                  { value: 'MLS', label: 'MLS • ESTADOS UNIDOS & CANADÁ' },
+                  { value: 'CONMEBOL_CUPS', label: 'LIBERTADORES & SUL-AMERICANA' },
+                  { value: 'UEFA_CUPS', label: 'CHAMPIONS LEAGUE & EUROPA LEAGUE' },
+                  { value: 'HISTORICO', label: 'HISTÓRICO DE CAMPEÕES' },
+                ]}
+              />
+            </div>
+
+            <div className="lg:col-span-4">
           {mode === 'HISTORICO' ? (
             <div className="h-9 bg-[#0E0F12] border border-[#242730] flex items-center justify-center font-condensed uppercase font-bold text-sm tracking-widest text-[#9498A3]">
               REGISTRO ANUAL ({worldSeason.history.length} CONCLUÍDAS)
@@ -320,8 +338,8 @@ export const CompetitionsTab: React.FC = () => {
           )}
         </div>
 
-        {/* Aba Superior: Classificação/Chaves vs Estatísticas do Campeonato */}
-        <div className="lg:col-span-3 flex items-center gap-1.5 justify-end">
+        {/* Aba Superior: Classificação/Chaves vs Estatísticas + Botão Y Calendário Mensal */}
+        <div className="lg:col-span-4 flex items-center gap-1.5 justify-end">
           {mode !== 'HISTORICO' && (
             <>
               <GamepadBadge action="ALT_X" />
@@ -329,12 +347,12 @@ export const CompetitionsTab: React.FC = () => {
                 type="button"
                 data-focusable="true"
                 onClick={() => setTopSubTab('STANDINGS')}
-                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${topSubTab === 'STANDINGS'
+                className={`h-9 px-2.5 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${topSubTab === 'STANDINGS'
                   ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
                   : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
                   }`}
               >
-                CLASSIFICAÇÃO
+                TABELA
               </button>
               <button
                 type="button"
@@ -349,15 +367,25 @@ export const CompetitionsTab: React.FC = () => {
                     }
                     : undefined
                 }
-                className={`flex-1 h-9 px-3 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${topSubTab === 'STATS'
+                className={`h-9 px-2.5 font-condensed uppercase font-extrabold text-xs tracking-wider border cursor-pointer ${topSubTab === 'STATS'
                   ? ''
                   : 'bg-[#0E0F12] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
                   }`}
               >
-                ESTATÍSTICAS
+                STATS
               </button>
             </>
           )}
+
+          <button
+            type="button"
+            data-focusable="true"
+            onClick={() => setViewScope('CALENDAR')}
+            className="h-9 px-3 bg-[#121824] hover:bg-[#1B2436] border border-[#38BDF8]/70 text-[#38BDF8] font-condensed uppercase font-extrabold text-xs tracking-wider inline-flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <GamepadBadge action="ALT_Y" />
+            <span>CALENDÁRIO</span>
+          </button>
         </div>
       </div>
 
@@ -507,6 +535,8 @@ export const CompetitionsTab: React.FC = () => {
 
         <ClubSquadInspector clubId={selectedClubId} accentColor={theme.accentPrimary} />
       </div>
+        </>
+      )}
     </div>
   );
 };

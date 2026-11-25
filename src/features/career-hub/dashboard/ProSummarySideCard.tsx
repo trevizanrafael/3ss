@@ -4,14 +4,16 @@ import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { PlayerPeriodStats } from '../../../domains/awards/awardTypes';
 import { UserCompetitionStatsMap } from '../../../domains/career-stats/careerHistoryTypes';
 import { ActiveContract } from '../../../domains/contracts/contractEngine';
+import { computePlayerMarketValue } from '../../../domains/contracts/transferWindowAndValue';
 import { formatBirthDatePt } from '../../../domains/player/createInitialPlayer';
 import { CareerPlayer } from '../../../domains/player/playerTypes';
+import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
 import { YouthAcademyState } from '../../../domains/youth-academy/youthModel';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { ClubPlayer3DViewport } from '../../../shared/ui/ClubPlayer3DViewport';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
 import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
-import { formatSquadRole } from '../../../shared/utils/formatters';
+import { formatCompactMoney, formatSquadRole } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { useNavigationStore } from '../../../state/useNavigationStore';
 
@@ -33,10 +35,18 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
   userCompStats,
   onOpenMyPro,
 }) => {
-  const { galaModalOpen } = useCareerStore();
+  const { galaModalOpen, calendar, worldSeason, awardPrestigeBoost } = useCareerStore();
   const { matchModalOpen } = useNavigationStore();
   const club = getClubById(contract.clubId);
-  const leagueTheme = getCompetitionTheme(club.leagueId);
+  const activeLg = findClubLeagueIdInWorld(worldSeason, contract.clubId);
+  const leagueTheme = getCompetitionTheme(activeLg);
+  const marketValue = computePlayerMarketValue(
+    player,
+    activeLg,
+    contract.seasonGoal,
+    calendar.week,
+    awardPrestigeBoost,
+  );
 
   const birthStr = formatBirthDatePt(
     player.birthDay ?? 15,
@@ -135,7 +145,14 @@ export const ProSummarySideCard: React.FC<ProSummarySideCardProps> = ({
           </div>
         </div>
 
-        <div className="py-3 border-b border-white/10 space-y-2.5">
+        <div className="py-3 border-b border-white/10 space-y-2">
+          <div className="flex items-center justify-between text-xs uppercase tracking-wider">
+            <span className="text-[#9498A3]">VALOR DE MERCADO</span>
+            <span className="font-condensed font-extrabold text-base text-[#2DBE60]">
+              {formatCompactMoney(marketValue)}
+            </span>
+          </div>
+
           <div className="flex items-center justify-between text-xs uppercase tracking-wider">
             <span className="text-[#9498A3]">STATUS NO ELENCO</span>
             <span className="font-condensed font-bold text-base text-[#F5F5F7]">

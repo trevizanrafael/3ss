@@ -3,6 +3,10 @@ import { INITIAL_PERIOD_STATS } from '../../domains/awards/awardTypes';
 import { evaluateEndOfSeasonAwards } from '../../domains/awards/evaluateSeasonAwards';
 import { resolveSeasonCompetitionsForDisplay } from '../../domains/career-stats/seasonCampaignBuilder';
 import {
+  computeHistoricalMarketValue,
+  isTransferWindowOpen,
+} from '../../domains/contracts/transferWindowAndValue';
+import {
   createInitialInternationalState,
   simulateInternationalDay,
 } from '../../domains/international/internationalCalendar';
@@ -135,15 +139,27 @@ export function migratePersistedCareerState(
 
   if (merged.careerSeasonLogs?.length && merged.player) {
     const nat = merged.player.nationality;
-    merged.careerSeasonLogs = merged.careerSeasonLogs.map((log) => ({
-      ...log,
-      competitions: resolveSeasonCompetitionsForDisplay(log, nat),
-      trophyTitles: (log.trophyTitles ?? []).filter(
-        (title) =>
-          !title.toUpperCase().includes('MELHOR DO MÊS') &&
-          !title.toUpperCase().includes('JOGADOR DO MÊS'),
-      ),
-    }));
+    const pos = merged.player.position;
+    merged.careerSeasonLogs = merged.careerSeasonLogs.map((log) => {
+      const primaryLg = log.stints[log.stints.length - 1]?.leagueId ?? 'BRA_1';
+      return {
+        ...log,
+        marketValueEnd:
+          log.marketValueEnd ??
+          computeHistoricalMarketValue(log.ovrEnd, log.age, pos, primaryLg),
+        competitions: resolveSeasonCompetitionsForDisplay(log, nat),
+        trophyTitles: (log.trophyTitles ?? []).filter(
+          (title) =>
+            !title.toUpperCase().includes('MELHOR DO MÊS') &&
+            !title.toUpperCase().includes('JOGADOR DO MÊS'),
+        ),
+      };
+    });
+  }
+
+  // Se o save aberto estiver fora de uma Janela de Transferências, limpa propostas externas antigas!
+  if (merged.calendar && !isTransferWindowOpen(merged.calendar.week) && merged.marketOffers?.length) {
+    merged.marketOffers = merged.marketOffers.filter((o) => o.offerType === 'RENEWAL');
   }
 
   if ((!merged.currentSeasonStints || merged.currentSeasonStints.length === 0) && merged.contract && merged.worldSeason) {

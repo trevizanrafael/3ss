@@ -32,6 +32,7 @@ export interface PlayerSeasonCareerLog {
   seasonYear: number; // 2026, 2027...
   age: number;
   ovrEnd: number;
+  marketValueEnd?: number; // Valor de mercado ao final daquela temporada
   stints: ClubSeasonStint[];
   competitions?: SeasonCompetitionCampaignEntry[];
   nationalTeamId: string;

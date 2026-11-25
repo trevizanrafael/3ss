@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
+import { isTransferWindowOpen } from '../../../domains/contracts/transferWindowAndValue';
 import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import {
   findClubLeagueIdInWorld,
@@ -58,8 +59,16 @@ function shouldStopAfterNextDay(st: CareerState, manualStop: boolean): boolean {
 }
 
 export const RollingWeekCalendarTile: React.FC = () => {
-  const { player, contract, calendar, worldSeason, periodStats, trainedToday, advanceDay } =
-    useCareerStore();
+  const {
+    player,
+    contract,
+    calendar,
+    worldSeason,
+    periodStats,
+    currentSeasonStints,
+    trainedToday,
+    advanceDay,
+  } = useCareerStore();
   const { setActiveTab, setMatchModalOpen } = useNavigationStore();
 
   const [isSimulating, setIsSimulating] = useState(false);
@@ -193,7 +202,9 @@ export const RollingWeekCalendarTile: React.FC = () => {
     contract.clubId,
     contract.stage,
     callUp,
+    currentSeasonStints,
   );
+  const windowOpenToday = isTransferWindowOpen(calendar.week);
 
   const handleTileClick = () => {
     if (isSimulating) {
@@ -256,8 +267,8 @@ export const RollingWeekCalendarTile: React.FC = () => {
             : 'console-tile-interactive'
         }`}
       >
-        {/* Cabeçalho com Tema e Logo Oficial da Competição na Esquerda + MÊS na Direita */}
-        <div className="flex items-center justify-between border-b border-[#242730] pb-3">
+        {/* Cabeçalho com Tema e Logo Oficial da Competição na Esquerda + Status da Janela + MÊS na Direita */}
+        <div className="flex items-center justify-between border-b border-[#242730] pb-3 gap-3">
           <CompetitionBadge
             competitionId={activeCompId}
             size="md"
@@ -265,8 +276,15 @@ export const RollingWeekCalendarTile: React.FC = () => {
               todayFixture?.stageLabel ?? upcomingFx?.stageLabel ?? 'PÓS-TEMPORADA'
             }
           />
-          <div className="font-condensed uppercase font-extrabold text-2xl tracking-wider text-[#F5F5F7]">
-            {currentMonthLabel}
+          <div className="flex items-center gap-3">
+            {windowOpenToday && (
+              <span className="px-2.5 py-0.5 bg-[#0A2236] border border-[#38BDF8]/70 text-[#38BDF8] font-condensed uppercase font-extrabold text-xs tracking-widest">
+                ● JANELA DE TRANSFERÊNCIAS ABERTA
+              </span>
+            )}
+            <div className="font-condensed uppercase font-extrabold text-2xl tracking-wider text-[#F5F5F7]">
+              {currentMonthLabel}
+            </div>
           </div>
         </div>
 
@@ -302,17 +320,25 @@ export const RollingWeekCalendarTile: React.FC = () => {
               {days.map((cell) => {
                 const relPos = cell.offset - slideFrac;
                 const focusWeight = Math.max(0, 1 - Math.abs(relPos));
-                const pastDim = relPos < 0 ? Math.max(0.38, 1 + relPos * 0.58) : 1;
-                const fx = cell.fixture;
+                const pastDim = relPos < 0 ? Math.max(0.45, 1 + relPos * 0.5) : 1;
+                const match = cell.matchOverview;
 
-                if (fx) {
-                  const fxTheme = getCompetitionTheme(fx.competitionId);
-                  const oppClub = getClubById(fx.opponentId);
-                  const venueMicro = fx.neutralVenue
+                if (match) {
+                  const fxTheme = getCompetitionTheme(match.competitionId);
+                  const oppClub = getClubById(match.opponentId);
+                  const venueMicro = match.neutralVenue
                     ? 'SEDE'
-                    : fx.isHome
+                    : match.isHome
                       ? 'CASA'
                       : 'FORA';
+                  const resColor =
+                    match.outcome === 'W'
+                      ? '#2DBE60'
+                      : match.outcome === 'L'
+                        ? '#EF4444'
+                        : '#EAB308';
+                  const resLetter =
+                    match.outcome === 'W' ? 'V' : match.outcome === 'L' ? 'D' : 'E';
 
                   return (
                     <div
@@ -321,15 +347,23 @@ export const RollingWeekCalendarTile: React.FC = () => {
                         width: '12.5%',
                         opacity: pastDim,
                       }}
-                      className="h-40 relative overflow-hidden border-r border-[#242730] flex flex-col justify-between p-2 shrink-0"
+                      className="h-40 relative overflow-hidden border-r border-[#242730] flex flex-col justify-between p-2 pt-2.5 shrink-0"
                     >
                       {/* Quadradinho Inteiro Tematizado na Identidade de Transmissão da Competição */}
-                      <MatchDayTileThemeArt competitionId={fx.competitionId} />
+                      <MatchDayTileThemeArt competitionId={match.competitionId} />
 
-                      {/* Topo: Logo Oficial da Competição (inclusive Liga Nacional!) à esquerda + Data compacta no canto superior direito */}
+                      {/* Tracinho Azul Superior Indicando Janela de Transferências Aberta! */}
+                      {cell.isTransferWindowOpen && (
+                        <div
+                          className="pointer-events-none absolute top-0 inset-x-0 h-[4px] bg-[#38BDF8] z-20"
+                          style={{ boxShadow: '0 0 10px rgba(56,189,248,0.85)' }}
+                        />
+                      )}
+
+                      {/* Topo: Logo Oficial da Competição à esquerda + Data compacta no canto superior direito */}
                       <div className="relative z-10 flex items-start justify-between gap-1 w-full">
                         <CompetitionBadge
-                          competitionId={fx.competitionId}
+                          competitionId={match.competitionId}
                           size="sm"
                           showName={false}
                         />
@@ -354,22 +388,39 @@ export const RollingWeekCalendarTile: React.FC = () => {
                             filter: `drop-shadow(0 6px 12px rgba(0,0,0,0.68))`,
                           }}
                         >
-                          <ClubCrest clubId={fx.opponentId} size="lg" />
+                          <ClubCrest clubId={match.opponentId} size="lg" />
                         </div>
                       </div>
 
-                      {/* Base: Mando + Sigla do Adversário no Tema do Campeonato */}
-                      <div
-                        className="relative z-10 w-full px-1.5 py-0.5 bg-[#080A10]/82 border-l-2 flex items-center justify-between gap-1"
-                        style={{ borderLeftColor: fxTheme.accentPrimary }}
-                      >
-                        <span className="font-condensed uppercase font-bold text-[9px] tracking-widest text-[#D4D7E0]">
-                          {venueMicro}
-                        </span>
-                        <span className="font-condensed uppercase font-extrabold text-xs tracking-wider text-[#F5F5F7] truncate">
-                          {oppClub.shortName}
-                        </span>
-                      </div>
+                      {/* Base: Placar V/E/D se já foi jogado, ou Mando + Sigla se futuro */}
+                      {match.played ? (
+                        <div
+                          className="relative z-10 w-full px-1.5 py-0.5 bg-[#080A10]/90 border-l-2 flex items-center justify-between gap-1"
+                          style={{ borderLeftColor: resColor }}
+                        >
+                          <span
+                            className="px-1 font-condensed font-extrabold text-[10px] leading-tight text-[#0B0B0D]"
+                            style={{ backgroundColor: resColor }}
+                          >
+                            {resLetter}
+                          </span>
+                          <span className="font-condensed font-extrabold text-xs tracking-wider text-[#F5F5F7] tabular-nums">
+                            {match.myGoals} - {match.oppGoals}
+                          </span>
+                        </div>
+                      ) : (
+                        <div
+                          className="relative z-10 w-full px-1.5 py-0.5 bg-[#080A10]/82 border-l-2 flex items-center justify-between gap-1"
+                          style={{ borderLeftColor: fxTheme.accentPrimary }}
+                        >
+                          <span className="font-condensed uppercase font-bold text-[9px] tracking-widest text-[#D4D7E0]">
+                            {venueMicro}
+                          </span>
+                          <span className="font-condensed uppercase font-extrabold text-xs tracking-wider text-[#F5F5F7] truncate">
+                            {oppClub.shortName}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   );
                 }
@@ -385,8 +436,15 @@ export const RollingWeekCalendarTile: React.FC = () => {
                           ? `rgba(32, 36, 46, ${0.35 + focusWeight * 0.65})`
                           : '#101216',
                     }}
-                    className="h-40 px-2 pt-5 pb-3 border-r border-[#242730] flex flex-col items-center justify-between shrink-0"
+                    className="h-40 relative px-2 pt-5 pb-3 border-r border-[#242730] flex flex-col items-center justify-between shrink-0"
                   >
+                    {/* Tracinho Azul Superior Indicando Janela de Transferências Aberta! */}
+                    {cell.isTransferWindowOpen && (
+                      <div
+                        className="pointer-events-none absolute top-0 inset-x-0 h-[4px] bg-[#38BDF8] z-20"
+                        style={{ boxShadow: '0 0 10px rgba(56,189,248,0.75)' }}
+                      />
+                    )}
                     <div className="text-center">
                       <div
                         className="font-condensed uppercase font-bold text-xs tracking-[0.2em]"

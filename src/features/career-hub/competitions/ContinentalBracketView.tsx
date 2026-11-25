@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { getClubById } from '../../../data/clubs';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { ContinentalCupData, KnockoutTie } from '../../../domains/season/seasonTypes';
-import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
 
@@ -140,15 +139,6 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            data-pad-y="true"
-            data-nav-ignore="true"
-            onClick={() => setSubView((v) => (v === 'GROUPS' ? 'KNOCKOUT' : 'GROUPS'))}
-            className="mr-1 cursor-pointer"
-          >
-            <GamepadBadge action="ALT_Y" />
-          </button>
           {(
             [
               ['GROUPS', 'GRUPOS A–H'],

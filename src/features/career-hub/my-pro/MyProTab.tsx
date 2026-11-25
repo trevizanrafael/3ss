@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { COUNTRIES } from '../../../data/countries/countries';
 import { AttributeKey } from '../../../data/equipment/catalog';
 import { POSITION_LABELS } from '../../../domains/attributes/overallCalculator';
+import { computePlayerMarketValue } from '../../../domains/contracts/transferWindowAndValue';
 import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
+import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
 import {
   computeFifaMacroStats,
   getDrillById,
@@ -11,6 +13,7 @@ import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CountryFlag } from '../../../shared/ui/CountryFlag';
 import { getFifaStatColor } from '../../../shared/ui/FifaStatBadge';
+import { formatCompactMoney } from '../../../shared/utils/formatters';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { CareerHistoryView } from './CareerHistoryView';
 import { TrophyCabinetView } from './TrophyCabinetView';
@@ -28,6 +31,9 @@ export const MyProTab: React.FC = () => {
   const {
     player,
     contract,
+    calendar,
+    worldSeason,
+    awardPrestigeBoost,
     drillSlots,
     recentLeveledKeys,
     trophyCabinet,
@@ -39,6 +45,14 @@ export const MyProTab: React.FC = () => {
   if (!player) return null;
   const natMeta = COUNTRIES[player.nationality] ?? COUNTRIES.BRA;
   const callUp = evaluateNationalCallUp(player, contract?.stage ?? 'YOUTH', periodStats);
+  const clubLg = contract ? findClubLeagueIdInWorld(worldSeason, contract.clubId) : 'BRA_1';
+  const marketValue = computePlayerMarketValue(
+    player,
+    clubLg,
+    contract?.seasonGoal,
+    calendar.week,
+    awardPrestigeBoost,
+  );
 
   const macros = computeFifaMacroStats(player.attributes);
   const activeTrainingKeys = new Set<AttributeKey>();
@@ -135,6 +149,10 @@ export const MyProTab: React.FC = () => {
                   : `META SELEÇÃO: ${callUp.minOvrRequired}+ OVR`}
               </strong>
               <span>• {POSITION_LABELS[player.position]}</span>
+              <span>• VALOR DE MERCADO:</span>
+              <strong className="text-[#2DBE60] font-condensed text-sm">
+                {formatCompactMoney(marketValue)}
+              </strong>
             </p>
           </div>
         </div>

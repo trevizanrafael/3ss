@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getClubById } from '../data/clubs';
 import { INITIAL_PERIOD_STATS } from '../domains/awards/awardTypes';
-import { generateWindowTransferOffers } from '../domains/contracts/contractEngine';
 import {
   getOwnedEquipmentBonuses,
   hireCareerAgent,
@@ -18,8 +17,10 @@ import { generateYouthOffersFromTryout } from '../domains/tryout/generateYouthOf
 import { clamp } from '../shared/utils/math';
 import { computeNextDayState } from './actions/calendarActions';
 import {
+  buildManagerTransferRequestPatch,
   buildMarketSignPatch,
   buildSignYouthPatch,
+  buildWithdrawTransferRequestPatch,
   buildYouthTransitionPatch,
 } from './actions/contractAndShopActions';
 import { computePlayedMatchState } from './actions/matchDayActions';
@@ -150,27 +151,26 @@ export const useCareerStore = create<CareerState>()(
       acceptMarketProposal: (offer) => set(buildMarketSignPatch(get(), offer)),
 
       requestLoanOrOffersFromAgent: () => {
-        const { player, contract, agentId, awardPrestigeBoost, calendar, feed } = get();
-        if (!player || !contract) return;
-        const offers = generateWindowTransferOffers(
-          player,
-          contract,
-          agentId,
-          awardPrestigeBoost,
-        );
-        set({
-          transitionProposals: [],
-          marketOffers: offers,
-          feed: [
-            makeEvent(
-              calendar.week,
-              'Sondagem de Mercado Concluída',
-              `${offers.length} proposta(s) profissional(is) e empréstimo na mesa.`,
-              'CONTRACT',
-            ),
-            ...feed,
-          ],
-        });
+        const res = buildManagerTransferRequestPatch(get(), 'TRANSFER');
+        if (Object.keys(res.patch).length > 0) set(res.patch);
+      },
+
+      requestTransferFromManager: () => {
+        const res = buildManagerTransferRequestPatch(get(), 'TRANSFER');
+        if (Object.keys(res.patch).length > 0) set(res.patch);
+        return { ok: res.ok, message: res.message };
+      },
+
+      requestLoanFromManager: () => {
+        const res = buildManagerTransferRequestPatch(get(), 'LOAN');
+        if (Object.keys(res.patch).length > 0) set(res.patch);
+        return { ok: res.ok, message: res.message };
+      },
+
+      withdrawTransferOrLoanRequest: () => {
+        const res = buildWithdrawTransferRequestPatch(get());
+        if (Object.keys(res.patch).length > 0) set(res.patch);
+        return { ok: res.ok, message: res.message };
       },
 
       buyEquipmentItem: (equipmentId) => {
