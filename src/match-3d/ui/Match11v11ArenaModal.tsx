@@ -3,8 +3,12 @@ import * as THREE from 'three';
 import { ClubData, FullSquadPlayer } from '../../data/clubs/types';
 import { AnyCompetitionId, getCompetitionTheme } from '../../data/world/competitionThemes';
 import { loadClubFullSquad } from '../../data/world/squadLoader';
+import { Played3DMatchStatsInput } from '../../domains/match-sim/matchSimulator';
 import { CareerPlayer } from '../../domains/player/playerTypes';
-import { resolvePrimaryRivalForClub } from '../../domains/rivalry/resolvePrimaryRival';
+import {
+  buildNonClashingAwayClub,
+  resolvePrimaryRivalForClub,
+} from '../../domains/rivalry/resolvePrimaryRival';
 import { buildTeamMatchLineup } from '../../features/career-hub/match-day/buildMatchLineup';
 import { createGoalkeeperAI, stepGoalkeeperAI } from '../actors/goalkeeperAI';
 import {
@@ -58,10 +62,27 @@ import {
   RadarDotSnapshot,
 } from './Match11v11HudOverlay';
 
+interface KitVisualOverride {
+  primaryColor: string;
+  secondaryColor: string;
+  pattern?: ClubData['pattern'];
+}
+
 interface Match11v11ArenaModalProps {
   player: CareerPlayer;
   club: ClubData;
+  opponentClub?: ClubData;
+  myKitOverride?: KitVisualOverride;
+  opponentKitOverride?: KitVisualOverride;
+  isUserVenueHome?: boolean;
+  venueStadiumName?: string;
+  matchBannerTitle?: string;
+  isCareerMatch?: boolean;
   competitionId?: AnyCompetitionId;
+  onCompleteCareerMatch?: (
+    stats: Played3DMatchStatsInput,
+    simulatedRestFromMinute?: number,
+  ) => void;
   onExit: () => void;
 }
 
@@ -98,11 +119,66 @@ function shortestYawDelta(from: number, to: number): number {
 export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
   player,
   club,
+  opponentClub,
+  myKitOverride,
+  opponentKitOverride,
+  isUserVenueHome = true,
+  venueStadiumName,
+  matchBannerTitle,
+  isCareerMatch = false,
   competitionId,
+  onCompleteCareerMatch,
   onExit,
 }) => {
   const canvasHostRef = useRef<HTMLDivElement | null>(null);
-  const derby = useMemo(() => resolvePrimaryRivalForClub(club), [club]);
+  const myKitPrimary = myKitOverride?.primaryColor;
+  const myKitSecondary = myKitOverride?.secondaryColor;
+  const myKitPattern = myKitOverride?.pattern;
+  const oppKitPrimary = opponentKitOverride?.primaryColor;
+  const oppKitSecondary = opponentKitOverride?.secondaryColor;
+  const oppKitPattern = opponentKitOverride?.pattern;
+
+  const derby = useMemo(() => {
+    if (!opponentClub) {
+      return resolvePrimaryRivalForClub(club);
+    }
+    const myRendered: ClubData =
+      myKitPrimary && myKitSecondary
+        ? {
+            ...club,
+            primaryColor: myKitPrimary,
+            secondaryColor: myKitSecondary,
+            pattern: myKitPattern ?? club.pattern,
+          }
+        : club;
+    const oppCandidate: ClubData =
+      oppKitPrimary && oppKitSecondary
+        ? {
+            ...opponentClub,
+            primaryColor: oppKitPrimary,
+            secondaryColor: oppKitSecondary,
+            pattern: oppKitPattern ?? opponentClub.pattern,
+          }
+        : opponentClub;
+
+    return {
+      homeClub: myRendered,
+      rivalClub: opponentClub,
+      awayRenderClub: buildNonClashingAwayClub(myRendered, oppCandidate),
+      derbyName: matchBannerTitle ?? `${club.shortName} × ${opponentClub.shortName}`,
+      tier: 'LOCAL' as const,
+    };
+  }, [
+    club,
+    opponentClub,
+    myKitPrimary,
+    myKitSecondary,
+    myKitPattern,
+    oppKitPrimary,
+    oppKitSecondary,
+    oppKitPattern,
+    matchBannerTitle,
+  ]);
   const compTheme = getCompetitionTheme(competitionId ?? club.leagueId);
 
   const [loadedSquads, setLoadedSquads] = useState<{
@@ -190,6 +266,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     cycleRadarMode: () => void;
     skipReplay: () => void;
     restartMatch: () => void;
+    confirmCareerFinish: () => void;
+    simulateRestOfMatch: () => void;
   }>({
     resume: () => {},
     togglePause: () => {},
@@ -200,10 +278,12 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     cycleRadarMode: () => {},
     skipReplay: () => {},
     restartMatch: () => {},
+    confirmCareerFinish: () => {},
+    simulateRestOfMatch: () => {},
   });
 
-  const callbacksRef = useRef({ onExit, player });
-  callbacksRef.current = { onExit, player };
+  const callbacksRef = useRef({ onExit, onCompleteCareerMatch, player, isCareerMatch });
+  callbacksRef.current = { onExit, onCompleteCareerMatch, player, isCareerMatch };
 
   useEffect(() => {
     const host = canvasHostRef.current;
@@ -243,7 +323,9 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     floodRim.position.set(-28, 34, -40);
     scene.add(floodRim);
 
-    const stadium = buildStadium3D(homeClub, compTheme, rivalClub, derby.derbyName);
+    const stadiumHostClub = isUserVenueHome === false ? rivalClub : homeClub;
+    const stadiumGuestClub = isUserVenueHome === false ? homeClub : rivalClub;
+    const stadium = buildStadium3D(stadiumHostClub, compTheme, stadiumGuestClub, derby.derbyName);
     scene.add(stadium.root);
 
     const userSlotIdx = findBestSlotIndexForPosition(homeFormation, activePlayer.position);
@@ -978,6 +1060,52 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         playWhistleSfx(false);
         setupKickoff('HOME');
       },
+      confirmCareerFinish: () => {
+        const totPoss = Math.max(1, homePossTime + awayPossTime);
+        const myPossPct = Math.round((homePossTime / totPoss) * 100);
+        if (callbacksRef.current.onCompleteCareerMatch) {
+          callbacksRef.current.onCompleteCareerMatch({
+            myTeamGoals: homeGoals,
+            opponentGoals: awayGoals,
+            userGoals,
+            userAssists,
+            userPasses,
+            userTackles,
+            myShots: homeShots,
+            oppShots: awayShots,
+            myPossessionPct: myPossPct,
+            staminaRemaining: pState.stamina,
+            minutesPlayed: 90,
+          });
+        } else {
+          callbacksRef.current.onExit();
+        }
+      },
+      simulateRestOfMatch: () => {
+        const totPoss = Math.max(1, homePossTime + awayPossTime);
+        const myPossPct = Math.round((homePossTime / totPoss) * 100);
+        const curMin = Math.min(89, Math.max(1, Math.floor(matchClockSeconds / 60)));
+        if (callbacksRef.current.onCompleteCareerMatch) {
+          callbacksRef.current.onCompleteCareerMatch(
+            {
+              myTeamGoals: homeGoals,
+              opponentGoals: awayGoals,
+              userGoals,
+              userAssists,
+              userPasses,
+              userTackles,
+              myShots: homeShots,
+              oppShots: awayShots,
+              myPossessionPct: myPossPct,
+              staminaRemaining: pState.stamina,
+              minutesPlayed: curMin,
+            },
+            curMin,
+          );
+        } else {
+          callbacksRef.current.onExit();
+        }
+      },
     };
 
     const syncSize = () => {
@@ -1076,7 +1204,11 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       // 2. MENU TELA CHEIA ESTILO FIFA (Start/Esc abre, D-Pad navega, A confirma, B volta!)
       if (inp.exitOrFinishJustPressed) {
         if (half === 'FT') {
-          callbacksRef.current.onExit();
+          if (callbacksRef.current.isCareerMatch) {
+            controlsRef.current.confirmCareerFinish();
+          } else {
+            callbacksRef.current.onExit();
+          }
           return;
         }
         paused = !paused;
@@ -1085,8 +1217,9 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
       }
 
       if (paused || half === 'FT') {
+        const careerMode = callbacksRef.current.isCareerMatch;
         const optionCount =
-          pauseTab === 'SETTINGS' ? 3 : half === 'FT' ? 4 : 5;
+          pauseTab === 'SETTINGS' ? 3 : half === 'FT' ? (careerMode ? 3 : 4) : 5;
 
         if (inp.menuUpJustPressed) {
           pauseMenuIndex = (pauseMenuIndex - 1 + optionCount) % optionCount;
@@ -1098,19 +1231,33 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
             else if (pauseMenuIndex === 1) controlsRef.current.cycleRadarMode();
             else controlsRef.current.openSettingsTab('MAIN');
           } else if (half === 'FT') {
-            if (pauseMenuIndex === 0) controlsRef.current.restartMatch();
-            else if (pauseMenuIndex === 1) controlsRef.current.launchInstantReplay();
-            else if (pauseMenuIndex === 2) controlsRef.current.openSettingsTab('SETTINGS');
-            else {
-              callbacksRef.current.onExit();
-              return;
+            if (careerMode) {
+              if (pauseMenuIndex === 0) {
+                controlsRef.current.confirmCareerFinish();
+                return;
+              } else if (pauseMenuIndex === 1) controlsRef.current.launchInstantReplay();
+              else controlsRef.current.openSettingsTab('SETTINGS');
+            } else {
+              if (pauseMenuIndex === 0) controlsRef.current.restartMatch();
+              else if (pauseMenuIndex === 1) controlsRef.current.launchInstantReplay();
+              else if (pauseMenuIndex === 2) controlsRef.current.openSettingsTab('SETTINGS');
+              else {
+                callbacksRef.current.onExit();
+                return;
+              }
             }
           } else {
             if (pauseMenuIndex === 0) paused = false;
             else if (pauseMenuIndex === 1) controlsRef.current.launchInstantReplay();
             else if (pauseMenuIndex === 2) controlsRef.current.openSettingsTab('SETTINGS');
-            else if (pauseMenuIndex === 3) controlsRef.current.restartMatch();
-            else {
+            else if (pauseMenuIndex === 3) {
+              if (careerMode) {
+                controlsRef.current.simulateRestOfMatch();
+                return;
+              } else {
+                controlsRef.current.restartMatch();
+              }
+            } else {
               callbacksRef.current.onExit();
               return;
             }
@@ -2020,7 +2167,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
 
     rafId = requestAnimationFrame(tick);
 
-    return () => {
+      return () => {
       cancelAnimationFrame(rafId);
       ro.disconnect();
       inputCollector.detach();
@@ -2041,7 +2188,13 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         host.removeChild(renderer.domElement);
       }
     };
-  }, [compTheme, derby, awayFormation, homeFormation, loadedSquads]);
+  }, [compTheme, derby, awayFormation, homeFormation, isUserVenueHome, loadedSquads]);
+
+  const resolvedStadiumLabel =
+    venueStadiumName ??
+    (isUserVenueHome === false
+      ? derby.rivalClub.stadiumName ?? derby.rivalClub.name
+      : derby.homeClub.stadiumName ?? derby.homeClub.name);
 
   return (
     <div
@@ -2055,7 +2208,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#071226]">
           <div className="bg-[#0B0B0D] border border-white/15 px-8 py-5 text-center">
             <div className="text-xs uppercase tracking-[0.25em] text-[#C8A45D] font-bold">
-              PREPARANDO CLÁSSICO 11v11
+              {isCareerMatch ? 'ENTRANDO EM CAMPO • PARTIDA OFICIAL' : 'PREPARANDO CLÁSSICO 11v11'}
             </div>
             <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] mt-1">
               {derby.homeClub.name} × {derby.rivalClub.name}
@@ -2070,6 +2223,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         rivalClub={derby.rivalClub}
         awayRenderClub={derby.awayRenderClub}
         derbyName={derby.derbyName}
+        stadiumLabel={resolvedStadiumLabel}
+        isCareerMatch={isCareerMatch}
         accentColor={compTheme.accentPrimary}
         hud={hud}
         onResume={() => controlsRef.current.resume()}
@@ -2081,6 +2236,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         onCycleRadarMode={() => controlsRef.current.cycleRadarMode()}
         onSkipReplay={() => controlsRef.current.skipReplay()}
         onRestartMatch={() => controlsRef.current.restartMatch()}
+        onConfirmCareerFinish={() => controlsRef.current.confirmCareerFinish()}
+        onSimulateRestOfMatch={() => controlsRef.current.simulateRestOfMatch()}
         onExit={onExit}
       />
     </div>

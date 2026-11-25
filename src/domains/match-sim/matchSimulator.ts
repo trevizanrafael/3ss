@@ -44,6 +44,131 @@ export interface MatchPerformanceResult {
   };
 }
 
+export interface Played3DMatchStatsInput {
+  myTeamGoals: number;
+  opponentGoals: number;
+  userGoals: number;
+  userAssists: number;
+  userPasses: number;
+  userTackles: number;
+  myShots: number;
+  oppShots: number;
+  myPossessionPct: number;
+  staminaRemaining: number;
+  minutesPlayed: number;
+}
+
+/**
+ * Converte o desempenho real jogado no campo 3D 11v11 em um `MatchPerformanceResult` oficial da Carreira,
+ * inclusive completando via simulação os minutos finais caso o usuário acione "Simular Restante" na pausa!
+ */
+export function buildMatchResultFromPlayed3D(
+  player: CareerPlayer,
+  clubId: string,
+  opponentId: string,
+  isHome: boolean,
+  competitionId: AnyCompetitionId,
+  stageLabel: string,
+  mindset: TacticalMindset,
+  neutralVenue: boolean,
+  stats: Played3DMatchStatsInput,
+  simulatedRestFromMinute?: number,
+): MatchPerformanceResult {
+  const myClub = getClubById(clubId);
+  const opponent = getClubById(opponentId);
+  const sector = getPositionSector(player.position);
+
+  const isNeutralMatch =
+    neutralVenue ||
+    competitionId === 'WORLD_CUP' ||
+    competitionId === 'COPA_AMERICA' ||
+    competitionId === 'EURO_CUP' ||
+    (stageLabel.includes('FINAL') && !stageLabel.includes('SEMI'));
+  const rivalry =
+    resolveRivalryMatchContext(clubId, opponentId, isHome, isNeutralMatch) ?? undefined;
+
+  let clubGoals = stats.myTeamGoals;
+  let opponentGoals = stats.opponentGoals;
+  let playerGoals = stats.userGoals;
+  let playerAssists = stats.userAssists;
+
+  // Se acionou "Simular Restante" antes dos 90', simula proporcionalmente os minutos faltantes!
+  if (simulatedRestFromMinute !== undefined && simulatedRestFromMinute < 89) {
+    const remFrac = clamp((90 - simulatedRestFromMinute) / 90, 0.04, 1.0);
+    const homeAdv = isNeutralMatch ? 0 : isHome ? 1.5 : -1.5;
+    const ovrDiff = myClub.squadAvgOvr - opponent.squadAvgOvr + homeAdv;
+    const extraMy = samplePoissonGoals(clamp(1.25 * Math.exp(0.04 * ovrDiff) * remFrac, 0.05, 2.4));
+    const extraOpp = samplePoissonGoals(clamp(1.18 * Math.exp(-0.04 * ovrDiff) * remFrac, 0.05, 2.2));
+    clubGoals += extraMy;
+    opponentGoals += extraOpp;
+
+    for (let g = 0; g < extraMy; g++) {
+      const r = Math.random();
+      if (r < (sector === 'ATK' ? 0.38 : sector === 'MID' ? 0.2 : 0.06)) playerGoals += 1;
+      else if (r < (sector === 'MID' ? 0.5 : 0.34)) playerAssists += 1;
+    }
+  }
+
+  const keyActions = Math.max(1, stats.userPasses + stats.userTackles * 2);
+  const matchRating =
+    6.2 +
+    playerGoals * 1.35 +
+    playerAssists * 0.95 +
+    stats.userPasses * 0.08 +
+    stats.userTackles * 0.22 +
+    (clubGoals > opponentGoals ? 0.45 : clubGoals === opponentGoals ? 0.1 : -0.2) +
+    (sector === 'DEF' && opponentGoals === 0 ? 1.15 : 0);
+
+  const stars: StarRating =
+    matchRating >= 8.0 ? 3 : matchRating >= 6.8 ? 2 : matchRating >= 5.9 ? 1 : 0;
+
+  const rawSpent = Math.max(12, player.stamina - stats.staminaRemaining);
+  const staminaSpent = clamp(Math.round(rawSpent * 0.58) + (rivalry ? 2 : 0), 10, 38);
+
+  const narrative: string[] = [];
+  if (simulatedRestFromMinute !== undefined && simulatedRestFromMinute < 89) {
+    narrative.push(
+      `Atuou em campo até os ${simulatedRestFromMinute}' e simulou os minutos finais (${stageLabel}).`,
+    );
+  } else {
+    narrative.push(
+      `Partida 3D disputada em tempo integral • Posse: ${stats.myPossessionPct}% • Finalizações: ${stats.myShots}x${stats.oppShots}.`,
+    );
+  }
+  if (playerGoals > 0) narrative.push(`Você balançou as redes ${playerGoals} vez(es)!`);
+  if (playerAssists > 0) narrative.push(`Distribuiu ${playerAssists} assistência(s) decisiva(s).`);
+  if (stats.userPasses > 0 || stats.userTackles > 0) {
+    narrative.push(
+      `Participação ativa: ${stats.userPasses} passe(s) conectado(s) e ${stats.userTackles} desarme(s).`,
+    );
+  }
+  if (mindset === 'AGRESSIVO_GOL' && playerGoals > 0) {
+    narrative.push('Postura ofensiva recompensada no terço final.');
+  }
+
+  return {
+    competitionId,
+    stageLabel,
+    clubId,
+    opponentId,
+    isHome,
+    clubGoals,
+    opponentGoals,
+    startedMatch: true,
+    minuteEntered: 1,
+    minuteExited: 90,
+    minutesPlayed: 90,
+    subbedOffForStamina: false,
+    playerGoals,
+    playerAssists,
+    keyActions,
+    stars,
+    staminaSpent,
+    matchNarrative: narrative,
+    rivalry,
+  };
+}
+
 export function resolveMatchSimulation(
   player: CareerPlayer,
   clubId: string,

@@ -75,6 +75,8 @@ interface Match11v11HudOverlayProps {
   rivalClub: ClubData;
   awayRenderClub: ClubData;
   derbyName: string;
+  stadiumLabel?: string;
+  isCareerMatch?: boolean;
   accentColor: string;
   hud: Match11v11HudSnapshot;
   onResume: () => void;
@@ -86,6 +88,8 @@ interface Match11v11HudOverlayProps {
   onCycleRadarMode: () => void;
   onSkipReplay: () => void;
   onRestartMatch: () => void;
+  onConfirmCareerFinish?: () => void;
+  onSimulateRestOfMatch?: () => void;
   onExit: () => void;
 }
 
@@ -113,6 +117,8 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
   rivalClub,
   awayRenderClub,
   derbyName,
+  stadiumLabel,
+  isCareerMatch = false,
   accentColor,
   hud,
   onResume,
@@ -124,6 +130,8 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
   onCycleRadarMode,
   onSkipReplay,
   onRestartMatch,
+  onConfirmCareerFinish,
+  onSimulateRestOfMatch,
   onExit,
 }) => {
   const { brand } = useGamepadStore();
@@ -186,20 +194,66 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
   // 2. MENU DE PAUSA / FIM DE PARTIDA EM TELA CHEIA ESTILO EA SPORTS FC (100vw × 100vh)
   if (hud.paused || hud.half === 'FT') {
     const isFT = hud.half === 'FT';
-    const mainItems = isFT
-      ? [
-          { title: 'JOGAR CLÁSSICO NOVAMENTE', sub: 'Reiniciar partida desde o 1º tempo', action: onRestartMatch },
-          { title: 'REPLAY DO ÚLTIMO LANCE', sub: 'Rever os últimos segundos em múltiplos ângulos', action: onLaunchInstantReplay },
-          { title: 'CONFIGURAÇÕES DE JOGO', sub: `Câmera (${CAMERA_LABELS[hud.cameraPreset]}) & Radar`, action: () => onOpenSettingsTab('SETTINGS') },
-          { title: 'SAIR PARA O MENU PRINCIPAL', sub: 'Encerrar sessão e voltar ao início', action: onExit },
-        ]
-      : [
-          { title: 'CONTINUAR PARTIDA', sub: 'Voltar imediatamente ao gramado', action: onResume },
-          { title: 'REPLAY DO LANCE', sub: 'Rever os últimos 5 segundos em câmera aberta', action: onLaunchInstantReplay },
-          { title: 'CONFIGURAÇÕES DE JOGO', sub: `Câmera (${CAMERA_LABELS[hud.cameraPreset]}) & Radar`, action: () => onOpenSettingsTab('SETTINGS') },
-          { title: 'REINICIAR PARTIDA', sub: 'Zerar placar e dar nova saída de bola', action: onRestartMatch },
-          { title: 'SAIR PARA O MENU PRINCIPAL', sub: 'Voltar à tela inicial', action: onExit },
-        ];
+    const mainItems = isCareerMatch
+      ? isFT
+        ? [
+            {
+              title: 'AVANÇAR E CONCLUIR PARTIDA ›',
+              sub: 'Registrar placar e estatísticas oficiais na sua Carreira',
+              action: onConfirmCareerFinish ?? onExit,
+            },
+            {
+              title: 'REPLAY DO ÚLTIMO LANCE',
+              sub: 'Rever os últimos segundos em múltiplos ângulos',
+              action: onLaunchInstantReplay,
+            },
+            {
+              title: 'CONFIGURAÇÕES DE JOGO',
+              sub: `Câmera (${CAMERA_LABELS[hud.cameraPreset]}) & Radar`,
+              action: () => onOpenSettingsTab('SETTINGS'),
+            },
+          ]
+        : [
+            {
+              title: 'CONTINUAR PARTIDA',
+              sub: 'Voltar imediatamente ao gramado',
+              action: onResume,
+            },
+            {
+              title: 'REPLAY DO LANCE',
+              sub: 'Rever os últimos 5 segundos em câmera aberta',
+              action: onLaunchInstantReplay,
+            },
+            {
+              title: 'CONFIGURAÇÕES DE JOGO',
+              sub: `Câmera (${CAMERA_LABELS[hud.cameraPreset]}) & Radar`,
+              action: () => onOpenSettingsTab('SETTINGS'),
+            },
+            {
+              title: 'SIMULAR RESTANTE DA PARTIDA',
+              sub: 'Pular para o apito final mantendo o placar atual',
+              action: onSimulateRestOfMatch ?? onExit,
+            },
+            {
+              title: 'VOLTAR AO PRÉ-JOGO',
+              sub: 'Cancelar partida em andamento e retornar à escalação',
+              action: onExit,
+            },
+          ]
+      : isFT
+        ? [
+            { title: 'JOGAR CLÁSSICO NOVAMENTE', sub: 'Reiniciar partida desde o 1º tempo', action: onRestartMatch },
+            { title: 'REPLAY DO ÚLTIMO LANCE', sub: 'Rever os últimos segundos em múltiplos ângulos', action: onLaunchInstantReplay },
+            { title: 'CONFIGURAÇÕES DE JOGO', sub: `Câmera (${CAMERA_LABELS[hud.cameraPreset]}) & Radar`, action: () => onOpenSettingsTab('SETTINGS') },
+            { title: 'SAIR PARA O MENU PRINCIPAL', sub: 'Encerrar sessão e voltar ao início', action: onExit },
+          ]
+        : [
+            { title: 'CONTINUAR PARTIDA', sub: 'Voltar imediatamente ao gramado', action: onResume },
+            { title: 'REPLAY DO LANCE', sub: 'Rever os últimos 5 segundos em câmera aberta', action: onLaunchInstantReplay },
+            { title: 'CONFIGURAÇÕES DE JOGO', sub: `Câmera (${CAMERA_LABELS[hud.cameraPreset]}) & Radar`, action: () => onOpenSettingsTab('SETTINGS') },
+            { title: 'REINICIAR PARTIDA', sub: 'Zerar placar e dar nova saída de bola', action: onRestartMatch },
+            { title: 'SAIR PARA O MENU PRINCIPAL', sub: 'Voltar à tela inicial', action: onExit },
+          ];
 
     const settingsItems = [
       {
@@ -294,7 +348,7 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
               {isFT ? 'FIM DE JOGO • ESTATÍSTICAS OFICIAIS' : `JOGO PAUSADO • ${derbyName}`}
             </div>
             <div className="text-xs uppercase tracking-widest text-[#9498A3] mt-0.5">
-              {homeClub.stadiumName ?? homeClub.name} • {String(hud.matchMinute).padStart(2, '0')}&apos; ({isFT ? '90 MIN' : `${hud.half}º TEMPO`})
+              {stadiumLabel ?? homeClub.stadiumName ?? homeClub.name} • {String(hud.matchMinute).padStart(2, '0')}&apos; ({isFT ? '90 MIN' : `${hud.half}º TEMPO`})
             </div>
           </div>
 

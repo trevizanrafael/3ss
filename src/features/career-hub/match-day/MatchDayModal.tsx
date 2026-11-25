@@ -5,7 +5,9 @@ import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
 import { MatchVenueInfo } from '../../../domains/international/worldCupHostVenues';
 import {
+  buildMatchResultFromPlayed3D,
   MatchPerformanceResult,
+  Played3DMatchStatsInput,
   resolveMatchSimulation,
   TacticalMindset,
 } from '../../../domains/match-sim/matchSimulator';
@@ -15,6 +17,7 @@ import {
 } from '../../../domains/match-sim/penaltyShootoutEngine';
 import { resolveRivalryMatchContext } from '../../../domains/rivalry/rivalryEngine';
 import { getClubFixtureOnExactDay } from '../../../domains/season/worldSeasonEngine';
+import { Match11v11ArenaModal } from '../../../match-3d/ui/Match11v11ArenaModal';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { NavDirection } from '../../../shared/gamepad/spatialNavigator';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
@@ -23,7 +26,11 @@ import { StarRatingBadge } from '../../../shared/ui/StarRatingBadge';
 import { useCareerStore } from '../../../state/useCareerStore';
 import { useNavigationStore } from '../../../state/useNavigationStore';
 import { InteractiveTravelMap } from './InteractiveTravelMap';
-import { KitChoice, MatchKitsAndInfoPanel } from './MatchKitsAndInfoPanel';
+import {
+  KitChoice,
+  MatchKitsAndInfoPanel,
+  resolveClubKitColors,
+} from './MatchKitsAndInfoPanel';
 import { PenaltyChoiceStage, PenaltyScoreboardStrip } from './PenaltyShootoutPanel';
 import { TacticalLineupPitch } from './TacticalLineupPitch';
 
@@ -41,6 +48,7 @@ export const MatchDayModal: React.FC = () => {
   } | null>(null);
   const [result, setResult] = useState<MatchPerformanceResult | null>(null);
   const [lockedVenueInfo, setLockedVenueInfo] = useState<MatchVenueInfo | null>(null);
+  const [playing3D, setPlaying3D] = useState(false);
 
   useEffect(() => {
     if (!matchModalOpen) return;
@@ -48,9 +56,10 @@ export const MatchDayModal: React.FC = () => {
     setAwayKit('AWAY');
     setPendingPenMatch(null);
     setLockedVenueInfo(null);
+    setPlaying3D(false);
   }, [matchModalOpen]);
 
-  const isPreMatchStage = matchModalOpen && !result && !pendingPenMatch;
+  const isPreMatchStage = matchModalOpen && !result && !pendingPenMatch && !playing3D;
 
   useEffect(() => {
     if (!isPreMatchStage) return;
@@ -149,23 +158,12 @@ export const MatchDayModal: React.FC = () => {
     ? ` • IDA: ${leg1Info.myShort} ${leg1Info.myGoals}x${leg1Info.oppGoals} ${leg1Info.oppShort}`
     : '';
 
-  const handleStartMatch = () => {
-    if (!liveFixture) return;
-    if (liveVenueInfo) {
-      setLockedVenueInfo(liveVenueInfo);
+  const finalizeNinetyMinutesResult = (sim90: MatchPerformanceResult) => {
+    if (!liveFixture) {
+      const committed = playCurrentMatch(mindset, sim90);
+      if (committed) setResult(committed);
+      return;
     }
-    const sim90 = resolveMatchSimulation(
-      player,
-      activeMyTeamId,
-      liveFixture.opponentId,
-      liveFixture.isHome,
-      liveFixture.competitionId,
-      liveFixture.stageLabel,
-      activeUserRole,
-      activeStage,
-      mindset,
-      isNeutralVenue,
-    );
 
     const hasPrevLeg =
       liveFixture.prevLegMyGoals !== undefined && liveFixture.prevLegOppGoals !== undefined;
@@ -199,6 +197,54 @@ export const MatchDayModal: React.FC = () => {
     if (committed) setResult(committed);
   };
 
+  const handleLaunch3DMatch = () => {
+    if (!liveFixture) return;
+    if (liveVenueInfo) {
+      setLockedVenueInfo(liveVenueInfo);
+    }
+    setPlaying3D(true);
+  };
+
+  const handleComplete3DMatch = (
+    stats3D: Played3DMatchStatsInput,
+    simulatedRestFromMinute?: number,
+  ) => {
+    setPlaying3D(false);
+    const built90 = buildMatchResultFromPlayed3D(
+      player,
+      activeMyTeamId,
+      opponentId,
+      isHome,
+      compId,
+      stageLabel,
+      mindset,
+      isNeutralVenue,
+      stats3D,
+      simulatedRestFromMinute,
+    );
+    finalizeNinetyMinutesResult(built90);
+  };
+
+  const handleSimulateMatch = () => {
+    if (!liveFixture) return;
+    if (liveVenueInfo) {
+      setLockedVenueInfo(liveVenueInfo);
+    }
+    const sim90 = resolveMatchSimulation(
+      player,
+      activeMyTeamId,
+      liveFixture.opponentId,
+      liveFixture.isHome,
+      liveFixture.competitionId,
+      liveFixture.stageLabel,
+      activeUserRole,
+      activeStage,
+      mindset,
+      isNeutralVenue,
+    );
+    finalizeNinetyMinutesResult(sim90);
+  };
+
   const handleSelectPenaltyCorner = (corner: PenaltyCorner) => {
     if (!pendingPenMatch) return;
     const shootout = resolveInteractiveShootout(
@@ -230,11 +276,44 @@ export const MatchDayModal: React.FC = () => {
   };
 
   const handleClose = () => {
+    setPlaying3D(false);
     setPendingPenMatch(null);
     setResult(null);
     setLockedVenueInfo(null);
     setMatchModalOpen(false);
   };
+
+  if (playing3D) {
+    const myKitChoice = isHome ? homeKit : awayKit;
+    const oppKitChoice = isHome ? awayKit : homeKit;
+    const myResolvedKit = resolveClubKitColors(myClub, myKitChoice, isNeutralVenue);
+    const oppResolvedKit = resolveClubKitColors(opponentClub, oppKitChoice, isNeutralVenue);
+
+    return (
+      <Match11v11ArenaModal
+        player={player}
+        club={myClub}
+        opponentClub={opponentClub}
+        myKitOverride={{
+          primaryColor: myResolvedKit.shirt,
+          secondaryColor: myResolvedKit.trim,
+          pattern: myKitChoice === 'HOME' ? myClub.pattern : 'solid',
+        }}
+        opponentKitOverride={{
+          primaryColor: oppResolvedKit.shirt,
+          secondaryColor: oppResolvedKit.trim,
+          pattern: oppKitChoice === 'HOME' ? opponentClub.pattern : 'solid',
+        }}
+        isUserVenueHome={isNeutralVenue ? true : isHome}
+        venueStadiumName={neutralVenueInfo?.stadiumName}
+        matchBannerTitle={activeRivalry?.derbyName ?? `${theme.shortLabel} • ${stageLabel}`}
+        isCareerMatch
+        competitionId={compId}
+        onCompleteCareerMatch={handleComplete3DMatch}
+        onExit={() => setPlaying3D(false)}
+      />
+    );
+  }
 
   return (
     <div
@@ -269,7 +348,7 @@ export const MatchDayModal: React.FC = () => {
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {!result && !pendingPenMatch && (
             <button
               type="button"
@@ -283,17 +362,29 @@ export const MatchDayModal: React.FC = () => {
           )}
 
           {!result && !pendingPenMatch ? (
-            <button
-              type="button"
-              data-autofocus="true"
-              data-pad-y="true"
-              onClick={handleStartMatch}
-              style={{ borderLeftColor: theme.accentPrimary }}
-              className="console-btn-primary px-7 py-2.5 text-lg inline-flex items-center gap-2.5 cursor-pointer"
-            >
-              <GamepadBadge action="ALT_Y" darkText />
-              <span>IR PARA O CAMPO / INICIAR ›</span>
-            </button>
+            <>
+              <button
+                type="button"
+                data-pad-x="true"
+                onClick={handleSimulateMatch}
+                className="px-4 py-2.5 bg-[#16181D] hover:bg-[#222630] border border-[#323642] inline-flex items-center gap-2 font-condensed uppercase font-extrabold text-sm tracking-wider text-[#D4D7E0] hover:text-[#F5F5F7] cursor-pointer"
+              >
+                <GamepadBadge action="ALT_X" />
+                <span>SIMULAR RÁPIDO</span>
+              </button>
+
+              <button
+                type="button"
+                data-autofocus="true"
+                data-pad-y="true"
+                onClick={handleLaunch3DMatch}
+                style={{ borderLeftColor: theme.accentPrimary }}
+                className="console-btn-primary px-7 py-2.5 text-lg inline-flex items-center gap-2.5 cursor-pointer"
+              >
+                <GamepadBadge action="CONFIRM" darkText />
+                <span>JOGAR PARTIDA 3D ›</span>
+              </button>
+            </>
           ) : result ? (
             <button
               type="button"

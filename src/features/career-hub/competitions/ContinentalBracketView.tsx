@@ -81,13 +81,12 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                   onSelectClub(club.id);
                 }
               }}
-              className={`flex items-center justify-between px-2 py-1.5 cursor-pointer border-l-2 outline-none ${
-                isWin
+              className={`flex items-center justify-between px-2 py-1.5 cursor-pointer border-l-2 outline-none ${isWin
                   ? 'bg-[#15221B] border-l-[#2DBE60] text-[#F5F5F7]'
                   : isEliminated
                     ? 'border-l-transparent text-[#686D7A] hover:text-[#F5F5F7]'
                     : 'border-l-transparent text-[#D4D7E0] hover:text-[#F5F5F7]'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2 truncate min-w-0 pr-2">
                 <ClubCrest clubId={club.id} size="sm" />
@@ -105,13 +104,12 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                 <span className="text-[#9498A3]">{leg1Done ? leg1 : '—'}</span>
                 <span className="text-[#9498A3]">{leg2Done ? leg2 : '—'}</span>
                 <span
-                  className={`py-0.5 font-extrabold ${
-                    isWin
+                  className={`py-0.5 font-extrabold ${isWin
                       ? 'bg-[#2DBE60]/20 text-[#2DBE60]'
                       : leg1Done
                         ? 'bg-[#191C24] text-[#F5F5F7]'
                         : 'text-[#565A65]'
-                  }`}
+                    }`}
                 >
                   {leg1Done ? `${agg}${hasPen ? ` (${pen})` : ''}` : '—'}
                 </span>
@@ -150,11 +148,10 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
               type="button"
               data-focusable="true"
               onClick={() => setSubView(id)}
-              className={`px-4 py-1.5 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${
-                subView === id
+              className={`px-4 py-1.5 font-condensed uppercase font-bold text-xs tracking-wider cursor-pointer ${subView === id
                   ? 'bg-[#F5F5F7] text-[#0B0B0D]'
                   : 'bg-[#0E0F12] text-[#9498A3] hover:text-[#F5F5F7]'
-              }`}
+                }`}
             >
               {lbl}
             </button>
@@ -185,9 +182,8 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                         data-focusable="true"
                         onFocus={() => onSelectClub(c.id)}
                         onClick={() => onSelectClub(c.id)}
-                        className={`cursor-pointer outline-none ${
-                          active ? 'bg-[#1C1F26] text-[#F5F5F7]' : 'hover:bg-[#16181D]'
-                        }`}
+                        className={`cursor-pointer outline-none ${active ? 'bg-[#1C1F26] text-[#F5F5F7]' : 'hover:bg-[#16181D]'
+                          }`}
                       >
                         <td className={`py-1.5 w-5 font-bold ${qualified ? 'text-[#2DBE60]' : 'text-[#565A65]'}`}>
                           {i + 1}
@@ -225,11 +221,10 @@ export const ContinentalBracketView: React.FC<ContinentalBracketViewProps> = ({
                 </span>
                 <span className="font-condensed font-extrabold text-2xl text-[#C8A45D]">
                   {cup.finalMatch.played
-                    ? `${cup.finalMatch.homeGoals} : ${cup.finalMatch.awayGoals}${
-                        cup.finalMatch.penHome !== undefined && cup.finalMatch.penHome !== null
-                          ? ` (PÊN ${cup.finalMatch.penHome}:${cup.finalMatch.penAway})`
-                          : ''
-                      }`
+                    ? `${cup.finalMatch.homeGoals} : ${cup.finalMatch.awayGoals}${cup.finalMatch.penHome !== undefined && cup.finalMatch.penHome !== null
+                      ? ` (PÊN ${cup.finalMatch.penHome}:${cup.finalMatch.penAway})`
+                      : ''
+                    }`
                     : 'VS'}
                 </span>
                 <span className="font-condensed uppercase font-bold text-lg">
