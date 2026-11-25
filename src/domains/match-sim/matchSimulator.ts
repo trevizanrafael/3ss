@@ -54,6 +54,7 @@ export function resolveMatchSimulation(
   role: SquadRole,
   stage: CareerStage,
   mindset: TacticalMindset,
+  neutralVenue = false,
 ): MatchPerformanceResult {
   const myClub = getClubById(clubId);
   const opponent = getClubById(opponentId);
@@ -74,11 +75,17 @@ export function resolveMatchSimulation(
     playTimeFactor;
 
   const effectiveMyOvr = myClub.squadAvgOvr + starCarryBoost;
-  const isNeutralFinal = stageLabel.includes('FINAL') && !stageLabel.includes('SEMI');
+  const isNeutralMatch =
+    neutralVenue ||
+    competitionId === 'WORLD_CUP' ||
+    competitionId === 'COPA_AMERICA' ||
+    competitionId === 'EURO_CUP' ||
+    (stageLabel.includes('FINAL') && !stageLabel.includes('SEMI'));
   const rivalry =
-    resolveRivalryMatchContext(clubId, opponentId, isHome, isNeutralFinal) ?? undefined;
+    resolveRivalryMatchContext(clubId, opponentId, isHome, isNeutralMatch) ?? undefined;
 
   // Pressão do Caldeirão em Clássicos: torcida hostil pesa mais fora de casa, e mosaico empurra em casa!
+  // Na Copa do Mundo (sede única neutra), NÃO há vantagem/desvantagem de casa ou fora!
   const derbyCauldronShift = !rivalry
     ? 0
     : rivalry.tier === 'FEROZ'
@@ -86,7 +93,7 @@ export function resolveMatchSimulation(
       : rivalry.tier === 'HISTORICO'
         ? 0.46
         : 0.28;
-  const homeAdv = isNeutralFinal
+  const homeAdv = isNeutralMatch
     ? 0
     : isHome
       ? 1.65 + derbyCauldronShift
@@ -98,8 +105,8 @@ export function resolveMatchSimulation(
   const defMindsetMult =
     mindset === 'AGRESSIVO_GOL' ? 1.06 : mindset === 'COLETIVO_SEGURO' ? 0.86 : 1.0;
 
-  const baseMyLambda = isHome ? 1.34 : 1.1;
-  const baseOppLambda = isHome ? 1.06 : 1.3;
+  const baseMyLambda = isNeutralMatch ? 1.22 : isHome ? 1.34 : 1.1;
+  const baseOppLambda = isNeutralMatch ? 1.22 : isHome ? 1.06 : 1.3;
 
   const lambdaMy = clamp(
     baseMyLambda * Math.exp(0.042 * ovrDiffForMyClub) * atkMindsetMult,

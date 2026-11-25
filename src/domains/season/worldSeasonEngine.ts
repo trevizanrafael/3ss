@@ -114,6 +114,13 @@ export function getClubFixtureOnExactDay(
         stageLabel: ntFx.stageLabel,
         opponentId: ntFx.opponentId,
         isHome: ntFx.isHome,
+        neutralVenue: ntFx.neutralVenue ?? false,
+        venueStadiumName: ntFx.venueStadiumName,
+        venueCity: ntFx.venueCity,
+        venueCountry: ntFx.venueCountry,
+        venueCountryName: ntFx.venueCountryName,
+        venueLat: ntFx.venueLat,
+        venueLng: ntFx.venueLng,
         dayOfWeek: ntFx.dayOfWeek,
         decidesKnockout: ntFx.decidesKnockout,
       };
@@ -279,6 +286,12 @@ export function rolloverSeasonWithPromotionAndQualification(
       world.international?.worldCup?.championTeamId ??
       world.international?.copaAmerica?.championTeamId ??
       null,
+    internationalCupLabel:
+      world.international?.worldCup?.championTeamId && world.international.worldCup.editionYear
+        ? `COPA DO MUNDO ${world.international.worldCup.editionYear}`
+        : world.international?.copaAmerica?.championTeamId
+          ? 'COPA AMÉRICA / EURO'
+          : undefined,
     goals: playerSeasonGoals,
     assists: playerSeasonAssists,
   };

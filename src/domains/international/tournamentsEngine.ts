@@ -1,5 +1,7 @@
 import { getNationalTeamsByConfederation } from '../../data/clubs';
+import { COUNTRIES } from '../../data/countries/countries';
 import { InternationalCompId } from '../../data/world/competitionThemes';
+import { LeagueCountryCode } from '../../shared/types/common';
 import { shuffleArray } from '../../shared/utils/math';
 import { PlayerScoreOverride } from '../season/continentalEngine';
 import {
@@ -219,11 +221,16 @@ export function createSummer16Tournament(
 export function createWorldCupTournament(
   seasonYear: number,
   qualified32Ids: string[],
+  hostCountry: LeagueCountryCode = 'ESP',
 ): NationalCupTournament {
+  const editionYear = seasonYear + 1;
+  const hostName = COUNTRIES[hostCountry]?.name ?? hostCountry;
   return {
     compId: 'WORLD_CUP',
-    title: `COPA DO MUNDO FIFA ${seasonYear + 1}`,
+    title: `COPA DO MUNDO ${editionYear} • ${hostName.toUpperCase()}`,
     seasonYear,
+    editionYear,
+    hostCountry,
     participantIds: qualified32Ids,
     groups: buildGroupsOfFour(qualified32Ids, `wc_${seasonYear}`, false),
     roundOf16: [],

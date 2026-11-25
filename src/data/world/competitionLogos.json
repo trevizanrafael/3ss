@@ -84,8 +84,8 @@
     "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/2310.png"
   },
   "WORLD_CUP": {
-    "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/4.png",
-    "dark": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/4.png"
+    "light": "/images/world-cup-trophy.png",
+    "dark": "/images/world-cup-trophy.png"
   },
   "WC_QUALIFIERS": {
     "light": "https://a.espncdn.com/i/leaguelogos/soccer/500/65.png",

@@ -1,6 +1,7 @@
 import { getClubById } from '../../data/clubs';
 import { getCompetitionTheme } from '../../data/world/competitionThemes';
 import { evaluateNationalCallUp } from '../../domains/international/callUpEvaluator';
+import { getWorldCupEditionInfo } from '../../domains/international/worldCupHostVenues';
 import {
   MatchPerformanceResult,
   resolveMatchSimulation,
@@ -58,6 +59,7 @@ export function computePlayedMatchState(
       activeRole,
       activeStage,
       mindset,
+      Boolean(fixture.neutralVenue),
     );
 
   const pen = result.penaltyShootout;
@@ -164,6 +166,10 @@ export function computePlayedMatchState(
 
   const opponent = getClubById(fixture.opponentId);
   const compTheme = getCompetitionTheme(fixture.competitionId);
+  const compDisplayLabel =
+    fixture.competitionId === 'WORLD_CUP'
+      ? getWorldCupEditionInfo(worldSeason.seasonYear, worldSeason.international).shortLabel
+      : compTheme.shortLabel;
   const tls = result.twoLegSummary;
   const aggSuffix = tls
     ? ` • AGREG. ${tls.aggMyGoals}x${tls.aggOppGoals} (${tls.qualified ? 'CLASSIFICADO' : 'ELIMINADO'})`
@@ -173,7 +179,7 @@ export function computePlayedMatchState(
     {
       ...makeEvent(
         calendar.week,
-        `[${compTheme.shortLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${aggSuffix}${penSuffix} (${result.stars}★)`,
+        `[${compDisplayLabel}] ${myTeam.shortName} ${result.clubGoals} x ${result.opponentGoals} ${opponent.shortName}${aggSuffix}${penSuffix} (${result.stars}★)`,
         `${fixture.stageLabel} • ${result.minutesPlayed} min • ${result.playerGoals}G ${result.playerAssists}A`,
         'MATCH',
       ),

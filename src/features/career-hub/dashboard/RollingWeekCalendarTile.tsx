@@ -371,7 +371,13 @@ export const RollingWeekCalendarTile: React.FC = () => {
               <>
                 <ClubCrest clubId={upcomingFx.opponentId} size="sm" />
                 <span className="font-condensed uppercase font-bold text-base text-[#9498A3] truncate">
-                  {upcomingFx.isHome ? 'EM CASA VS' : 'FORA VS'}{' '}
+                  {upcomingFx.neutralVenue
+                    ? upcomingFx.venueCity
+                      ? `SEDE (${upcomingFx.venueCity.toUpperCase()}) VS`
+                      : 'SEDE NEUTRA VS'
+                    : upcomingFx.isHome
+                      ? 'EM CASA VS'
+                      : 'FORA VS'}{' '}
                   <strong className="text-[#F5F5F7]">
                     {getClubById(upcomingFx.opponentId).name}
                   </strong>{' '}

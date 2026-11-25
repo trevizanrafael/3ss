@@ -10,6 +10,14 @@ interface InteractiveTravelMapProps {
   opponentClub: ClubData;
   isHome: boolean;
   accentColor: string;
+  isNeutralVenue?: boolean;
+  neutralVenue?: {
+    stadiumName: string;
+    city: string;
+    countryName: string;
+    lat: number;
+    lng: number;
+  };
 }
 
 export function computeDistanceKm(
@@ -73,11 +81,37 @@ function makeClubPinIcon(club: ClubData, tag: string, highlightColor: string): L
   });
 }
 
+function makeNeutralVenuePinIcon(
+  stadiumName: string,
+  tag: string,
+  highlightColor: string,
+): L.DivIcon {
+  return L.divIcon({
+    className: '',
+    iconSize: [190, 56],
+    iconAnchor: [95, 48],
+    html: `
+      <div style="display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
+        <div style="background:#0B0B0D;border:2px solid ${highlightColor};padding:4px 10px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(0,0,0,0.88);">
+          <img src="/images/world-cup-trophy.png" style="width:22px;height:22px;object-fit:contain;" />
+          <div style="line-height:1.08;text-align:left;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;letter-spacing:0.12em;color:${highlightColor};text-transform:uppercase;white-space:nowrap;">${tag}</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#F5F5F7;text-transform:uppercase;white-space:nowrap;">${stadiumName}</div>
+          </div>
+        </div>
+        <div style="width:2px;height:8px;background:${highlightColor};"></div>
+      </div>
+    `,
+  });
+}
+
 export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
   myClub,
   opponentClub,
   isHome,
   accentColor,
+  isNeutralVenue = false,
+  neutralVenue,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -88,21 +122,22 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
 
   const originLat = originClub.lat ?? -22.91;
   const originLng = originClub.lng ?? -43.23;
-  const hostLat = hostClub.lat ?? -23.52;
-  const hostLng = hostClub.lng ?? -46.67;
+  const hostLat = neutralVenue?.lat ?? hostClub.lat ?? -23.52;
+  const hostLng = neutralVenue?.lng ?? hostClub.lng ?? -46.67;
   const visitorLat = opponentClub.lat ?? -23.52;
   const visitorLng = opponentClub.lng ?? -46.67;
 
   const distanceKm = useMemo(
-    () => (isHome ? 0 : computeDistanceKm(originLat, originLng, hostLat, hostLng)),
-    [isHome, originLat, originLng, hostLat, hostLng],
+    () =>
+      isHome || isNeutralVenue ? 0 : computeDistanceKm(originLat, originLng, hostLat, hostLng),
+    [isHome, isNeutralVenue, originLat, originLng, hostLat, hostLng],
   );
 
   const fitMapRoute = () => {
     const map = mapRef.current;
     if (!map) return;
-    if (isHome) {
-      map.setView([hostLat, hostLng], mapStyle === 'SATELLITE' ? 15 : 12, { animate: true });
+    if (neutralVenue || isNeutralVenue || isHome) {
+      map.setView([hostLat, hostLng], mapStyle === 'SATELLITE' ? 15 : 13, { animate: true });
     } else if (distanceKm < 25) {
       map.setView([hostLat, hostLng], 11, { animate: true });
     } else {
@@ -172,7 +207,47 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
     const originCoords: [number, number] = [originLat, originLng];
     const visitorCoords: [number, number] = [visitorLat, visitorLng];
 
-    if (isHome) {
+    if (neutralVenue) {
+      L.circleMarker(hostCoords, {
+        radius: 28,
+        color: accentColor,
+        weight: 1.8,
+        fillColor: accentColor,
+        fillOpacity: 0.18,
+      }).addTo(map);
+
+      L.marker(hostCoords, {
+        icon: makeNeutralVenuePinIcon(
+          neutralVenue.stadiumName,
+          `SEDE • ${neutralVenue.countryName.toUpperCase()}`,
+          accentColor,
+        ),
+      })
+        .bindPopup(
+          `<b>${neutralVenue.stadiumName}</b><br/>${neutralVenue.city} — ${neutralVenue.countryName} (Campo Neutro)`,
+        )
+        .addTo(map);
+
+      map.setView(hostCoords, mapStyle === 'SATELLITE' ? 15 : 13);
+    } else if (isNeutralVenue) {
+      L.circleMarker(hostCoords, {
+        radius: 26,
+        color: accentColor,
+        weight: 1.5,
+        fillColor: accentColor,
+        fillOpacity: 0.16,
+      }).addTo(map);
+
+      L.marker(hostCoords, {
+        icon: makeClubPinIcon(hostClub, 'SEDE NEUTRA • TORNEIO', accentColor),
+      })
+        .bindPopup(
+          `<b>${hostClub.stadiumName ?? hostClub.name}</b><br/>${hostClub.city ?? ''} (Campo Neutro)`,
+        )
+        .addTo(map);
+
+      map.setView(hostCoords, mapStyle === 'SATELLITE' ? 15 : 12);
+    } else if (isHome) {
       L.circleMarker(hostCoords, {
         radius: 26,
         color: accentColor,
@@ -259,7 +334,17 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myClub.id, opponentClub.id, isHome, mapStyle, accentColor]);
+  }, [
+    myClub.id,
+    opponentClub.id,
+    isHome,
+    isNeutralVenue,
+    neutralVenue?.stadiumName,
+    neutralVenue?.lat,
+    neutralVenue?.lng,
+    mapStyle,
+    accentColor,
+  ]);
 
   // Listeners isolados de Controle (RS para mover e D-Pad ↑/↓ para Zoom + e Zoom -) sem recriar o mapa!
   useEffect(() => {
@@ -298,16 +383,22 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
             className="text-[10px] uppercase tracking-[0.2em] font-bold"
             style={{ color: accentColor }}
           >
-            {isHome
-              ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
-              : distanceKm < 25
-                ? 'FORA DE CASA • CLÁSSICO REGIONAL'
-                : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
+            {neutralVenue
+              ? `SEDE OFICIAL • ${neutralVenue.countryName.toUpperCase()} (CAMPO NEUTRO)`
+              : isNeutralVenue
+                ? 'SEDE NEUTRA DE TORNEIO • SEM MANDO DE CAMPO'
+                : isHome
+                  ? 'ATUAÇÃO EM CASA • SEM DESLOCAMENTO'
+                  : distanceKm < 25
+                    ? 'FORA DE CASA • CLÁSSICO REGIONAL'
+                    : `VIAGEM FORA DE CASA • ${distanceKm.toLocaleString('pt-BR')} KM`}
           </div>
           <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate">
-            {isHome
-              ? `${hostClub.stadiumName ?? 'Estádio'} — ${hostClub.city ?? hostClub.name}`
-              : `${originClub.city ?? originClub.shortName}  ➔  ${hostClub.city ?? hostClub.shortName}`}
+            {neutralVenue
+              ? `${neutralVenue.stadiumName} — ${neutralVenue.city}`
+              : isNeutralVenue || isHome
+                ? `${hostClub.stadiumName ?? 'Estádio'} — ${hostClub.city ?? hostClub.name}`
+                : `${originClub.city ?? originClub.shortName}  ➔  ${hostClub.city ?? hostClub.shortName}`}
           </div>
         </div>
 
@@ -345,7 +436,11 @@ export const InteractiveTravelMap: React.FC<InteractiveTravelMapProps> = ({
             <span className="text-[#9498A3]">ZOOM +/-</span>
           </span>
         </div>
-        <span className="truncate ml-2">{hostClub.stadiumName ?? hostClub.name}</span>
+        <span className="truncate ml-2">
+          {neutralVenue
+            ? `${neutralVenue.stadiumName} (${neutralVenue.city})`
+            : (hostClub.stadiumName ?? hostClub.name)}
+        </span>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { ALL_NATIONAL_TEAMS } from '../../data/clubs';
 import { getQualifierCompId, InternationalCompId } from '../../data/world/competitionThemes';
+import { LeagueCountryCode } from '../../shared/types/common';
 import { shuffleArray } from '../../shared/utils/math';
 import { PlayerScoreOverride } from '../season/continentalEngine';
 import { simulateRealisticScoreline, sortStandings } from '../season/poissonMatchMath';
@@ -23,6 +24,10 @@ import {
   simulateNationsLeagueOnSunday,
   simulateSummerCupSlot,
 } from './tournamentsEngine';
+import {
+  pickWorldCupHostCountry,
+  resolveWorldCupMatchVenue,
+} from './worldCupHostVenues';
 
 export const FRIENDLY_WEEKS = [8, 16, 24, 32] as const;
 
@@ -45,12 +50,15 @@ function buildFriendlyRounds(seasonYear: number): FixtureMatch[][] {
 }
 
 export function createInitialInternationalState(seasonYear = 2026): InternationalCycleState {
-  const cycleIndex = (((seasonYear - 2026) % 4) + 4) % 4 as 0 | 1 | 2 | 3;
+  const cycleIndex = ((((seasonYear - 2026) % 4) + 4) % 4) as 0 | 1 | 2 | 3;
   const qualifiers = createWorldCupQualifiers();
   const conmebolTop2 = qualifiers[0].standings.slice(0, 2).map((r) => r.clubId);
+  const upcomingEditionYear = seasonYear + ((3 - cycleIndex + 4) % 4) + 1;
+  const nextWorldCupHost = pickWorldCupHostCountry(upcomingEditionYear, []);
 
   return {
     cycleIndex,
+    nextWorldCupHost,
     qualifiers,
     conmebolNationsSpots: conmebolTop2,
     qualifiedWorldCupIds: [],
@@ -65,11 +73,29 @@ export function createInitialInternationalState(seasonYear = 2026): Internationa
         ? createWorldCupTournament(
             seasonYear,
             ALL_NATIONAL_TEAMS.slice(0, 32).map((t) => t.id),
+            nextWorldCupHost,
           )
         : null,
     friendlyRounds: cycleIndex === 3 ? buildFriendlyRounds(seasonYear) : [],
     pastChampions: [],
   };
+}
+
+export interface NationalTeamDayFixture {
+  matchId: string;
+  competitionId: InternationalCompId;
+  stageLabel: string;
+  opponentId: string;
+  isHome: boolean;
+  dayOfWeek: 3 | 7;
+  decidesKnockout: boolean;
+  neutralVenue?: boolean;
+  venueStadiumName?: string;
+  venueCity?: string;
+  venueCountry?: LeagueCountryCode;
+  venueCountryName?: string;
+  venueLat?: number;
+  venueLng?: number;
 }
 
 function findInMatchList(
@@ -79,13 +105,14 @@ function findInMatchList(
   compId: InternationalCompId,
   dayOfWeek: 3 | 7,
   decidesKnockout = false,
-) {
+): NationalTeamDayFixture | null {
   const m = list.find(
     (fx) => !fx.played && (fx.homeClubId === teamId || fx.awayClubId === teamId),
   );
   if (!m) return null;
   const isHome = m.homeClubId === teamId;
   return {
+    matchId: m.id,
     competitionId: compId,
     stageLabel,
     opponentId: isHome ? m.awayClubId : m.homeClubId,
@@ -118,24 +145,49 @@ function findInGroups(
   return null;
 }
 
-function findSummerCupMatch(cup: NationalCupTournament | null, teamId: string, week: number, day: 3 | 7) {
+function findSummerCupMatch(
+  cup: NationalCupTournament | null,
+  teamId: string,
+  week: number,
+  day: 3 | 7,
+): NationalTeamDayFixture | null {
   if (!cup) return null;
-  if (week === 39 && day === 3) return findInGroups(cup.groups, 0, teamId, cup.compId, 3);
-  if (week === 39 && day === 7) return findInGroups(cup.groups, 1, teamId, cup.compId, 7);
-  if (week === 40 && day === 3) return findInGroups(cup.groups, 2, teamId, cup.compId, 3);
-  if (week === 40 && day === 7 && cup.roundOf16.length > 0) {
-    return findInMatchList(cup.roundOf16, teamId, 'OITAVAS DE FINAL', cup.compId, 7, true);
+  let hit = null;
+  if (week === 39 && day === 3) hit = findInGroups(cup.groups, 0, teamId, cup.compId, 3);
+  else if (week === 39 && day === 7) hit = findInGroups(cup.groups, 1, teamId, cup.compId, 7);
+  else if (week === 40 && day === 3) hit = findInGroups(cup.groups, 2, teamId, cup.compId, 3);
+  else if (week === 40 && day === 7 && cup.roundOf16.length > 0) {
+    hit = findInMatchList(cup.roundOf16, teamId, 'OITAVAS DE FINAL', cup.compId, 7, true);
+  } else if (week === 41 && day === 3) {
+    hit = findInMatchList(cup.quarterFinals, teamId, 'QUARTAS DE FINAL', cup.compId, 3, true);
+  } else if (week === 41 && day === 7) {
+    hit = findInMatchList(cup.semiFinals, teamId, 'SEMIFINAL', cup.compId, 7, true);
+  } else if (week === 42 && day === 7 && cup.finalMatch) {
+    hit = findInMatchList([cup.finalMatch], teamId, 'GRANDE FINAL', cup.compId, 7, true);
   }
-  if (week === 41 && day === 3) {
-    return findInMatchList(cup.quarterFinals, teamId, 'QUARTAS DE FINAL', cup.compId, 3, true);
+
+  if (!hit) return null;
+
+  // Na Copa do Mundo, todos os jogos são disputados em Estádios Cadastrados do País-Sede (sem casa/fora!)
+  if (cup.compId === 'WORLD_CUP') {
+    const host: LeagueCountryCode = cup.hostCountry ?? 'ESP';
+    const venue = resolveWorldCupMatchVenue(host, hit.matchId, hit.stageLabel);
+    return {
+      ...hit,
+      neutralVenue: true,
+      venueStadiumName: venue.stadiumName,
+      venueCity: venue.city,
+      venueCountry: venue.country,
+      venueCountryName: venue.countryName,
+      venueLat: venue.lat,
+      venueLng: venue.lng,
+    };
   }
-  if (week === 41 && day === 7) {
-    return findInMatchList(cup.semiFinals, teamId, 'SEMIFINAL', cup.compId, 7, true);
-  }
-  if (week === 42 && day === 7 && cup.finalMatch) {
-    return findInMatchList([cup.finalMatch], teamId, 'GRANDE FINAL', cup.compId, 7, true);
-  }
-  return null;
+
+  return {
+    ...hit,
+    neutralVenue: true,
+  };
 }
 
 export function findNationalTeamFixtureOnDay(
@@ -143,8 +195,7 @@ export function findNationalTeamFixtureOnDay(
   nationalTeamId: string,
   week: number,
   day: number,
-) {
-  // 1. Datas FIFA durante a temporada de clubes (Domingo = 7, Semanas 1..38)
+): NationalTeamDayFixture | null {
   if (day === 7 && week <= 38) {
     if (intl.cycleIndex === 0 || intl.cycleIndex === 2) {
       const wIdx = FIFA_WINDOW_WEEKS.indexOf(week as (typeof FIFA_WINDOW_WEEKS)[number]);
@@ -196,7 +247,6 @@ export function findNationalTeamFixtureOnDay(
     }
   }
 
-  // 2. Torneios de Verão (Semanas 39..42, Quarta=3 e Domingo=7)
   if (week >= 39 && week <= 42 && (day === 3 || day === 7)) {
     if (intl.cycleIndex === 1) {
       return (
@@ -287,6 +337,8 @@ function pushChampionRecord(
   return [
     {
       season: cup.seasonYear,
+      editionYear: cup.editionYear,
+      hostCountry: cup.hostCountry,
       tournamentName: cup.title,
       compId: cup.compId,
       championTeamId: cup.championTeamId,
@@ -307,9 +359,12 @@ export function rolloverInternationalSeason(
   pastChampions = pushChampionRecord(pastChampions, intl.worldCup);
   pastChampions = pastChampions.slice(0, 24);
 
+  const prevWcHosts = pastChampions
+    .filter((r) => r.compId === 'WORLD_CUP' && r.hostCountry)
+    .map((r) => r.hostCountry!);
+
   const nextCycle = ((intl.cycleIndex + 1) % 4) as 0 | 1 | 2 | 3;
 
-  // Transição Ano 1 -> Ano 2: Top 2 das Eliminatórias CONMEBOL entram na Liga das Nações com a Europa!
   if (nextCycle === 1) {
     const conmebolGrp = intl.qualifiers.find((q) => q.confederation === 'CONMEBOL');
     const conmebolTop2 = conmebolGrp
@@ -329,7 +384,6 @@ export function rolloverInternationalSeason(
     };
   }
 
-  // Transição Ano 2 -> Ano 3: Retoma o 2º Turno das MESMAS Eliminatórias!
   if (nextCycle === 2) {
     return {
       ...intl,
@@ -343,26 +397,33 @@ export function rolloverInternationalSeason(
     };
   }
 
-  // Transição Ano 3 -> Ano 4: Classifica as 32 Seleções para a Copa do Mundo FIFA!
+  // Transição Ano 3 -> Ano 4: Sorteia/confirma País-Sede e classifica as 32 Seleções (incluindo o País-Sede)!
   if (nextCycle === 3) {
-    const qualified32 = extractWorldCup32FromQualifiers(intl.qualifiers);
+    const editionYear = nextSeasonYear + 1;
+    const hostCountry =
+      intl.nextWorldCupHost ?? pickWorldCupHostCountry(editionYear, prevWcHosts);
+    const qualified32 = extractWorldCup32FromQualifiers(intl.qualifiers, hostCountry);
     return {
       ...intl,
       cycleIndex: 3,
+      nextWorldCupHost: hostCountry,
       qualifiedWorldCupIds: qualified32,
       nationsLeague: null,
       copaAmerica: null,
       euroCup: null,
-      worldCup: createWorldCupTournament(nextSeasonYear, qualified32),
+      worldCup: createWorldCupTournament(nextSeasonYear, qualified32, hostCountry),
       friendlyRounds: buildFriendlyRounds(nextSeasonYear),
       pastChampions,
     };
   }
 
-  // Transição Ano 4 -> Ano 1 de novo Ciclo Olímpico/FIFA: Zera Eliminatórias para a próxima Copa!
+  // Novo Ciclo de 4 Anos: já define o País-Sede da próxima Copa do Mundo (+4 anos à frente)!
   const freshQualifiers = createWorldCupQualifiers();
+  const nextCycleEditionYear = nextSeasonYear + 4;
+  const nextHost = pickWorldCupHostCountry(nextCycleEditionYear, prevWcHosts);
   return {
     cycleIndex: 0,
+    nextWorldCupHost: nextHost,
     qualifiers: freshQualifiers,
     conmebolNationsSpots: freshQualifiers[0].standings.slice(0, 2).map((r) => r.clubId),
     qualifiedWorldCupIds: [],

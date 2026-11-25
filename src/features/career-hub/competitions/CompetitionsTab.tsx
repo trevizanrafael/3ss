@@ -6,6 +6,7 @@ import {
   getQualifierCompId,
   InternationalCompId,
 } from '../../../data/world/competitionThemes';
+import { getWorldCupEditionInfo } from '../../../domains/international/worldCupHostVenues';
 import { findClubLeagueIdInWorld } from '../../../domains/season/worldSeasonEngine';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
@@ -254,12 +255,31 @@ export const CompetitionsTab: React.FC = () => {
               compact
               value={intlCupId}
               onChange={setIntlCupId}
-              options={[
-                { value: 'WORLD_CUP', label: 'COPA DO MUNDO FIFA (32 SELEÇÕES)' },
-                { value: 'NATIONS_LEAGUE', label: 'LIGA DAS NAÇÕES (UEFA + TOP 2 CONMEBOL)' },
-                { value: 'COPA_AMERICA', label: 'CONMEBOL COPA AMÉRICA (16 SELEÇÕES)' },
-                { value: 'EURO_CUP', label: 'UEFA EUROCOPA (16 SELEÇÕES)' },
-              ]}
+              options={(() => {
+                const wcInfo = getWorldCupEditionInfo(
+                  worldSeason.seasonYear,
+                  worldSeason.international,
+                );
+                return [
+                  {
+                    value: 'WORLD_CUP' as const,
+                    label: `${wcInfo.shortLabel} • ${wcInfo.hostCountryName.toUpperCase()}`,
+                    leadingVisual: <CountryFlag code={wcInfo.hostCountry} size="sm" />,
+                  },
+                  {
+                    value: 'NATIONS_LEAGUE' as const,
+                    label: 'LIGA DAS NAÇÕES (UEFA + TOP 2 CONMEBOL)',
+                  },
+                  {
+                    value: 'COPA_AMERICA' as const,
+                    label: 'CONMEBOL COPA AMÉRICA (16 SELEÇÕES)',
+                  },
+                  {
+                    value: 'EURO_CUP' as const,
+                    label: 'UEFA EUROCOPA (16 SELEÇÕES)',
+                  },
+                ];
+              })()}
             />
           ) : isClubCupMode ? (
             <ConsoleStepper

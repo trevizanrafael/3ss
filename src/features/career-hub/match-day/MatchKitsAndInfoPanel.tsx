@@ -16,7 +16,11 @@ interface KitColors {
   label: string;
 }
 
-export function resolveClubKitColors(club: ClubData, choice: KitChoice): KitColors {
+export function resolveClubKitColors(
+  club: ClubData,
+  choice: KitChoice,
+  neutral = false,
+): KitColors {
   const p = club.primaryColor || '#1E2430';
   const s = club.secondaryColor || '#F5F5F7';
   const isLightPrimary = p.toLowerCase() === '#ffffff' || p.toLowerCase() === '#fafafc';
@@ -26,13 +30,23 @@ export function resolveClubKitColors(club: ClubData, choice: KitChoice): KitColo
       shirt: p,
       trim: s,
       shorts: isLightPrimary ? '#12141A' : s,
-      label: 'UNIF. 1 (CASA)',
+      label: neutral ? 'UNIF. 1 (TITULAR)' : 'UNIF. 1 (CASA)',
     };
   }
   if (choice === 'AWAY') {
     return isLightPrimary
-      ? { shirt: '#151821', trim: p, shorts: '#151821', label: 'UNIF. 2 (FORA)' }
-      : { shirt: '#F2F3F7', trim: p, shorts: p, label: 'UNIF. 2 (FORA)' };
+      ? {
+          shirt: '#151821',
+          trim: p,
+          shorts: '#151821',
+          label: neutral ? 'UNIF. 2 (RESERVA)' : 'UNIF. 2 (FORA)',
+        }
+      : {
+          shirt: '#F2F3F7',
+          trim: p,
+          shorts: p,
+          label: neutral ? 'UNIF. 2 (RESERVA)' : 'UNIF. 2 (FORA)',
+        };
   }
   return {
     shirt: '#111216',
@@ -57,6 +71,12 @@ interface MatchKitsAndInfoPanelProps {
   onChangeMindset: (m: TacticalMindset) => void;
   isContinentalNight: boolean;
   accentColor: string;
+  isNeutralVenue?: boolean;
+  neutralVenue?: {
+    stadiumName: string;
+    city: string;
+    countryName: string;
+  };
   leg1Info?: {
     myShort: string;
     oppShort: string;
@@ -115,10 +135,12 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
   onChangeMindset,
   isContinentalNight,
   accentColor,
+  isNeutralVenue = false,
+  neutralVenue,
   leg1Info,
 }) => {
-  const hk = resolveClubKitColors(homeClub, homeKit);
-  const ak = resolveClubKitColors(awayClub, awayKit);
+  const hk = resolveClubKitColors(homeClub, homeKit, isNeutralVenue);
+  const ak = resolveClubKitColors(awayClub, awayKit, isNeutralVenue);
 
   const cycleKit = (curr: KitChoice, dir: -1 | 1) =>
     KIT_ORDER[(KIT_ORDER.indexOf(curr) + dir + KIT_ORDER.length) % KIT_ORDER.length];
@@ -132,6 +154,17 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
         ? 'TUDO IGUAL NA IDA • QUEM VENCER AVANÇA'
         : `PRECISA VENCER POR +${Math.abs(leg1Diff) + 1} (OU +${Math.abs(leg1Diff)} P/ PÊNALTIS)`;
 
+  const leftSideTag = isNeutralVenue
+    ? homeClub.id.startsWith('nt_')
+      ? 'SELEÇÃO'
+      : 'CAMPO NEUTRO'
+    : 'CASA';
+  const rightSideTag = isNeutralVenue
+    ? awayClub.id.startsWith('nt_')
+      ? 'SELEÇÃO'
+      : 'CAMPO NEUTRO'
+    : 'FORA';
+
   return (
     <div className="console-tile p-5 flex flex-col justify-between h-full min-h-0">
       {/* Confronto: Escudos e Classificação */}
@@ -140,7 +173,7 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           <ClubCrest clubId={homeClub.id} size="md" />
           <div className="min-w-0">
             <div className="text-[9px] uppercase tracking-widest text-[#9498A3]">
-              CASA {homeRank ? `• ${homeRank}º` : ''} {isPlayerHome ? '• VOCÊ' : ''}
+              {leftSideTag} {homeRank ? `• ${homeRank}º` : ''} {isPlayerHome ? '• VOCÊ' : ''}
             </div>
             <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate">
               {homeClub.name}
@@ -159,7 +192,7 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           <ClubCrest clubId={awayClub.id} size="md" />
           <div className="min-w-0">
             <div className="text-[9px] uppercase tracking-widest text-[#9498A3]">
-              FORA {awayRank ? `• ${awayRank}º` : ''} {!isPlayerHome ? '• VOCÊ' : ''}
+              {rightSideTag} {awayRank ? `• ${awayRank}º` : ''} {!isPlayerHome ? '• VOCÊ' : ''}
             </div>
             <div className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] truncate">
               {awayClub.name}
@@ -180,7 +213,7 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
         </div>
       )}
 
-      {/* Seletor de Uniformes dos 2 Times Estilo FIFA (LT troca Casa / RT troca Fora!) */}
+      {/* Seletor de Uniformes dos 2 Times Estilo FIFA (LT troca Esq / RT troca Dir!) */}
       <div className="my-auto py-2">
         <button
           type="button"
@@ -197,8 +230,14 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           className="hidden"
         />
         <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-[#9498A3] mb-1 px-1">
-          <GamepadBadge action="LT" label="UNIF. CASA" />
-          <GamepadBadge action="RT" label="UNIF. FORA" />
+          <GamepadBadge
+            action="LT"
+            label={isNeutralVenue ? `UNIF. ${homeClub.shortName}` : 'UNIF. CASA'}
+          />
+          <GamepadBadge
+            action="RT"
+            label={isNeutralVenue ? `UNIF. ${awayClub.shortName}` : 'UNIF. FORA'}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -238,13 +277,27 @@ export const MatchKitsAndInfoPanel: React.FC<MatchKitsAndInfoPanelProps> = ({
           <div className="bg-[#0E0F12] border border-[#242730] px-2.5 py-1.5">
             <span className="text-[9px] text-[#565A65] block">PALCO DO JOGO</span>
             <span className="font-condensed font-bold text-sm text-[#F5F5F7] truncate block">
-              {homeClub.stadiumName ?? homeClub.name}
+              {neutralVenue
+                ? `${neutralVenue.stadiumName} — ${neutralVenue.city}`
+                : (homeClub.stadiumName ?? homeClub.name)}
             </span>
           </div>
           <div className="bg-[#0E0F12] border border-[#242730] px-2.5 py-1.5">
-            <span className="text-[9px] text-[#565A65] block">CLIMA & HORÁRIO</span>
+            <span className="text-[9px] text-[#565A65] block">
+              {neutralVenue
+                ? 'PAÍS-SEDE • CAMPO NEUTRO'
+                : isNeutralVenue
+                  ? 'MANDO DE CAMPO'
+                  : 'CLIMA & HORÁRIO'}
+            </span>
             <span className="font-condensed font-bold text-sm text-[#F5F5F7] truncate block">
-              {isContinentalNight ? '21:30 • NOITE LIMPA' : '16:00 • GRAMADO BOM'}
+              {neutralVenue
+                ? `${neutralVenue.countryName.toUpperCase()} • SEM MANDO`
+                : isNeutralVenue
+                  ? 'SEDE NEUTRA • SEM VANTAGEM'
+                  : isContinentalNight
+                    ? '21:30 • NOITE LIMPA'
+                    : '16:00 • GRAMADO BOM'}
             </span>
           </div>
         </div>

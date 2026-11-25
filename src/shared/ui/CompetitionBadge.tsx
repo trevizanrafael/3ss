@@ -3,12 +3,15 @@ import {
   AnyCompetitionId,
   getCompetitionTheme,
 } from '../../data/world/competitionThemes';
+import { getWorldCupEditionInfo } from '../../domains/international/worldCupHostVenues';
+import { useCareerStore } from '../../state/useCareerStore';
 
 interface CompetitionBadgeProps {
   competitionId: AnyCompetitionId;
   size?: 'sm' | 'md' | 'lg';
   showName?: boolean;
   stageSubtitle?: string;
+  labelOverride?: string;
 }
 
 export const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
@@ -16,9 +19,19 @@ export const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
   size = 'md',
   showName = true,
   stageSubtitle,
+  labelOverride,
 }) => {
   const [failed, setFailed] = useState(false);
   const theme = getCompetitionTheme(competitionId);
+  const worldSeason = useCareerStore((s) =>
+    competitionId === 'WORLD_CUP' ? s.worldSeason : null,
+  );
+
+  const dynamicLabel =
+    labelOverride ??
+    (competitionId === 'WORLD_CUP' && worldSeason
+      ? getWorldCupEditionInfo(worldSeason.seasonYear, worldSeason.international).shortLabel
+      : theme.shortLabel);
 
   const imgCls =
     size === 'lg' ? 'w-10 h-10' : size === 'sm' ? 'w-5 h-5' : 'w-7 h-7';
@@ -28,7 +41,7 @@ export const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
       {theme.logoUrl && !failed ? (
         <img
           src={theme.logoUrl}
-          alt={theme.shortLabel}
+          alt={dynamicLabel}
           className={`${imgCls} object-contain shrink-0`}
           onError={() => setFailed(true)}
         />
@@ -45,7 +58,7 @@ export const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
             className="font-condensed uppercase font-extrabold tracking-wider text-sm block"
             style={{ color: theme.accentPrimary }}
           >
-            {theme.shortLabel}
+            {dynamicLabel}
           </span>
           {stageSubtitle && (
             <span className="text-[10px] uppercase tracking-widest text-[#9498A3] block">

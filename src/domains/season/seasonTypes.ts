@@ -1,6 +1,6 @@
 import { ContinentalCupId, LeagueId } from '../../data/leagues/leagues';
 import { AnyCompetitionId } from '../../data/world/competitionThemes';
-import { SquadRole } from '../../shared/types/common';
+import { LeagueCountryCode, SquadRole } from '../../shared/types/common';
 import { InternationalCycleState } from '../international/internationalTypes';
 
 export interface ClubStandingRow {
@@ -72,6 +72,14 @@ export interface ScheduledClubFixture {
   stageLabel: string;
   opponentId: string;
   isHome: boolean;
+  /** True em Copas de Sede Única (ex: Copa do Mundo), sem mando de casa/fora! */
+  neutralVenue?: boolean;
+  venueStadiumName?: string;
+  venueCity?: string;
+  venueCountry?: LeagueCountryCode;
+  venueCountryName?: string;
+  venueLat?: number;
+  venueLng?: number;
   dayOfWeek: 3 | 6 | 7;
   /** True quando este jogo decide mata-mata (jogo único eliminatório ou jogo de VOLTA)! */
   decidesKnockout?: boolean;
@@ -89,6 +97,7 @@ export interface SeasonHistoryRecord {
   championsLeagueWinnerId: string | null;
   libertadoresWinnerId: string | null;
   worldCupWinnerId?: string | null;
+  internationalCupLabel?: string;
   goals: number;
   assists: number;
 }

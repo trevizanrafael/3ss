@@ -319,8 +319,12 @@ export function evaluateEndOfSeasonAwards(
     const userNatId = `nt_${player.nationality.toLowerCase()}`;
     if (period.internationalMatches > 0 && world.international) {
       const intl = world.international;
+      const wcEdition = intl.worldCup?.editionYear ?? world.seasonYear + 1;
+      const wcTitle = intl.worldCup?.title
+        ? `CAMPEÃO • ${intl.worldCup.title}`
+        : `CAMPEÃO • COPA DO MUNDO ${wcEdition}`;
       for (const [champId, ntTitle, ntDetail] of [
-        [intl.worldCup?.championTeamId, 'CAMPEÃO • COPA DO MUNDO FIFA', 'GLÓRIA MÁXIMA MUNDIAL'],
+        [intl.worldCup?.championTeamId, wcTitle, 'GLÓRIA MÁXIMA MUNDIAL'],
         [intl.copaAmerica?.championTeamId, 'CAMPEÃO • CONMEBOL COPA AMÉRICA', 'TÍTULO DE SELEÇÕES'],
         [intl.euroCup?.championTeamId, 'CAMPEÃO • UEFA EUROCOPA', 'TÍTULO DE SELEÇÕES'],
         [intl.nationsLeague?.championTeamId, 'CAMPEÃO • LIGA DAS NAÇÕES', 'UEFA + CONMEBOL'],

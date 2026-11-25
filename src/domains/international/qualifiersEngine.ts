@@ -1,4 +1,5 @@
 import { getNationalTeamsByConfederation } from '../../data/clubs';
+import { LeagueCountryCode } from '../../shared/types/common';
 import { shuffleArray } from '../../shared/utils/math';
 import { PlayerScoreOverride } from '../season/continentalEngine';
 import {
@@ -158,7 +159,10 @@ export function simulateQualifiersWindow(
   });
 }
 
-export function extractWorldCup32FromQualifiers(qualifiers: QualifierGroupData[]): string[] {
+export function extractWorldCup32FromQualifiers(
+  qualifiers: QualifierGroupData[],
+  hostCountry?: LeagueCountryCode,
+): string[] {
   const qualified: string[] = [];
   const cafThirds: { clubId: string; points: number; gd: number }[] = [];
 
@@ -181,5 +185,12 @@ export function extractWorldCup32FromQualifiers(qualifiers: QualifierGroupData[]
   cafThirds.sort((a, b) => b.points - a.points || b.gd - a.gd);
   if (cafThirds[0]) qualified.push(cafThirds[0].clubId);
 
-  return qualified.slice(0, 32);
+  const final32 = qualified.slice(0, 32);
+  if (hostCountry) {
+    const hostTeamId = `nt_${hostCountry.toLowerCase()}`;
+    if (!final32.includes(hostTeamId) && final32.length === 32) {
+      final32[31] = hostTeamId;
+    }
+  }
+  return final32;
 }

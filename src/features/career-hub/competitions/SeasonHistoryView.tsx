@@ -85,7 +85,9 @@ export const SeasonHistoryView: React.FC<SeasonHistoryViewProps> = ({
                   onClick={() => ntChamp && onSelectClub(ntChamp.id)}
                   className="cursor-pointer"
                 >
-                  <span className="text-[10px] uppercase text-[#565A65] block">COPA DE SELEÇÕES</span>
+                  <span className="text-[10px] uppercase text-[#565A65] block">
+                    {h.internationalCupLabel ?? 'COPA DE SELEÇÕES'}
+                  </span>
                   <span className="font-condensed uppercase font-bold text-base text-[#2DBE60]">
                     {ntChamp?.name ?? 'ELIMINATÓRIAS'}
                   </span>

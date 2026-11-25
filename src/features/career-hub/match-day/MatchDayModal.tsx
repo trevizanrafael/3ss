@@ -3,6 +3,7 @@ import { getClubById } from '../../../data/clubs';
 import { LeagueId } from '../../../data/leagues/leagues';
 import { getCompetitionTheme } from '../../../data/world/competitionThemes';
 import { evaluateNationalCallUp } from '../../../domains/international/callUpEvaluator';
+import { MatchVenueInfo } from '../../../domains/international/worldCupHostVenues';
 import {
   MatchPerformanceResult,
   resolveMatchSimulation,
@@ -39,12 +40,14 @@ export const MatchDayModal: React.FC = () => {
     aggLabel?: string;
   } | null>(null);
   const [result, setResult] = useState<MatchPerformanceResult | null>(null);
+  const [lockedVenueInfo, setLockedVenueInfo] = useState<MatchVenueInfo | null>(null);
 
   useEffect(() => {
     if (!matchModalOpen) return;
     setHomeKit('HOME');
     setAwayKit('AWAY');
     setPendingPenMatch(null);
+    setLockedVenueInfo(null);
   }, [matchModalOpen]);
 
   const isPreMatchStage = matchModalOpen && !result && !pendingPenMatch;
@@ -92,7 +95,31 @@ export const MatchDayModal: React.FC = () => {
   const opponentClub = getClubById(opponentId);
   const homeClub = isHome ? myClub : opponentClub;
   const awayClub = isHome ? opponentClub : myClub;
-  const isNeutralFinal = stageLabel.includes('FINAL') && !stageLabel.includes('SEMI');
+  const isNeutralVenue = Boolean(
+    liveFixture?.neutralVenue ||
+      lockedVenueInfo ||
+      compId === 'WORLD_CUP' ||
+      compId === 'COPA_AMERICA' ||
+      compId === 'EURO_CUP',
+  );
+  const liveVenueInfo: MatchVenueInfo | null =
+    liveFixture?.venueStadiumName &&
+    liveFixture.venueCountry &&
+    liveFixture.venueLat !== undefined &&
+    liveFixture.venueLng !== undefined
+      ? {
+          stadiumName: liveFixture.venueStadiumName,
+          city: liveFixture.venueCity ?? '',
+          country: liveFixture.venueCountry,
+          countryName: liveFixture.venueCountryName ?? '',
+          lat: liveFixture.venueLat,
+          lng: liveFixture.venueLng,
+        }
+      : null;
+  const neutralVenueInfo = liveVenueInfo ?? lockedVenueInfo ?? undefined;
+
+  const isNeutralFinal =
+    isNeutralVenue || (stageLabel.includes('FINAL') && !stageLabel.includes('SEMI'));
   const activeRivalry =
     result?.rivalry ??
     resolveRivalryMatchContext(activeMyTeamId, opponentId, isHome, isNeutralFinal) ??
@@ -124,6 +151,9 @@ export const MatchDayModal: React.FC = () => {
 
   const handleStartMatch = () => {
     if (!liveFixture) return;
+    if (liveVenueInfo) {
+      setLockedVenueInfo(liveVenueInfo);
+    }
     const sim90 = resolveMatchSimulation(
       player,
       activeMyTeamId,
@@ -134,6 +164,7 @@ export const MatchDayModal: React.FC = () => {
       activeUserRole,
       activeStage,
       mindset,
+      isNeutralVenue,
     );
 
     const hasPrevLeg =
@@ -201,6 +232,7 @@ export const MatchDayModal: React.FC = () => {
   const handleClose = () => {
     setPendingPenMatch(null);
     setResult(null);
+    setLockedVenueInfo(null);
     setMatchModalOpen(false);
   };
 
@@ -222,7 +254,13 @@ export const MatchDayModal: React.FC = () => {
           <CompetitionBadge
             competitionId={compId}
             size="lg"
-            stageSubtitle={`${stageLabel} • ${isHome ? 'EM CASA' : 'FORA DE CASA'}${prevLegSubtitle}`}
+            stageSubtitle={
+              isNeutralVenue
+                ? neutralVenueInfo
+                  ? `${stageLabel} • SEDE: ${neutralVenueInfo.countryName.toUpperCase()} (${neutralVenueInfo.stadiumName})${prevLegSubtitle}`
+                  : `${stageLabel} • SEDE NEUTRA${prevLegSubtitle}`
+                : `${stageLabel} • ${isHome ? 'EM CASA' : 'FORA DE CASA'}${prevLegSubtitle}`
+            }
           />
           {activeRivalry && isPreMatchStage && (
             <span className="hidden md:inline-block pl-5 border-l border-[#242730] font-condensed uppercase font-extrabold text-xl tracking-wider text-[#C8A45D]">
@@ -304,6 +342,8 @@ export const MatchDayModal: React.FC = () => {
               onChangeMindset={setMindset}
               isContinentalNight={isContinental}
               accentColor={theme.accentPrimary}
+              isNeutralVenue={isNeutralVenue}
+              neutralVenue={neutralVenueInfo}
               leg1Info={leg1Info}
             />
           </div>
@@ -314,6 +354,8 @@ export const MatchDayModal: React.FC = () => {
               opponentClub={opponentClub}
               isHome={isHome}
               accentColor={theme.accentPrimary}
+              isNeutralVenue={isNeutralVenue}
+              neutralVenue={neutralVenueInfo}
             />
           </div>
 
@@ -334,7 +376,10 @@ export const MatchDayModal: React.FC = () => {
             style={{ borderTopColor: theme.accentPrimary }}
           >
             <div className="text-center text-xs uppercase tracking-[0.25em] text-[#9498A3] mb-3">
-              APITO FINAL • {homeClub.stadiumName ?? homeClub.name}
+              APITO FINAL •{' '}
+              {neutralVenueInfo
+                ? `${neutralVenueInfo.stadiumName}, ${neutralVenueInfo.city} (${neutralVenueInfo.countryName})`
+                : (homeClub.stadiumName ?? homeClub.name)}
               {result.aggregateNote ? ` • ${result.aggregateNote}` : ''}
             </div>
 

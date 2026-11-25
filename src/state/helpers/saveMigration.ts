@@ -5,6 +5,7 @@ import {
   createInitialInternationalState,
   simulateInternationalDay,
 } from '../../domains/international/internationalCalendar';
+import { pickWorldCupHostCountry } from '../../domains/international/worldCupHostVenues';
 import { findClubLeagueIdInWorld } from '../../domains/season/worldSeasonEngine';
 import { CareerState } from '../careerTypes';
 
@@ -214,6 +215,38 @@ export function migratePersistedCareerState(
     merged.worldSeason = {
       ...merged.worldSeason,
       international: intl,
+    };
+  } else if (merged.worldSeason?.international) {
+    // Backfill não-destrutivo de País-Sede e Ano da Copa do Mundo em saves abertos!
+    const intl = merged.worldSeason.international;
+    const sYear = merged.worldSeason.seasonYear ?? merged.calendar?.season ?? 2026;
+    const prevHosts = (intl.pastChampions ?? [])
+      .filter((r) => r.compId === 'WORLD_CUP' && r.hostCountry)
+      .map((r) => r.hostCountry!);
+    const cIdx = intl.cycleIndex ?? 0;
+    const upcomingEdition = sYear + ((3 - cIdx + 4) % 4) + 1;
+    const host = intl.nextWorldCupHost ?? pickWorldCupHostCountry(upcomingEdition, prevHosts);
+
+    let updatedWc = intl.worldCup;
+    if (updatedWc && (!updatedWc.hostCountry || !updatedWc.editionYear)) {
+      const wcYear = updatedWc.seasonYear + 1;
+      const wcHost = updatedWc.hostCountry ?? host;
+      const hostName = COUNTRIES[wcHost]?.name ?? wcHost;
+      updatedWc = {
+        ...updatedWc,
+        editionYear: wcYear,
+        hostCountry: wcHost,
+        title: `COPA DO MUNDO ${wcYear} • ${hostName.toUpperCase()}`,
+      };
+    }
+
+    merged.worldSeason = {
+      ...merged.worldSeason,
+      international: {
+        ...intl,
+        nextWorldCupHost: host,
+        worldCup: updatedWc,
+      },
     };
   }
 

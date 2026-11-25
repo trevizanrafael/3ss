@@ -1,5 +1,5 @@
 import { InternationalCompId } from '../../data/world/competitionThemes';
-import { ConfederationCode } from '../../shared/types/common';
+import { ConfederationCode, LeagueCountryCode } from '../../shared/types/common';
 import { ClubStandingRow, ContinentalGroup, FixtureMatch } from '../season/seasonTypes';
 
 export interface QualifierGroupData {
@@ -16,11 +16,13 @@ export interface NationalCupTournament {
   compId: InternationalCompId;
   title: string;
   seasonYear: number;
+  editionYear?: number; // Ex: 2030, 2034, 2038...
+  hostCountry?: LeagueCountryCode; // País-sede com estádios reais cadastrados!
   participantIds: string[];
-  conmebolGuestIds?: string[]; // Destaca as 2 seleções CONMEBOL classificadas via Eliminatórias
+  conmebolGuestIds?: string[];
   groups: ContinentalGroup[];
-  leagueBGroups?: ContinentalGroup[]; // Divisão B da Liga das Nações
-  roundOf16: FixtureMatch[]; // Usado na Copa do Mundo (32 seleções)
+  leagueBGroups?: ContinentalGroup[];
+  roundOf16: FixtureMatch[];
   quarterFinals: FixtureMatch[];
   semiFinals: FixtureMatch[];
   finalMatch: FixtureMatch | null;
@@ -29,6 +31,8 @@ export interface NationalCupTournament {
 
 export interface InternationalHistoryRecord {
   season: number;
+  editionYear?: number;
+  hostCountry?: LeagueCountryCode;
   tournamentName: string;
   compId: InternationalCompId;
   championTeamId: string;
@@ -37,13 +41,14 @@ export interface InternationalHistoryRecord {
 
 export interface InternationalCycleState {
   cycleIndex: 0 | 1 | 2 | 3; // 0: Elim Turno 1 | 1: Nations + Copa América + Euro | 2: Elim Turno 2 | 3: Copa do Mundo
+  nextWorldCupHost?: LeagueCountryCode; // País-sede já definido para a Copa deste ciclo de 4 anos!
   qualifiers: QualifierGroupData[];
-  conmebolNationsSpots: string[]; // As 2 primeiras da CONMEBOL nas Eliminatórias
-  qualifiedWorldCupIds: string[]; // As 32 seleções classificadas para a Copa do Mundo
+  conmebolNationsSpots: string[];
+  qualifiedWorldCupIds: string[];
   nationsLeague: NationalCupTournament | null;
   copaAmerica: NationalCupTournament | null;
   euroCup: NationalCupTournament | null;
   worldCup: NationalCupTournament | null;
-  friendlyRounds: FixtureMatch[][]; // Amistosos Data FIFA no ano da Copa
+  friendlyRounds: FixtureMatch[][];
   pastChampions: InternationalHistoryRecord[];
 }

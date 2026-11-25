@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { getClubById } from '../../../data/clubs';
+import { COUNTRIES } from '../../../data/countries/countries';
 import { InternationalCompId, getCompetitionTheme } from '../../../data/world/competitionThemes';
 import {
   InternationalCycleState,
   NationalCupTournament,
 } from '../../../domains/international/internationalTypes';
+import {
+  getHostCountryWorldCupVenues,
+  getWorldCupEditionInfo,
+  resolveWorldCupMatchVenue,
+} from '../../../domains/international/worldCupHostVenues';
 import { FixtureMatch } from '../../../domains/season/seasonTypes';
 import { GamepadBadge } from '../../../shared/gamepad/GamepadBadge';
 import { ClubCrest } from '../../../shared/ui/ClubCrest';
 import { CompetitionBadge } from '../../../shared/ui/CompetitionBadge';
+import { CountryFlag } from '../../../shared/ui/CountryFlag';
 
 interface InternationalCupBracketViewProps {
   compId: Extract<
@@ -48,30 +55,81 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
         ? (3 - intl.cycleIndex + 4) % 4
         : (1 - intl.cycleIndex + 4) % 4;
     const targetSeason = seasonYear + nextYearsAway;
+    const wcInfo = compId === 'WORLD_CUP' ? getWorldCupEditionInfo(seasonYear, intl) : null;
+    const hostVenues = wcInfo ? getHostCountryWorldCupVenues(wcInfo.hostCountry) : [];
     const lastChamp = intl.pastChampions.find((c) => c.compId === compId);
 
     return (
       <div
-        className="lg:col-span-8 console-tile border-t-[3px] p-6 flex flex-col justify-between min-h-0"
+        className="lg:col-span-8 console-tile border-t-[3px] p-6 flex flex-col justify-between min-h-0 overflow-y-auto"
         style={{ borderTopColor: theme.accentPrimary }}
       >
         <CompetitionBadge
           competitionId={compId}
           size="lg"
-          stageSubtitle={`CALENDÁRIO OFICIAL DO CICLO FIFA • PRÓXIMA EDIÇÃO EM ${targetSeason}/${String(targetSeason + 1).slice(-2)}`}
+          labelOverride={wcInfo?.shortLabel}
+          stageSubtitle={
+            wcInfo
+              ? `CALENDÁRIO OFICIAL DO CICLO FIFA • PAÍS-SEDE: ${wcInfo.hostCountryName.toUpperCase()}`
+              : `CALENDÁRIO OFICIAL DO CICLO FIFA • PRÓXIMA EDIÇÃO EM ${targetSeason}/${String(targetSeason + 1).slice(-2)}`
+          }
         />
 
-        <div className="my-auto max-w-xl space-y-4">
+        <div className="my-auto max-w-2xl space-y-4 py-3">
           <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7]">
-            TORNEIO PROGRAMADO PARA A TEMPORADA {targetSeason}
+            {wcInfo
+              ? `TORNEIO PROGRAMADO PARA JUNHO DE ${wcInfo.editionYear}`
+              : `TORNEIO PROGRAMADO PARA A TEMPORADA ${targetSeason}`}
           </div>
           <p className="text-xs text-[#9498A3] leading-relaxed">
             {compId === 'NATIONS_LEAGUE'
               ? 'Disputada no Ano 2 do ciclo FIFA reunindo as potências da UEFA + as 2 primeiras colocadas das Eliminatórias da CONMEBOL na Liga A.'
-              : compId === 'WORLD_CUP'
-                ? 'A Copa do Mundo FIFA encerra o ciclo de 4 anos nas Semanas 39 a 42 (Junho) com as 32 Seleções classificadas pelas Eliminatórias.'
+              : wcInfo
+                ? `A Copa do Mundo ${wcInfo.editionYear} será disputada integralmente em sede única (${wcInfo.hostCountryName}), sem vantagem de casa ou fora, nas Semanas 39 a 42 (Junho) com 32 Seleções.`
                 : 'Disputada no verão da Temporada 2 do ciclo FIFA (Semanas 39 a 42) logo após o término das ligas de clubes.'}
           </p>
+
+          {wcInfo && (
+            <div className="bg-[#0E0F12] border border-[#242730] p-4 space-y-3">
+              <div className="flex items-center justify-between gap-3 border-b border-[#1C1F26] pb-2.5">
+                <div className="flex items-center gap-2.5">
+                  <CountryFlag code={wcInfo.hostCountry} size="md" />
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-[#C8A45D] font-bold">
+                      PAÍS-SEDE OFICIAL • VAGA DIRETA GARANTIDA
+                    </div>
+                    <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7]">
+                      {wcInfo.hostCountryName} ({wcInfo.editionYear})
+                    </div>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 bg-[#16181D] border border-[#242730] font-condensed uppercase font-bold text-[11px] tracking-wider text-[#9498A3]">
+                  CAMPO NEUTRO • {hostVenues.length} ESTÁDIOS-SEDE
+                </span>
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-[#9498A3] mb-1.5">
+                  PRINCIPAIS ESTÁDIOS CADASTRADOS DA SEDE
+                </div>
+                <div className="grid sm:grid-cols-2 gap-1.5 text-xs">
+                  {hostVenues.slice(0, 6).map((v, idx) => (
+                    <div
+                      key={v.stadiumName}
+                      className="bg-[#14161B] border border-[#242730] px-2.5 py-1.5 flex items-center justify-between gap-2"
+                    >
+                      <span className="font-condensed uppercase font-bold text-[#F5F5F7] truncate">
+                        {idx === 0 ? `★ ${v.stadiumName}` : v.stadiumName}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-[#9498A3] shrink-0">
+                        {idx === 0 ? `${v.city} • FINAL` : v.city}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {compId === 'NATIONS_LEAGUE' && intl.conmebolNationsSpots.length > 0 && (
             <div className="bg-[#0E0F12] border border-[#242730] p-4">
@@ -103,7 +161,11 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
               <ClubCrest clubId={lastChamp.championTeamId} size="md" />
               <div>
                 <div className="text-[10px] uppercase tracking-widest text-[#C8A45D]">
-                  ÚLTIMO CAMPEÃO ({lastChamp.season})
+                  ÚLTIMO CAMPEÃO (
+                  {compId === 'WORLD_CUP'
+                    ? (lastChamp.editionYear ?? lastChamp.season + 1)
+                    : lastChamp.season}
+                  )
                 </div>
                 <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7]">
                   {getClubById(lastChamp.championTeamId).name}
@@ -122,12 +184,24 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
 
   const guestSet = new Set(cup.conmebolGuestIds ?? []);
   const allGroups = [...cup.groups, ...(cup.leagueBGroups ?? [])];
+  const cupEditionYear = cup.editionYear ?? cup.seasonYear + 1;
+  const cupHostCountry = cup.hostCountry;
+  const cupHostName = cupHostCountry ? (COUNTRIES[cupHostCountry]?.name ?? cupHostCountry) : null;
+  const cupHostFlagshipVenue =
+    compId === 'WORLD_CUP' && cupHostCountry
+      ? getHostCountryWorldCupVenues(cupHostCountry)[0]
+      : null;
 
-  const renderSingleMatch = (m: FixtureMatch) => {
+  const renderSingleMatch = (m: FixtureMatch, stageName: string) => {
     const h = getClubById(m.homeClubId);
     const a = getClubById(m.awayClubId);
     const hasPen =
       m.penHome !== undefined && m.penHome !== null && m.penAway !== undefined && m.penAway !== null;
+    const matchVenue =
+      compId === 'WORLD_CUP' && cupHostCountry
+        ? resolveWorldCupMatchVenue(cupHostCountry, m.id, stageName)
+        : null;
+
     return (
       <div key={m.id} className="bg-[#0E0F12] border border-[#242730] p-3 text-xs space-y-1.5">
         {[
@@ -156,6 +230,14 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
             </span>
           </div>
         ))}
+        {matchVenue && (
+          <div className="pt-1.5 border-t border-[#191B20] flex items-center justify-between text-[10px] uppercase tracking-wider text-[#565A65] px-1">
+            <span>ESTÁDIO-SEDE</span>
+            <span className="truncate ml-2 text-[#9498A3]">
+              {matchVenue.stadiumName} • {matchVenue.city}
+            </span>
+          </div>
+        )}
       </div>
     );
   };
@@ -163,8 +245,23 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
   return (
     <div className="lg:col-span-8 console-tile p-5 flex flex-col min-h-0">
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-[#242730] shrink-0">
-        <div className="flex items-center gap-4">
-          <CompetitionBadge competitionId={compId} size="md" />
+        <div className="flex flex-wrap items-center gap-3">
+          <CompetitionBadge
+            competitionId={compId}
+            size="md"
+            labelOverride={
+              compId === 'WORLD_CUP' ? `COPA DO MUNDO ${cupEditionYear}` : undefined
+            }
+          />
+          {compId === 'WORLD_CUP' && cupHostCountry && (
+            <span className="px-2.5 py-1 bg-[#14161B] border border-[#242730] inline-flex items-center gap-1.5 font-condensed uppercase font-bold text-xs tracking-wider text-[#F5F5F7]">
+              <CountryFlag code={cupHostCountry} size="xs" />
+              <span>
+                SEDE: {cupHostName?.toUpperCase()}
+                {cupHostFlagshipVenue ? ` • FINAL NO ${cupHostFlagshipVenue.stadiumName.toUpperCase()}` : ''}
+              </span>
+            </span>
+          )}
           {cup.championTeamId && (
             <span
               className="px-2.5 py-0.5 font-condensed uppercase font-extrabold text-xs"
@@ -270,7 +367,7 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
               <div className="font-condensed uppercase font-bold text-xs tracking-widest text-[#C8A45D] mb-2">
                 GRANDE FINAL
               </div>
-              {renderSingleMatch(cup.finalMatch)}
+              {renderSingleMatch(cup.finalMatch, 'GRANDE FINAL')}
             </div>
           )}
 
@@ -281,12 +378,15 @@ export const InternationalCupBracketView: React.FC<InternationalCupBracketViewPr
           ].map(([lbl, list]) => {
             const arr = list as FixtureMatch[];
             if (arr.length === 0) return null;
+            const stageTitle = lbl as string;
             return (
-              <div key={lbl as string}>
+              <div key={stageTitle}>
                 <div className="font-condensed uppercase font-bold text-xs tracking-widest text-[#9498A3] mb-2">
-                  {lbl as string}
+                  {stageTitle}
                 </div>
-                <div className="grid sm:grid-cols-2 gap-3">{arr.map(renderSingleMatch)}</div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {arr.map((m) => renderSingleMatch(m, stageTitle))}
+                </div>
               </div>
             );
           })}
