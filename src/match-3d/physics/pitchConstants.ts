@@ -1,13 +1,14 @@
 /**
- * Dimensões calibradas para jogabilidade 3D em 3ª pessoa:
- * Gol mais largo e mais alto (9.0m × 3.05m) proporcional aos atletas blocky e bola levemente menor (0.185m)
- * para abrir ângulos reais nos cantos, gavetas e cavadinhas no 1x1!
+ * Escala Oficial de Campo de Futebol 11v11 (105m × 68m FIFA Standard):
+ * - Eixo Z: -52.5m (Gol Norte / Alvo atacado pelo time do usuário) até +52.5m (Gol Sul / Defendido pelo time do usuário)
+ * - Eixo X: -34.0m (Lateral Esquerda) até +34.0m (Lateral Direita)
+ * - Mantém as proporções calibradas de trave (9.0m × 3.05m) e bola (0.185m) aprovadas nos testes de finalização!
  */
 export const PITCH = {
-  LENGTH: 84, // Eixo Z: -42 (Gol Norte / Alvo) até +42 (Gol Sul)
-  WIDTH: 56, // Eixo X: -28 até +28
-  HALF_L: 42,
-  HALF_W: 28,
+  LENGTH: 105,
+  WIDTH: 68,
+  HALF_L: 52.5,
+  HALF_W: 34,
 
   GOAL_WIDTH: 9.0,
   GOAL_HALF_W: 4.5,
@@ -15,11 +16,12 @@ export const PITCH = {
   GOAL_DEPTH: 2.65,
   POST_RADIUS: 0.075,
 
-  PENALTY_BOX_W: 33.0,
-  PENALTY_BOX_D: 15.0,
-  SIX_YARD_W: 17.0,
-  SIX_YARD_D: 5.2,
-  PENALTY_SPOT_Z: -31.0,
+  PENALTY_BOX_W: 40.32,
+  PENALTY_BOX_D: 16.5,
+  SIX_YARD_W: 18.32,
+  SIX_YARD_D: 5.5,
+  PENALTY_SPOT_DIST: 11.0,
+  PENALTY_SPOT_Z: -41.5, // -HALF_L + 11.0
 
   BALL_RADIUS: 0.185,
 } as const;

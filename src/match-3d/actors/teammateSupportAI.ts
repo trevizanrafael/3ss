@@ -178,6 +178,7 @@ export function stepSupportTeammateAI(
   const shootAtOpenGoalCorner = () => {
     ball.ownerId = null;
     ball.lastTouchBy = 'MATE';
+    ball.lastTouchTeam = 'HOME';
     ball.touchCooldown = 0.45;
     mate.shotCooldown = 2.2;
     mate.queuedCall = null;
@@ -210,6 +211,7 @@ export function stepSupportTeammateAI(
   const deliverPassToUser = (mode: 'PASS' | 'THROUGH' | 'CROSS') => {
     ball.ownerId = null;
     ball.lastTouchBy = 'MATE';
+    ball.lastTouchTeam = 'HOME';
     ball.touchCooldown = 0.32;
     mate.queuedCall = null;
     mate.queuedCallTimer = 0;
@@ -225,7 +227,7 @@ export function stepSupportTeammateAI(
       targetZ = Math.max(-PITCH.HALF_L + 5.2, userPos.z + leadZ);
     } else if (mode === 'CROSS') {
       targetX = userPos.x + userVel.x * 0.5;
-      targetZ = Math.max(-PITCH.HALF_L + 5.8, Math.min(userPos.z - 2.0, -29));
+      targetZ = Math.max(-PITCH.HALF_L + 5.8, Math.min(userPos.z - 2.0, -PITCH.HALF_L + 13.0));
     }
 
     const dx = targetX - mate.pos.x;
@@ -277,7 +279,7 @@ export function stepSupportTeammateAI(
       return { deliveredAssistPass, shotByMateFromUserPass: false };
     }
 
-    const inPrimeBox = mate.pos.z < -29.5 && Math.abs(mate.pos.x) < 12.0;
+    const inPrimeBox = mate.pos.z < -PITCH.HALF_L + 13.0 && Math.abs(mate.pos.x) < 12.0;
     const distMateToGk = Math.hypot(mate.pos.x - gkPos.x, mate.pos.z - gkPos.z);
     if (
       cameFromUser &&
@@ -295,6 +297,7 @@ export function stepSupportTeammateAI(
 
     ball.ownerId = 'MATE';
     ball.lastTouchBy = 'MATE';
+    ball.lastTouchTeam = 'HOME';
     ball.spin.set(0, 0, 0);
     mate.holdTimer = 1.35;
   }
@@ -336,7 +339,7 @@ export function stepSupportTeammateAI(
       const distToGk = Math.hypot(mate.pos.x - gkPos.x, mate.pos.z - gkPos.z);
       const hasGreatShotAngle =
         mate.shotCooldown <= 0 &&
-        mate.pos.z < -25.0 &&
+        mate.pos.z < -PITCH.HALF_L + 17.5 &&
         Math.abs(mate.pos.x) < 13.5 &&
         distToGoal < 19.5 &&
         distToGk > 2.2;
@@ -388,9 +391,9 @@ export function stepSupportTeammateAI(
     }
 
     if (!chasingLooseBall) {
-      if (Math.abs(userPos.x) > 9.5 && userPos.z < -18) {
+      if (Math.abs(userPos.x) > 9.5 && userPos.z < -PITCH.HALF_L + 24.0) {
         targetX = userPos.x > 0 ? -3.0 : 3.0;
-        targetZ = Math.max(-PITCH.HALF_L + 8.0, Math.min(-30, userPos.z - 3.0));
+        targetZ = Math.max(-PITCH.HALF_L + 8.0, Math.min(-PITCH.HALF_L + 12.0, userPos.z - 3.0));
       } else {
         targetX = userPos.x >= 0 ? -9.5 : 9.5;
         targetZ = Math.max(-PITCH.HALF_L + 9.0, Math.min(12, userPos.z - 4.0));

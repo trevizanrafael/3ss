@@ -27,6 +27,7 @@ import {
 } from '../physics/playerLocomotion';
 import { buildStadium3D } from '../stadium/buildStadium3D';
 import { ArenaHudSnapshot, ArenaSessionProps, KickKind } from '../types';
+import { Match11v11ArenaModal } from './Match11v11ArenaModal';
 import { PitchHudOverlay } from './PitchHudOverlay';
 
 function computeEarnedStars(points: number, mode: ArenaSessionProps['mode']): StarRating {
@@ -48,14 +49,31 @@ function shortestYawDelta(from: number, to: number): number {
 }
 
 const SPAWN_PRESETS: { px: number; pz: number; bx: number; bz: number; mx: number; mz: number }[] = [
-  { px: 0, pz: -11, bx: 0, bz: -13, mx: 10.5, mz: -16 },
-  { px: -9.5, pz: -15, bx: -8.5, bz: -16.5, mx: 4.5, mz: -21 },
-  { px: 9.5, pz: -15, bx: 8.5, bz: -16.5, mx: -4.5, mz: -21 },
-  { px: 0, pz: -20, bx: 0, bz: -21.5, mx: 11.5, mz: -25 },
-  { px: -13, pz: -10, bx: -11.5, bz: -12, mx: 2, mz: -18 },
+  { px: 0, pz: -21.5, bx: 0, bz: -23.5, mx: 10.5, mz: -26.5 },
+  { px: -9.5, pz: -25.5, bx: -8.5, bz: -27, mx: 4.5, mz: -31.5 },
+  { px: 9.5, pz: -25.5, bx: 8.5, bz: -27, mx: -4.5, mz: -31.5 },
+  { px: 0, pz: -30.5, bx: 0, bz: -32, mx: 11.5, mz: -35.5 },
+  { px: -13, pz: -20.5, bx: -11.5, bz: -22.5, mx: 2, mz: -28.5 },
 ];
 
-export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
+export const PitchArenaModal: React.FC<ArenaSessionProps> = (props) => {
+  if (props.mode === 'FREE_PLAY') {
+    return (
+      <Match11v11ArenaModal
+        player={props.player}
+        club={props.club}
+        competitionId={props.competitionId}
+        onExit={() => {
+          if (props.onCancel) props.onCancel();
+          else props.onFinishSession(3, 0);
+        }}
+      />
+    );
+  }
+  return <TryoutDrillArenaModal {...props} />;
+};
+
+const TryoutDrillArenaModal: React.FC<ArenaSessionProps> = ({
   mode,
   player,
   club,

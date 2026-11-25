@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { getClubById, getNationalTeamByCountry } from '../../data/clubs';
+import { getClubById } from '../../data/clubs';
 import { getCompetitionTheme } from '../../data/world/competitionThemes';
 import { createInitialPlayer } from '../../domains/player/createInitialPlayer';
+import { resolvePrimaryRivalForClub } from '../../domains/rivalry/resolvePrimaryRival';
 import { findClubLeagueIdInWorld } from '../../domains/season/worldSeasonEngine';
 import { PitchArenaModal } from '../../match-3d/ui/PitchArenaModal';
 import { useUiSoundStore } from '../../shared/audio/uiSoundEngine';
@@ -27,6 +28,14 @@ export const MainMenuScreen: React.FC = () => {
 
   const currentClub = contract ? getClubById(contract.clubId) : null;
   const canContinue = Boolean(hasActiveSave && player && contract && currentClub);
+  const sandboxClub = useMemo(
+    () => currentClub ?? getClubById('flamengo_819'),
+    [currentClub],
+  );
+  const sandboxDerby = useMemo(
+    () => resolvePrimaryRivalForClub(sandboxClub),
+    [sandboxClub],
+  );
 
   const fallbackPlayer = useMemo(
     () =>
@@ -222,21 +231,32 @@ export const MainMenuScreen: React.FC = () => {
             id="menu-arena"
             data-nav-up="menu-new"
             data-pad-y="true"
-            data-focus-label="ENTRAR NO GRAMADO 3D AGORA"
+            data-focus-label="JOGAR CLÁSSICO 11v11 AGORA"
             onClick={() => setArenaOpen(true)}
             className="console-tile console-tile-interactive text-left p-5 border-l-4 border-l-[#2DBE60] cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-1.5">
               <span className="font-condensed uppercase text-xs tracking-[0.22em] text-[#2DBE60] font-bold">
-                {canContinue ? '03 // TREINO LIVRE NO CAMPO' : '02 // TESTAR GAMEPLAY 3D'}
+                {canContinue
+                  ? `03 // CLÁSSICO 11v11 • ${sandboxDerby.derbyName}`
+                  : '02 // PARTIDA RÁPIDA 11v11 3D'}
               </span>
-              <GamepadBadge action="ALT_Y" label="CAMPO 3D" />
+              <GamepadBadge action="ALT_Y" label="CLÁSSICO 3D" />
             </div>
-            <div className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] leading-none">
-              ARENA DE FUTEBOL 3D (LIVRE)
-            </div>
-            <div className="text-xs text-[#9498A3] mt-1.5 uppercase tracking-wider">
-              3ª PESSOA • CURVA COLOCADA • TABELINHA & GOLEIRO IA
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="font-condensed uppercase font-extrabold text-2xl text-[#F5F5F7] leading-none truncate">
+                  {sandboxClub.shortName} × {sandboxDerby.rivalClub.shortName} (11v11)
+                </div>
+                <div className="text-xs text-[#9498A3] mt-1.5 uppercase tracking-wider truncate">
+                  CAMPO REAL 105×68M • FORMAÇÕES TÁTICAS IA • SEU ATLETA
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <ClubCrest clubId={sandboxClub.id} size="sm" />
+                <span className="font-condensed font-extrabold text-xs text-[#565A65]">×</span>
+                <ClubCrest clubId={sandboxDerby.rivalClub.id} size="sm" />
+              </div>
             </div>
           </button>
         </div>
@@ -254,7 +274,7 @@ export const MainMenuScreen: React.FC = () => {
         <PitchArenaModal
           mode="FREE_PLAY"
           player={player ?? fallbackPlayer}
-          club={currentClub ?? getNationalTeamByCountry('BRA')}
+          club={sandboxClub}
           competitionId={activeLeagueId}
           onFinishSession={() => setArenaOpen(false)}
           onCancel={() => setArenaOpen(false)}

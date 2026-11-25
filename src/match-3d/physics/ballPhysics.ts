@@ -8,8 +8,9 @@ export interface BallState {
   spin: THREE.Vector3;
   /** Rotação visual acumulada da malha da bola */
   quat: THREE.Quaternion;
-  ownerId: 'USER' | 'MATE' | 'GK' | null;
-  lastTouchBy: 'USER' | 'MATE' | 'GK' | null;
+  ownerId: string | null;
+  lastTouchBy: string | null;
+  lastTouchTeam: 'HOME' | 'AWAY' | null;
   touchCooldown: number;
   /** Só fica preenchido quando a bola entrou PELA FRENTE da boca do gol! */
   enteredGoalSide: 'NORTH' | 'SOUTH' | null;
@@ -44,6 +45,7 @@ export function createInitialBallState(x = 0, z = -14): BallState {
     quat: new THREE.Quaternion(),
     ownerId: null,
     lastTouchBy: null,
+    lastTouchTeam: null,
     touchCooldown: 0,
     enteredGoalSide: null,
     netRipple: 0,
@@ -253,7 +255,9 @@ export function stepBallPhysics(ball: BallState, dt: number): BallStepEvents {
     if (north.inGoal) events.scoredNorthGoal = true;
     if (south.inGoal) events.scoredSouthGoal = true;
 
-    if (!north.inGoal && !south.inGoal && ball.ownerId !== 'GK') {
+    const isKeeperHolding =
+      ball.ownerId === 'GK' || ball.ownerId === 'HOME_GK' || ball.ownerId === 'AWAY_GK';
+    if (!north.inGoal && !south.inGoal && !isKeeperHolding) {
       if (
         Math.abs(ball.pos.x) > PITCH.HALF_W + 0.35 ||
         Math.abs(ball.pos.z) > PITCH.HALF_L + 0.45
