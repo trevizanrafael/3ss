@@ -17,6 +17,8 @@ export interface GoalkeeperBrain {
   vel: THREE.Vector3;
   diveTimer: number;
   diveDir: -1 | 0 | 1;
+  diveHeight01: number;
+  highJumpTimer: number;
   holdBallTimer: number;
   smotherCooldown: number;
   fakeShotFreezeTimer: number;
@@ -103,6 +105,8 @@ export function createGoalkeeperAI(opponentClub: ClubData): GoalkeeperBrain {
     vel: new THREE.Vector3(),
     diveTimer: 0,
     diveDir: 0,
+    diveHeight01: 0.3,
+    highJumpTimer: 0,
     holdBallTimer: 0,
     smotherCooldown: 0,
     fakeShotFreezeTimer: 0,
@@ -130,6 +134,7 @@ export function stepGoalkeeperAI(
   gk.smotherCooldown = Math.max(0, gk.smotherCooldown - dt);
   gk.fakeShotFreezeTimer = Math.max(0, gk.fakeShotFreezeTimer - dt);
   gk.recentSaveTimer = Math.max(0, gk.recentSaveTimer - dt);
+  gk.highJumpTimer = Math.max(0, gk.highJumpTimer - dt);
   gk.spreadCommitTimer = Math.max(0, gk.spreadCommitTimer - dt);
   if (gk.spreadCommitTimer <= 0) {
     gk.inSpreadStance = false;
@@ -270,13 +275,16 @@ export function stepGoalkeeperAI(
           const deltaX = predX - gk.pos.x;
           // Só salta quando a bola realmente está chegando perto (tHit < 0.30s), nunca 1 segundo antes!
           const diveTriggerTime = isVeryFarMidfield ? 0.44 : 0.29;
-          if (Math.abs(deltaX) > 0.95 && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.1) {
+          if (Math.abs(deltaX) > 0.72 && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.1) {
             gk.diveDir = deltaX < 0 ? -1 : 1;
             gk.diveTimer = 0.44;
+            gk.diveHeight01 = Math.max(0, Math.min(1, (yAtGk - 0.5) / 2.1));
             const diveSpd = isVeryFarMidfield
               ? 6.2 + skillDifficulty01 * 1.5
               : 5.1 + skillDifficulty01 * 1.25;
             gk.vel.set(gk.diveDir * diveSpd, 0, 0);
+          } else if (Math.abs(deltaX) <= 0.72 && yAtGk > 1.75 && tHit < 0.34) {
+            gk.highJumpTimer = 0.38;
           }
         }
       }
@@ -316,40 +324,42 @@ export function stepGoalkeeperAI(
     ball.lastTouchBy = 'GK';
     gk.holdBallTimer = 0.95;
   } else if (
-    // 5. Defesa de Chutes:
-    // - De longe (shotOriginDist >= 16.5m): alcance alto até 2.98m (pega cavadinha/chapadinha mansa de longe!)
-    // - No mano a mano (< 14m): alcance humano enxuto (deixa os cantos do gol de 9m livres se bater colocado/forte!)
+    // 5. Defesa de Chutes COM CONTATO VISUAL REAL (só espalma/agarra onde o corpo ou as luvas realmente encostam!):
     ball.ownerId === null &&
     ball.touchCooldown <= 0.19 &&
     ball.pos.z > -PITCH.HALF_L - 0.1
   ) {
-    const isVeryFar = gk.shotOriginDist >= 28.5;
-    const reachX = gk.inSpreadStance
-      ? 1.06
-      : gk.diveTimer > 0
-        ? isVeryFar
-          ? 1.45
-          : 1.2
-        : isVeryFar
-          ? 0.98
-          : 0.8;
-    const reachZ = 0.85;
-    const reachY = gk.inSpreadStance
-      ? 1.32
-      : isVeryFar
-        ? 2.98
-        : gk.diveTimer > 0
-          ? 2.62
-          : 2.45;
-
-    const dx = Math.abs(ball.pos.x - gk.pos.x);
     const dz = Math.abs(ball.pos.z - gk.pos.z);
+    // Quando salta pro lado (diveDir = -1 ou +1), as luvas/tronco se projetam pro lado do salto (NUNCA atrás do pé!)
+    const hitCenterX =
+      gk.diveTimer > 0 && gk.diveDir !== 0 ? gk.pos.x + gk.diveDir * 0.56 : gk.pos.x;
+    const halfSpanX = gk.inSpreadStance
+      ? 0.96
+      : gk.diveTimer > 0
+        ? 0.68
+        : 0.52;
+
+    const minReachY = gk.diveTimer > 0 && gk.diveHeight01 > 0.65 ? 0.55 : 0;
+    const maxReachY = gk.inSpreadStance
+      ? 1.28
+      : gk.diveTimer > 0
+        ? 0.95 + gk.diveHeight01 * 1.68
+        : gk.highJumpTimer > 0
+          ? 2.68
+          : 1.98;
+
+    const dx = Math.abs(ball.pos.x - hitCenterX);
+    const inHeightBand = ball.pos.y >= minReachY && ball.pos.y <= maxReachY;
 
     const movingTowardGoalOrLooseClose =
-      ball.vel.z < -1.0 || (currDistHoriz < 0.95 && ball.pos.z < -34);
+      ball.vel.z < -1.0 || (currDistHoriz < 0.82 && ball.pos.z < -34);
 
-    if (dx < reachX && dz < reachZ && ball.pos.y < reachY && movingTowardGoalOrLooseClose) {
+    if (dx <= halfSpanX && dz <= 0.48 && inHeightBand && movingTowardGoalOrLooseClose) {
       madeSave = true;
+      const isVeryFar = gk.shotOriginDist >= 28.5;
+      if (ball.pos.y > 1.7 && gk.diveTimer <= 0 && !gk.inSpreadStance) {
+        gk.highJumpTimer = 0.35;
+      }
       const shotSpeed = ball.vel.length();
       playBallKickSfx(0.7);
 
@@ -403,12 +413,22 @@ export function stepGoalkeeperAI(
       ? 'GK_DIVE_LEFT'
       : gk.diveDir === 1
         ? 'GK_DIVE_RIGHT'
-        : gk.inSpreadStance
-          ? 'GK_SPREAD_LOW'
-          : gkSpd > 3.2
-            ? 'RUN'
-            : 'GK_READY';
-  animatePitchActor(gk.actor, pose, gkSpd, 0, false, dt, timeSec);
+        : gk.highJumpTimer > 0
+          ? 'GK_JUMP_HIGH'
+          : gk.inSpreadStance
+            ? 'GK_SPREAD_LOW'
+            : gkSpd > 3.2
+              ? 'RUN'
+              : 'GK_READY';
+  animatePitchActor(
+    gk.actor,
+    pose,
+    gkSpd,
+    gk.diveTimer > 0 ? gk.diveHeight01 : 0,
+    false,
+    dt,
+    timeSec,
+  );
 
   return { madeSave, caughtFirmly };
 }

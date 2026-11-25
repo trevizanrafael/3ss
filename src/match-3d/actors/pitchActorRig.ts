@@ -15,6 +15,7 @@ export type PitchPoseState =
   | 'SLIDE'
   | 'CELEBRATE'
   | 'GK_READY'
+  | 'GK_JUMP_HIGH'
   | 'GK_SPREAD_LOW'
   | 'GK_DIVE_LEFT'
   | 'GK_DIVE_RIGHT';
@@ -76,14 +77,27 @@ export function animatePitchActor(
 
   if (pose === 'GK_DIVE_LEFT' || pose === 'GK_DIVE_RIGHT') {
     const sign = pose === 'GK_DIVE_LEFT' ? 1 : -1;
-    ch.position.y = 0.42;
+    // charge01 passa a altura da ponte (0 = rasteira 0.32m, 1 = voo alto na gaveta 1.65m!)
+    ch.position.y = 0.32 + Math.max(0, Math.min(1, charge01)) * 1.35;
     ch.rotation.z = sign * 1.28;
-    rig.leftArmPivot.rotation.set(-2.65, 0, -0.25);
-    rig.rightArmPivot.rotation.set(-2.65, 0, 0.25);
-    rig.leftForearmPivot.rotation.x = -0.1;
-    rig.rightForearmPivot.rotation.x = -0.1;
+    rig.leftArmPivot.rotation.set(-2.75, 0, -0.2);
+    rig.rightArmPivot.rotation.set(-2.75, 0, 0.2);
+    rig.leftForearmPivot.rotation.x = -0.08;
+    rig.rightForearmPivot.rotation.x = -0.08;
     rig.leftLegPivot.rotation.set(0.18, 0, 0);
     rig.rightLegPivot.rotation.set(-0.12, 0, 0);
+    return;
+  }
+
+  if (pose === 'GK_JUMP_HIGH') {
+    ch.position.y = 0.55;
+    rig.headPivot.rotation.set(-0.22, 0, 0);
+    rig.leftArmPivot.rotation.set(-2.85, 0, -0.18);
+    rig.rightArmPivot.rotation.set(-2.85, 0, 0.18);
+    rig.leftForearmPivot.rotation.x = -0.08;
+    rig.rightForearmPivot.rotation.x = -0.08;
+    rig.leftLegPivot.rotation.set(0.12, 0, -0.08);
+    rig.rightLegPivot.rotation.set(-0.22, 0, 0.08);
     return;
   }
 

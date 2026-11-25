@@ -470,10 +470,23 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
             ? pState.lockedPower01
             : pState.powerCharge01;
 
+      const finesseChargeLeftFoot =
+        ball.pos.x < -0.9
+          ? false
+          : ball.pos.x > 0.9
+            ? true
+            : inp.moveX > 0.22
+              ? false
+              : inp.moveX < -0.22
+                ? true
+                : activePlayer.preferredFoot === 'ESQUERDA';
+
       const animUseLeftFoot =
         userPose === 'KICK' || userPose === 'FAKE_SHOT'
           ? pState.lastKickUsedLeftFoot
-          : activePlayer.preferredFoot === 'ESQUERDA';
+          : userPose === 'CHARGE' && (pState.chargingFinesse || inp.finesseHeld)
+            ? finesseChargeLeftFoot
+            : activePlayer.preferredFoot === 'ESQUERDA';
 
       animatePitchActor(
         userActor,

@@ -372,47 +372,68 @@ export function stepPlayerAndBallControl(
       const bestSide = pickSmartBestCornerSign(ball.pos, gkPos, input.moveX);
 
       if (isChip) {
-        // CAVADINHA (LB + B): recurso de habilidade quando o goleiro sai/ajoelha no 1x1!
+        // CAVADINHA (LB + B): Parábola gravitacional pura (sobe redondinha e cai de cima pra baixo no gol!)
         pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
-        const errorX = (Math.random() - 0.5) * (1 - finSkill) * 0.95;
-        const targetX = bestSide * (2.25 + finSkill * 1.15) + errorX;
+        const errorX = (Math.random() - 0.5) * (1 - finSkill) * 0.9;
+        const targetX = bestSide * (2.1 + finSkill * 1.1) + errorX;
         const dx = targetX - ball.pos.x;
-        const dz = -PITCH.HALF_L + 0.55 - ball.pos.z;
+        const dz = -PITCH.HALF_L + 0.95 - ball.pos.z;
         const rawDist = Math.max(3.8, Math.hypot(dx, dz));
         const dirX = dx / rawDist;
         const dirZ = dz / rawDist;
 
-        const carryDist = Math.min(rawDist, 7.0 + power * 12.5);
-        const flightT = Math.max(0.58, Math.min(1.12, carryDist / (10.4 + power * 5.4)));
-        const horizSpd = carryDist / flightT;
+        const g = Math.abs(BALL_AERO.GRAVITY);
+        const carryDist = Math.min(rawDist + 0.6, 6.2 + power * 13.5);
+        const overChip = power > 0.86 ? (power - 0.86) * 6.5 : 0;
+        const peakH = 2.25 + power * 1.05 + overChip;
 
-        const overChip = power > 0.85 ? (power - 0.85) * 5.2 : 0;
-        const landY = rawDist > 19.0 ? 0.2 : Math.min(3.5, 0.75 + power * 1.75 + overChip);
-        const vy =
-          (landY - ball.pos.y - 0.5 * (BALL_AERO.GRAVITY + 1.0) * flightT * flightT) / flightT;
+        // Parábola exata: vy0 sobe até peakH e depois despenca de cima pra baixo dentro do gol!
+        const vy0 = Math.sqrt(2 * g * Math.max(1.2, peakH - ball.pos.y));
+        const tUp = vy0 / g;
+        const tDown = Math.sqrt((2 * Math.max(0.4, peakH - 0.55)) / g);
+        const totalFlightT = (tUp + tDown) * 0.94; // Compensa leve arrasto do ar
+        const horizSpd = carryDist / totalFlightT;
 
-        ball.vel.set(dirX * horizSpd, Math.min(9.5, Math.max(5.9, vy)), dirZ * horizSpd);
-        ball.spin.set(7.5, 0, 0);
+        ball.vel.set(dirX * horizSpd, vy0, dirZ * horizSpd);
+        ball.spin.set(0, 0, 0); // Sem flutuação artificial: queda limpa de parábola!
         pState.facingYaw = Math.atan2(dirX, dirZ);
         kicked = 'CHIP_SHOT';
         playBallKickSfx(0.42 + power * 0.25);
       } else if (isFinesse) {
-        // CHUTE COLOCADO CHAPADO (RB + B):
-        // Ideal pra chapada da entrada/fora da área (14m..27m): abre por fora e curva bonito no canto!
-        const farPenalty = distFromGoalLine > 29 ? (distFromGoalLine - 29) * 0.14 : 0;
-        const dispersion = (1 - finSkill) * 0.85 + farPenalty;
-        const targetX =
-          bestSide * (3.32 + finSkill * 0.78) + (Math.random() - 0.5) * dispersion;
+        // CHUTE COLOCADO CHAPADO (RB + B) — FÍSICA REAL DE FORA PRA DENTRO + PERNA DE TRÁS CORRETA:
+        // • Na ESQUERDA (x < -0.9): bate de PERNA DIREITA no canto DIREITO (+X) -> abre por fora da trave direita e curva pra dentro (-X, spinY > 0)!
+        // • Na DIREITA (x > +0.9): bate de PERNA ESQUERDA no canto ESQUERDO (-X) -> abre por fora da trave esquerda e curva pra dentro (+X, spinY < 0)!
+        let targetCornerSign: -1 | 1; // +1 = canto direito (+X); -1 = canto esquerdo (-X)
+        if (ball.pos.x < -0.9) {
+          targetCornerSign = 1; // Está na esquerda -> bate com a direita cruzado no canto direito!
+        } else if (ball.pos.x > 0.9) {
+          targetCornerSign = -1; // Está na direita -> bate com a esquerda cruzado no canto esquerdo!
+        } else if (input.moveX > 0.22) {
+          targetCornerSign = 1;
+        } else if (input.moveX < -0.22) {
+          targetCornerSign = -1;
+        } else {
+          targetCornerSign = player.preferredFoot === 'ESQUERDA' ? -1 : 1;
+        }
 
-        const curlInwardSign: -1 | 1 = targetX <= ball.pos.x ? 1 : -1;
-        pState.lastKickUsedLeftFoot = curlInwardSign === 1;
+        // Canto direito (+1) usa Perna Direita (false); Canto esquerdo (-1) usa Perna Esquerda (true)!
+        pState.lastKickUsedLeftFoot = targetCornerSign === -1;
+
+        const farPenalty = distFromGoalLine > 29 ? (distFromGoalLine - 29) * 0.14 : 0;
+        const dispersion = (1 - finSkill) * 0.8 + farPenalty;
+        const targetX =
+          targetCornerSign * (3.35 + finSkill * 0.72) + (Math.random() - 0.5) * dispersion;
 
         const overLift = power > 0.9 ? (power - 0.9) * 11.0 : 0;
-        const targetY = 0.65 + power * 1.98 + overLift;
+        const targetY = 0.68 + power * 1.98 + overLift;
 
         const horizSpd = (25.5 + (attrs.shotPower / 99) * 9.5) * (0.7 + power * 0.34);
-        const distanceSpinScale = Math.max(0.62, Math.min(1.05, 22 / distFromGoalLine));
-        const spinY = curlInwardSign * (15.5 + finSkill * 4.5) * distanceSpinScale;
+        const distanceSpinScale = Math.max(0.65, Math.min(1.08, 22 / distFromGoalLine));
+
+        // Em Three.js (vz < 0):
+        // • spinY > 0 gera força Magnus em -X (abre por fora na direita +X e curva pra dentro -X!)
+        // • spinY < 0 gera força Magnus em +X (abre por fora na esquerda -X e curva pra dentro +X!)
+        const spinY = targetCornerSign * (18.5 + finSkill * 5.5) * distanceSpinScale;
         const spinX = -2.0;
 
         const solvedVel = solveTenseShotVelocity(
