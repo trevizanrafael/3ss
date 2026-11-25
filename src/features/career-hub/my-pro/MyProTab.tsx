@@ -156,11 +156,10 @@ export const MyProTab: React.FC = () => {
             data-focusable="true"
             data-autofocus="true"
             onClick={() => setSubView('STATS')}
-            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${
-              subView === 'STATS'
+            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${subView === 'STATS'
                 ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
                 : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
-            }`}
+              }`}
           >
             01 HABILIDADES
           </button>
@@ -169,11 +168,10 @@ export const MyProTab: React.FC = () => {
             type="button"
             data-focusable="true"
             onClick={() => setSubView('TROPHIES')}
-            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${
-              subView === 'TROPHIES'
+            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${subView === 'TROPHIES'
                 ? 'bg-[#C8A45D] text-[#0B0B0D] border-[#C8A45D]'
                 : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
-            }`}
+              }`}
           >
             02 TROFÉUS ({trophyCabinet.filter((t) => t.code !== 'POTM').length})
           </button>
@@ -182,11 +180,10 @@ export const MyProTab: React.FC = () => {
             type="button"
             data-focusable="true"
             onClick={() => setSubView('HISTORY')}
-            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${
-              subView === 'HISTORY'
+            className={`px-3.5 py-2 font-condensed uppercase font-extrabold text-xs md:text-sm tracking-wider border transition-colors cursor-pointer ${subView === 'HISTORY'
                 ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
                 : 'bg-[#14161B] text-[#9498A3] border-[#242730] hover:text-[#F5F5F7]'
-            }`}
+              }`}
           >
             03 CARREIRA ({careerSeasonLogs.length + 1} TEMP)
           </button>
@@ -257,9 +254,8 @@ export const MyProTab: React.FC = () => {
                           <div className="flex items-center gap-1.5 shrink-0">
                             {(leveled || inSlot) && (
                               <span
-                                className={`text-[10px] font-bold ${
-                                  leveled ? 'text-[#2DBE60]' : 'text-[#C8A45D]'
-                                }`}
+                                className={`text-[10px] font-bold ${leveled ? 'text-[#2DBE60]' : 'text-[#C8A45D]'
+                                  }`}
                                 title={leveled ? 'Subiu recentemente!' : 'Alocado no Treino'}
                               >
                                 ▲

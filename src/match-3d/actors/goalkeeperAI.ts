@@ -151,6 +151,8 @@ export function createGoalkeeperAI(
   };
 }
 
+export type GoalkeeperMatchMode = 'SANDBOX_1V1' | 'MATCH_VS_USER' | 'MATCH_VS_AI';
+
 /**
  * Executa a IA de goleiro em espaço espelhado simétrico (`m = -goalSideSign`),
  * funcionando identicamente para o Gol Norte (-52.5m) e para o Gol Sul (+52.5m)!
@@ -163,6 +165,7 @@ export function stepGoalkeeperAI(
   skillDifficulty01: number,
   dt: number,
   timeSec: number,
+  mode: GoalkeeperMatchMode = 'SANDBOX_1V1',
 ): { madeSave: boolean; caughtFirmly: boolean } {
   let madeSave = false;
   let caughtFirmly = false;
@@ -249,20 +252,39 @@ export function stepGoalkeeperAI(
     return { madeSave: false, caughtFirmly: false };
   }
 
+  const isVsUser11v11 = mode === 'MATCH_VS_USER';
+  const isVsAi11v11 = mode === 'MATCH_VS_AI';
+
   // Detecta início de novo chute contra este gol (inclusive chutes do meio de campo até 62m!)
   const isIncomingShot =
     ball.ownerId === null && ballLvz < -5.5 && ballLz > -PITCH.HALF_L && ballLz < -PITCH.HALF_L + 64;
   if (isIncomingShot && !gk.trackingShotActive) {
     gk.trackingShotActive = true;
     gk.shotOriginDist = Math.hypot(ball.pos.x, -PITCH.HALF_L - ballLz);
-    gk.shotReactionTimer =
-      gk.shotOriginDist < 13.5
-        ? 0.19
-        : gk.shotOriginDist < 28.5
-          ? 0.21
-          : gk.shotOriginDist < 36.0
-            ? 0.11
-            : 0.04;
+    if (isVsUser11v11) {
+      gk.shotReactionTimer =
+        gk.shotOriginDist < 12.5
+          ? 0.125
+          : gk.shotOriginDist < 22.0
+            ? 0.095
+            : 0.05;
+    } else if (isVsAi11v11) {
+      gk.shotReactionTimer =
+        gk.shotOriginDist < 13.5
+          ? 0.16
+          : gk.shotOriginDist < 26.0
+            ? 0.13
+            : 0.06;
+    } else {
+      gk.shotReactionTimer =
+        gk.shotOriginDist < 13.5
+          ? 0.19
+          : gk.shotOriginDist < 28.5
+            ? 0.21
+            : gk.shotOriginDist < 36.0
+              ? 0.11
+              : 0.04;
+    }
   } else if (!isIncomingShot) {
     gk.trackingShotActive = false;
     gk.shotReactionTimer = 0;
@@ -305,28 +327,40 @@ export function stepGoalkeeperAI(
 
     let targetX: number;
     let targetLz: number;
-    let maxMoveSpd = 4.4 + skillDifficulty01 * 0.95;
+    let maxMoveSpd = isVsUser11v11
+      ? 5.45 + skillDifficulty01 * 1.25
+      : isVsAi11v11
+        ? 4.85 + skillDifficulty01 * 1.05
+        : 4.4 + skillDifficulty01 * 0.95;
 
-    if (attackerIn1v1Close && (ballLz < -PITCH.HALF_L + 6.5 || attackerAdvancing)) {
-      maxMoveSpd = 5.2 + skillDifficulty01 * 0.9;
-      targetX = ball.pos.x * 0.78;
-      targetLz = Math.max(-PITCH.HALF_L + 2.2, Math.min(-PITCH.HALF_L + 7.2, ballLz - 1.35));
-      if (distToBallHoriz < 6.0) {
+    if (attackerIn1v1Close && (ballLz < -PITCH.HALF_L + (isVsUser11v11 ? 8.2 : 6.5) || attackerAdvancing)) {
+      maxMoveSpd = (isVsUser11v11 ? 6.15 : 5.2) + skillDifficulty01 * 0.95;
+      targetX = ball.pos.x * (isVsUser11v11 ? 0.84 : 0.78);
+      targetLz = Math.max(-PITCH.HALF_L + 2.2, Math.min(-PITCH.HALF_L + 7.6, ballLz - 1.3));
+      if (distToBallHoriz < 6.2) {
         gk.inSpreadStance = true;
         gk.spreadCommitTimer = 0.6;
       }
     } else {
-      const inDefensiveThird = ballLz < -PITCH.HALF_L + 22;
-      const maxStepOut = inDefensiveThird ? (attackerAdvancing ? 3.2 : 2.0) : 0.95;
+      const inDefensiveThird = ballLz < -PITCH.HALF_L + 24;
+      const maxStepOut = inDefensiveThird
+        ? attackerAdvancing
+          ? isVsUser11v11
+            ? 3.7
+            : 3.2
+          : isVsUser11v11
+            ? 2.45
+            : 2.0
+        : 0.95;
       const stepOutDist = inDefensiveThird
-        ? Math.min(maxStepOut, Math.max(0.72, (1 - (distBallFromGoal - 8) / 20) * maxStepOut))
+        ? Math.min(maxStepOut, Math.max(0.75, (1 - (distBallFromGoal - 8) / 20) * maxStepOut))
         : 0.85;
       const dirX = ball.pos.x / Math.max(1, distBallFromGoal);
       const dirLz = (ballLz - -PITCH.HALF_L) / Math.max(1, distBallFromGoal);
 
       targetX = Math.max(
-        -PITCH.GOAL_HALF_W + 0.85,
-        Math.min(PITCH.GOAL_HALF_W - 0.85, dirX * (stepOutDist + 1.85)),
+        -PITCH.GOAL_HALF_W + 0.75,
+        Math.min(PITCH.GOAL_HALF_W - 0.75, dirX * (stepOutDist + (isVsUser11v11 ? 2.25 : 1.85))),
       );
       targetLz = gk.inSpreadStance
         ? gkLz
@@ -339,34 +373,57 @@ export function stepGoalkeeperAI(
       const isOutsideBoxRange = gk.shotOriginDist >= 14.5;
       if (isOutsideBoxRange) {
         targetLz = baseGoalLz;
-        maxMoveSpd = isVeryFarMidfield ? 5.8 : 4.5 + skillDifficulty01 * 0.75;
+        maxMoveSpd = isVeryFarMidfield
+          ? 6.3
+          : (isVsUser11v11 ? 5.65 : isVsAi11v11 ? 4.95 : 4.5) + skillDifficulty01 * 1.05;
       }
 
       const interceptLz = isOutsideBoxRange ? baseGoalLz : gkLz;
       const tHit = (interceptLz - ballLz) / ballLvz;
-      if (tHit > 0 && tHit < 1.55) {
+      if (tHit > 0 && tHit < 1.65) {
         const yAtGk =
           ball.pos.y + ball.vel.y * tHit + 0.5 * BALL_AERO.GRAVITY * tHit * tHit;
-        const curveRead = isVeryFarMidfield ? 0.92 : tHit > 0.34 ? 0.18 : 0.72;
+        const curveRead = isVeryFarMidfield
+          ? 0.94
+          : isVsUser11v11
+            ? gk.shotOriginDist >= 19.0
+              ? 0.78
+              : tHit > 0.32
+                ? 0.46
+                : 0.84
+            : tHit > 0.34
+              ? 0.24
+              : 0.74;
         // Aceleração Magnus real em X depende do vel.z mundial (ball.spin.y * ball.vel.z)!
         const magnusAx = ball.spin.y * ball.vel.z * BALL_AERO.MAGNUS_COEFF * 0.82;
         const predX = ball.pos.x + ball.vel.x * tHit + 0.5 * magnusAx * tHit * tHit * curveRead;
 
-        if (Math.abs(predX) < PITCH.GOAL_HALF_W + 1.1) {
-          targetX = Math.max(-PITCH.GOAL_HALF_W + 0.35, Math.min(PITCH.GOAL_HALF_W - 0.35, predX));
+        if (Math.abs(predX) < PITCH.GOAL_HALF_W + 1.15) {
+          targetX = Math.max(-PITCH.GOAL_HALF_W + 0.3, Math.min(PITCH.GOAL_HALF_W - 0.3, predX));
           const deltaX = predX - gk.pos.x;
-          const diveTriggerTime = isVeryFarMidfield ? 0.44 : 0.29;
-          if (Math.abs(deltaX) > 0.72 && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.1) {
+          const diveTriggerTime = isVeryFarMidfield
+            ? 0.46
+            : isVsUser11v11
+              ? 0.42
+              : isVsAi11v11
+                ? 0.34
+                : 0.29;
+          const minDiveDelta = isVsUser11v11 ? 0.58 : 0.72;
+          if (Math.abs(deltaX) > minDiveDelta && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.18) {
             gk.diveDir = deltaX < 0 ? -1 : 1;
-            gk.diveTimer = 0.44;
-            gk.diveHeight01 = Math.max(0, Math.min(1, (yAtGk - 0.5) / 2.1));
+            gk.diveTimer = isVsUser11v11 ? 0.48 : 0.44;
+            gk.diveHeight01 = Math.max(0, Math.min(1, (yAtGk - 0.45) / 2.15));
             const diveSpd = isVeryFarMidfield
-              ? 6.2 + skillDifficulty01 * 1.5
-              : 5.1 + skillDifficulty01 * 1.25;
+              ? 6.6 + skillDifficulty01 * 1.6
+              : isVsUser11v11
+                ? 7.35 + skillDifficulty01 * 1.85
+                : isVsAi11v11
+                  ? 6.05 + skillDifficulty01 * 1.4
+                  : 5.1 + skillDifficulty01 * 1.25;
             gk.vel.set(gk.diveDir * diveSpd, 0, 0);
             gkLvz = 0;
-          } else if (Math.abs(deltaX) <= 0.72 && yAtGk > 1.75 && tHit < 0.34) {
-            gk.highJumpTimer = 0.38;
+          } else if (Math.abs(deltaX) <= minDiveDelta && yAtGk > 1.72 && tHit < 0.38) {
+            gk.highJumpTimer = 0.4;
           }
         }
       }
@@ -411,32 +468,64 @@ export function stepGoalkeeperAI(
     ball.lastTouchTeam = gk.teamSide;
     gk.holdBallTimer = 0.95;
   } else if (
-    // 5. Defesa de Chutes COM CONTATO VISUAL REAL nas luvas/tronco!
+    // 5. Defesa Contínua Anti-Tunelamento: avalia o cruzamento exato do segmento da bola no frame!
     ball.ownerId === null &&
-    ball.touchCooldown <= 0.19 &&
-    ballLz > -PITCH.HALF_L - 0.1
+    ball.lastTouchBy !== gk.ownerTag &&
+    ballLz > -PITCH.HALF_L - 0.15
   ) {
-    const dlz = Math.abs(ballLz - gkLz);
+    const nextBallLz = ballLz + ballLvz * dt;
+    const segMinLz = Math.min(ballLz, nextBallLz);
+    const segMaxLz = Math.max(ballLz, nextBallLz);
+    const crossesGkPlane = gkLz >= segMinLz - 0.48 && gkLz <= segMaxLz + 0.48;
+
+    let sampleX = ball.pos.x;
+    let sampleY = ball.pos.y;
+    if (crossesGkPlane && Math.abs(ballLvz * dt) > 0.04) {
+      const frac = Math.max(0, Math.min(1, (gkLz - ballLz) / (ballLvz * dt)));
+      sampleX = ball.pos.x + ball.vel.x * dt * frac;
+      sampleY = ball.pos.y + ball.vel.y * dt * frac;
+    }
+
     const hitCenterX =
-      gk.diveTimer > 0 && gk.diveDir !== 0 ? gk.pos.x + gk.diveDir * 0.56 : gk.pos.x;
-    const halfSpanX = gk.inSpreadStance ? 0.96 : gk.diveTimer > 0 ? 0.68 : 0.52;
-
-    const minReachY = gk.diveTimer > 0 && gk.diveHeight01 > 0.65 ? 0.55 : 0;
-    const maxReachY = gk.inSpreadStance
-      ? 1.28
+      gk.diveTimer > 0 && gk.diveDir !== 0
+        ? gk.pos.x + gk.diveDir * (isVsUser11v11 ? 0.68 : 0.56)
+        : gk.pos.x;
+    const halfSpanX = gk.inSpreadStance
+      ? isVsUser11v11
+        ? 1.12
+        : 0.96
       : gk.diveTimer > 0
-        ? 0.95 + gk.diveHeight01 * 1.68
-        : gk.highJumpTimer > 0
-          ? 2.68
-          : 1.98;
+        ? isVsUser11v11
+          ? 1.06
+          : isVsAi11v11
+            ? 0.86
+            : 0.68
+        : isVsUser11v11
+          ? 0.68
+          : isVsAi11v11
+            ? 0.58
+            : 0.52;
 
-    const dx = Math.abs(ball.pos.x - hitCenterX);
-    const inHeightBand = ball.pos.y >= minReachY && ball.pos.y <= maxReachY;
+    const minReachY = gk.diveTimer > 0 && gk.diveHeight01 > 0.72 && !isVsUser11v11 ? 0.5 : 0;
+    const maxReachY = gk.inSpreadStance
+      ? isVsUser11v11
+        ? 1.48
+        : 1.28
+      : gk.diveTimer > 0
+        ? (isVsUser11v11 ? 1.12 : 0.95) + gk.diveHeight01 * 1.72
+        : gk.highJumpTimer > 0
+          ? 2.82
+          : isVsUser11v11
+            ? 2.25
+            : 1.98;
+
+    const dx = Math.abs(sampleX - hitCenterX);
+    const inHeightBand = sampleY >= minReachY && sampleY <= maxReachY;
 
     const movingTowardGoalOrLooseClose =
       ballLvz < -1.0 || (currDistHoriz < 0.85 && ballLz < -PITCH.HALF_L + 8.5 && ball.lastTouchBy !== gk.ownerTag);
 
-    if (dx <= halfSpanX && dlz <= 0.48 && inHeightBand && movingTowardGoalOrLooseClose) {
+    if (dx <= halfSpanX && crossesGkPlane && inHeightBand && movingTowardGoalOrLooseClose) {
       madeSave = true;
       const isVeryFar = gk.shotOriginDist >= 28.5;
       if (ball.pos.y > 1.7 && gk.diveTimer <= 0 && !gk.inSpreadStance) {

@@ -291,16 +291,16 @@ export function computeNextDayState(
         nextStints.length > 0
           ? nextStints
           : [
-              {
-                clubId: contract.clubId,
-                leagueId: findClubLeagueIdInWorld(nextWorld, contract.clubId),
-                stage: contract.stage,
-                matches: Math.max(0, nextPeriod.seasonMatches - nextPeriod.internationalMatches),
-                goals: Math.max(0, nextPeriod.seasonGoals - nextPeriod.internationalGoals),
-                assists: Math.max(0, nextPeriod.seasonAssists - nextPeriod.internationalAssists),
-                threeStarMatches: 0,
-              },
-            ]
+            {
+              clubId: contract.clubId,
+              leagueId: findClubLeagueIdInWorld(nextWorld, contract.clubId),
+              stage: contract.stage,
+              matches: Math.max(0, nextPeriod.seasonMatches - nextPeriod.internationalMatches),
+              goals: Math.max(0, nextPeriod.seasonGoals - nextPeriod.internationalGoals),
+              assists: Math.max(0, nextPeriod.seasonAssists - nextPeriod.internationalAssists),
+              threeStarMatches: 0,
+            },
+          ]
       ).map((st) => {
         const lgRows = nextWorld.leagues[st.leagueId]?.standings ?? [];
         const posIdx = lgRows.findIndex((r) => r.clubId === st.clubId);

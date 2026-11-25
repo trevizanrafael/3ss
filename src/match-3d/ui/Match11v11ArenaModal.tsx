@@ -374,7 +374,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
     let userAssists = 0;
     let matchClockSeconds = 0;
     let half: 1 | 2 | 'HT' | 'FT' = 1;
-    let stoppageMinutes = 1 + Math.floor(Math.random() * 3);
+    let stoppageMinutes = 1 + Math.floor(Math.random() * 2);
     let halfTimeBreakTimer = 0;
     let fullTimeCoastTimer = 0;
 
@@ -973,7 +973,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         matchClockSeconds = 0;
         half = 1;
         fullTimeCoastTimer = 0;
-        stoppageMinutes = 1 + Math.floor(Math.random() * 3);
+        stoppageMinutes = 1 + Math.floor(Math.random() * 2);
         pState.stamina = pState.maxStamina;
         playWhistleSfx(false);
         setupKickoff('HOME');
@@ -1217,17 +1217,17 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
         if (halfTimeBreakTimer <= 0) {
           half = 2;
           matchClockSeconds = 45 * 60;
-          stoppageMinutes = 2 + Math.floor(Math.random() * 3);
+          stoppageMinutes = 1 + Math.floor(Math.random() * 2);
           pState.stamina = Math.min(pState.maxStamina, pState.stamina + 20);
           playWhistleSfx(false);
           setupKickoff('AWAY');
           showTicker('2º TEMPO EM ANDAMENTO', '#C8A45D', 1.5);
         }
       } else if ((half === 1 || half === 2) && celebrationTimer <= 0) {
-        matchClockSeconds += dt * 12.0;
+        matchClockSeconds += dt * 23.5;
         const regLimitSec = (half === 1 ? 45 : 90) * 60;
         const targetEndSec = regLimitSec + stoppageMinutes * 60;
-        const hardMaxSec = targetEndSec + 4.0 * 60;
+        const hardMaxSec = targetEndSec + 2.0 * 60;
 
         if (matchClockSeconds >= targetEndSec) {
           const inCalmMidfield =
@@ -1616,8 +1616,8 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           return new THREE.Vector3((Math.random() - 0.5) * 16, 0, fallbackZ);
         };
 
-        const gkSkillAway = Math.max(0.46, Math.min(0.76, (rivalClub.squadAvgOvr - 52) / 42));
-        const gkSkillHome = Math.max(0.48, Math.min(0.78, (homeClub.squadAvgOvr - 50) / 42));
+        const gkSkillAway = Math.max(0.54, Math.min(0.86, (rivalClub.squadAvgOvr - 48) / 38));
+        const gkSkillHome = Math.max(0.5, Math.min(0.8, (homeClub.squadAvgOvr - 50) / 40));
 
         const awaySave = stepGoalkeeperAI(
           awayGk,
@@ -1627,6 +1627,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           gkSkillAway,
           dt,
           timeSec,
+          'MATCH_VS_USER',
         );
         if (awaySave.madeSave) awaySaves += 1;
 
@@ -1638,6 +1639,7 @@ export const Match11v11ArenaModal: React.FC<Match11v11ArenaModalProps> = ({
           gkSkillHome,
           dt,
           timeSec,
+          'MATCH_VS_AI',
         );
         if (homeSave.madeSave) homeSaves += 1;
 

@@ -353,15 +353,17 @@ function executeAgentShot(
   oppGkPos: THREE.Vector3,
 ): void {
   const goalZ = agent.attackDir * PITCH.HALF_L;
+  const distToGoal = Math.hypot(ball.pos.x, goalZ - ball.pos.z);
   const openLeft = oppGkPos.x - -PITCH.GOAL_HALF_W;
   const openRight = PITCH.GOAL_HALF_W - oppGkPos.x;
   const side = openRight >= openLeft ? 1 : -1;
 
   const finSkill = agent.profile.attributes.finishing / 99;
-  const scatter = (1 - finSkill) * 1.45;
-  const targetX = side * (2.65 + finSkill * 0.85) + (Math.random() - 0.5) * scatter;
-  const targetY = 0.65 + Math.random() * 1.65;
-  const horizSpd = 24.5 + (agent.profile.attributes.shotPower / 99) * 10.5;
+  const distScatter = distToGoal > 17.5 ? (distToGoal - 17.5) * 0.13 : 0;
+  const scatter = (1 - finSkill) * 2.15 + distScatter;
+  const targetX = side * (2.25 + finSkill * 0.92) + (Math.random() - 0.5) * scatter;
+  const targetY = 0.55 + Math.random() * 1.85;
+  const horizSpd = 24.0 + (agent.profile.attributes.shotPower / 99) * 10.0;
 
   const solved = solveAIShotVelocity(ball.pos, goalZ, targetX, targetY, horizSpd);
   ball.ownerId = null;
@@ -485,6 +487,46 @@ export function stepOutfieldAgentsTeam(
     }
 
     const distToBall = Math.hypot(ball.pos.x - ag.pos.x, ball.pos.z - ag.pos.z);
+
+    // 0. Bloqueio Físico de Chutes na Zaga (impede que chutes atravessem marcadores plantados na frente!)
+    const ballHorizSpd = Math.hypot(ball.vel.x, ball.vel.z);
+    if (
+      ball.ownerId === null &&
+      ball.lastTouchTeam !== null &&
+      ball.lastTouchTeam !== ag.teamSide &&
+      ballHorizSpd > 15.5 &&
+      ball.pos.y < 1.68 &&
+      ag.tackleCooldown <= 0
+    ) {
+      const prevBx = ball.pos.x - ball.vel.x * dt;
+      const prevBz = ball.pos.z - ball.vel.z * dt;
+      const segDx = ball.pos.x - prevBx;
+      const segDz = ball.pos.z - prevBz;
+      const segLenSq = segDx * segDx + segDz * segDz;
+      const projT =
+        segLenSq > 0.0001
+          ? Math.max(0, Math.min(1, ((ag.pos.x - prevBx) * segDx + (ag.pos.z - prevBz) * segDz) / segLenSq))
+          : 1;
+      const closestX = prevBx + segDx * projT;
+      const closestZ = prevBz + segDz * projT;
+      const segDist = Math.hypot(ag.pos.x - closestX, ag.pos.z - closestZ);
+      const inFrontOfShot = (ag.pos.x - prevBx) * ball.vel.x + (ag.pos.z - prevBz) * ball.vel.z > 0.2;
+
+      if (segDist < 0.78 && inFrontOfShot) {
+        const pushAngle = Math.atan2(closestX - ag.pos.x, closestZ - ag.pos.z) + (Math.random() - 0.5) * 0.6;
+        const deflectSpd = 7.5 + Math.random() * 4.5;
+        ball.pos.x = closestX;
+        ball.pos.z = closestZ;
+        ball.vel.set(Math.sin(pushAngle) * deflectSpd, 1.4 + Math.random() * 2.2, Math.cos(pushAngle) * deflectSpd);
+        ball.spin.multiplyScalar(0.25);
+        ball.lastTouchBy = ag.id;
+        ball.lastTouchTeam = ag.teamSide;
+        ball.touchCooldown = 0.22;
+        ag.kickAnimTimer = 0.22;
+        ag.tackleCooldown = 0.65;
+        playBallKickSfx(0.6);
+      }
+    }
 
     // 1. Domínio de bola solta / interceptação
     const canClaimLoose =
