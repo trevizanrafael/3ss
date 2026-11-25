@@ -18,7 +18,6 @@ export interface PlayerPitchState {
   chargeIntent: ChargeIntent;
   chargingFinesse: boolean;
   chargingChip: boolean;
-  /** Janela curta de alavanca da perna (~135ms) ao soltar B/X para permitir apertar B e depois A (Fingir Chute)! */
   windupTimer: number;
   lockedPower01: number;
   lockedIntent: 'SHOT' | 'CROSS' | null;
@@ -67,10 +66,35 @@ function shortestAngleDiff(from: number, to: number): number {
 }
 
 /**
- * Resolve o vetor inicial exato (vx, vy, vz) com a física real do jogo para que o chute suba firme
- * até (targetX, targetY, -HALF_L) sem pingar antes e desenhando um arco único de fora para dentro!
+ * Escolhe automaticamente o MELHOR CANTO ABERTO DO GOL longe do goleiro!
+ * Só força o outro canto se você inclinar bastante o analógico (> 58%) de propósito.
  */
-function solveBallisticShotToGoal(
+function pickSmartBestCornerSign(
+  ballPos: THREE.Vector3,
+  gkPos: THREE.Vector3,
+  stickMoveX: number,
+): -1 | 1 {
+  if (stickMoveX < -0.58) return -1;
+  if (stickMoveX > 0.58) return 1;
+
+  // Mede o corredor livre à esquerda (-4.5 .. gk.x) vs à direita (gk.x .. +4.5)
+  const openLeft = gkPos.x - -PITCH.GOAL_HALF_W;
+  const openRight = PITCH.GOAL_HALF_W - gkPos.x;
+
+  if (Math.abs(openRight - openLeft) > 0.35) {
+    return openRight > openLeft ? 1 : -1;
+  }
+  // Se o goleiro estiver centralizado, bate cruzado no canto mais amplo!
+  if (Math.abs(stickMoveX) > 0.2) {
+    return stickMoveX < 0 ? -1 : 1;
+  }
+  return ballPos.x >= 0 ? -1 : 1;
+}
+
+/**
+ * Calcula chute tenso de linha reta/curva controlada SEM NUNCA virar balão de cobertura de longe!
+ */
+function solveTenseShotVelocity(
   startPos: THREE.Vector3,
   targetX: number,
   targetY: number,
@@ -80,13 +104,16 @@ function solveBallisticShotToGoal(
 ): THREE.Vector3 {
   const goalZ = -PITCH.HALF_L;
   const distZ = Math.max(3.5, Math.abs(goalZ - startPos.z));
-  const estT = distZ / Math.max(14, horizSpeed * 0.94);
+  const estT = distZ / Math.max(15, horizSpeed * 0.94);
 
   let vx = (targetX - startPos.x) / estT;
   const maxVx = horizSpeed * 0.72;
   vx = Math.max(-maxVx, Math.min(maxVx, vx));
-  const vz = -Math.sqrt(Math.max(120, horizSpeed * horizSpeed - vx * vx));
-  let vy = (targetY - startPos.y - 0.5 * BALL_AERO.GRAVITY * estT * estT) / estT;
+  const vz = -Math.sqrt(Math.max(130, horizSpeed * horizSpeed - vx * vx));
+
+  // Limita vy máximo para que chutes de longe sejam SEMPRE tensos (teto máx ~2.85m, nunca balão!)
+  const rawVy = (targetY - startPos.y - 0.5 * BALL_AERO.GRAVITY * estT * estT) / estT;
+  let vy = Math.max(0.9, Math.min(8.6, rawVy));
 
   for (let iter = 0; iter < 2; iter++) {
     let px = startPos.x;
@@ -100,7 +127,7 @@ function solveBallisticShotToGoal(
     const h = 1 / 120;
     let elapsed = 0;
 
-    for (let step = 0; step < 180 && pz > goalZ; step++) {
+    for (let step = 0; step < 190 && pz > goalZ; step++) {
       svy += BALL_AERO.GRAVITY * h;
       const drag = 1 - BALL_AERO.AIR_DRAG * h;
       svx *= drag;
@@ -126,11 +153,11 @@ function solveBallisticShotToGoal(
 
     if (elapsed > 0.04) {
       vx += ((targetX - px) / elapsed) * 0.94;
-      vy += ((targetY - py) / elapsed) * 0.92;
+      vy = Math.max(0.9, Math.min(8.8, vy + ((targetY - py) / elapsed) * 0.85));
     }
   }
 
-  return new THREE.Vector3(vx, Math.max(0.8, vy), vz);
+  return new THREE.Vector3(vx, vy, vz);
 }
 
 export function stepPlayerAndBallControl(
@@ -171,7 +198,7 @@ export function stepPlayerAndBallControl(
     }
   }
 
-  // 1. Vetores relativos à câmera
+  // 1. Movimentação relativa à câmera
   tmpForward.set(-Math.sin(camYaw), 0, -Math.cos(camYaw)).normalize();
   tmpRight.set(Math.cos(camYaw), 0, -Math.sin(camYaw)).normalize();
 
@@ -204,7 +231,6 @@ export function stepPlayerAndBallControl(
   if (pState.slideTimer > 0) {
     pState.vel.multiplyScalar(Math.max(0, 1 - 3.2 * dt));
   } else if (pState.fakeShotAnimTimer > 0) {
-    // Na fase 1 (0.34 -> 0.22) freia ameaçando o chute; na fase 2 (0.22 -> 0) explode na penteada!
     if (pState.fakeShotAnimTimer < 0.22) {
       pState.vel.multiplyScalar(Math.max(0, 1 - 1.5 * dt));
     }
@@ -232,9 +258,9 @@ export function stepPlayerAndBallControl(
     pState.facingYaw += shortestAngleDiff(pState.facingYaw, desiredYaw) * Math.min(1, turnRate * dt);
   }
 
-  // 2. Domínio / Condução Natural da Bola no Pé
+  // 2. Domínio e condução da bola
   const distToBall = Math.hypot(ball.pos.x - pState.pos.x, ball.pos.z - pState.pos.z);
-  const controlRadius = 0.94 + (attrs.ballControl / 99) * 0.34;
+  const controlRadius = 0.92 + (attrs.ballControl / 99) * 0.34;
 
   if (
     ball.ownerId === null &&
@@ -251,12 +277,12 @@ export function stepPlayerAndBallControl(
     const footSide = player.preferredFoot === 'ESQUERDA' ? -0.14 : 0.14;
     const leadDist =
       pState.fakeShotAnimTimer > 0
-        ? 0.54
+        ? 0.52
         : input.closeControlHeld
-          ? 0.5
+          ? 0.48
           : canSprint
-            ? 0.76
-            : 0.6;
+            ? 0.74
+            : 0.58;
     const sinY = Math.sin(pState.facingYaw);
     const cosY = Math.cos(pState.facingYaw);
 
@@ -270,7 +296,7 @@ export function stepPlayerAndBallControl(
     ball.vel.copy(pState.vel);
   }
 
-  // 3. Sistema de Chute Inteligente, LB+B Cavadinha, RB+B Chapada, B->A Fingir Chute e Y Enfiada Inteligente!
+  // 3. Ações com bola vs Sem bola (A pede passe na hora!)
   let kicked: KickKind | null = null;
   let calledForBall: 'PASS' | 'THROUGH' | 'CROSS' | null = null;
   let commandedMateShoot = false;
@@ -279,9 +305,9 @@ export function stepPlayerAndBallControl(
 
   const canStrike =
     ball.ownerId === 'USER' ||
-    (ball.ownerId === null && distToBall < 1.5 && ball.pos.y < 1.85);
+    (ball.ownerId === null && distToBall < 1.45 && ball.pos.y < 1.85);
 
-  // FINGIR CHUTE (B depois A, ou X depois A): funciona TANTO segurando B+A QUANTO soltando B e apertando A logo em seguida!
+  // FINGIR CHUTE (B depois A, ou X depois A)
   if (
     canStrike &&
     (pState.chargeIntent === 'SHOT' ||
@@ -300,7 +326,6 @@ export function stepPlayerAndBallControl(
     pState.suppressButtonsUntilRelease = true;
     pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
 
-    // Penteada pro lado apontado no analógico (ou corte lateral de 60° se o analógico estiver neutro!)
     const cutDir = new THREE.Vector3();
     if (wishMag > 0.16) {
       cutDir.copy(tmpWish);
@@ -310,7 +335,7 @@ export function stepPlayerAndBallControl(
       cutDir.set(Math.sin(cutYaw), 0, Math.cos(cutYaw)).normalize();
     }
 
-    const burstSpd = 8.1 + (attrs.dribbling / 99) * 2.5 + (attrs.agility / 99) * 1.1;
+    const burstSpd = 8.2 + (attrs.dribbling / 99) * 2.5 + (attrs.agility / 99) * 1.1;
     pState.vel.set(cutDir.x * burstSpd, 0, cutDir.z * burstSpd);
     pState.facingYaw = Math.atan2(cutDir.x, cutDir.z);
     pState.fakeShotAnimTimer = 0.34;
@@ -336,84 +361,66 @@ export function stepPlayerAndBallControl(
   ) => {
     const baseAim = wishMag > 0.18 ? tmpWish.clone() : tmpForward.clone();
     const finSkill = attrs.finishing / 99;
+    const distFromGoalLine = Math.max(3.5, Math.abs(-PITCH.HALF_L - ball.pos.z));
 
     ball.ownerId = null;
     ball.lastTouchBy = 'USER';
     ball.touchCooldown = 0.24;
 
     if (intent === 'SHOT') {
-      // Escolha inteligente de canto (analógico Esq/Dir OU canto livre longe do goleiro!)
-      let chosenCornerSign: -1 | 1;
-      if (input.moveX < -0.24) {
-        chosenCornerSign = -1;
-      } else if (input.moveX > 0.24) {
-        chosenCornerSign = 1;
-      } else if (Math.abs(gkPos.x) > 0.22) {
-        chosenCornerSign = gkPos.x > 0 ? -1 : 1;
-      } else {
-        chosenCornerSign = ball.pos.x >= 0 ? -1 : 1;
-      }
+      // MIRA INTELIGENTE NO MELHOR CANTO ABERTO DO GOL (tira do goleiro automaticamente!)
+      const bestSide = pickSmartBestCornerSign(ball.pos, gkPos, input.moveX);
 
       if (isChip) {
-        // CAVADINHA (LB + B): encobre o goleiro quando ele sai/ajoelha no 1x1 e cai dentro do gol!
+        // CAVADINHA (LB + B): recurso de curta/média distância (< 18m) p/ encobrir goleiro adiantado!
+        // De longe (> 19m) ela morre antes/chega mansa na mão do goleiro, NUNCA faz gol do meio-campo!
         pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
         const errorX = (Math.random() - 0.5) * (1 - finSkill) * 1.1;
-        const targetX = chosenCornerSign * (1.55 + finSkill * 0.85) + errorX;
+        const targetX = bestSide * (2.15 + finSkill * 1.15) + errorX;
         const dx = targetX - ball.pos.x;
-        const dz = -PITCH.HALF_L + 0.8 - ball.pos.z;
-        const distToGoal = Math.max(4.0, Math.hypot(dx, dz));
+        const dz = -PITCH.HALF_L + 0.7 - ball.pos.z;
+        const rawDist = Math.max(4.0, Math.hypot(dx, dz));
+        const dirX = dx / rawDist;
+        const dirZ = dz / rawDist;
 
-        // Calibrado p/ subir a ~1.95..2.25m por cima do goleiro ajoelhado e cair ABAIXO do travessão (2.44m)!
-        // Se encher >82% da barra, encobre demais e cai em cima da rede superior!
-        const overChip = power > 0.8 ? (power - 0.8) * 3.8 : 0;
-        const landY = Math.min(3.1, 0.35 + power * 1.55 + overChip);
-        const flightT = Math.min(1.35, Math.max(0.68, distToGoal / (10.5 + power * 5.2)));
-        const vx = dx / flightT;
-        const vz = dz / flightT;
+        // Alcance máximo natural de uma cavadinha (~17.5m no ar)
+        const carryDist = Math.min(rawDist, 6.5 + power * 12.5);
+        const flightT = Math.max(0.62, Math.min(1.18, carryDist / (9.8 + power * 5.2)));
+        const horizSpd = carryDist / flightT;
+
+        // Sobe ~2.1..2.65m (passa lindo por cima do goleiro ajoelhado e entra abaixo dos 3.05m do travessão!)
+        const overChip = power > 0.84 ? (power - 0.84) * 5.2 : 0;
+        const landY = rawDist > 19.5 ? 0.2 : Math.min(3.6, 0.55 + power * 1.85 + overChip);
         const vy =
-          (landY - ball.pos.y - 0.5 * (BALL_AERO.GRAVITY + 1.2) * flightT * flightT) / flightT;
+          (landY - ball.pos.y - 0.5 * (BALL_AERO.GRAVITY + 1.0) * flightT * flightT) / flightT;
 
-        ball.vel.set(vx, Math.max(5.8, vy), vz);
-        ball.spin.set(7.5, 0, 0); // Backspin suave faz pingar macio dentro do gol!
-        pState.facingYaw = Math.atan2(vx, vz);
+        ball.vel.set(dirX * horizSpd, Math.min(9.6, Math.max(5.8, vy)), dirZ * horizSpd);
+        ball.spin.set(7.5, 0, 0);
+        pState.facingYaw = Math.atan2(dirX, dirZ);
         kicked = 'CHIP_SHOT';
         playBallKickSfx(0.42 + power * 0.25);
       } else if (isFinesse) {
         // CHUTE COLOCADO CHAPADO (RB + B):
-        // Na direita (x > 1) bate de PERNA ESQUERDA curvando de fora (+X) pra dentro (-X)!
-        // Na esquerda (x < -1) bate de PERNA DIREITA curvando de fora (-X) pra dentro (+X)!
-        let curlInwardSign: -1 | 1; // +1 = curva p/ esquerda (-X); -1 = curva p/ direita (+X)
-        if (ball.pos.x > 1.1) {
-          curlInwardSign = 1; // Está na direita -> bate de canhota curvando p/ esquerda!
-          pState.lastKickUsedLeftFoot = true;
-        } else if (ball.pos.x < -1.1) {
-          curlInwardSign = -1; // Está na esquerda -> bate de direita curvando p/ direita!
-          pState.lastKickUsedLeftFoot = false;
-        } else if (input.moveX < -0.22) {
-          curlInwardSign = 1;
-          pState.lastKickUsedLeftFoot = true;
-        } else if (input.moveX > 0.22) {
-          curlInwardSign = -1;
-          pState.lastKickUsedLeftFoot = false;
-        } else {
-          const leftPref = player.preferredFoot === 'ESQUERDA';
-          curlInwardSign = leftPref ? 1 : -1;
-          pState.lastKickUsedLeftFoot = leftPref;
-        }
-
-        // O canto alvo SEMPRE casa com o arco de fora pra dentro (nunca faz S ou curva pra fora!)
-        const cornerSign = curlInwardSign === 1 ? -1 : 1;
-        const dispersion = (1 - finSkill) * 0.95;
+        // Mira na MELHOR POSIÇÃO ABERTA do gol e faz uma curva limpa, tensa e natural estilo FIFA (sem balão!)
+        const dispersion = (1 - finSkill) * 1.05 + (distFromGoalLine > 24 ? 0.55 : 0);
         const targetX =
-          cornerSign * (2.35 + finSkill * 0.55) + (Math.random() - 0.5) * dispersion;
-        const overPowerLift = power > 0.89 ? (power - 0.89) * 9.5 : 0;
-        const targetY = 0.48 + power * 1.65 + overPowerLift;
+          bestSide * (2.95 + finSkill * 0.9) + (Math.random() - 0.5) * dispersion;
 
-        const horizSpd = (23.5 + (attrs.shotPower / 99) * 8.5) * (0.68 + power * 0.34);
-        const spinY = curlInwardSign * (21.5 + finSkill * 6.5);
+        // Se vai bater no canto esquerdo (targetX < ball.x), bate de canhota curvando da direita p/ esquerda (+1)
+        // Se vai bater no canto direito (targetX > ball.x), bate de direita curvando da esquerda p/ direita (-1)
+        const curlInwardSign: -1 | 1 = targetX <= ball.pos.x ? 1 : -1;
+        pState.lastKickUsedLeftFoot = curlInwardSign === 1;
+
+        const overLift = power > 0.9 ? (power - 0.9) * 11.0 : 0;
+        const targetY = 0.55 + power * 1.95 + overLift;
+
+        // Velocidade tensa e curva controlada (12..15 rad/s = arco bonito de ~1.8m, nunca bizarro!)
+        const horizSpd = (24.5 + (attrs.shotPower / 99) * 9.5) * (0.68 + power * 0.35);
+        const distanceSpinScale = Math.max(0.52, Math.min(1.0, 20 / distFromGoalLine));
+        const spinY = curlInwardSign * (13.0 + finSkill * 4.0) * distanceSpinScale;
         const spinX = -2.2;
 
-        const solvedVel = solveBallisticShotToGoal(
+        const solvedVel = solveTenseShotVelocity(
           ball.pos,
           targetX,
           targetY,
@@ -427,34 +434,23 @@ export function stepPlayerAndBallControl(
         kicked = 'FINESSE_SHOT';
         playBallKickSfx(0.58 + power * 0.36);
       } else {
-        // CHUTE FORTE INTELIGENTE (B): usa Finalização p/ tirar do goleiro e sobe firme sem pingar!
+        // CHUTE FORTE INTELIGENTE (B): crava na melhor posição aberta longe do goleiro!
         pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
-        const idealCornerX = chosenCornerSign * (2.1 + finSkill * 0.82);
-
-        // Projeção bruta pra onde a câmera olha
-        const rawCamX =
-          baseAim.z < -0.2
-            ? Math.max(-5.5, Math.min(5.5, ball.pos.x + (baseAim.x / baseAim.z) * (-PITCH.HALF_L - ball.pos.z)))
-            : idealCornerX;
-
-        // Quanto maior a Finalização, mais o craque tira do goleiro e crava no canto!
-        const smartAssist = 0.58 + finSkill * 0.36;
-        const errorSpread = (1 - finSkill) * 1.25;
+        const dispersion =
+          (1 - finSkill) * 1.2 + (distFromGoalLine > 25 ? (distFromGoalLine - 25) * 0.06 : 0);
         const targetX =
-          rawCamX * (1 - smartAssist) +
-          idealCornerX * smartAssist +
-          (Math.random() - 0.5) * errorSpread;
+          bestSide * (2.85 + finSkill * 0.95) + (Math.random() - 0.5) * dispersion;
 
         const overPowerLift =
-          power > 0.9 ? (power - 0.9) * 12.0 * (1.25 - finSkill * 0.6) : 0;
-        const targetY = 0.35 + power * 1.82 + overPowerLift;
+          power > 0.9 ? (power - 0.9) * 13.0 * (1.25 - finSkill * 0.6) : 0;
+        const targetY = 0.42 + power * 2.15 + overPowerLift;
 
-        const maxShotSpd = 25.5 + (attrs.shotPower / 99) * 13.5;
-        const horizSpd = maxShotSpd * (0.62 + power * 0.4);
-        const spinX = -3.8;
-        const spinY = (Math.random() - 0.5) * 2.0;
+        const maxShotSpd = 26.5 + (attrs.shotPower / 99) * 14.0;
+        const horizSpd = maxShotSpd * (0.64 + power * 0.38);
+        const spinX = -3.4;
+        const spinY = (Math.random() - 0.5) * 1.8;
 
-        const solvedVel = solveBallisticShotToGoal(
+        const solvedVel = solveTenseShotVelocity(
           ball.pos,
           targetX,
           targetY,
@@ -480,9 +476,9 @@ export function stepPlayerAndBallControl(
 
       const align = baseAim.dot(mateDir);
       const dir =
-        align > 0.52
-          ? baseAim.clone().lerp(mateDir, 0.82).normalize()
-          : align > 0.15 && wishMag < 0.22
+        align > 0.48
+          ? baseAim.clone().lerp(mateDir, 0.84).normalize()
+          : align > 0.12 && wishMag < 0.22
             ? mateDir
             : baseAim.clone();
 
@@ -493,16 +489,14 @@ export function stepPlayerAndBallControl(
       kicked = 'GROUND_PASS';
       playBallKickSfx(0.42 + power * 0.35);
     } else if (intent === 'THROUGH') {
-      // BOLA ENFIADA INTELIGENTE (Y): acha sozinho o espaço em profundidade na corrida do parceiro!
       pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
       const leadDepth = 5.5 + power * 8.5;
-      // Puxa suavemente pro corredor de finalização na frente do gol!
       const idealTx = Math.max(
         -PITCH.HALF_W + 3.5,
         Math.min(PITCH.HALF_W - 3.5, teammatePos.x * 0.68 + teammateVel.x * 0.35),
       );
       const idealTz = Math.max(
-        -PITCH.HALF_L + 4.8,
+        -PITCH.HALF_L + 5.2,
         Math.min(12, Math.min(teammatePos.z, ball.pos.z + 2) - leadDepth),
       );
 
@@ -513,7 +507,6 @@ export function stepPlayerAndBallControl(
       const dirX = dx / passDist;
       const dirZ = dz / passDist;
 
-      // Calcula a velocidade exata vencendo o atrito da grama p/ chegar redondinha na passada do camisa 8!
       const mateDist = Math.hypot(idealTx - teammatePos.x, idealTz - teammatePos.z);
       const tArrival = Math.max(0.55, Math.min(2.1, mateDist / 8.8));
       const solvedSpd = Math.min(
@@ -534,7 +527,7 @@ export function stepPlayerAndBallControl(
       const mateBoxSpot = new THREE.Vector3(
         teammatePos.x + teammateVel.x * 0.55,
         0,
-        Math.max(-PITCH.HALF_L + 5.5, Math.min(teammatePos.z - 2.5, -29)),
+        Math.max(-PITCH.HALF_L + 6.0, Math.min(teammatePos.z - 2.5, -29)),
       );
       const toBoxMate = mateBoxSpot.clone().sub(new THREE.Vector3(ball.pos.x, 0, ball.pos.z));
       if (toBoxMate.length() > 3) {
@@ -563,7 +556,6 @@ export function stepPlayerAndBallControl(
     pState.kickAnimTimer = 0.28;
   };
 
-  // Se estiver na janela curta de alavanca do chute/cruzamento (windupTimer) e não cancelou com A, bate na bola!
   if (pState.windupTimer > 0) {
     if (!canStrike) {
       pState.windupTimer = 0;
@@ -586,7 +578,6 @@ export function stepPlayerAndBallControl(
 
   if (canStrike && !pState.suppressButtonsUntilRelease) {
     if (pState.chargeIntent === null) {
-      // Nota: Cavadinha exige LB + B (segurar B junto com LB, nunca LB sozinho!)
       if (input.shootHeld) {
         pState.chargeIntent = 'SHOT';
         pState.powerCharge01 = 0.08;
@@ -629,12 +620,10 @@ export function stepPlayerAndBallControl(
         pState.hudPowerHoldTimer = 0.38;
 
         if (intent === 'SHOT' || intent === 'CROSS') {
-          // Abre a janela natural de 135ms da alavanca do pé (permite soltar B e apertar A p/ Fingir Chute!)
           pState.windupTimer = 0.135;
           pState.lockedPower01 = power;
           pState.lockedIntent = intent;
         } else {
-          // Passe (A) e Bola Enfiada (Y) saem instantâneos!
           const fin = pState.chargingFinesse;
           const chp = pState.chargingChip;
           pState.chargingFinesse = false;
@@ -644,6 +633,7 @@ export function stepPlayerAndBallControl(
       }
     }
   } else if (!canStrike) {
+    // SEM A BOLA: A pede passe no pé na hora, Y pede bola enfiada, X pede cruzamento (ou dá carrinho)!
     pState.chargeIntent = null;
     pState.powerCharge01 = 0;
     pState.chargingFinesse = false;
@@ -658,7 +648,7 @@ export function stepPlayerAndBallControl(
     } else if (input.lobOrSlideJustPressed) {
       if (ball.ownerId === 'MATE') {
         calledForBall = 'CROSS';
-      } else if (pState.slideTimer <= 0 && horizSpeed > 2.4) {
+      } else if (pState.slideTimer <= 0 && horizSpeed > 2.4 && distToBall < 3.5) {
         pState.slideTimer = 0.42;
         pState.vel.multiplyScalar(1.32);
         if (distToBall < 1.9) {

@@ -214,6 +214,9 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       mateBrain.pos.set(preset.mx, 0, preset.mz);
       mateBrain.vel.set(0, 0, 0);
       mateBrain.receivedFromUser = false;
+      mateBrain.shotCooldown = 0;
+      mateBrain.queuedCall = null;
+      mateBrain.queuedCallTimer = 0;
       mateBrain.throughRunTarget = null;
       mateBrain.throughRunTimer = 0;
 
@@ -222,6 +225,9 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
       gkBrain.diveTimer = 0;
       gkBrain.diveDir = 0;
       gkBrain.inSpreadStance = false;
+      gkBrain.trackingShotActive = false;
+      gkBrain.shotReactionTimer = 0;
+      gkBrain.recentSaveTimer = 0;
 
       mateAssistArmed = false;
       userAssistArmed = false;
@@ -388,8 +394,8 @@ export const PitchArenaModal: React.FC<ArenaSessionProps> = ({
           statsRef.current.goals += 1;
 
           const hitTopCorner =
-            Math.abs(ball.pos.x) > PITCH.GOAL_HALF_W - 1.5 &&
-            ball.pos.y > PITCH.GOAL_HEIGHT - 1.1;
+            Math.abs(ball.pos.x) > PITCH.GOAL_HALF_W - 1.85 &&
+            ball.pos.y > PITCH.GOAL_HEIGHT - 1.25;
 
           const scoredByMate = ball.lastTouchBy === 'MATE';
           const wasChip = !scoredByMate && lastUserShotKind === 'CHIP_SHOT';

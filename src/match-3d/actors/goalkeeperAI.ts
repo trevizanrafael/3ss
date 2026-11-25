@@ -21,6 +21,12 @@ export interface GoalkeeperBrain {
   smotherCooldown: number;
   fakeShotFreezeTimer: number;
   inSpreadStance: boolean;
+  /** Tempo humano de reação (impede virar o Neuer pegando 100% no mano a mano de perto!) */
+  shotReactionTimer: number;
+  trackingShotActive: boolean;
+  shotOriginDist: number;
+  /** Evita loop infinito de rebote/espalmada na pequena área: se já salvou há <2s, encaixa a próxima! */
+  recentSaveTimer: number;
 }
 
 export function createGoalkeeperAI(opponentClub: ClubData): GoalkeeperBrain {
@@ -43,8 +49,8 @@ export function createGoalkeeperAI(opponentClub: ClubData): GoalkeeperBrain {
     startingLeagueCountry: 'BRA',
     position: 'ATA',
     preferredFoot: 'DIREITA',
-    heightCm: 191,
-    weightKg: 85,
+    heightCm: 190,
+    weightKg: 84,
     appearance: {
       skinTone: '#C68642',
       hairStyle: 'CURTO',
@@ -58,22 +64,22 @@ export function createGoalkeeperAI(opponentClub: ClubData): GoalkeeperBrain {
       bootColor: '#111827',
     },
     attributes: {
-      acceleration: 80,
-      sprintSpeed: 78,
-      agility: 84,
-      balance: 84,
+      acceleration: 78,
+      sprintSpeed: 76,
+      agility: 82,
+      balance: 82,
       stamina: 82,
-      strength: 85,
+      strength: 84,
       finishing: 50,
       shotPower: 80,
       longShots: 50,
-      positioning: 85,
+      positioning: 84,
       shortPass: 74,
       longPass: 80,
       dribbling: 55,
       ballControl: 74,
-      tackling: 82,
-      interceptions: 85,
+      tackling: 80,
+      interceptions: 82,
     },
     attributeXp: {
       acceleration: 0, sprintSpeed: 0, agility: 0, balance: 0, stamina: 0, strength: 0,
@@ -100,6 +106,10 @@ export function createGoalkeeperAI(opponentClub: ClubData): GoalkeeperBrain {
     smotherCooldown: 0,
     fakeShotFreezeTimer: 0,
     inSpreadStance: false,
+    shotReactionTimer: 0,
+    trackingShotActive: false,
+    shotOriginDist: 16,
+    recentSaveTimer: 0,
   };
 }
 
@@ -117,20 +127,21 @@ export function stepGoalkeeperAI(
   const baseGoalZ = -PITCH.HALF_L + 0.72;
   gk.smotherCooldown = Math.max(0, gk.smotherCooldown - dt);
   gk.fakeShotFreezeTimer = Math.max(0, gk.fakeShotFreezeTimer - dt);
+  gk.recentSaveTimer = Math.max(0, gk.recentSaveTimer - dt);
 
-  // Fingir Chute (B->A) faz o goleiro plantar o pé pro lado falso por 0.34s!
-  if (triggeredFakeShotDirX !== null && ball.pos.z < -28.0 && gk.fakeShotFreezeTimer <= 0) {
-    gk.fakeShotFreezeTimer = 0.34;
-    gk.vel.set(triggeredFakeShotDirX * 3.1, 0, 0);
+  if (triggeredFakeShotDirX !== null && ball.pos.z < -27.5 && gk.fakeShotFreezeTimer <= 0) {
+    gk.fakeShotFreezeTimer = 0.38;
+    gk.vel.set(triggeredFakeShotDirX * 3.4, 0, 0);
   }
 
-  // 1. Quando o goleiro encaixou a bola: caminha até a linha da pequena área e repõe!
+  // 1. Quando o goleiro encaixou a bola: caminha até a pequena área e repõe limpo!
   if (ball.ownerId === 'GK') {
     gk.inSpreadStance = false;
+    gk.trackingShotActive = false;
     gk.holdBallTimer -= dt;
     gk.diveDir = 0;
-    const walkOutSpd = gk.pos.z < -PITCH.HALF_L + 3.2 ? 2.1 : 0;
-    gk.pos.z = Math.min(-PITCH.HALF_L + 3.2, gk.pos.z + walkOutSpd * dt);
+    const walkOutSpd = gk.pos.z < -PITCH.HALF_L + 3.4 ? 2.2 : 0;
+    gk.pos.z = Math.min(-PITCH.HALF_L + 3.4, gk.pos.z + walkOutSpd * dt);
     ball.pos.set(gk.pos.x, 1.08, gk.pos.z + 0.42);
     ball.vel.set(0, 0, 0);
     ball.spin.set(0, 0, 0);
@@ -139,15 +150,32 @@ export function stepGoalkeeperAI(
       ball.ownerId = null;
       ball.lastTouchBy = 'GK';
       ball.touchCooldown = 0.35;
-      const aimZ = Math.max(-15, userPos.z);
+      const aimZ = Math.max(-14, userPos.z);
       const toUser = new THREE.Vector3(userPos.x - gk.pos.x, 0, aimZ - gk.pos.z).normalize();
-      ball.vel.set(toUser.x * 17.5, 4.0, toUser.z * 17.5);
+      ball.vel.set(toUser.x * 18.0, 4.2, toUser.z * 18.0);
       playBallKickSfx(0.62);
     }
     gk.actor.root.position.copy(gk.pos);
     gk.actor.root.rotation.y = 0;
     animatePitchActor(gk.actor, walkOutSpd > 0.2 ? 'RUN' : 'IDLE', walkOutSpd, 0, false, dt, timeSec);
     return { madeSave: false, caughtFirmly: false };
+  }
+
+  // Detecta início de novo chute contra o gol para disparar o tempo humano de reação!
+  const isIncomingShot =
+    ball.ownerId === null && ball.vel.z < -5.5 && ball.pos.z > -PITCH.HALF_L;
+  if (isIncomingShot && !gk.trackingShotActive) {
+    gk.trackingShotActive = true;
+    gk.shotOriginDist = Math.hypot(ball.pos.x, -PITCH.HALF_L - ball.pos.z);
+    // De perto (< 13m = mano a mano!) o goleiro leva ~0.18s pra reagir; de longe (> 18m) ele vê a bola sair do pé rápido!
+    gk.shotReactionTimer = gk.shotOriginDist < 13.5 ? 0.185 : gk.shotOriginDist < 19 ? 0.1 : 0.03;
+  } else if (!isIncomingShot) {
+    gk.trackingShotActive = false;
+    gk.shotReactionTimer = 0;
+  }
+
+  if (gk.shotReactionTimer > 0) {
+    gk.shotReactionTimer = Math.max(0, gk.shotReactionTimer - dt);
   }
 
   const distToBallHoriz = Math.hypot(ball.pos.x - gk.pos.x, ball.pos.z - gk.pos.z);
@@ -157,160 +185,174 @@ export function stepGoalkeeperAI(
     gk.diveTimer -= dt;
     gk.pos.x += gk.vel.x * dt;
     gk.pos.z += gk.vel.z * dt;
-    gk.pos.x = Math.max(-PITCH.GOAL_HALF_W - 0.85, Math.min(PITCH.GOAL_HALF_W + 0.85, gk.pos.x));
-    gk.pos.z = Math.max(-PITCH.HALF_L + 0.35, Math.min(-PITCH.HALF_L + 11.5, gk.pos.z));
+    gk.pos.x = Math.max(-PITCH.GOAL_HALF_W - 0.5, Math.min(PITCH.GOAL_HALF_W + 0.5, gk.pos.x));
+    gk.pos.z = Math.max(-PITCH.HALF_L + 0.35, Math.min(-PITCH.HALF_L + 10.5, gk.pos.z));
   } else if (gk.fakeShotFreezeTimer > 0) {
     gk.pos.x += gk.vel.x * dt;
-    gk.vel.multiplyScalar(Math.max(0, 1 - 5.5 * dt));
+    gk.vel.multiplyScalar(Math.max(0, 1 - 5.2 * dt));
   } else {
     gk.diveDir = 0;
 
-    // 2. Posicionamento com INÉRCIA REAL DE PASSADA (não desliza mais como robô!) + AJOELHADA 1x1!
+    // 2. Posicionamento Equilibrado:
+    // - Se a bola está LONGE (z > -25), fica cravado perto da linha (z = -41.2) -> IMPOSSÍVEL tomar gol bobo de cobertura de longe!
+    // - No MANO A MANO (z < -33.5), sai pra fechar o meio e ajoelha (GK_SPREAD_LOW), mas deixa os cantos do gol de 9m abertos p/ finalização colocada/forte ou cavadinha!
     const distBallFromGoal = Math.hypot(ball.pos.x, ball.pos.z - -PITCH.HALF_L);
     const attackerAdvancing = ball.vel.z < -0.9;
     const attackerIn1v1Close =
       (ball.ownerId === 'USER' || ball.ownerId === 'MATE') &&
-      Math.abs(ball.pos.x) < 9.0 &&
-      ball.pos.z < -32.8;
-
-    const looseBallInSixYard =
-      ball.ownerId === null &&
-      Math.hypot(ball.vel.x, ball.vel.z) < 7.0 &&
-      ball.pos.z < -35.5 &&
-      Math.abs(ball.pos.x) < 7.5;
+      Math.abs(ball.pos.x) < 8.5 &&
+      ball.pos.z < -33.5;
 
     let targetX: number;
     let targetZ: number;
-    // Velocidade humana realista de passada lateral (4.7..5.6 m/s — se você girar rápido o jogo ou bater cruzado no canto oposto, vence ele!)
-    let maxMoveSpd = 4.6 + skillDifficulty01 * 1.15;
+    let maxMoveSpd = 4.4 + skillDifficulty01 * 0.95;
 
-    if ((attackerIn1v1Close && (ball.pos.z < -35.0 || attackerAdvancing)) || looseBallInSixYard) {
-      maxMoveSpd = 5.8 + skillDifficulty01 * 1.1;
-      targetX = ball.pos.x * 0.9;
-      targetZ = Math.min(-PITCH.HALF_L + 7.8, ball.pos.z - 0.55);
-      // Quando chega perto (dist < 6.5m no 1x1), sai de base / ajoelha em cruz fechando por baixo e abrindo a Cavadinha (LB+B)!
-      gk.inSpreadStance = distToBallHoriz < 6.5;
+    if (attackerIn1v1Close && (ball.pos.z < -35.8 || attackerAdvancing)) {
+      maxMoveSpd = 5.2 + skillDifficulty01 * 0.9;
+      targetX = ball.pos.x * 0.78;
+      // Sai até ~6.5m da linha p/ fechar e ajoelhar, permitindo a cavadinha ou batida tirando dele!
+      targetZ = Math.max(-PITCH.HALF_L + 2.2, Math.min(-PITCH.HALF_L + 6.8, ball.pos.z - 1.35));
+      gk.inSpreadStance = distToBallHoriz < 5.6;
     } else {
       gk.inSpreadStance = false;
-      const maxStepOut = attackerAdvancing ? 3.8 : 2.3;
+      // Quando a bola está longe (z > -24), fica em baseGoalZ (-41.28) bem guardado debaixo da trave!
+      const maxStepOut = ball.pos.z < -25 ? (attackerAdvancing ? 3.1 : 1.9) : 0.75;
       const stepOutDist =
-        ball.pos.z < -20
-          ? Math.min(maxStepOut, Math.max(0.75, (1 - (distBallFromGoal - 7) / 22) * maxStepOut))
-          : 0.75;
+        ball.pos.z < -25
+          ? Math.min(maxStepOut, Math.max(0.72, (1 - (distBallFromGoal - 8) / 18) * maxStepOut))
+          : 0.72;
       const dirX = ball.pos.x / Math.max(1, distBallFromGoal);
       const dirZ = (ball.pos.z - -PITCH.HALF_L) / Math.max(1, distBallFromGoal);
 
       targetX = Math.max(
-        -PITCH.GOAL_HALF_W + 0.45,
-        Math.min(PITCH.GOAL_HALF_W - 0.45, dirX * (stepOutDist + 1.5)),
+        -PITCH.GOAL_HALF_W + 0.85,
+        Math.min(PITCH.GOAL_HALF_W - 0.85, dirX * (stepOutDist + 1.85)),
       );
       targetZ = Math.max(baseGoalZ, -PITCH.HALF_L + dirZ * stepOutDist);
     }
 
-    // 3. Leitura de Chutes (se ele já estiver ajoelhado em GK_SPREAD_LOW no 1x1, não salta alto na cavadinha!)
-    if (
-      ball.ownerId === null &&
-      ball.vel.z < -5.5 &&
-      ball.pos.z < -4 &&
-      ball.pos.z > -PITCH.HALF_L
-    ) {
-      const tHit = (gk.pos.z - ball.pos.z) / ball.vel.z;
-      if (tHit > 0 && tHit < 1.2) {
+    // 3. Leitura de Chutes:
+    // - DE LONGE (shotOriginDist >= 16m): recua p/ linha, lê 95% da curva e busca chapadinha/cavadinha de longe sem tomar frango!
+    // - DE PERTO (shotOriginDist < 13.5m): respeita o tempo humano de reação (shotReactionTimer) e alcance humano!
+    if (isIncomingShot && gk.shotReactionTimer <= 0) {
+      const isLongShot = gk.shotOriginDist >= 16.5;
+      if (isLongShot) {
+        targetZ = baseGoalZ;
+        maxMoveSpd = 5.9 + skillDifficulty01 * 1.1;
+      }
+
+      const interceptZ = isLongShot ? baseGoalZ : gk.pos.z;
+      const tHit = (interceptZ - ball.pos.z) / ball.vel.z;
+      if (tHit > 0 && tHit < 1.55) {
         const yAtGk =
           ball.pos.y + ball.vel.y * tHit + 0.5 * BALL_AERO.GRAVITY * tHit * tHit;
-        const magnusAx = ball.spin.y * ball.vel.z * BALL_AERO.MAGNUS_COEFF * 0.8;
-        const predX = ball.pos.x + ball.vel.x * tHit + 0.5 * magnusAx * tHit * tHit * 0.82;
+        const curveRead = isLongShot ? 0.96 : 0.65;
+        const magnusAx = ball.spin.y * ball.vel.z * BALL_AERO.MAGNUS_COEFF * 0.82;
+        const predX = ball.pos.x + ball.vel.x * tHit + 0.5 * magnusAx * tHit * tHit * curveRead;
 
-        if (Math.abs(predX) < PITCH.GOAL_HALF_W + 1.0) {
-          targetX = Math.max(-PITCH.GOAL_HALF_W, Math.min(PITCH.GOAL_HALF_W, predX));
+        if (Math.abs(predX) < PITCH.GOAL_HALF_W + 1.1) {
+          targetX = Math.max(-PITCH.GOAL_HALF_W + 0.25, Math.min(PITCH.GOAL_HALF_W - 0.25, predX));
           const deltaX = predX - gk.pos.x;
-          // Se não estiver travado na ajoelhada de 1x1 e o chute vier nos cantos, salta em ponte!
-          if (!gk.inSpreadStance && Math.abs(deltaX) > 0.88 && tHit < 0.52 && yAtGk < 2.48) {
+          const diveTriggerTime = isLongShot ? 0.56 : 0.36;
+          if (!gk.inSpreadStance && Math.abs(deltaX) > 0.95 && tHit < diveTriggerTime && yAtGk < PITCH.GOAL_HEIGHT + 0.1) {
             gk.diveDir = deltaX < 0 ? -1 : 1;
-            gk.diveTimer = 0.46;
-            gk.vel.set(gk.diveDir * (5.9 + skillDifficulty01 * 2.1), 0, 0);
+            gk.diveTimer = 0.44;
+            const diveSpd = isLongShot
+              ? 6.4 + skillDifficulty01 * 1.8
+              : 4.9 + skillDifficulty01 * 1.3;
+            gk.vel.set(gk.diveDir * diveSpd, 0, 0);
           }
         }
       }
     }
 
-    // Aceleração física com inércia (precisa apoiar o pé e acelerar, zero teleporte/deslize!)
     if (gk.diveTimer <= 0) {
       const dx = targetX - gk.pos.x;
       const dz = targetZ - gk.pos.z;
       const d = Math.hypot(dx, dz);
-      const wishSpd = d > 0.06 ? Math.min(maxMoveSpd, d * 6.5) : 0;
+      const wishSpd = d > 0.06 ? Math.min(maxMoveSpd, d * 6.2) : 0;
       const wishVx = d > 0.06 ? (dx / d) * wishSpd : 0;
       const wishVz = d > 0.06 ? (dz / d) * wishSpd : 0;
 
-      const accel = 15.0;
+      const accel = 14.5;
       gk.vel.x += (wishVx - gk.vel.x) * Math.min(1, accel * dt);
       gk.vel.z += (wishVz - gk.vel.z) * Math.min(1, accel * dt);
       gk.pos.addScaledVector(gk.vel, dt);
     }
   }
 
-  // 4. Abafa nos pés 1x1 se você bater de frente nele sem cavar (LB+B) nem cortar (B->A)!
+  // 4. Abafa nos pés 1x1 somente se você trombar direto em cima dele (< 1.08m)!
   const currDistHoriz = Math.hypot(ball.pos.x - gk.pos.x, ball.pos.z - gk.pos.z);
   if (
     (ball.ownerId === 'USER' || ball.ownerId === 'MATE') &&
     gk.smotherCooldown <= 0 &&
-    currDistHoriz < 1.24 &&
-    ball.pos.y < 1.25
+    currDistHoriz < 1.08 &&
+    ball.pos.y < 1.2
   ) {
     madeSave = true;
-    gk.smotherCooldown = 0.85;
+    caughtFirmly = true;
+    gk.smotherCooldown = 1.0;
     gk.diveDir = ball.pos.x < gk.pos.x ? -1 : 1;
-    gk.diveTimer = 0.32;
+    gk.diveTimer = 0.3;
     gk.vel.set(0, 0, 0);
     playBallKickSfx(0.7);
-
-    if (Math.random() < 0.55) {
-      caughtFirmly = true;
-      ball.ownerId = 'GK';
-      ball.lastTouchBy = 'GK';
-      gk.holdBallTimer = 0.9;
-    } else {
-      const pushX = ball.pos.x >= gk.pos.x ? 1 : -1;
-      ball.ownerId = null;
-      ball.lastTouchBy = 'GK';
-      ball.touchCooldown = 0.32;
-      ball.vel.set(pushX * 8.5, 1.8, 5.5);
-    }
+    ball.ownerId = 'GK';
+    ball.lastTouchBy = 'GK';
+    gk.holdBallTimer = 0.95;
   } else if (
-    // 5. Defesa de Chutes: Chutes fortes ESPALMAM gerando rebote; só chutes fracos/no peito ele encaixa!
+    // 5. Defesa de Chutes:
+    // - De longe (shotOriginDist >= 16.5m): alcance alto até 2.98m (pega cavadinha/chapadinha mansa de longe!)
+    // - No mano a mano (< 14m): alcance humano enxuto (deixa os cantos do gol de 9m livres se bater colocado/forte!)
     ball.ownerId === null &&
     ball.touchCooldown <= 0.19 &&
     ball.pos.z > -PITCH.HALF_L - 0.1
   ) {
-    // Se estiver ajoelhado em GK_SPREAD_LOW, fecha largo embaixo (1.38m) mas baixinho em cima (1.18m = Cavadinha passa!)
-    const reachX = gk.inSpreadStance ? 1.38 : gk.diveTimer > 0 ? 1.38 : 0.88;
-    const reachZ = 0.86;
-    const reachY = gk.inSpreadStance ? 1.18 : gk.diveTimer > 0 ? 2.38 : 2.28;
+    const isLongShot = gk.shotOriginDist >= 16.5;
+    const reachX = gk.inSpreadStance
+      ? 1.06
+      : gk.diveTimer > 0
+        ? isLongShot
+          ? 1.48
+          : 1.16
+        : isLongShot
+          ? 0.98
+          : 0.76;
+    const reachZ = 0.85;
+    // Em GK_SPREAD_LOW no 1x1 fica em 1.25m (contra 3.05m do travessão = janela perfeita p/ Cavadinha LB+B!)
+    const reachY = gk.inSpreadStance
+      ? 1.25
+      : isLongShot
+        ? 2.98
+        : gk.diveTimer > 0
+          ? 2.55
+          : 2.35;
+
     const dx = Math.abs(ball.pos.x - gk.pos.x);
     const dz = Math.abs(ball.pos.z - gk.pos.z);
 
     const movingTowardGoalOrLooseClose =
-      ball.vel.z < -1.0 || (currDistHoriz < 0.95 && ball.pos.z < -33);
+      ball.vel.z < -1.0 || (currDistHoriz < 0.95 && ball.pos.z < -34);
 
     if (dx < reachX && dz < reachZ && ball.pos.y < reachY && movingTowardGoalOrLooseClose) {
       madeSave = true;
       const shotSpeed = ball.vel.length();
       playBallKickSfx(0.7);
 
-      // Relação realista entre Força do Chute e Espalmar vs Encaixar:
-      // - Chute forte (>= 23.5 m/s) ou ponte aérea (diveTimer > 0) ou longe do tronco -> ESPALMA (rebote vivo!)
-      // - Só encaixa se for chute fraco/médio (< 22.0 m/s) perto do peito e em pé!
+      // ANTI-PINGUE-PONGUE INFINITO: se já fez uma defesa há menos de 2.2s, OU se for bola mansa de longe, AGARRA FIRME!
       let catchChance = 0;
-      if (shotSpeed < 19.5 && gk.diveTimer <= 0 && !gk.inSpreadStance) {
-        catchChance = 0.82;
-      } else if (shotSpeed < 23.5 && dx < 0.48 && gk.diveTimer <= 0 && !gk.inSpreadStance) {
-        catchChance = 0.48;
-      } else if (shotSpeed < 25.0 && dx < 0.38 && gk.diveTimer <= 0) {
-        catchChance = 0.22;
+      if (gk.recentSaveTimer > 0) {
+        catchChance = 0.92;
+      } else if (isLongShot && shotSpeed < 26.5) {
+        catchChance = 0.78;
+      } else if (shotSpeed < 20.0 && gk.diveTimer <= 0 && !gk.inSpreadStance) {
+        catchChance = 0.8;
+      } else if (shotSpeed < 24.5 && dx < 0.45 && gk.diveTimer <= 0) {
+        catchChance = 0.45;
       } else {
-        catchChance = 0.05; // Bombas quase sempre espalmam!
+        catchChance = 0.08;
       }
+
+      gk.recentSaveTimer = 2.4;
 
       if (Math.random() < catchChance) {
         caughtFirmly = true;
@@ -318,7 +360,7 @@ export function stepGoalkeeperAI(
         ball.lastTouchBy = 'GK';
         gk.holdBallTimer = 0.95;
       } else {
-        // ESPALMADA COM REBOTE REALISTA EM CAMPO!
+        // Espalma BEM AFASTADO pros lados/frente p/ nunca ficar preso quicando no atacante colado!
         const pushSide =
           Math.abs(ball.pos.x - gk.pos.x) > 0.18
             ? ball.pos.x >= gk.pos.x
@@ -328,10 +370,10 @@ export function stepGoalkeeperAI(
               ? -1
               : 1;
         ball.lastTouchBy = 'GK';
-        ball.touchCooldown = 0.26;
-        const reboundSideSpd = 5.8 + Math.random() * 5.2;
-        const reboundOutZ = 3.8 + Math.min(6.5, Math.abs(ball.vel.z) * 0.26);
-        ball.vel.set(pushSide * reboundSideSpd, 1.8 + Math.random() * 2.4, reboundOutZ);
+        ball.touchCooldown = 0.35;
+        const reboundSideSpd = 9.5 + Math.random() * 5.0;
+        const reboundOutZ = 6.5 + Math.min(6.5, Math.abs(ball.vel.z) * 0.25);
+        ball.vel.set(pushSide * reboundSideSpd, 2.0 + Math.random() * 2.2, reboundOutZ);
         ball.spin.multiplyScalar(0.3);
       }
     }
