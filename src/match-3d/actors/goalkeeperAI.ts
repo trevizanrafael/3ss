@@ -249,14 +249,20 @@ export function stepGoalkeeperAI(
     return { madeSave: false, caughtFirmly: false };
   }
 
-  // Detecta início de novo chute contra este gol
+  // Detecta início de novo chute contra este gol (inclusive chutes do meio de campo até 62m!)
   const isIncomingShot =
-    ball.ownerId === null && ballLvz < -5.5 && ballLz > -PITCH.HALF_L && ballLz < -PITCH.HALF_L + 38;
+    ball.ownerId === null && ballLvz < -5.5 && ballLz > -PITCH.HALF_L && ballLz < -PITCH.HALF_L + 64;
   if (isIncomingShot && !gk.trackingShotActive) {
     gk.trackingShotActive = true;
     gk.shotOriginDist = Math.hypot(ball.pos.x, -PITCH.HALF_L - ballLz);
     gk.shotReactionTimer =
-      gk.shotOriginDist < 13.5 ? 0.19 : gk.shotOriginDist < 28.5 ? 0.21 : 0.12;
+      gk.shotOriginDist < 13.5
+        ? 0.19
+        : gk.shotOriginDist < 28.5
+          ? 0.21
+          : gk.shotOriginDist < 36.0
+            ? 0.11
+            : 0.04;
   } else if (!isIncomingShot) {
     gk.trackingShotActive = false;
     gk.shotReactionTimer = 0;

@@ -1,11 +1,11 @@
 import React from 'react';
 import { ClubData } from '../../data/clubs/types';
 import { CareerPlayer } from '../../domains/player/playerTypes';
-import { PITCH } from '../physics/pitchConstants';
 import { useGamepadStore } from '../../shared/gamepad/gamepadStore';
 import { ClubCrest } from '../../shared/ui/ClubCrest';
+import { PITCH } from '../physics/pitchConstants';
 
-export type MatchCameraPreset = 'PRO_TACTICAL' | 'PRO_CLOSE' | 'BROADCAST_TV';
+export type MatchCameraPreset = 'BROADCAST_TV' | 'PRO_TACTICAL' | 'PRO_CLOSE';
 
 export interface RadarDotSnapshot {
   id: string;
@@ -24,15 +24,17 @@ export interface Match11v11HudSnapshot {
   userAssists: number;
   matchMinute: number;
   matchSecond: number;
-  half: 1 | 2 | 'FT';
+  stoppageMinutes: number;
+  inStoppageTime: boolean;
+  half: 1 | 2 | 'HT' | 'FT';
+  paused: boolean;
+  pauseMenuIndex: number;
+  isReplayActive: boolean;
+  replayScorerText: string;
   stamina: number;
   maxStamina: number;
   powerPct: number;
-  teamPossession: 'HOME' | 'AWAY' | 'NEUTRAL';
-  userHasBall: boolean;
   cameraPreset: MatchCameraPreset;
-  homeFormationLabel: string;
-  awayFormationLabel: string;
   bannerFeedback: { text: string; subtext?: string; color: string } | null;
   ballX: number;
   ballZ: number;
@@ -47,15 +49,18 @@ interface Match11v11HudOverlayProps {
   derbyName: string;
   accentColor: string;
   hud: Match11v11HudSnapshot;
+  onResume: () => void;
+  onTogglePause: () => void;
   onCycleCamera: () => void;
+  onSkipReplay: () => void;
   onRestartMatch: () => void;
   onExit: () => void;
 }
 
 const CAMERA_LABELS: Record<MatchCameraPreset, string> = {
+  BROADCAST_TV: 'TV LATERAL',
   PRO_TACTICAL: 'PRO TÁTICA',
   PRO_CLOSE: 'PRO IMERSIVA',
-  BROADCAST_TV: 'TV LATERAL',
 };
 
 export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
@@ -66,20 +71,21 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
   derbyName,
   accentColor,
   hud,
+  onResume,
+  onTogglePause,
   onCycleCamera,
+  onSkipReplay,
   onRestartMatch,
   onExit,
 }) => {
-  const { padConnected, brand } = useGamepadStore();
+  const { brand } = useGamepadStore();
   const isPS = brand === 'PLAYSTATION';
-  const lblShoot = isPS ? '○' : 'B';
-  const lblPass = isPS ? '✕' : 'A';
+  const lblConfirm = isPS ? '✕' : 'A';
+  const lblBackBtn = isPS ? '○' : 'B';
   const lblThrough = isPS ? '△' : 'Y';
   const lblLob = isPS ? '□' : 'X';
-  const lblLB = isPS ? 'L1' : 'LB';
   const lblRB = isPS ? 'R1' : 'RB';
-  const lblRT = isPS ? 'R2' : 'RT';
-  const lblBack = isPS ? 'SHARE' : 'SELECT';
+  const lblSelect = isPS ? 'SHARE' : 'SELECT';
   const lblStart = isPS ? 'OPTIONS' : 'START';
 
   const staminaPct = Math.max(0, Math.min(100, hud.stamina));
@@ -88,167 +94,196 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
   const staminaColor =
     staminaPct < 24 ? '#EF4444' : staminaPct < 48 ? '#F59E0B' : '#E2E8F0';
 
-  // No radar 2D horizontal (196x126), a esquerda é o Gol Sul (+Z, defendido pelo usuário) e a direita é o Gol Norte (-Z, atacado pelo usuário)!
   const toRadarLeftPct = (z: number) => ((PITCH.HALF_L - z) / PITCH.LENGTH) * 100;
   const toRadarTopPct = (x: number) => ((x + PITCH.HALF_W) / PITCH.WIDTH) * 100;
 
-  return (
-    <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-5 select-none">
-      {/* TOPO: Placar Oficial de Transmissão 11v11 + Câmera/Saída */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <div
-            style={{ borderLeftColor: accentColor }}
-            className="bg-[#0B0B0D]/88 border border-white/15 border-l-4 px-4 py-2 flex items-center gap-4 backdrop-blur-md"
-          >
-            {/* Mandante */}
-            <div className="flex items-center gap-2">
-              <ClubCrest clubId={homeClub.id} size="sm" />
-              <div className="leading-none">
-                <span className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] tracking-wide block">
-                  {homeClub.shortName}
-                </span>
-                <span className="text-[9px] font-condensed uppercase tracking-widest text-[#9498A3]">
-                  {hud.homeFormationLabel}
-                </span>
+  // MODO REPLAY DE TV LIMPO: só a etiqueta de Replay no topo e o botão Pular [A] no canto!
+  if (hud.isReplayActive) {
+    return (
+      <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-6 select-none">
+        <div className="flex items-center justify-between">
+          <div className="bg-[#0B0B0D]/88 border-l-4 border-l-[#EF4444] border border-white/15 px-4 py-2 flex items-center gap-3 backdrop-blur-md">
+            <span className="w-2.5 h-2.5 bg-[#EF4444] inline-block animate-pulse" />
+            <div>
+              <div className="text-[10px] font-condensed uppercase tracking-[0.24em] text-[#C8A45D] font-bold">
+                REPLAY OFICIAL DA TRANSMISSÃO
               </div>
-              <span
-                className="w-1.5 h-6 ml-0.5 inline-block"
-                style={{ backgroundColor: homeClub.primaryColor || '#2DBE60' }}
-              />
-            </div>
-
-            {/* Placar Central */}
-            <div className="bg-[#141720] border border-white/12 px-3.5 py-1 font-condensed font-extrabold text-2xl text-[#F5F5F7] tabular-nums tracking-wider">
-              {hud.homeGoals} <span className="text-[#565A65]">:</span> {hud.awayGoals}
-            </div>
-
-            {/* Visitante (Maior Rival) */}
-            <div className="flex items-center gap-2">
-              <span
-                className="w-1.5 h-6 mr-0.5 inline-block"
-                style={{ backgroundColor: awayRenderClub.primaryColor || '#F5F5F7' }}
-              />
-              <div className="leading-none text-right">
-                <span className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] tracking-wide block">
-                  {rivalClub.shortName}
-                </span>
-                <span className="text-[9px] font-condensed uppercase tracking-widest text-[#9498A3]">
-                  {hud.awayFormationLabel}
-                </span>
-              </div>
-              <ClubCrest clubId={rivalClub.id} size="sm" />
-            </div>
-
-            {/* Cronômetro & Tempo */}
-            <div className="pl-3 border-l border-white/15 text-right leading-none">
-              <div className="text-[9px] uppercase tracking-[0.18em] text-[#C8A45D] font-bold">
-                {hud.half === 'FT' ? 'ENCERRADO' : `${hud.half}º TEMPO`}
-              </div>
-              <div className="font-condensed font-extrabold text-xl text-[#F5F5F7] tabular-nums mt-0.5">
-                {String(hud.matchMinute).padStart(2, '0')}:
-                {String(hud.matchSecond).padStart(2, '0')}
+              <div className="font-condensed uppercase font-extrabold text-xl text-[#F5F5F7] leading-none mt-0.5">
+                {hud.replayScorerText}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Fita compacta do Clássico + Atuação do seu Craque */}
-          <div className="bg-[#0B0B0D]/72 border border-white/10 px-3 py-1 flex items-center justify-between gap-4 text-[10px] font-condensed uppercase tracking-wider text-[#D4D7E0] backdrop-blur-sm">
-            <span className="font-bold text-[#C8A45D] truncate">{derbyName} • 11v11</span>
-            <span>
-              VOCÊ (#{player.shirtNumber} {player.shirtName} • {player.position}):{' '}
-              <strong className="text-[#F5F5F7]">
-                {hud.userGoals}G • {hud.userAssists}A
-              </strong>
+        <div className="flex justify-end pointer-events-auto">
+          <button
+            type="button"
+            onClick={onSkipReplay}
+            className="bg-[#0B0B0D]/90 hover:bg-[#F5F5F7] hover:text-[#0B0B0D] border border-white/25 px-5 py-2 font-condensed uppercase font-extrabold text-sm tracking-wider text-[#F5F5F7] cursor-pointer transition-colors"
+          >
+            [{lblConfirm} / ESPAÇO] PULAR REPLAY ›
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const pauseOptions =
+    hud.half === 'FT'
+      ? [
+          { label: 'JOGAR CLÁSSICO NOVAMENTE', action: onRestartMatch },
+          { label: 'VOLTAR AO MENU INICIAL', action: onExit },
+        ]
+      : [
+          { label: 'CONTINUAR PARTIDA', action: onResume },
+          { label: `CÂMERA: ${CAMERA_LABELS[hud.cameraPreset]}`, action: onCycleCamera },
+          { label: 'REINICIAR CLÁSSICO', action: onRestartMatch },
+          { label: 'VOLTAR AO MENU INICIAL', action: onExit },
+        ];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-5 select-none">
+      {/* TOPO ENXUTO: Placar estilo TV à esquerda + Pílula discreta de Pausa/Câmera à direita */}
+      <div className="flex items-start justify-between gap-4">
+        <div
+          style={{ borderLeftColor: accentColor }}
+          className="bg-[#0B0B0D]/86 border border-white/15 border-l-4 px-3.5 py-1.5 flex items-center gap-3 backdrop-blur-md"
+        >
+          <div className="flex items-center gap-1.5">
+            <ClubCrest clubId={homeClub.id} size="sm" />
+            <span className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] tracking-wide">
+              {homeClub.shortName}
+            </span>
+            <span
+              className="w-1 h-4 inline-block"
+              style={{ backgroundColor: homeClub.primaryColor || '#2DBE60' }}
+            />
+          </div>
+
+          <div className="bg-[#141720] border border-white/10 px-2.5 py-0.5 font-condensed font-extrabold text-xl text-[#F5F5F7] tabular-nums">
+            {hud.homeGoals} : {hud.awayGoals}
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span
+              className="w-1 h-4 inline-block"
+              style={{ backgroundColor: awayRenderClub.primaryColor || '#F5F5F7' }}
+            />
+            <span className="font-condensed uppercase font-extrabold text-lg text-[#F5F5F7] tracking-wide">
+              {rivalClub.shortName}
+            </span>
+            <ClubCrest clubId={rivalClub.id} size="sm" />
+          </div>
+
+          <div className="pl-2.5 border-l border-white/15 flex items-center gap-2">
+            <span className="font-condensed font-extrabold text-lg text-[#F5F5F7] tabular-nums">
+              {String(hud.matchMinute).padStart(2, '0')}:{String(hud.matchSecond).padStart(2, '0')}
+            </span>
+            {hud.inStoppageTime && hud.stoppageMinutes > 0 && (
+              <span className="px-1.5 py-0.5 bg-[#C8A45D] text-[#0B0B0D] font-condensed font-extrabold text-xs">
+                +{hud.stoppageMinutes}&apos;
+              </span>
+            )}
+            <span className="text-[10px] font-condensed uppercase tracking-wider text-[#9498A3] font-bold">
+              {hud.half === 'FT'
+                ? 'FIM'
+                : hud.half === 'HT'
+                  ? 'INT'
+                  : `${hud.half}ºT`}
             </span>
           </div>
         </div>
 
-        {/* Botões Rápidos no Topo Direito */}
-        <div className="flex items-center gap-2 pointer-events-auto">
-          <span
-            className={`px-3 py-1.5 border font-condensed uppercase font-extrabold text-xs tracking-wider ${
-              padConnected
-                ? 'bg-[#12261A]/85 text-[#2DBE60] border-[#2DBE60]'
-                : 'bg-[#0B0B0D]/80 text-[#FACC15] border-[#FACC15]/60'
-            }`}
-          >
-            {padConnected ? `CONTROLE (${brand})` : 'TECLADO / CONTROLE'}
-          </span>
-
+        <div className="flex items-center gap-1.5 pointer-events-auto">
           <button
             type="button"
             onClick={onCycleCamera}
-            className="px-3 py-1.5 bg-[#0B0B0D]/82 hover:bg-[#1C1F28] border border-[#C8A45D]/70 font-condensed uppercase font-bold text-xs tracking-wider text-[#C8A45D] cursor-pointer"
+            className="px-2.5 py-1 bg-[#0B0B0D]/72 hover:bg-[#1C1F28] border border-white/15 font-condensed uppercase font-bold text-[11px] tracking-wider text-[#D4D7E0] cursor-pointer"
           >
-            CÂMERA: {CAMERA_LABELS[hud.cameraPreset]} ({lblBack} / V)
+            {CAMERA_LABELS[hud.cameraPreset]} ({lblSelect}/V)
           </button>
-
           <button
             type="button"
-            onClick={onRestartMatch}
-            className="px-3 py-1.5 bg-[#0B0B0D]/82 hover:bg-[#1C1F28] border border-white/15 font-condensed uppercase font-bold text-xs tracking-wider text-[#F5F5F7] cursor-pointer"
+            onClick={onTogglePause}
+            className="px-2.5 py-1 bg-[#0B0B0D]/72 hover:bg-[#1C1F28] border border-white/15 font-condensed uppercase font-bold text-[11px] tracking-wider text-[#C8A45D] cursor-pointer"
           >
-            REINICIAR JOGO
-          </button>
-
-          <button
-            type="button"
-            onClick={onExit}
-            className="px-4 py-1.5 bg-[#C94040] hover:bg-[#DC2626] text-[#F5F5F7] font-condensed uppercase font-extrabold text-xs tracking-wider cursor-pointer"
-          >
-            SAIR ({lblStart}) ›
+            MENU ({lblStart}/ESC)
           </button>
         </div>
       </div>
 
-      {/* CENTRO: Tarja de Gol / Intervalo / Fim de Jogo */}
+      {/* CENTRO: Tarja de Evento OU Menu Enxuto de Pausa / Fim de Jogo (100% Controle & Mouse!) */}
       <div className="my-auto flex flex-col items-center justify-center">
-        {hud.bannerFeedback && (
+        {(hud.paused || hud.half === 'FT') ? (
           <div
-            style={{ borderColor: hud.bannerFeedback.color }}
-            className="bg-[#0B0B0D]/90 border-y-2 px-9 py-2.5 text-center shadow-2xl backdrop-blur-md"
+            style={{ borderTopColor: accentColor }}
+            className="pointer-events-auto bg-[#0B0B0D]/95 border border-white/20 border-t-4 p-6 w-full max-w-md shadow-2xl backdrop-blur-md"
           >
-            <div
-              style={{ color: hud.bannerFeedback.color }}
-              className="font-condensed uppercase font-extrabold text-3xl tracking-wider leading-none"
-            >
-              {hud.bannerFeedback.text}
-            </div>
-            {hud.bannerFeedback.subtext && (
-              <div className="font-condensed uppercase font-bold text-xs tracking-[0.22em] text-[#E2E8F0] mt-1">
-                {hud.bannerFeedback.subtext}
+            <div className="text-center border-b border-[#242730] pb-3 mb-4">
+              <div className="text-[10px] uppercase tracking-[0.25em] text-[#C8A45D] font-bold">
+                {hud.half === 'FT' ? 'FIM DO CLÁSSICO 11v11' : derbyName}
               </div>
-            )}
-          </div>
-        )}
+              <div className="font-condensed uppercase font-extrabold text-3xl text-[#F5F5F7] mt-0.5">
+                {homeClub.shortName} {hud.homeGoals} : {hud.awayGoals} {rivalClub.shortName}
+              </div>
+              <div className="text-[11px] font-condensed uppercase tracking-wider text-[#9498A3] mt-1">
+                #{player.shirtNumber} {player.shirtName} • {hud.userGoals} GOLS • {hud.userAssists} ASSIST
+              </div>
+            </div>
 
-        {hud.half === 'FT' && (
-          <div className="mt-4 pointer-events-auto flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onRestartMatch}
-              style={{ borderLeftColor: accentColor }}
-              className="console-btn-primary px-6 py-2.5 text-sm cursor-pointer"
-            >
-              JOGAR CLÁSSICO NOVAMENTE ›
-            </button>
-            <button
-              type="button"
-              onClick={onExit}
-              className="px-5 py-2.5 bg-[#16181D] hover:bg-[#22252E] border border-white/20 font-condensed uppercase font-bold text-sm tracking-wider text-[#F5F5F7] cursor-pointer"
-            >
-              VOLTAR AO MENU
-            </button>
+            <div className="flex flex-col gap-2">
+              {pauseOptions.map((opt, idx) => {
+                const selected = hud.pauseMenuIndex === idx;
+                return (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={opt.action}
+                    className={`w-full px-4 py-2.5 font-condensed uppercase font-extrabold text-base tracking-wider text-left flex items-center justify-between cursor-pointer border transition-colors ${
+                      selected
+                        ? 'bg-[#F5F5F7] text-[#0B0B0D] border-[#F5F5F7]'
+                        : 'bg-[#141720] text-[#D4D7E0] border-[#242730] hover:bg-[#1E2230]'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    {selected && <span className="text-xs">[{lblConfirm}] ›</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#242730] text-[10px] font-condensed uppercase tracking-wider text-[#9498A3] text-center leading-relaxed">
+              <strong className="text-[#F5F5F7]">ATAQUE:</strong> {lblBackBtn} Chute • {lblRB}+{lblBackBtn} Chapada • {lblConfirm} Passe • {lblThrough} Enfiada • {lblLob} Cruzar
+              <br />
+              <strong className="text-[#F5F5F7]">DEFESA:</strong> {lblConfirm} Bote • {lblLob} Carrinho • {lblRB} Pressão IA
+            </div>
           </div>
+        ) : (
+          hud.bannerFeedback && (
+            <div
+              style={{ borderColor: hud.bannerFeedback.color }}
+              className="bg-[#0B0B0D]/88 border-y-2 px-8 py-2 text-center shadow-2xl backdrop-blur-md"
+            >
+              <div
+                style={{ color: hud.bannerFeedback.color }}
+                className="font-condensed uppercase font-extrabold text-3xl tracking-wider leading-none"
+              >
+                {hud.bannerFeedback.text}
+              </div>
+              {hud.bannerFeedback.subtext && (
+                <div className="font-condensed uppercase font-bold text-xs tracking-[0.22em] text-[#E2E8F0] mt-1">
+                  {hud.bannerFeedback.subtext}
+                </div>
+              )}
+            </div>
+          )
         )}
       </div>
 
-      {/* RODAPÉ: Barras FIFA (Esq) + Radar Tático 2D 22 Atletas (Centro) + Guia Contextual (Dir) */}
+      {/* RODAPÉ LIMPO: Duas Barrinhas FIFA (Esq) + Radar 2D Compacto (Centro) */}
       <div className="grid grid-cols-12 items-end gap-4">
-        {/* Esquerda: Barras de Fôlego + Força */}
         <div className="col-span-4 flex items-end">
-          <div className="bg-[#080A0F]/52 border border-white/12 px-2.5 py-2 w-56 backdrop-blur-sm space-y-1.5">
+          <div className="bg-[#080A0F]/48 border border-white/12 px-2 py-1.5 w-44 backdrop-blur-sm space-y-1.5">
             <div className="w-full h-[5px] bg-black/55 relative overflow-hidden">
               {maxStaminaPct < 99.5 && (
                 <div
@@ -262,13 +297,13 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
               />
             </div>
 
-            <div className="w-full h-[9px] bg-black/60 border border-white/10 relative overflow-hidden">
+            <div className="w-full h-[8px] bg-black/60 border border-white/10 relative overflow-hidden">
               <div
                 className="h-full overflow-hidden transition-none"
                 style={{ width: `${powerPct}%` }}
               >
                 <div
-                  className="h-full w-56"
+                  className="h-full w-44"
                   style={{
                     background:
                       'linear-gradient(90deg, #22C55E 0%, #84CC16 32%, #FACC15 58%, #F97316 80%, #EF4444 100%)',
@@ -279,13 +314,11 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
           </div>
         </div>
 
-        {/* Centro: Radar Tático 2D (Mostra as duas formações 11v11 se movimentando ao vivo!) */}
         <div className="col-span-4 flex justify-center">
-          <div className="relative w-[204px] h-[130px] bg-[#0B1912]/72 border border-white/20 backdrop-blur-sm overflow-hidden shadow-xl">
-            {/* Marcações do gramado no radar (Esquerda = Gol Sul / Defesa; Direita = Gol Norte / Ataque) */}
+          <div className="relative w-[176px] h-[112px] bg-[#0B1912]/68 border border-white/18 backdrop-blur-sm overflow-hidden shadow-lg">
             <svg
               viewBox="0 0 210 136"
-              className="absolute inset-0 w-full h-full opacity-35"
+              className="absolute inset-0 w-full h-full opacity-30"
               fill="none"
               stroke="#E2E8F0"
               strokeWidth="1.2"
@@ -296,13 +329,6 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
               <rect x="4" y="28" width="32" height="80" />
               <rect x="174" y="28" width="32" height="80" />
             </svg>
-
-            <div className="absolute top-0.5 left-1.5 text-[8px] font-condensed uppercase tracking-widest text-white/45">
-              DEF ({homeClub.shortName})
-            </div>
-            <div className="absolute top-0.5 right-1.5 text-[8px] font-condensed uppercase tracking-widest text-white/45">
-              ATA ➔
-            </div>
 
             {hud.radarDots.map((dot) => {
               const leftPct = Math.max(2, Math.min(98, toRadarLeftPct(dot.z)));
@@ -324,84 +350,24 @@ export const Match11v11HudOverlay: React.FC<Match11v11HudOverlayProps> = ({
                     zIndex: dot.isUser ? 30 : dot.hasBall ? 25 : 10,
                   }}
                   className={`absolute -translate-x-1/2 -translate-y-1/2 border ${
-                    dot.isUser ? 'w-3 h-3 border-2' : 'w-2 h-2'
+                    dot.isUser ? 'w-2.5 h-2.5 border-2' : 'w-2 h-2'
                   }`}
                 />
               );
             })}
 
-            {/* Ponto da Bola */}
             <span
               style={{
                 left: `${Math.max(2, Math.min(98, toRadarLeftPct(hud.ballZ)))}%`,
                 top: `${Math.max(3, Math.min(97, toRadarTopPct(hud.ballX)))}%`,
                 zIndex: 40,
               }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white border border-black shadow"
+              className="absolute -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white border border-black"
             />
           </div>
         </div>
 
-        {/* Direita: Guia Contextual Inteligente (Ataque vs Defesa vs Sem Bola) */}
-        <div className="col-span-4 flex justify-end">
-          <div className="bg-[#0B0B0D]/66 border border-white/10 px-3.5 py-2 text-[11px] font-condensed uppercase tracking-wider text-[#D4D7E0] flex flex-wrap justify-end items-center gap-x-3 gap-y-1 backdrop-blur-sm">
-            {hud.userHasBall ? (
-              <>
-                <span>
-                  <strong className="text-[#EF4444]">{lblShoot}:</strong> CHUTE
-                </span>
-                <span>
-                  <strong className="text-[#C8A45D]">{lblRB}+{lblShoot}:</strong> CHAPADA
-                </span>
-                <span>
-                  <strong className="text-[#A78BFA]">{lblLB}+{lblShoot}:</strong> CAVADINHA
-                </span>
-                <span>
-                  <strong className="text-[#2DBE60]">{lblPass}:</strong> PASSE
-                </span>
-                <span>
-                  <strong className="text-[#FACC15]">{lblThrough}:</strong> ENFIADA
-                </span>
-                <span>
-                  <strong className="text-[#38BDF8]">{lblLob}:</strong> CRUZAR
-                </span>
-              </>
-            ) : hud.teamPossession === 'AWAY' ? (
-              <>
-                <span>
-                  <strong className="text-[#2DBE60]">{lblPass}:</strong> DAR BOTE
-                </span>
-                <span>
-                  <strong className="text-[#38BDF8]">{lblLob}:</strong> CARRINHO
-                </span>
-                <span>
-                  <strong className="text-[#C8A45D]">{lblRB}:</strong> DOBRAR PRESSÃO IA
-                </span>
-                <span>
-                  <strong className="text-[#F5F5F7]">{lblRT}:</strong> PIQUE
-                </span>
-              </>
-            ) : (
-              <>
-                <span>
-                  <strong className="text-[#2DBE60]">{lblPass}:</strong> PEDIR NO PÉ
-                </span>
-                <span>
-                  <strong className="text-[#FACC15]">{lblThrough}:</strong> PEDIR ENFIADA
-                </span>
-                <span>
-                  <strong className="text-[#38BDF8]">{lblLob}:</strong> PEDIR CRUZAMENTO
-                </span>
-                <span>
-                  <strong className="text-[#EF4444]">{lblShoot}:</strong> PEDIR CHUTE IA
-                </span>
-                <span>
-                  <strong className="text-[#F5F5F7]">{lblRT}:</strong> PIQUE
-                </span>
-              </>
-            )}
-          </div>
-        </div>
+        <div className="col-span-4" />
       </div>
     </div>
   );

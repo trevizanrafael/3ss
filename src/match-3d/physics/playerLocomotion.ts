@@ -224,12 +224,33 @@ export function stepPlayerAndBallControl(
         : baseJogSpeed);
 
   if (ball.ownerId === 'USER' && pState.fakeShotAnimTimer <= 0) {
-    const dribbleEfficiency = 0.87 + (attrs.dribbling / 99) * 0.11;
+    const dribbleEfficiency = 0.81 + (attrs.dribbling / 99) * 0.09;
     targetSpeed *= dribbleEfficiency;
   }
 
   if (pState.slideTimer > 0) {
-    pState.vel.multiplyScalar(Math.max(0, 1 - 3.2 * dt));
+    pState.vel.multiplyScalar(Math.max(0, 1 - 1.55 * dt));
+    // Varredura contínua de desarme durante TODO o deslize do carrinho!
+    const slideDistNow = Math.hypot(ball.pos.x - pState.pos.x, ball.pos.z - pState.pos.z);
+    const slideReachNow = 1.95 + (attrs.tackling / 99) * 0.45;
+    if (
+      pState.slideTimer > 0.1 &&
+      slideDistNow < slideReachNow &&
+      ball.pos.y < 1.35 &&
+      ball.ownerId !== 'USER' &&
+      ball.ownerId !== 'AWAY_GK' &&
+      ball.ownerId !== 'HOME_GK' &&
+      !(ball.lastTouchBy === 'USER' && ball.touchCooldown > 0.05)
+    ) {
+      const lungeDir = new THREE.Vector3(Math.sin(pState.facingYaw), 0, Math.cos(pState.facingYaw));
+      ball.ownerId = 'USER';
+      ball.lastTouchBy = 'USER';
+      ball.lastTouchTeam = 'HOME';
+      ball.touchCooldown = 0.32;
+      ball.spin.set(0, 0, 0);
+      ball.vel.set(lungeDir.x * 7.5, 0, lungeDir.z * 7.5);
+      playBallKickSfx(0.56);
+    }
   } else if (pState.fakeShotAnimTimer > 0) {
     if (pState.fakeShotAnimTimer < 0.22) {
       pState.vel.multiplyScalar(Math.max(0, 1 - 1.5 * dt));
@@ -258,15 +279,40 @@ export function stepPlayerAndBallControl(
     pState.facingYaw += shortestAngleDiff(pState.facingYaw, desiredYaw) * Math.min(1, turnRate * dt);
   }
 
-  // 2. Domínio e condução da bola
+  // 2. Domínio magnético de passe amigo e condução da bola
+  const isIncomingFriendlyPass =
+    ball.ownerId === null &&
+    ball.lastTouchTeam === 'HOME' &&
+    ball.lastTouchBy !== null &&
+    ball.lastTouchBy !== 'USER';
+
+  // Micro-assistência de posicionamento p/ fechar na linha de recepção quando um companheiro toca pra você!
+  if (isIncomingFriendlyPass && pState.slideTimer <= 0) {
+    const rawDist = Math.hypot(ball.pos.x - pState.pos.x, ball.pos.z - pState.pos.z);
+    const ballHorizSpd = Math.hypot(ball.vel.x, ball.vel.z);
+    if (rawDist < 3.6 && rawDist > 0.35 && ball.pos.y < 2.1 && ballHorizSpd > 2.2) {
+      const toPlayerX = pState.pos.x - ball.pos.x;
+      const toPlayerZ = pState.pos.z - ball.pos.z;
+      const approaching = toPlayerX * ball.vel.x + toPlayerZ * ball.vel.z > -2.5;
+      if (approaching) {
+        const pullStep = Math.min(rawDist * 0.45, 4.4 * dt);
+        pState.pos.x += ((ball.pos.x - pState.pos.x) / rawDist) * pullStep;
+        pState.pos.z += ((ball.pos.z - pState.pos.z) / rawDist) * pullStep;
+      }
+    }
+  }
+
   const distToBall = Math.hypot(ball.pos.x - pState.pos.x, ball.pos.z - pState.pos.z);
-  const controlRadius = 0.92 + (attrs.ballControl / 99) * 0.34;
+  const controlRadius = isIncomingFriendlyPass
+    ? 1.68 + (attrs.ballControl / 99) * 0.38
+    : 1.05 + (attrs.ballControl / 99) * 0.34;
+  const maxTrapHeight = isIncomingFriendlyPass ? 2.05 : 1.6;
 
   if (
     ball.ownerId === null &&
     ball.touchCooldown <= 0 &&
     distToBall < controlRadius &&
-    ball.pos.y < 1.55
+    ball.pos.y < maxTrapHeight
   ) {
     ball.ownerId = 'USER';
     ball.lastTouchBy = 'USER';
@@ -422,7 +468,10 @@ export function stepPlayerAndBallControl(
         // Canto direito (+1) usa Perna Direita (false); Canto esquerdo (-1) usa Perna Esquerda (true)!
         pState.lastKickUsedLeftFoot = targetCornerSign === -1;
 
-        const farPenalty = distFromGoalLine > 29 ? (distFromGoalLine - 29) * 0.14 : 0;
+        const farPenalty =
+          distFromGoalLine > 29
+            ? (distFromGoalLine - 29) * (distFromGoalLine > 36 ? 0.38 : 0.16)
+            : 0;
         const dispersion = (1 - finSkill) * 0.8 + farPenalty;
         const targetX =
           targetCornerSign * (3.35 + finSkill * 0.72) + (Math.random() - 0.5) * dispersion;
@@ -456,7 +505,10 @@ export function stepPlayerAndBallControl(
         // CHUTE FORTE INTELIGENTE (B): crava na melhor posição aberta longe do goleiro!
         pState.lastKickUsedLeftFoot = player.preferredFoot === 'ESQUERDA';
         const dispersion =
-          (1 - finSkill) * 1.2 + (distFromGoalLine > 25 ? (distFromGoalLine - 25) * 0.06 : 0);
+          (1 - finSkill) * 1.2 +
+          (distFromGoalLine > 25
+            ? (distFromGoalLine - 25) * (distFromGoalLine > 35 ? 0.32 : 0.08)
+            : 0);
         const targetX =
           bestSide * (2.85 + finSkill * 0.95) + (Math.random() - 0.5) * dispersion;
 
@@ -501,8 +553,9 @@ export function stepPlayerAndBallControl(
             ? mateDir
             : baseAim.clone();
 
-      const spd = 12.5 + power * (14.5 + (attrs.shortPass / 99) * 4.0);
-      ball.vel.set(dir.x * spd, 0.18 + power * 0.35, dir.z * spd);
+      const spd = 15.5 + power * (14.5 + (attrs.shortPass / 99) * 4.5);
+      ball.pos.y = PITCH.BALL_RADIUS;
+      ball.vel.set(dir.x * spd, 0, dir.z * spd);
       ball.spin.set(0, 0, 0);
       pState.facingYaw = Math.atan2(dir.x, dir.z);
       kicked = 'GROUND_PASS';
@@ -670,23 +723,25 @@ export function stepPlayerAndBallControl(
       commandedMateShoot = true;
     } else if (opponentHasBall && input.passJustPressed) {
       // BOTE / DESARME EM PÉ (A quando defendendo!)
+      const predBallX = ball.pos.x + ball.vel.x * 0.12;
+      const predBallZ = ball.pos.z + ball.vel.z * 0.12;
       const lungeYaw =
-        distToBall > 0.2
-          ? Math.atan2(ball.pos.x - pState.pos.x, ball.pos.z - pState.pos.z)
+        distToBall > 0.15
+          ? Math.atan2(predBallX - pState.pos.x, predBallZ - pState.pos.z)
           : pState.facingYaw;
       pState.facingYaw = lungeYaw;
-      pState.kickAnimTimer = 0.22;
-      const tackleReach = 1.65 + (attrs.tackling / 99) * 0.55;
+      pState.kickAnimTimer = 0.24;
+      const tackleReach = 1.95 + (attrs.tackling / 99) * 0.55;
       if (distToBall <= tackleReach) {
         ball.ownerId = 'USER';
         ball.lastTouchBy = 'USER';
         ball.lastTouchTeam = 'HOME';
-        ball.touchCooldown = 0.28;
+        ball.touchCooldown = 0.32;
         ball.spin.set(0, 0, 0);
-        playBallKickSfx(0.46);
-      } else if (distToBall < 4.2) {
-        pState.vel.x += Math.sin(lungeYaw) * 3.4;
-        pState.vel.z += Math.cos(lungeYaw) * 3.4;
+        playBallKickSfx(0.48);
+      } else if (distToBall < 4.8) {
+        pState.vel.x += Math.sin(lungeYaw) * 5.0;
+        pState.vel.z += Math.cos(lungeYaw) * 5.0;
       }
     } else if (input.passJustPressed) {
       calledForBall = 'PASS';
@@ -695,25 +750,18 @@ export function stepPlayerAndBallControl(
     } else if (input.lobOrSlideJustPressed) {
       if (teammateHasBall) {
         calledForBall = 'CROSS';
-      } else if (pState.slideTimer <= 0 && (horizSpeed > 2.2 || opponentHasBall) && distToBall < 3.8) {
+      } else if (pState.slideTimer <= 0 && distToBall < 5.6 && (opponentHasBall || ball.ownerId === null)) {
+        const predX = ball.pos.x + ball.vel.x * 0.18;
+        const predZ = ball.pos.z + ball.vel.z * 0.18;
         const lungeYaw =
-          opponentHasBall && distToBall > 0.2
-            ? Math.atan2(ball.pos.x - pState.pos.x, ball.pos.z - pState.pos.z)
+          distToBall > 0.15
+            ? Math.atan2(predX - pState.pos.x, predZ - pState.pos.z)
             : pState.facingYaw;
         pState.facingYaw = lungeYaw;
-        pState.slideTimer = 0.42;
-        const slideBoost = Math.max(horizSpeed * 1.28, 7.8);
+        pState.slideTimer = 0.46;
+        const slideBoost = Math.max(horizSpeed * 1.35, 11.8 + (attrs.tackling / 99) * 1.6);
         pState.vel.set(Math.sin(lungeYaw) * slideBoost, 0, Math.cos(lungeYaw) * slideBoost);
-        const slideReach = 1.85 + (attrs.tackling / 99) * 0.45;
-        if (distToBall < slideReach && ball.ownerId !== 'AWAY_GK' && ball.ownerId !== 'HOME_GK') {
-          const lungeDir = new THREE.Vector3(Math.sin(lungeYaw), 0, Math.cos(lungeYaw));
-          ball.ownerId = null;
-          ball.lastTouchBy = 'USER';
-          ball.lastTouchTeam = 'HOME';
-          ball.touchCooldown = 0.3;
-          ball.vel.set(lungeDir.x * 11.5, 0.85, lungeDir.z * 11.5);
-          playBallKickSfx(0.55);
-        }
+        playBallKickSfx(0.32);
       } else if (!opponentHasBall) {
         calledForBall = 'CROSS';
       }

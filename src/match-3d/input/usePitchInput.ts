@@ -26,8 +26,10 @@ export interface LivePitchInput {
   lobHeld: boolean; // X / R
   lobOrSlideJustPressed: boolean;
   lobJustReleased: boolean;
-  resetBallJustPressed: boolean; // Select / Back / Share / V / Backspace
-  exitOrFinishJustPressed: boolean; // Start / Options / Menu
+  resetBallJustPressed: boolean; // Select / Back / Share / V
+  exitOrFinishJustPressed: boolean; // Start / Options / Menu / Escape
+  menuUpJustPressed: boolean;
+  menuDownJustPressed: boolean;
 }
 
 export class PitchInputCollector {
@@ -46,6 +48,8 @@ export class PitchInputCollector {
   private prevChip = false;
   private prevReset = false;
   private prevStart = false;
+  private prevMenuUp = false;
+  private prevMenuDown = false;
   private initializedFromPad = false;
 
   private hostEl: HTMLElement | null = null;
@@ -53,7 +57,7 @@ export class PitchInputCollector {
   private onKeyDown = (e: KeyboardEvent) => {
     this.keys.add(e.code);
     if (
-      ['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace'].includes(
+      ['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(
         e.code,
       )
     ) {
@@ -66,23 +70,24 @@ export class PitchInputCollector {
   };
 
   private onMouseMove = (e: MouseEvent) => {
-    if (document.pointerLockElement === this.hostEl) {
-      this.mouseDX += e.movementX * 0.0028;
-      this.mouseDY += e.movementY * 0.0022;
+    // Giro de câmera no mouse somente segurando botão direito/meio (nunca trava o cursor com pointerLock!)
+    if (this.mouseBtns.has(2) || this.mouseBtns.has(1)) {
+      this.mouseDX += e.movementX * 0.0032;
+      this.mouseDY += e.movementY * 0.0024;
     }
   };
 
   private onMouseDown = (e: MouseEvent) => {
     window.focus?.();
-    if (!this.hostEl) return;
-    if (document.pointerLockElement !== this.hostEl && e.target === this.hostEl.firstChild) {
-      this.hostEl.requestPointerLock?.().catch?.(() => {});
-    }
     this.mouseBtns.add(e.button);
   };
 
   private onMouseUp = (e: MouseEvent) => {
     this.mouseBtns.delete(e.button);
+  };
+
+  private onContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
   };
 
   attach(hostEl: HTMLElement): void {
@@ -93,6 +98,7 @@ export class PitchInputCollector {
     window.addEventListener('keyup', this.onKeyUp);
     window.addEventListener('mousemove', this.onMouseMove);
     hostEl.addEventListener('mousedown', this.onMouseDown);
+    hostEl.addEventListener('contextmenu', this.onContextMenu);
     window.addEventListener('mouseup', this.onMouseUp);
   }
 
@@ -102,9 +108,10 @@ export class PitchInputCollector {
     window.removeEventListener('mousemove', this.onMouseMove);
     if (this.hostEl) {
       this.hostEl.removeEventListener('mousedown', this.onMouseDown);
+      this.hostEl.removeEventListener('contextmenu', this.onContextMenu);
     }
     window.removeEventListener('mouseup', this.onMouseUp);
-    if (document.pointerLockElement === this.hostEl) {
+    if (document.pointerLockElement) {
       document.exitPointerLock?.();
     }
     this.hostEl = null;
@@ -192,9 +199,12 @@ export class PitchInputCollector {
     const passNow = Boolean(gp?.south) || this.keys.has('KeyE');
     const throughNow = Boolean(gp?.north) || this.keys.has('KeyF');
     const lobNow = Boolean(gp?.west) || this.keys.has('KeyR');
-    const resetNow =
-      Boolean(gp?.back) || this.keys.has('KeyV') || this.keys.has('Backspace');
-    const startNow = Boolean(gp?.start);
+    const resetNow = Boolean(gp?.back) || this.keys.has('KeyV');
+    const startNow = Boolean(gp?.start) || this.keys.has('Escape');
+    const menuUpNow =
+      Boolean(gp?.dpadUp) || Boolean(gp && gp.ly < -0.55) || this.keys.has('ArrowUp') || this.keys.has('KeyW');
+    const menuDownNow =
+      Boolean(gp?.dpadDown) || Boolean(gp && gp.ly > 0.55) || this.keys.has('ArrowDown') || this.keys.has('KeyS');
 
     const out: LivePitchInput = {
       moveX: this.smoothMoveX,
@@ -221,6 +231,8 @@ export class PitchInputCollector {
       lobJustReleased: !lobNow && this.prevLob,
       resetBallJustPressed: resetNow && !this.prevReset,
       exitOrFinishJustPressed: startNow && !this.prevStart,
+      menuUpJustPressed: menuUpNow && !this.prevMenuUp,
+      menuDownJustPressed: menuDownNow && !this.prevMenuDown,
     };
 
     this.prevShoot = shootNow;
@@ -230,6 +242,8 @@ export class PitchInputCollector {
     this.prevChip = chipNow;
     this.prevReset = resetNow;
     this.prevStart = startNow;
+    this.prevMenuUp = menuUpNow;
+    this.prevMenuDown = menuDownNow;
 
     return out;
   }

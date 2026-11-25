@@ -71,10 +71,10 @@ export function createInitialInternationalState(seasonYear = 2026): Internationa
     worldCup:
       cycleIndex === 3
         ? createWorldCupTournament(
-            seasonYear,
-            ALL_NATIONAL_TEAMS.slice(0, 32).map((t) => t.id),
-            nextWorldCupHost,
-          )
+          seasonYear,
+          ALL_NATIONAL_TEAMS.slice(0, 32).map((t) => t.id),
+          nextWorldCupHost,
+        )
         : null,
     friendlyRounds: cycleIndex === 3 ? buildFriendlyRounds(seasonYear) : [],
     pastChampions: [],

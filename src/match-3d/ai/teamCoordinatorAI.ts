@@ -225,13 +225,15 @@ export function stepTeamTacticalCoordinator(
   coord.possessionBlend +=
     (targetBlend - coord.possessionBlend) * Math.min(1, dt * 1.45);
 
-  // 3. Altura Sincronizada da Linha Defensiva (sobe com o time no ataque; recua até a entrada da área na defesa!)
+  // 3. Altura Sincronizada da Linha Defensiva (acompanha contra-ataques rápidos sem deixar avenida!)
   const ballProg = (coord.smoothBallPos.z * coord.attackDir) / PITCH.HALF_L;
+  const liveBallProg = (ball.pos.z * coord.attackDir) / PITCH.HALF_L;
+  const effectiveDefProg = teamInAttack ? ballProg : Math.min(ballProg, liveBallProg);
   const desiredDefLineProg = teamInAttack
-    ? Math.max(-0.52, Math.min(-0.04, -0.34 + ballProg * 0.34))
-    : Math.max(-0.67, Math.min(-0.18, -0.48 + ballProg * 0.32));
+    ? Math.max(-0.52, Math.min(-0.06, -0.35 + effectiveDefProg * 0.34))
+    : Math.max(-0.74, Math.min(-0.22, -0.5 + effectiveDefProg * 0.38));
 
-  const maxLineShift = (7.0 / PITCH.HALF_L) * dt;
+  const maxLineShift = (11.5 / PITCH.HALF_L) * dt;
   const lineDelta = desiredDefLineProg - coord.defensiveLineProgress;
   coord.defensiveLineProgress += Math.max(-maxLineShift, Math.min(maxLineShift, lineDelta));
 
@@ -448,6 +450,7 @@ export function stepTeamTacticalCoordinator(
 
     const ballCarrierOpp = opponents.find((o) => o.id === ball.ownerId);
     const threatPos = ballCarrierOpp ? ballCarrierOpp.pos : ball.pos;
+    const threatVel = ballCarrierOpp ? ballCarrierOpp.vel : ball.vel;
     const distThreatFromOwnGoal = Math.abs(
       -coord.attackDir * PITCH.HALF_L - threatPos.z,
     );
@@ -457,17 +460,24 @@ export function stepTeamTacticalCoordinator(
 
     for (const tm of teammates) {
       if (tm.isUser || coord.directives.has(tm.id)) continue;
-      const dBall = Math.hypot(tm.pos.x - threatPos.x, tm.pos.z - threatPos.z);
+      // Antecipa 0.32s da corrida do portador para escolher quem fecha a frente dele (não quem corre atrás!)
+      const leadX = threatPos.x + threatVel.x * 0.32;
+      const leadZ = threatPos.z + threatVel.z * 0.32;
+      const dBall = Math.hypot(tm.pos.x - leadX, tm.pos.z - leadZ);
       const anc = baseAnchors.get(tm.id)!;
       const dAnchor = Math.hypot(anc.x - threatPos.x, anc.z - threatPos.z);
 
-      // Protege o miolo da zaga: ZAG só sai da linha p/ dar bote se o adversário já invadiu os últimos 28m!
-      const isCenterBack = tm.slot.roleLabel === 'ZAG';
-      const cbOutPenalty = isCenterBack && distThreatFromOwnGoal > 28.5 ? 14.0 : 0;
+      // Penaliza quem já ficou ultrapassado nas costas do driblador, forçando o próximo defensor da frente a dar o bote!
+      const ownGoalZ = -coord.attackDir * PITCH.HALF_L;
+      const tmDistToOwnGoal = Math.abs(ownGoalZ - tm.pos.z);
+      const carrierDistToOwnGoal = Math.abs(ownGoalZ - threatPos.z);
+      const beatenBehindPenalty = tmDistToOwnGoal > carrierDistToOwnGoal + 2.2 ? 9.5 : 0;
 
-      // Histerese (-2.5m) para o atual First Defender não ficar trocando a cada frame!
-      const hysteresis = tm.id === coord.firstDefenderId ? -2.5 : 0;
-      const cost = dBall * 0.72 + dAnchor * 0.35 + cbOutPenalty + hysteresis;
+      const isCenterBack = tm.slot.roleLabel === 'ZAG';
+      const cbOutPenalty = isCenterBack && distThreatFromOwnGoal > 32.0 ? 11.0 : 0;
+
+      const hysteresis = tm.id === coord.firstDefenderId ? -1.8 : 0;
+      const cost = dBall * 0.78 + dAnchor * 0.25 + beatenBehindPenalty + cbOutPenalty + hysteresis;
 
       if (cost < bestPresserCost) {
         bestPresserCost = cost;
@@ -477,31 +487,33 @@ export function stepTeamTacticalCoordinator(
 
     coord.firstDefenderId = bestPresserId;
     if (bestPresserId) {
-      // Ponto de Contenção (Jockey): 1.35m entre a bola e o próprio gol!
+      // Ponto de Combate Agressivo: fecha exatamente a linha de progressão entre a bola e o gol (0.55m à frente do pé da bola!)
       const ownGoalZ = -coord.attackDir * PITCH.HALF_L;
-      const toOwnGoalX = 0 - threatPos.x;
-      const toOwnGoalZ = ownGoalZ - threatPos.z;
+      const predX = threatPos.x + threatVel.x * 0.26;
+      const predZ = threatPos.z + threatVel.z * 0.26;
+      const toOwnGoalX = 0 - predX;
+      const toOwnGoalZ = ownGoalZ - predZ;
       const toGoalLen = Math.max(1, Math.hypot(toOwnGoalX, toOwnGoalZ));
-      const containDist = forceTeamPressHeld ? 0.75 : 1.35;
+      const tackleOffset = 0.52;
 
       coord.directives.set(bestPresserId, {
         duty: 'FIRST_DEFENDER',
         targetPos: new THREE.Vector3(
-          threatPos.x + (toOwnGoalX / toGoalLen) * containDist,
+          predX + (toOwnGoalX / toGoalLen) * tackleOffset,
           0,
-          threatPos.z + (toOwnGoalZ / toGoalLen) * containDist,
+          predZ + (toOwnGoalZ / toGoalLen) * tackleOffset,
         ),
-        urgency01: 0.96,
+        urgency01: 1.0,
       });
     }
 
-    // Escolhe `SECOND_DEFENDER` para fechar a linha de passe mais perigosa (Cover Shadow)
+    // Escolhe `SECOND_DEFENDER`: no terço defensivo (< 32m do gol) ou com RB segurado, fecha junto na diagonal pra trancar a passagem!
     let bestCoverId: string | null = null;
     let bestCoverCost = Infinity;
     for (const tm of teammates) {
       if (tm.isUser || coord.directives.has(tm.id)) continue;
       const dBall = Math.hypot(tm.pos.x - threatPos.x, tm.pos.z - threatPos.z);
-      const hysteresis = tm.id === coord.secondDefenderId ? -2.0 : 0;
+      const hysteresis = tm.id === coord.secondDefenderId ? -1.8 : 0;
       const cost = dBall + hysteresis;
       if (cost < bestCoverCost) {
         bestCoverCost = cost;
@@ -512,19 +524,15 @@ export function stepTeamTacticalCoordinator(
     coord.secondDefenderId = bestCoverId;
     if (bestCoverId) {
       const anc = baseAnchors.get(bestCoverId)!;
-      if (forceTeamPressHeld) {
-        // RB segurado: segundo marcador dobra pressão na bola!
+      if (forceTeamPressHeld || distThreatFromOwnGoal < 30.0) {
+        const insideX = threatPos.x * 0.82;
+        const coverGoalZ = threatPos.z - coord.attackDir * (forceTeamPressHeld ? 1.1 : 2.6);
         coord.directives.set(bestCoverId, {
           duty: 'SECOND_DEFENDER',
-          targetPos: new THREE.Vector3(
-            threatPos.x * 0.9,
-            0,
-            threatPos.z - coord.attackDir * 1.8,
-          ),
-          urgency01: 0.92,
+          targetPos: new THREE.Vector3(insideX, 0, coverGoalZ),
+          urgency01: 0.96,
         });
       } else {
-        // Cobre na diagonal (5.5m atrás do primeiro combate fechando passe infiltrado!)
         const dangerousReceiver = opponents
           .filter((o) => o.id !== ball.ownerId)
           .sort(
@@ -534,18 +542,18 @@ export function stepTeamTacticalCoordinator(
           )[0];
 
         const shadowX = dangerousReceiver
-          ? threatPos.x * 0.55 + dangerousReceiver.pos.x * 0.45
+          ? threatPos.x * 0.52 + dangerousReceiver.pos.x * 0.48
           : threatPos.x * 0.75;
-        const shadowZ = threatPos.z - coord.attackDir * 5.8;
+        const shadowZ = threatPos.z - coord.attackDir * 5.2;
 
         coord.directives.set(bestCoverId, {
           duty: 'SECOND_DEFENDER',
           targetPos: new THREE.Vector3(
-            anc.x * 0.35 + shadowX * 0.65,
+            anc.x * 0.3 + shadowX * 0.7,
             0,
-            anc.z * 0.35 + shadowZ * 0.65,
+            anc.z * 0.3 + shadowZ * 0.7,
           ),
-          urgency01: 0.8,
+          urgency01: 0.85,
         });
       }
     }
